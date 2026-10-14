@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2.5 Loss as a proper scoring rule</title>
+<meta name="description" content="Why the cross-entropy loss used to train language models rewards honest, calibrated probabilities.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="2.5">
+<article>
+<h1>Loss as a proper scoring rule</h1>
+
+<section>
+<p>A language model outputs a probability for every possible next token. Training scores that output with the <em>cross-entropy loss</em>: minus the natural log of the probability the model gave to the token that actually came next. If the model gave the right token probability 0.9, the loss is 0.105. If it gave the right token probability 0.01, the loss is 4.6.</p>
+
+<p>The same kind of score is used to grade weather forecasters. A scoring rule takes a forecast and the outcome and returns a loss. This page compares three rules for a yes-or-no event, where you report a probability \(q\) that the event happens:</p>
+<ul>
+<li>the <em>log rule</em> charges minus the log of the probability you gave to what happened;</li>
+<li>the <em>Brier rule</em> charges the squared distance between your report and the outcome, counted as 1 if the event happened and 0 if not;</li>
+<li>the <em>linear rule</em> charges one minus the probability you gave to what happened.</li>
+</ul>
+<p>The question is which rule rewards a forecaster for reporting what they actually believe.</p>
+</section>
+
+<section>
+<h2>The forecaster&rsquo;s game</h2>
+<p>Each task below asks for a prediction first. Make it, then use the tool to check it.</p>
+
+<div class="tool" id="tool">
+  <div class="panel" id="panel-one">
+    <h3>One forecast</h3>
+    <p class="panel-note">An event happens with probability \(p\). You report \(q\). The curve shows your expected loss for every possible report under the chosen rule; <span class="c-accent">your report</span> is the dot.</p>
+    <div class="row"><div class="controls" id="one-controls"></div><div class="stage" id="one-chart"></div></div>
+    <p class="readout" id="one-readout" aria-live="polite"></p>
+  </div>
+
+  <div class="panel" id="panel-many">
+    <h3>Many forecasts</h3>
+    <p class="panel-note">Three forecasters see the same 1,000 events, each with the probability \(p\) and the rule set above. The <span class="c-accent">honest</span> forecaster reports \(p\). The <span class="c-second">overconfident</span> one reports 0.95 for the more likely outcome. The underconfident one reports \(p\) moved most of the way toward one half (0.58 when \(p\) is 0.70).</p>
+    <div class="row"><div class="controls" id="many-controls"></div><div class="stage" id="many-chart"></div></div>
+    <p class="readout" id="many-readout" aria-live="polite"></p>
+  </div>
+
+  <div class="panel" id="panel-tokens">
+    <h3>The same game with next tokens</h3>
+    <p class="panel-note">After the words &ldquo;The capital of France is,&rdquo; five tokens can come next, with the true probabilities shown as outlines (illustrative numbers). The model&rsquo;s probabilities are the <span class="c-accent">filled bars</span>. Drag a bar, or select it and use the arrow keys; the other bars rescale so the total stays 1.</p>
+    <div class="row"><div class="controls" id="tok-controls"></div><div class="stage" id="tok-chart"></div></div>
+    <p class="readout" id="tok-readout" aria-live="polite"></p>
+  </div>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="2.5-t1">
+    <p class="prompt">Under the <em>linear</em> rule, with \(p = 0.7\), which report gives the lowest expected loss?</p>
+    <div class="choices" data-options="0.5|0.7|1.0"></div>
+    <div class="after"><p>Now check it: in <em>One forecast</em>, choose Linear, set \(p\) to 0.70, and move \(q\).</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The lowest point is at \(q = 1\). Reporting certainty you do not have lowers your expected loss from 0.42 to 0.30. The linear rule rewards overconfidence.</p></div></div>
+  </li>
+  <li class="task" data-id="2.5-t2">
+    <p class="prompt">Switch to the <em>log</em> rule, still with \(p = 0.7\). Which report is best now?</p>
+    <div class="choices" data-options="0.5|0.7|1.0"></div>
+    <div class="after"><p>Check it, then move \(p\) and watch where the lowest point goes. Try the Brier rule too.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Under the log rule the lowest point is always at \(q = p\): the only way to do best is to report what you believe. The Brier rule behaves the same way. As \(q\) approaches 0 or 1, the log loss rises without limit.</p></div></div>
+  </li>
+  <li class="task" data-id="2.5-t3">
+    <p class="prompt">With the log rule and \(p = 0.7\), run 1,000 events. Which forecaster ends with the lowest average loss?</p>
+    <div class="choices" data-options="Honest|Overconfident|Underconfident"></div>
+    <div class="after"><p>Run it in <em>Many forecasts</em>. Then switch the rule to Linear and run again.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Under the log rule the honest forecaster has the lowest average loss; under the linear rule the overconfident one does. Over many events, the average loss settles at the expected loss, so whatever a rule rewards in expectation is what training under that rule ends up rewarding.</p></div></div>
+  </li>
+  <li class="task" data-id="2.5-t4">
+    <p class="prompt">In the next-token panel, drag the bar for &ldquo;also&rdquo; down to zero. What happens to the expected loss?</p>
+    <div class="choices" data-options="It rises a little|It rises a lot but stays finite|It becomes infinite"></div>
+    <div class="after"><p>Try it.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The loss becomes infinite. The token &ldquo;also&rdquo; comes next 7% of the time, and each time it does, a model that gave it probability zero pays \(-\log 0\). A model trained this way learns never to give probability zero to a token that occurs in its training text.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>Why honest reports win</h2>
+<p>A scoring rule is <em>strictly proper</em> if a forecaster minimizes their expected loss only by reporting their true probabilities.<label for="sn-gr" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-gr" class="margin-toggle"><span class="sidenote">Gneiting and Raftery (2007), &ldquo;Strictly proper scoring rules, prediction, and estimation,&rdquo; <em>Journal of the American Statistical Association</em> 102: 359&ndash;378.</span> <span class="claim">Theorem</span> The log rule and the Brier rule are strictly proper; the linear rule is not. For the log rule, when the event has probability \(p\) and you report \(q\), your expected loss (natural log) is</p>
+$$\mathbb{E}[L(q)] = -\,p \log q \;-\; (1-p)\log(1-q).$$
+<p>Its derivative is zero only at \(q = p\), where the curve has its minimum. The linear rule&rsquo;s expected loss is a straight line in \(q\), so its minimum is always at an end: at \(q = 1\) whenever the event is more likely than not.</p>
+
+<figure class="multiples" id="fig-rules" aria-describedby="fig-rules-desc"></figure>
+<p id="fig-rules-desc" class="caption">Expected loss against the reported probability \(q\), when the event happens with probability 0.7, on a shared scale. The log and Brier rules are lowest at \(q = 0.7\); the linear rule is lowest at \(q = 1\).</p>
+</section>
+
+<section>
+<h2>What this means for language models</h2>
+<p><span class="claim">Argument</span> Because the training loss is strictly proper, training to predict the next token pushes a model toward calibrated probabilities: among the cases where it says 70%, the event should happen about 70% of the time. <span class="claim">Empirical finding</span> The GPT-4 technical report found the pretrained model well calibrated on a multiple-choice benchmark, and less calibrated after further training with human feedback.<label for="sn-gpt4" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-gpt4" class="margin-toggle"><span class="sidenote">OpenAI (2023), &ldquo;GPT-4 Technical Report,&rdquo; the calibration figure for the MMLU benchmark. Section 4 of this site explains the later training.</span></p>
+<p>A common belief is that language models learn by reinforcement learning. Pretraining is not reinforcement learning. Its targets come from the text itself, so it is supervised learning, often called self-supervised learning. Reinforcement learning enters only in later training, where the model&rsquo;s own outputs are scored (Section 4.1).</p>
+</section>
+
+<div class="check" data-id="2.5-c1b" data-correct="1">
+  <p class="label">Check</p>
+  <p class="q">Suppose a model were trained with the linear rule instead of the log rule. Would you expect the probabilities it reports to be calibrated?</p>
+  <div class="options seg"><button>Yes, any scoring rule leads to calibration</button><button>No, training would push its reports toward 0 and 1</button><button>No, training would push its reports toward one half</button></div>
+  <div class="feedback"><p>The linear rule is not proper: its expected loss is lowest at an end, so a model trained with it gains by reporting 0 or 1. Calibration comes from the rule being strictly proper.</p></div>
+</div>
+
+<div class="check" data-id="2.5-c2" data-correct="1">
+  <p class="q">What kind of learning is pretraining?</p>
+  <div class="options seg"><button>Reinforcement learning</button><button>Supervised learning, with targets taken from the text</button><button>Clustering without targets</button></div>
+  <div class="feedback"><p>Each next token in the training text is the target, and the model is scored on it with the log rule. No reward signal is involved.</p></div>
+</div>
+
+<div class="explain" data-id="2.5-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: why does an honest report minimize expected log loss, while the linear rule rewards overconfidence?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>Cross-entropy is the logarithmic scoring rule. It is strictly proper, so the best a model can do is report the probabilities the data supports, and next-token training pushes models toward calibration. Pretraining is supervised learning; reinforcement learning comes later.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/2-5.js"></script>
+</body>
+</html>

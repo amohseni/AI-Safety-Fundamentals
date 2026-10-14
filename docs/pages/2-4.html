@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2.4 Layers bend space</title>
+<meta name="description" content="A multilayer network as a sequence of geometric transformations that move the data until one line separates the classes.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  .plane { width: 100%; aspect-ratio: 1 / 1; max-width: 34rem; outline-offset: 4px; }
+  .mini { width: 100%; aspect-ratio: 1 / 1; }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="2.4">
+<article>
+<h1>Layers bend space</h1>
+
+<section>
+<p>The four clusters of the XOR dataset sit at the corners of a square, with each class on one diagonal. No single line separates the <span class="c-accent">blue</span> points from the <span class="c-second">orange</span> ones. A network with two small hidden layers usually learns to classify them. This page shows how: each hidden layer moves the points, and after the last hidden layer one line can separate them.</p>
+
+<p>Each layer does two things. First a linear map, plus a shift, rotates, stretches, shears, or flattens space. Then the activation function bends it. The network on this page uses the hyperbolic tangent, tanh, which squashes each coordinate into the range from \(-1\) to \(1\). ReLU, the other common choice, sets every negative coordinate to zero. For a network with two hidden layers,</p>
+$$h_1 = \tanh(W_1 x + b_1), \quad h_2 = \tanh(W_2 h_1 + b_2), \quad \text{output} = \sigma(w \cdot h_2 + b).$$
+<p>The output is a single neuron (Section 2.2). It draws one line through the space of \(h_2\) and reports which side of that line each point is on. The <em>width</em> of the network is the number of units in each hidden layer. At width 2 the hidden spaces are planes; at width 3 they are three-dimensional, and the output draws a plane instead of a line.<label for="sn-olah" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-olah" class="margin-toggle"><span class="sidenote">This way of picturing a network comes from Chris Olah (2014), &ldquo;Neural Networks, Manifolds, and Topology.&rdquo;</span></p>
+</section>
+
+<section>
+<h2>Watch the plane bend</h2>
+<p>Train a network, then move the slider to follow the points and a grid drawn over the input plane through each step. The arrow keys move the slider one step at a time. At width 3, drag the picture, or select it and use the arrow keys, to turn it.</p>
+
+<div class="tool" id="tool">
+  <div class="row">
+    <div class="controls" id="controls"></div>
+    <div class="stage"><canvas class="plane" id="plane" tabindex="0" aria-label="The data and grid at the selected step of the network"></canvas></div>
+  </div>
+  <p class="readout" id="readout" aria-live="polite"></p>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="2.4-t1">
+    <p class="prompt">XOR, width 2. After training, at which step do the two classes first become separable by a single line?</p>
+    <div class="choices" data-options="The input|Layer 1, linear map|Layer 1, activation|Layer 2, activation"></div>
+    <div class="after"><p>Choose XOR and width 2, train until the accuracy reaches 100%, then move the slider one step at a time.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>In every successful run we tested, the classes first become separable after layer 1&rsquo;s activation. Layer 1&rsquo;s linear map cannot separate them: if a line separated the points just after a linear map, that line, mapped back, would already separate them in the input, and no line does. The bending done by the activation is what makes them separable.</p></div></div>
+  </li>
+  <li class="task" data-id="2.4-t2">
+    <p class="prompt">Spirals, width 2. If you train for the full 6,000 steps, will the network classify every training point correctly?</p>
+    <div class="choices" data-options="Yes|No"></div>
+    <div class="after"><p>Train spirals at width 2 until training stops. Then switch to width 3 and train again; press New start to try other starting points.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p><span class="claim">Empirical finding</span> At width 2, training stalls well short of 100%: in our runs, between 65% and 84%. At width 3 the network can lift one spiral above the other, and accuracy goes higher: the first two starting points reach 100%, and the others end between 85% and 99%. The extra dimension gives the layers room to separate what they could not separate in the plane.</p></div></div>
+  </li>
+  <li class="task" data-id="2.4-t3">
+    <p class="prompt">After training on spirals, look at the input step, where the shading shows which class the network assigns to each region. Is the boundary between the shaded regions curved or straight?</p>
+    <div class="choices" data-options="Curved|Straight"></div>
+    <div class="after"><p>Compare the input step with the last step, where the network&rsquo;s own boundary is drawn.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>In the input the boundary curves around the spirals. At the last step the boundary is one line, or one plane at width 3. The curvature in the input comes from the hidden layers, which moved the points; the output only draws a straight boundary in the space they produce.</p></div></div>
+  </li>
+</ol>
+
+<figure class="multiples" id="fig-xor" aria-describedby="fig-xor-desc"></figure>
+<p id="fig-xor-desc" class="caption">A trained XOR network at width 2, step by step. In this run the first linear map squeezes the plane almost onto one line, along a diagonal. The activation then bends that line into an L, with one class at the corner and the other on the arms, so a line can now separate them. After layer 2, the output&rsquo;s line does.</p>
+</section>
+
+<div class="check" data-id="2.4-c2" data-correct="1">
+  <p class="label">Check</p>
+  <p class="q">A trained network&rsquo;s boundary in the input plane is curved. Where does the curvature come from?</p>
+  <div class="options seg"><button>The output neuron draws a curved boundary</button><button>The hidden layers move the points; the output&rsquo;s straight boundary, traced back to the input, is curved</button><button>The training data contains the curve</button></div>
+  <div class="feedback"><p>The output is one neuron, so its boundary is flat in the space it sees. That space is the input after the hidden layers have bent it, so the same boundary looks curved in the input.</p></div>
+</div>
+
+<div class="explain" data-id="2.4-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: what does a hidden layer do to the data, in terms of this picture?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>A multilayer network is a sequence of geometric transformations: linear maps that rotate, stretch, and flatten, and activation functions that bend. The hidden layers move the data until a single hyperplane separates the classes, and the output draws that hyperplane.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/2-4.js"></script>
+</body>
+</html>

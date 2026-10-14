@@ -1,0 +1,178 @@
+/* Site layer on top of Tufte CSS (tufte.css). Tokens first; components after.
+   Rule: color carries meaning. --accent marks what the reader manipulates or the
+   first of two compared quantities; --second marks the other. Nothing else is colored. */
+
+:root {
+  --paper: #fffff8;
+  --ink: #111111;
+  --quiet: #5f5e57;
+  --rule: #d9d6c9;
+  --faint: #efede2;
+  --accent: #2b4fa0;
+  --second: #a8690f;
+  --good: #3c6e3a;
+  --bad: #9e2a20;
+  --focus: #2b4fa0;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #161614;
+    --ink: #e6e4dc;
+    --quiet: #a3a196;
+    --rule: #3b3a34;
+    --faint: #22221f;
+    --accent: #8fa8ec;
+    --second: #dba64a;
+    --good: #8cc488;
+    --bad: #e08a80;
+    --focus: #8fa8ec;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #161614; --ink: #e6e4dc; --quiet: #a3a196; --rule: #3b3a34; --faint: #22221f;
+  --accent: #8fa8ec; --second: #dba64a; --good: #8cc488; --bad: #e08a80; --focus: #8fa8ec;
+}
+
+body { background-color: var(--paper); color: var(--ink); }
+a:link, a:visited { color: inherit; }
+::selection { background: var(--faint); }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+/* Numbers in readouts and tables line up. */
+.num, .readout, table, .tool output { font-variant-numeric: lining-nums tabular-nums; }
+
+/* Top line: where you are, and the way back to the contents. */
+.topline {
+  width: 55%; display: flex; justify-content: space-between; align-items: baseline;
+  padding-top: 2rem; font-size: 1.1rem; color: var(--quiet);
+}
+.topline a { text-decoration: none; background: none; color: var(--quiet); }
+.topline a:hover { color: var(--ink); }
+.topline .core-dot { margin-left: 0.4rem; }
+article { padding-top: 1.5rem; }
+h1 { margin-top: 1.5rem; }
+h1 .pageno { color: var(--quiet); margin-right: 0.6rem; }
+
+/* Core-path marker: a small filled dot, explained on the contents page. */
+.core-dot {
+  display: inline-block; width: 0.45rem; height: 0.45rem; border-radius: 50%;
+  background: var(--ink); vertical-align: 0.15rem;
+}
+
+/* Colored words in prose that name a figure element. */
+.c-accent { color: var(--accent); }
+.c-second { color: var(--second); }
+
+/* Interactive tool: spans text column and margin. */
+.tool { width: 90%; margin: 2rem 0 2.5rem; clear: right; }
+figure.multiples, ol.tasks, .check, .explain, .takeaway { clear: right; }
+.katex-display { overflow-x: auto; overflow-y: hidden; padding: 0.2rem 0; }
+.tool .panel { margin-bottom: 2.2rem; }
+.tool h3 { margin-top: 0.4rem; margin-bottom: 0.6rem; font-size: 1.45rem; }
+.tool .panel-note { font-size: 1.15rem; line-height: 1.6rem; color: var(--quiet); width: 61%; margin: 0.2rem 0 0.8rem; }
+.tool .row { display: flex; flex-wrap: wrap; gap: 1.6rem; align-items: flex-start; }
+.tool .controls { display: flex; flex-direction: column; gap: 0.9rem; min-width: 15rem; max-width: 19rem; flex: 0 1 19rem; }
+.tool .stage { flex: 1 1 26rem; min-width: 0; }
+.tool svg, .tool canvas { display: block; max-width: 100%; touch-action: none; }
+.readout { font-size: 1.25rem; line-height: 1.8rem; width: 61%; margin: 0.8rem 0 0; }
+.readout b { font-weight: 600; }
+
+/* Controls */
+.ctl { display: flex; flex-direction: column; gap: 0.25rem; font-size: 1.1rem; }
+.ctl .ctl-head { display: flex; justify-content: space-between; gap: 1rem; }
+.ctl .ctl-head output { color: var(--ink); }
+.ctl .ctl-name { color: var(--quiet); }
+input[type="range"] {
+  -webkit-appearance: none; appearance: none; width: 100%; height: 1.4rem; background: transparent; margin: 0;
+}
+input[type="range"]::-webkit-slider-runnable-track { height: 1px; background: var(--quiet); }
+input[type="range"]::-moz-range-track { height: 1px; background: var(--quiet); }
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 0.95rem; height: 0.95rem; border-radius: 50%;
+  background: var(--accent); margin-top: -0.45rem; border: 0;
+}
+input[type="range"]::-moz-range-thumb { width: 0.95rem; height: 0.95rem; border-radius: 50%; background: var(--accent); border: 0; }
+
+.seg { display: inline-flex; flex-wrap: wrap; gap: 0.35rem; }
+button, .seg button {
+  font: inherit; font-size: 1.1rem; color: var(--ink); background: transparent;
+  border: 1px solid var(--rule); border-radius: 3px; padding: 0.15rem 0.65rem; cursor: pointer;
+}
+button:hover { border-color: var(--quiet); }
+.seg button[aria-pressed="true"], button.primary { border-color: var(--accent); color: var(--accent); }
+button:disabled { opacity: 0.45; cursor: default; }
+
+/* Tasks: predict, then try, then see what to notice. */
+ol.tasks { width: 61%; padding-left: 1.4rem; }
+ol.tasks > li { margin-bottom: 1.3rem; }
+.task .prompt { margin: 0; }
+.task .choices { margin: 0.5rem 0 0.2rem; }
+.task .choices-label { font-size: 1.1rem; color: var(--quiet); margin-right: 0.5rem; }
+.task .after { display: none; font-size: 1.25rem; line-height: 1.8rem; margin-top: 0.4rem; }
+.task.predicted .after { display: block; }
+.task .notice { display: none; border-left: 2px solid var(--rule); padding-left: 0.8rem; margin-top: 0.5rem; }
+.task.revealed .notice { display: block; }
+.task button[aria-pressed="true"] { border-color: var(--ink); }
+
+/* Check questions and self-explanation. */
+.check, .explain, .takeaway {
+  width: 55%; border-top: 1px solid var(--rule); padding-top: 0.8rem; margin-top: 2rem;
+}
+.check .label, .explain .label, .takeaway .label { font-style: italic; color: var(--quiet); font-size: 1.15rem; }
+.check .q { margin-top: 0.4rem; margin-bottom: 0.6rem; }
+.check .feedback { display: none; margin-top: 0.7rem; }
+.check.answered .feedback { display: block; }
+.check .verdict-right { color: var(--good); }
+.check .verdict-wrong { color: var(--bad); }
+.check button.chosen { border-color: var(--ink); }
+.explain textarea {
+  width: 100%; min-height: 4.5rem; font: inherit; font-size: 1.25rem; line-height: 1.7rem;
+  color: var(--ink); background: transparent; border: 1px solid var(--rule); border-radius: 3px; padding: 0.4rem 0.5rem;
+}
+.explain .saved { font-size: 1rem; color: var(--quiet); }
+.takeaway p { margin-top: 0.4rem; }
+
+/* Page-end navigation. */
+.pagenav { width: 55%; display: flex; justify-content: space-between; gap: 2rem; margin: 3rem 0 4rem; font-size: 1.2rem; }
+.pagenav a { text-decoration: none; background: none; }
+.pagenav a:hover { text-decoration: underline; }
+.pagenav .dir { display: block; color: var(--quiet); font-size: 1rem; }
+.pagenav .next { text-align: right; }
+
+/* Charts: no frames or grids; quiet axes; labels on the lines. */
+.chart text { font-family: et-book, Georgia, serif; fill: var(--quiet); font-size: 13px; font-variant-numeric: lining-nums tabular-nums; }
+.chart .axis path, .chart .axis line { stroke: var(--rule); }
+.chart .label-ink { fill: var(--ink); }
+.chart .label-accent { fill: var(--accent); }
+.chart .label-second { fill: var(--second); }
+figure.multiples { display: flex; flex-wrap: wrap; gap: 1.2rem; max-width: 90%; }
+figure.multiples > div { flex: 1 1 12rem; min-width: 11rem; }
+figure .small-title { font-size: 1.1rem; color: var(--ink); margin: 0 0 0.2rem; }
+
+/* Figure captions and claim-type labels. */
+.caption { width: 61%; color: var(--quiet); font-size: 1.15rem; line-height: 1.6rem; }
+.claim { font-style: italic; color: var(--quiet); font-size: 1.05rem; margin-right: 0.3rem; }
+.claim::after { content: "."; }
+
+/* Contents page. */
+.contents { width: 61%; }
+.contents h2 { font-size: 1.7rem; margin-top: 2.2rem; margin-bottom: 0.4rem; }
+.contents ol { list-style: none; padding-left: 0; margin: 0; }
+.contents li { display: flex; gap: 0.7rem; align-items: baseline; font-size: 1.3rem; line-height: 2rem; }
+.contents .no { color: var(--quiet); min-width: 2.2rem; }
+.contents .planned { color: var(--quiet); }
+.contents .mark { min-width: 0.8rem; }
+.contents .done-dot { display: inline-block; width: 0.45rem; height: 0.45rem; border-radius: 50%; border: 1px solid var(--quiet); }
+.contents .done-dot.done { background: var(--quiet); }
+.contents li a { text-decoration: none; background: none; }
+.contents li a:hover { text-decoration: underline; }
+
+/* Phones: the tool and its text take the full column. */
+@media (max-width: 760px) {
+  .topline, .tool, ol.tasks, .readout, .check, .explain, .takeaway, .pagenav, .contents, .tool .panel-note, .caption { width: 100%; }
+  .tool .controls { max-width: none; flex: 1 1 100%; }
+  ol.tasks { padding-left: 1.2rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto !important; }
+}

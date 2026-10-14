@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Safety Fundamentals</title>
+<meta name="description" content="An interactive introduction to how modern AI systems work, for readers who want to understand and contribute to AI safety research.">
+<link rel="stylesheet" href="css/tufte.css">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body data-base="">
+<article>
+<h1>AI Safety Fundamentals</h1>
+<p class="subtitle">How modern AI systems work, from a single neuron to the alignment problem</p>
+
+<section>
+<p>This site explains how modern AI systems work, in enough depth to follow current AI safety research and to start contributing to it. It assumes linear algebra, calculus, and probability, and no machine learning.</p>
+<p>Every page answers one question with one interactive tool. Read the short text, make the prediction each task asks for, then use the tool to check it. Each page ends with a check question and a box for explaining the idea in your own words. Your answers and progress stay in this browser.</p>
+<p>The <span class="core-dot" title="Core path"></span> marks the twenty pages of the core path, about five hours. They carry the main line of argument, from &ldquo;a network is a function&rdquo; to &ldquo;why a trained system can pursue goals its designers did not intend.&rdquo; Pages in grey are not written yet. A small circle after a page title fills in once you have answered its check question.</p>
+</section>
+
+<nav class="contents" id="contents" aria-label="Contents"></nav>
+</article>
+<script type="module">
+  import { contents } from './js/site.js';
+  contents(document.getElementById('contents'));
+</script>
+</body>
+</html>
