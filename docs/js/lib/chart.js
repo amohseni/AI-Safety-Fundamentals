@@ -5,12 +5,12 @@ const d3 = window.d3;
 const COLOR = { accent: 'var(--accent)', second: 'var(--second)', ink: 'var(--ink)', quiet: 'var(--quiet)', rule: 'var(--rule)' };
 
 export function chart(container, opts) {
-  const { height = 280, margin = { top: 28, right: 92, bottom: 40, left: 52 }, x: xo, y: yo, title } = opts;
+  const { height = 320, margin = { top: 34, right: 120, bottom: 52, left: 60 }, x: xo, y: yo, title } = opts;
   // Draw at the container's real width (capped), so text stays at its set size on phones.
   const avail = container.clientWidth || opts.width || 560;
   const width = Math.max(280, Math.min(opts.width || 560, avail));
   const svg = d3.select(container).append('svg')
-    .attr('class', 'chart').attr('viewBox', `0 0 ${width} ${height}`).attr('width', '100%')
+    .attr('class', 'chart').attr('viewBox', `0 0 ${width} ${height}`).attr('width', width).attr('height', height)
     .attr('role', 'img').attr('aria-label', title || '');
   const iw = width - margin.left - margin.right, ih = height - margin.top - margin.bottom;
   const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
@@ -23,8 +23,8 @@ export function chart(container, opts) {
     yAxis.call(d3.axisLeft(y).ticks(yo.ticks || 4, yo.format).tickSizeOuter(0));
   };
   drawAxes();
-  if (xo.label) g.append('text').attr('x', iw).attr('y', ih + 34).attr('text-anchor', 'end').text(xo.label);
-  if (yo.label) g.append('text').attr('x', -margin.left + 4).attr('y', -14).attr('text-anchor', 'start').text(yo.label);
+  if (xo.label) g.append('text').attr('x', iw).attr('y', ih + 46).attr('text-anchor', 'end').text(xo.label);
+  if (yo.label) g.append('text').attr('x', -margin.left + 4).attr('y', -16).attr('text-anchor', 'start').text(yo.label);
   const clipId = `clip-${Math.random().toString(36).slice(2)}`;
   svg.append('defs').append('clipPath').attr('id', clipId).append('rect').attr('x', -6).attr('y', -6).attr('width', iw + 12).attr('height', ih + 12);
   const layer = g.append('g').attr('clip-path', `url(#${clipId})`);

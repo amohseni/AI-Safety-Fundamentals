@@ -40,6 +40,7 @@ An interactive explainer site that teaches a new graduate student how modern AI 
 
 ## Conventions
 
+- Three type sizes only (decided 2026-10-15): the page title (h1), section headings (h2), and 16pt (`--text`) for everything else, including chart labels, controls, sidenotes, and formulas. Gray and italics carry other distinctions. Charts are drawn at their true pixel width so their labels stay at 16pt.
 - Colors only through the CSS tokens in `site.css` (`--accent`, `--second`, `--ink`, `--quiet`, `--rule`), so light and dark themes both work.
 - Libraries are vendored in `docs/vendor/` at fixed versions (D3 7.9.0, KaTeX 0.16.11). No CDNs.
 - Reader state lives in `localStorage` under one key through `store` in `site.js`; every access tolerates failure.

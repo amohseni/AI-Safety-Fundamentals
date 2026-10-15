@@ -35,7 +35,7 @@ const changed = () => listeners.forEach((f) => f());
     box.innerHTML = `<p class="small-title">${RULES[rule].name} rule</p>`;
     fig.append(box);
     const pts = curve(rule, 0.7);
-    const c = chart(box, { width: 260, height: 170, margin: { top: 14, right: 16, bottom: 30, left: 36 },
+    const c = chart(box, { width: 300, height: 220, margin: { top: 16, right: 20, bottom: 36, left: 46 },
       x: { domain: [0, 1], ticks: 3 }, y: { domain: [0, 1.2], ticks: 3 }, title: `${RULES[rule].name} rule, expected loss` });
     c.line('c', pts, { color: 'ink' });
     const [bq, bv] = argmin(rule, 0.7);
@@ -144,8 +144,8 @@ const changed = () => listeners.forEach((f) => f());
   let model = [0.2, 0.2, 0.2, 0.2, 0.2];
   const ctl = document.getElementById('tok-controls');
   const out = document.getElementById('tok-readout');
-  const W = Math.max(280, Math.min(520, document.getElementById('tok-chart').clientWidth || 520)), H = 260, m = { top: 28, right: 16, bottom: 34, left: 44 };
-  const svg = d3.select('#tok-chart').append('svg').attr('class', 'chart').attr('viewBox', `0 0 ${W} ${H}`).attr('width', '100%')
+  const W = Math.max(280, Math.min(520, document.getElementById('tok-chart').clientWidth || 520)), H = 300, m = { top: 34, right: 16, bottom: 40, left: 52 };
+  const svg = d3.select('#tok-chart').append('svg').attr('class', 'chart').attr('viewBox', `0 0 ${W} ${H}`).attr('width', W).attr('height', H)
     .attr('role', 'group').attr('aria-label', 'Model probabilities for five next tokens; each bar is adjustable');
   const g = svg.append('g').attr('transform', `translate(${m.left},${m.top})`);
   const iw = W - m.left - m.right, ih = H - m.top - m.bottom;
@@ -153,7 +153,7 @@ const changed = () => listeners.forEach((f) => f());
   const y = d3.scaleLinear().domain([0, 1]).range([ih, 0]);
   g.append('g').attr('class', 'axis').call(d3.axisLeft(y).ticks(4).tickSizeOuter(0));
   g.append('g').attr('class', 'axis').attr('transform', `translate(0,${ih})`).call(d3.axisBottom(x).tickSizeOuter(0));
-  g.append('text').attr('x', -m.left + 4).attr('y', -14).text('probability');
+  g.append('text').attr('x', -m.left + 4).attr('y', -16).text('probability');
 
   const setBar = (i, v) => {
     v = Math.min(1, Math.max(0, v));

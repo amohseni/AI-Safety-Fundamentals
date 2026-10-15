@@ -3,6 +3,8 @@
    first of two compared quantities; --second marks the other. Nothing else is colored. */
 
 :root {
+  /* Three type sizes only: page title (h1), section heading (h2), and --text for everything else. */
+  --text: 16pt;
   --paper: #fffff8;
   --ink: #111111;
   --quiet: #5f5e57;
@@ -44,7 +46,7 @@ a:link, a:visited { color: inherit; }
 /* Top line: where you are, and the way back to the contents. */
 .topline {
   width: 55%; display: flex; justify-content: space-between; align-items: baseline;
-  padding-top: 2rem; font-size: 1.1rem; color: var(--quiet);
+  padding-top: 2rem; font-size: var(--text); color: var(--quiet);
 }
 .topline a { text-decoration: none; background: none; color: var(--quiet); }
 .topline a:hover { color: var(--ink); }
@@ -66,19 +68,19 @@ h1 .pageno { color: var(--quiet); margin-right: 0.6rem; }
 /* Interactive tool: spans text column and margin. */
 .tool { width: 90%; margin: 2rem 0 2.5rem; clear: right; }
 figure.multiples, ol.tasks, .check, .explain, .takeaway { clear: right; }
-.katex-display { overflow-x: auto; overflow-y: hidden; padding: 0.2rem 0; }
+.katex-display { width: 55%; overflow-x: auto; overflow-y: hidden; padding: 0.2rem 0; }
 .tool .panel { margin-bottom: 2.2rem; }
-.tool h3 { margin-top: 0.4rem; margin-bottom: 0.6rem; font-size: 1.45rem; }
-.tool .panel-note { font-size: 1.15rem; line-height: 1.6rem; color: var(--quiet); width: 61%; margin: 0.2rem 0 0.8rem; }
+.tool h3 { margin-top: 0.4rem; margin-bottom: 0.6rem; font-size: var(--text); }
+.tool .panel-note { font-size: var(--text); line-height: 1.5; color: var(--quiet); width: 61%; margin: 0.2rem 0 0.8rem; }
 .tool .row { display: flex; flex-wrap: wrap; gap: 1.6rem; align-items: flex-start; }
 .tool .controls { display: flex; flex-direction: column; gap: 0.9rem; min-width: 15rem; max-width: 19rem; flex: 0 1 19rem; }
 .tool .stage { flex: 1 1 26rem; min-width: 0; }
-.tool svg, .tool canvas { display: block; max-width: 100%; touch-action: none; }
-.readout { font-size: 1.25rem; line-height: 1.8rem; width: 61%; margin: 0.8rem 0 0; }
+.tool svg, .tool canvas, figure svg { display: block; max-width: 100%; height: auto; touch-action: none; }
+.readout { font-size: var(--text); line-height: 1.5; width: 61%; margin: 0.8rem 0 0; }
 .readout b { font-weight: 600; }
 
 /* Controls */
-.ctl { display: flex; flex-direction: column; gap: 0.25rem; font-size: 1.1rem; }
+.ctl { display: flex; flex-direction: column; gap: 0.25rem; font-size: var(--text); }
 .ctl .ctl-head { display: flex; justify-content: space-between; gap: 1rem; }
 .ctl .ctl-head output { color: var(--ink); }
 .ctl .ctl-name { color: var(--quiet); }
@@ -95,7 +97,7 @@ input[type="range"]::-moz-range-thumb { width: 0.95rem; height: 0.95rem; border-
 
 .seg { display: inline-flex; flex-wrap: wrap; gap: 0.35rem; }
 button, .seg button {
-  font: inherit; font-size: 1.1rem; color: var(--ink); background: transparent;
+  font: inherit; font-size: var(--text); color: var(--ink); background: transparent;
   border: 1px solid var(--rule); border-radius: 3px; padding: 0.15rem 0.65rem; cursor: pointer;
 }
 button:hover { border-color: var(--quiet); }
@@ -107,8 +109,8 @@ ol.tasks { width: 61%; padding-left: 1.4rem; }
 ol.tasks > li { margin-bottom: 1.3rem; }
 .task .prompt { margin: 0; }
 .task .choices { margin: 0.5rem 0 0.2rem; }
-.task .choices-label { font-size: 1.1rem; color: var(--quiet); margin-right: 0.5rem; }
-.task .after { display: none; font-size: 1.25rem; line-height: 1.8rem; margin-top: 0.4rem; }
+.task .choices-label { font-size: var(--text); color: var(--quiet); margin-right: 0.5rem; }
+.task .after { display: none; font-size: var(--text); line-height: 1.5; margin-top: 0.4rem; }
 .task.predicted .after { display: block; }
 .task .notice { display: none; border-left: 2px solid var(--rule); padding-left: 0.8rem; margin-top: 0.5rem; }
 .task.revealed .notice { display: block; }
@@ -118,7 +120,7 @@ ol.tasks > li { margin-bottom: 1.3rem; }
 .check, .explain, .takeaway {
   width: 55%; border-top: 1px solid var(--rule); padding-top: 0.8rem; margin-top: 2rem;
 }
-.check .label, .explain .label, .takeaway .label { font-style: italic; color: var(--quiet); font-size: 1.15rem; }
+.check .label, .explain .label, .takeaway .label { font-style: italic; color: var(--quiet); font-size: var(--text); }
 .check .q { margin-top: 0.4rem; margin-bottom: 0.6rem; }
 .check .feedback { display: none; margin-top: 0.7rem; }
 .check.answered .feedback { display: block; }
@@ -126,39 +128,39 @@ ol.tasks > li { margin-bottom: 1.3rem; }
 .check .verdict-wrong { color: var(--bad); }
 .check button.chosen { border-color: var(--ink); }
 .explain textarea {
-  width: 100%; min-height: 4.5rem; font: inherit; font-size: 1.25rem; line-height: 1.7rem;
+  width: 100%; min-height: 4.5rem; font: inherit; font-size: var(--text); line-height: 1.5;
   color: var(--ink); background: transparent; border: 1px solid var(--rule); border-radius: 3px; padding: 0.4rem 0.5rem;
 }
-.explain .saved { font-size: 1rem; color: var(--quiet); }
+.explain .saved { font-size: var(--text); color: var(--quiet); }
 .takeaway p { margin-top: 0.4rem; }
 
 /* Page-end navigation. */
-.pagenav { width: 55%; display: flex; justify-content: space-between; gap: 2rem; margin: 3rem 0 4rem; font-size: 1.2rem; }
+.pagenav { width: 55%; display: flex; justify-content: space-between; gap: 2rem; margin: 3rem 0 4rem; font-size: var(--text); }
 .pagenav a { text-decoration: none; background: none; }
 .pagenav a:hover { text-decoration: underline; }
-.pagenav .dir { display: block; color: var(--quiet); font-size: 1rem; }
+.pagenav .dir { display: block; color: var(--quiet); font-size: var(--text); }
 .pagenav .next { text-align: right; }
 
 /* Charts: no frames or grids; quiet axes; labels on the lines. */
-.chart text { font-family: et-book, Georgia, serif; fill: var(--quiet); font-size: 13px; font-variant-numeric: lining-nums tabular-nums; }
+.chart text { font-family: et-book, Georgia, serif; fill: var(--quiet); font-size: var(--text); font-variant-numeric: lining-nums tabular-nums; }
 .chart .axis path, .chart .axis line { stroke: var(--rule); }
 .chart .label-ink { fill: var(--ink); }
 .chart .label-accent { fill: var(--accent); }
 .chart .label-second { fill: var(--second); }
 figure.multiples { display: flex; flex-wrap: wrap; gap: 1.2rem; max-width: 90%; }
 figure.multiples > div { flex: 1 1 12rem; min-width: 11rem; }
-figure .small-title { font-size: 1.1rem; color: var(--ink); margin: 0 0 0.2rem; }
+figure .small-title { font-size: var(--text); color: var(--ink); margin: 0 0 0.2rem; }
 
 /* Figure captions and claim-type labels. */
-.caption { width: 61%; color: var(--quiet); font-size: 1.15rem; line-height: 1.6rem; }
-.claim { font-style: italic; color: var(--quiet); font-size: 1.05rem; margin-right: 0.3rem; }
+.caption { width: 61%; color: var(--quiet); font-size: var(--text); line-height: 1.5; }
+.claim { font-style: italic; color: var(--quiet); font-size: var(--text); margin-right: 0.3rem; }
 .claim::after { content: "."; }
 
 /* Contents page. */
 .contents { width: 61%; }
-.contents h2 { font-size: 1.7rem; margin-top: 2.2rem; margin-bottom: 0.4rem; }
+.contents h2 { font-size: 2.2rem; margin-top: 2.2rem; margin-bottom: 0.4rem; }
 .contents ol { list-style: none; padding-left: 0; margin: 0; }
-.contents li { display: flex; gap: 0.7rem; align-items: baseline; font-size: 1.3rem; line-height: 2rem; }
+.contents li { display: flex; gap: 0.7rem; align-items: baseline; font-size: var(--text); line-height: 1.5; }
 .contents .no { color: var(--quiet); min-width: 2.2rem; }
 .contents .planned { color: var(--quiet); }
 .contents .mark { min-width: 0.8rem; }
@@ -169,10 +171,20 @@ figure .small-title { font-size: 1.1rem; color: var(--ink); margin: 0 0 0.2rem; 
 
 /* Phones: the tool and its text take the full column. */
 @media (max-width: 760px) {
-  .topline, .tool, ol.tasks, .readout, .check, .explain, .takeaway, .pagenav, .contents, .tool .panel-note, .caption { width: 100%; }
+  .katex-display, .topline, .tool, ol.tasks, .readout, .check, .explain, .takeaway, .pagenav, .contents, .tool .panel-note, .caption { width: 100%; }
   .tool .controls { max-width: none; flex: 1 1 100%; }
   ol.tasks { padding-left: 1.2rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   * { scroll-behavior: auto !important; }
 }
+
+/* One text size for everything below the two heading levels, including Tufte CSS defaults,
+   sidenotes, formulas, and chart labels. Gray and italics carry the remaining distinctions. */
+p, dl, ol, ul, li, blockquote, table, label, input, textarea, button, figcaption, code,
+.sidenote, .marginnote, p.subtitle, h3, .tool h3, .katex, .katex-display > .katex {
+  font-size: var(--text);
+}
+p, dl, ol, ul, .sidenote, .marginnote { line-height: 1.5; }
+.sidenote, .marginnote { vertical-align: baseline; }
+.sidenote-number::after, .sidenote::before { font-size: 0.75em; }
