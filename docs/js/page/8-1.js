@@ -135,7 +135,7 @@ const num = (d) => (v) => { const t = v.toFixed(d); return /^-0\.?0*$/.test(t) ?
       .attr('cx', (d) => c.x(d[0])).attr('cy', (d) => c.y(d[1]));
     c.vline('range', st.range, { color: 'quiet', label: 'end of data', labelY: 0 });
     c.vline('reach', st.reach, { color: 'ink', dash: null });
-    c.text('reach-label', st.reach, -14.5, 'search limit ', { color: 'ink', anchor: st.reach > 3 ? 'end' : 'start' });
+    c.text('reach-label', st.reach, -14.5, st.reach > 3 ? 'search limit\u00a0\u00a0' : '\u00a0\u00a0search limit', { color: 'ink', anchor: st.reach > 3 ? 'end' : 'start' }); // no-break spaces keep the label off the line
     const o = optimize(p, st.reach);
     c.point('pp', o.x, o.proxy, { color: 'second', r: 4 });
     c.point('pt', o.x, o.truth, { color: 'accent', r: 5 });

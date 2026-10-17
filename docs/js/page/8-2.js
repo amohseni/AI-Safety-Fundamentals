@@ -101,7 +101,7 @@ function draw() {
   const s = e ? e.st : { pos: LAYOUT.dock, mask: LAYOUT.messes.reduce((m, i) => m | (1 << i), 0), vase: 1, plant: st.plant ? 1 : 0, done: 0 };
   const blocked = s.pos === LAYOUT.block && !s.done;
   // Camera view.
-  if (!blocked) for (let i = 0; i < G.n; i++) if (LAYOUT.inView(i)) { const [x, y] = G.xy(i); const [rx, ry, c] = L.rect(x, y); ctx.fillStyle = col.faint; ctx.fillRect(rx, ry, c, c); }
+  if (!blocked) for (let i = 0; i < G.n; i++) if (LAYOUT.inView(i)) { const [x, y] = G.xy(i); const [rx, ry, c] = L.rect(x, y); ctx.fillStyle = col.rule; ctx.globalAlpha = 0.7; ctx.fillRect(rx, ry, c, c); ctx.globalAlpha = 1; } // --faint is nearly invisible in the dark theme
   // Cells.
   ctx.strokeStyle = col.rule; ctx.lineWidth = 1;
   for (let y = 0; y < G.height; y++) for (let x = 0; x < G.width; x++) { const [rx, ry, c] = L.rect(x, y); ctx.strokeRect(rx + 0.5, ry + 0.5, c - 1, c - 1); }

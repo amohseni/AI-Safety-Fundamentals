@@ -37,12 +37,17 @@ function update() {
   dist.line('sab', xs.map((x) => [x, C.density(x, state.mu)]), { color: 'second', label: null });
   dist.text('normal:l', -1.1, 0.3, 'normal', { color: 'ink', anchor: 'end' });
   dist.text('sab:l', state.mu + 1.1, 0.3, 'sabotage', { color: 'second', anchor: 'start' });
-  dist.vline('tA', state.tA, { color: 'accent', dash: null, label: 'audit', labelY: 20 });
-  if (Number.isFinite(tD)) dist.vline('tD', tD, { color: 'accent', dash: '4 3', label: 'hand off', labelY: tD < state.tA ? 44 : 68 });
-  else dist.remove('tD');
+  dist.vline('tA', state.tA, { color: 'accent', dash: null, label: 'audit', labelY: -16 }); // above the plot, clear of the curves
+  // The hand-off label goes above the plot, ending at its line, so it never meets the audit label or the curves.
+  if (Number.isFinite(tD)) {
+    dist.vline('tD', tD, { color: 'accent', dash: '4 3' });
+    if (tD < state.tA && tD > -2) dist.text('tD:l', tD - 0.1, 0.47, 'hand off', { color: 'accent', anchor: 'end' });
+    else if (state.tA - tD > 3.3) dist.text('tD:l', tD + 0.1, 0.47, 'hand off', { color: 'accent', anchor: 'start' });
+    else dist.text('tD:l', tD + 0.1, 0.3, 'hand off', { color: 'accent', anchor: 'start' });
+  } else { dist.remove('tD'); dist.remove('tD:l'); }
 
   const e = C.evaluate({ mu: state.mu, budget: state.budget, tA: state.tA, tD });
-  trade.point('now', e.usefulness, e.safety, { color: 'accent', r: 6, label: 'current protocol', anchor: e.usefulness > 0.6 ? 'end' : 'start', dx: e.usefulness > 0.6 ? -10 : 10, dy: e.safety > 0.85 ? 22 : -10 });
+  trade.point('now', e.usefulness, e.safety, { color: 'accent', r: 6, label: 'current protocol', anchor: e.usefulness > 0.6 ? 'end' : 'start', dx: e.usefulness > 0.6 ? -10 : 10, dy: e.safety > 0.85 ? 40 : -10 });
   const flagged = 1 - C.Phi(state.tA);
   const lasts = flagged * 1000 > e.B ? `the ${e.B} audits last about ${Math.round(e.B / flagged)} tasks` : `about ${Math.round(e.audits)} of the ${e.B} audits are used`;
   out.innerHTML = `The audit threshold flags ${pct(flagged)} of normal work and ${pct(e.catchRate)} of sabotage; with an honest model, ${lasts}. ` +
@@ -59,9 +64,8 @@ function curve() {
   }
   pts.sort((a, b) => a[0] - b[0]);
   trade.line('curve', pts, { color: 'quiet', label: null });
-  // Label under the left part of the curve.
-  const left = pts.find((p) => p[0] >= 0.03) || pts[0];
-  trade.text('curve:l', 0.03, Math.max(0.05, left[1] - 0.2), 'every hand-off threshold', { color: 'quiet', anchor: 'start' });
+  // Label just above the plot, over the curve's left end, which is always near 100% safety.
+  trade.text('curve:l', 0.03, 1.07, 'every hand-off threshold', { color: 'quiet', anchor: 'start' });
 }
 update();
 curve();

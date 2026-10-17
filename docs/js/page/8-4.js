@@ -9,7 +9,7 @@ const num = (d) => (v) => { const t = v.toFixed(d); return /^-0\.?0*$/.test(t) ?
 
 // Draws a graph with first-move shares and power into an SVG. Returns the node selection for wiring events.
 function drawGraph(svgSel, graph, result, { width, height = width < 450 ? 420 : 340, selected = null, interactive = false }) {
-  const R = 15;
+  const R = 15, narrow = width < 450;
   svgSel.attr('viewBox', `0 0 ${width} ${height}`).attr('width', width).attr('height', height);
   svgSel.selectAll('*').remove();
   const defs = svgSel.append('defs');
@@ -39,12 +39,15 @@ function drawGraph(svgSel, graph, result, { width, height = width < 450 ? 420 : 
       .attr('stroke', fromStart ? 'var(--accent)' : 'var(--rule)').attr('stroke-width', fromStart ? 1.5 + 14 * share : 1.5)
       .attr('marker-end', `url(#${fromStart ? 'arrow-a' : 'arrow-q'})`).attr('marker-start', both ? 'url(#arrow-q)' : null);
     if (fromStart) {
-      const mx = (x1 + x2) / 2, my = (y1 + y2) / 2, nx = -uy, ny = ux;
+      const nx = -uy, ny = ux;
       // Label on the upper side of a level arrow, and on the left side of a steep one.
       const steep = Math.abs(uy) > 0.45;
-      const side = steep ? (nx < 0 ? 1 : -1) : (ny > 0 ? -1 : 1) * (width < 450 ? -1 : 1); // below a level arrow on narrow screens
-      const below = !steep && width < 450;
-      eg.append('text').attr('class', 'share').attr('x', mx + side * nx * 14).attr('y', my + side * ny * 14 + (steep ? 5 : below ? 12 : -2))
+      const side = steep ? (nx < 0 ? 1 : -1) : (ny > 0 ? -1 : 1);
+      // On narrow screens the start and the hub are close: a level arrow's label goes below it, and the
+      // power numbers of the start and the hub move out of its way (see pPos).
+      const below = !steep && narrow;
+      const lx = (x1 + x2) / 2, ly = (y1 + y2) / 2, sd = below ? -side : side;
+      eg.append('text').attr('class', 'share').attr('x', lx + sd * nx * 14).attr('y', ly + sd * ny * 14 + (steep ? 5 : below ? 12 : -2))
         .attr('text-anchor', steep ? 'end' : 'middle').text(pct(share));
     }
   }
@@ -53,8 +56,21 @@ function drawGraph(svgSel, graph, result, { width, height = width < 450 ? 420 : 
     .attr('transform', (n) => `translate(${px(n)},${py(n)})`);
   if (interactive) nodes.attr('tabindex', 0).attr('role', 'button').attr('aria-label', (n) => `State ${n.name || n.id}, power ${num(2)(result.power[ix.get(n.id)])}`);
   nodes.append('circle').attr('r', R);
-  nodes.append('text').attr('class', 'power').attr('text-anchor', (n) => (n.label === 'right' ? 'start' : 'middle'))
-    .attr('x', (n) => (n.label === 'right' ? R + 6 : 0)).attr('y', (n) => (n.label === 'right' ? 25 : R + 18)).text((n) => num(2)(result.power[ix.get(n.id)]));
+  // Where each state's power goes: outward from the hub for the states around it (angle pa), below and to the
+  // left of the hub (away from its arrows), right of a state labeled on the right, and below every other state.
+  const pPos = (n) => {
+    if (n.pa !== undefined) {
+      const c = Math.cos(n.pa), si = Math.sin(n.pa);
+      if (si < -0.9) return { x: R + 6, y: 6, anchor: 'start' }; // the top state: to its right, clear of the dead end's labels
+      return { x: c * (R + 6), y: si * (R + 14) + 6, anchor: c > 0.3 ? 'start' : 'middle' };
+    }
+    if (n.id === 'hub') return narrow ? { x: -4, y: -R - 27, anchor: 'end' } : { x: -R - 2, y: R + 18, anchor: 'end' };
+    if (n.id === 'start' && narrow) return { x: -R - 5, y: 27, anchor: 'end' };
+    if (n.label === 'right') return { x: R + 6, y: 25, anchor: 'start' };
+    return { x: 0, y: R + 18, anchor: 'middle' };
+  };
+  nodes.append('text').attr('class', 'power').attr('text-anchor', (n) => pPos(n).anchor)
+    .attr('x', (n) => pPos(n).x).attr('y', (n) => pPos(n).y).text((n) => num(2)(result.power[ix.get(n.id)]));
   const lab = nodes.filter((n) => n.name).append('text').text((n) => n.name);
   lab.attr('text-anchor', (n) => (n.label === 'right' ? 'start' : n.label === 'aboveleft' || n.label === 'left' ? 'end' : 'middle'))
     .attr('x', (n) => (n.label === 'right' ? R + 6 : n.label === 'aboveleft' ? -4 : n.label === 'left' ? -R - 5 : 0))
@@ -196,7 +212,7 @@ function drawGraph(svgSel, graph, result, { width, height = width < 450 ? 420 : 
       cx.line(id, tr.map((s, t) => [t, s.x[i]]), { color: inProxy ? 'second' : 'accent', label: showLabel ? (inProxy ? 'in the proxy' : 'left out') : null });
       ids.push(id);
     }
-    cx.line('floorline', [[0, st.floor], [n, st.floor]], { color: 'quiet', dash: '3 3', width: 1, label: 'floor', dy: 16 });
+    cx.line('floorline', [[0, st.floor], [n, st.floor]], { color: 'quiet', dash: '3 3', width: 1, label: 'floor', labelAt: 0, dy: -10 });
     const us = tr.map((s) => s.true), ps = tr.map((s) => s.proxy);
     cu.setY([Math.min(d3.min(us), d3.min(ps), 0) * 1.05 - 0.5, Math.max(d3.max(us), d3.max(ps)) * 1.1 + 0.5]);
     cu.line('true', tr.map((s, t) => [t, s.true]), { color: 'accent', label: 'true utility' });
