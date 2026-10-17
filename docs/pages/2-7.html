@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2.7 Backpropagation</title>
+<meta name="description" content="Backpropagation as the chain rule applied to a network's computation graph, worked from the loss back to the parameters.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  /* The one-word title is wider than a phone screen at the h1 size. */
+  h1 { hyphens: auto; overflow-wrap: break-word; }
+  #tool .row { flex-direction: column; }
+  #tool .controls { flex-direction: row; flex-wrap: wrap; align-items: flex-start; max-width: none; flex: 1 1 100%; gap: 0.9rem 1.6rem; }
+  #tool .controls .ctl { flex: 1 1 11rem; max-width: 16rem; }
+  #tool .stage { flex: 1 1 100%; width: 100%; }
+  #readout p { margin: 0 0 0.6rem; }
+  #fig-graph { max-width: 90%; }
+  @media (max-width: 760px) { #fig-graph { max-width: 100%; } }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="2.7">
+<article>
+<h1>Backpropagation</h1>
+
+<section>
+<p>Gradient descent needs the derivative of the loss with respect to every parameter (Section 2.6). A network is a composition of simple operations, so the chain rule gives each derivative as a product of <em>local derivatives</em>, one for each operation on the way from the parameter to the loss. For example, if \(z = w_1 x + b\), \(a = \sigma(z)\), and the loss \(L\) depends on \(a\), then the chain rule gives \(\partial L/\partial w_1\) as \(\partial L/\partial a\) times \(\partial a/\partial z = \sigma'(z)\) times \(\partial z/\partial w_1 = x\):</p>
+$$\frac{\partial L}{\partial w_1} = \frac{\partial L}{\partial a}\,\sigma'(z)\,x .$$
+<p><em>Backpropagation</em> organizes this computation. First run the network forward and store every intermediate value. Then work backward from the loss, whose derivative with respect to itself is 1. Each operation receives the derivative of the loss with respect to its output, multiplies it by its own local derivative for each input, and passes the results to its inputs. Where a value feeds more than one operation, the derivatives coming back from those operations add. Each intermediate derivative is computed once and reused by everything upstream of it.</p>
+</section>
+
+<section>
+<h2>Gradients by hand</h2>
+<p>The graph below computes a loss from inputs and parameters (the parameters are in italics). Under each node, the black number is its value from the forward pass and the <span class="c-accent">blue number</span> is the derivative of the loss with respect to that node, from the backward pass. Three dots mark a node that has received some but not all of its derivatives. Press a parameter, or choose it in the controls, to see its chain-rule product. The nudge test changes one parameter by 0.001 up and down and compares the change in the loss with the derivative.</p>
+
+<div class="tool" id="tool">
+  <div class="row">
+    <div class="controls" id="controls"></div>
+    <div class="stage" id="graph"></div>
+  </div>
+  <div class="readout" id="readout" aria-live="polite"></div>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="2.7-t1">
+    <p class="prompt">With the default values, the forward pass gives \(p = 1.336\) while the target is \(y = 0.5\). Before pressing Backward: what is the sign of \(\partial L/\partial w_2\)?</p>
+    <div class="choices" data-options="Positive|Negative|Zero"></div>
+    <div class="after"><p>Press Forward until the loss is computed, then Backward until the derivative reaches \(w_2\).</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Positive: \(\partial L/\partial w_2 = 1.118\). The loss is \(d^2\) with \(d = p - y = 0.836\), so \(\partial L/\partial d = 2d\) is positive; \(\partial d/\partial p = 1\); and \(\partial p/\partial w_2 = a = 0.668\) is positive. The prediction is too high, and raising \(w_2\) would raise it further, so gradient descent will lower \(w_2\).</p></div></div>
+  </li>
+  <li class="task" data-id="2.7-t2">
+    <p class="prompt">Run the nudge test on \(w_1\). Will the change in loss per unit of nudge agree with the backpropagated derivative to the four decimals shown?</p>
+    <div class="choices" data-options="Yes|Only roughly|No"></div>
+    <div class="after"><p>Choose \(w_1\) and press Nudge test. Then move the sliders and run it again.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Yes: both are 1.1126 at the default values. The nudge test needs two extra forward passes for each parameter it checks, while one backward pass gives every derivative at once. In 120,000 comparisons at random settings of the sliders, the two numbers never differed by more than 0.00003, and 99.9% agreed to all four decimals.</p></div></div>
+  </li>
+  <li class="task" data-id="2.7-t3">
+    <p class="prompt">Switch to the graph with a value used twice. At which node do two derivatives arrive and add?</p>
+    <div class="choices" data-options="h|s|q"></div>
+    <div class="after"><p>Press Backward one step at a time and read the explanation of each step.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>At \(h\). The value \(h = wx\) feeds both \(u = v_1 h\) and \(s = \sigma(h)\), so the loss depends on \(h\) along two paths. With the default values the two derivatives are \(-2.2370\) and \(0.3412\), and \(\partial L/\partial h\) is their sum, \(-1.8958\). Each backward step used only its own local derivative and the one number passed back to it.</p></div></div>
+  </li>
+</ol>
+
+<figure id="fig-graph" aria-describedby="fig-graph-desc"></figure>
+<p id="fig-graph-desc" class="caption">The computation graph for \(L = (w_2\,\sigma(w_1 x + b) - y)^2\) with \(x = 1.5\), \(w_1 = 0.8\), \(b = -0.5\), \(w_2 = 2\), \(y = 0.5\). Black: the value of each node from the forward pass. Blue: the derivative of \(L\) with respect to that node from the backward pass, starting from 1 at \(L\).</p>
+</section>
+
+<section>
+<h2>Why backward</h2>
+<p>The loss is one number, and there are many parameters. Working backward, one pass delivers the derivative of that one number with respect to every node at once. Working forward instead, which is called forward-mode differentiation, one pass gives the derivative of every node with respect to one chosen input, so the full gradient would take one pass per parameter.</p>
+<p><span class="claim">Theorem</span> The backward pass costs at most a small constant multiple of the forward pass, whether the network has a thousand parameters or a trillion: in operation count the factor is below 6, and typically 2 to 3.<label for="sn-bay" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-bay" class="margin-toggle"><span class="sidenote">Baydin, Pearlmutter, Radul, and Siskind (2018), &ldquo;Automatic differentiation in machine learning: a survey,&rdquo; <em>Journal of Machine Learning Research</em> 18, article 153, citing Griewank and Walther (2008).</span> The price is memory, since every value from the forward pass is stored for the backward pass. This fact is what makes training large networks possible. The general technique is called reverse-mode automatic differentiation; libraries such as PyTorch and JAX apply it automatically to any computation written in them. Its use for training networks with hidden layers was popularized by Rumelhart, Hinton, and Williams in 1986 (Section 1.3).<label for="sn-rhw" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-rhw" class="margin-toggle"><span class="sidenote">Rumelhart, Hinton, and Williams (1986), &ldquo;Learning representations by back-propagating errors,&rdquo; <em>Nature</em> 323: 533&ndash;536. For a visual account, see 3Blue1Brown, &ldquo;Neural networks,&rdquo; chapters 3 and 4 (2017); for a minimal implementation, Karpathy, &ldquo;micrograd&rdquo; (2020, on GitHub).</span></p>
+</section>
+
+<div class="check" data-id="2.7-c1" data-correct="2">
+  <p class="label">Check</p>
+  <p class="q">A network has one loss and a million parameters. Forward-mode differentiation gives, in one pass, the derivatives of every node with respect to one chosen parameter. About how many passes does each method need for the full gradient?</p>
+  <div class="options seg"><button>One each</button><button>A million each</button><button>Forward mode a million, backpropagation one</button></div>
+  <div class="feedback"><p>Forward mode follows one parameter per pass, so it needs a million passes. Backpropagation starts from the single loss and reaches every parameter in one backward pass, after one forward pass.</p></div>
+</div>
+
+<div class="check" data-id="2.7-c2" data-correct="0">
+  <p class="q">In a graph, a value \(v\) feeds two operations. The derivatives they send back to \(v\) are 0.3 and \(-0.5\). What is \(\partial L/\partial v\)?</p>
+  <div class="options seg"><button>\(-0.2\)</button><button>\(-0.15\)</button><button>0.3, the first one to arrive</button></div>
+  <div class="feedback"><p>Where paths meet, the contributions add: \(0.3 + (-0.5) = -0.2\). This is the multivariable chain rule: the loss depends on \(v\) through both operations.</p></div>
+</div>
+
+<div class="explain" data-id="2.7-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: what does each node need to know to do its part of the backward pass?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>Backpropagation is the chain rule applied to the computation graph, from the loss back to the parameters. Each node multiplies the derivative passed back to it by its own local derivative, and contributions add where paths meet. One backward pass gives the derivative for every parameter at a small constant multiple of the cost of the forward pass.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/2-7.js"></script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2.1 Learning means choosing parameters</title>
+<meta name="description" content="A neural network is a function with adjustable parameters, and learning means choosing parameter values that fit a set of examples.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  #fig-box svg { max-width: 100%; height: auto; }
+  #tool .controls { flex: 1 1 100%; max-width: none; flex-direction: row; flex-wrap: wrap; gap: 0.9rem 1.6rem; }
+  #tool .controls .ctl { flex: 1 1 13rem; max-width: 18rem; }
+  #tool .stage { flex: 0 1 auto; }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="2.1">
+<article>
+<h1>Learning means choosing parameters</h1>
+
+<section>
+<p>A neural network is a function. It takes an input, such as the pixel values of an image or a sequence of words, and returns an output, such as a label or a probability for each possible next word. The function has adjustable numbers called <em>parameters</em>. We write the function as \(f(x; \theta)\), where \(x\) is the input and \(\theta\) is the list of all the parameters. Different parameter values give different functions from the same family.</p>
+
+<figure id="fig-box" aria-describedby="fig-box-desc"></figure>
+<p id="fig-box-desc" class="caption">A network as a box. The input \(x\) goes in and the output \(y\) comes out; the knobs on top are the parameters \(\theta\). Turning a knob changes which function the box computes.</p>
+
+<p>Learning means choosing parameter values so that the function&rsquo;s outputs match a set of examples \((x_1, y_1), \dots, (x_n, y_n)\). To make &ldquo;match&rdquo; precise we need a <em>loss</em>: a number that measures how badly the function does on the examples. On this page the loss is the mean squared error,</p>
+$$L(\theta) = \frac{1}{n}\sum_{i=1}^{n} \big(f(x_i; \theta) - y_i\big)^2 .$$
+<p>Training searches for parameter values with a low loss. Section 2.5 explains which loss to use for probabilities, and Section 2.6 how the search is done automatically. A function with two or three parameters can be fitted by hand, by turning the knobs yourself. GPT-3 has 175 billion parameters.<label for="sn-gpt3" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-gpt3" class="margin-toggle"><span class="sidenote">Brown et al. (2020), &ldquo;Language models are few-shot learners,&rdquo; <em>Advances in Neural Information Processing Systems</em> 33.</span> The rest of this section explains how a search over that many numbers is possible.</p>
+</section>
+
+<section>
+<h2>Fit by hand</h2>
+<p>Choose a model and move its sliders. The left chart shows the 20 points and the <span class="c-accent">model&rsquo;s curve</span>; the gray segments are the errors. The right chart is a map of the loss over two parameters: darker means lower loss, and the <span class="c-accent">dot</span> is your current setting. Press or drag on the map to move the dot. Each model has its own 20 points, made from one member of its family plus random noise.</p>
+
+<div class="tool" id="tool">
+  <div class="row">
+    <div class="controls" id="controls"></div>
+    <div class="stage" id="data-chart"></div>
+    <div class="stage" id="map-chart"></div>
+  </div>
+  <p class="readout" id="readout" aria-live="polite"></p>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="2.1-t1">
+    <p class="prompt">With the line, what is the lowest loss you can reach?</p>
+    <div class="choices" data-options="0|About 0.3|About 1"></div>
+    <div class="after"><p>Move the slope and intercept, or drag on the map, until the loss stops going down.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>About 0.32, at slope 0.91 and intercept 0.32. No line goes through all 20 points, because the points contain noise, so the loss cannot reach 0. On the map the loss has one low point, at the bottom of a bowl.</p></div></div>
+  </li>
+  <li class="task" data-id="2.1-t2">
+    <p class="prompt">Switch to the wave. Its points were made from \(a = 1.5\), \(b = 1.5\), \(c = 0.5\), plus noise. Is that setting the one with the lowest loss?</p>
+    <div class="choices" data-options="Yes|No, another setting is lower"></div>
+    <div class="after"><p>Set the three sliders to 1.5, 1.5, and 0.5 and read the loss. Then try to beat it.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The setting that made the points has loss 0.120. Near \(a = 1.66\), \(b = 1.47\), \(c = 0.35\) the loss is 0.078. The lowest loss belongs to the setting that best fits these 20 noisy points, which is close to the true setting but not equal to it.</p></div></div>
+  </li>
+  <li class="task" data-id="2.1-t3">
+    <p class="prompt">With the wave and \(c = 0.5\), does the map have a low point, lower than everything around it, other than the best one?</p>
+    <div class="choices" data-options="Yes|No"></div>
+    <div class="after"><p>Look for dark patches away from the darkest one, and drag the dot into them.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Yes, several. For example, near \(a = -0.55\), \(b = 0.70\) the loss is 1.32, lower than at any nearby setting, while the best setting has loss 0.10. A search that only ever moves downhill and starts near such a point stops there. Section 2.6 returns to this.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<div class="check" data-id="2.1-c1" data-correct="1">
+  <p class="label">Check</p>
+  <p class="q">Two copies of the same network, with the same architecture, are trained on different data. In the terms of this page, what differs between the two trained models?</p>
+  <div class="options seg"><button>Their architecture</button><button>Only their parameter values, which pick out two functions from the same family</button><button>Nothing, since the architecture is the same</button></div>
+  <div class="feedback"><p>The architecture fixes the family of functions \(f(x; \theta)\). Training picks one member of the family by choosing \(\theta\), so a trained model is one function, picked out by one setting of the parameters.</p></div>
+</div>
+
+<div class="explain" data-id="2.1-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: what were you doing when you moved the sliders, in terms of the loss map?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>A neural network is a function \(f(x; \theta)\) with adjustable parameters \(\theta\). Learning means choosing \(\theta\) so that the function fits a set of examples, which means searching for low points of the loss. The loss can have low points that are not the lowest.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/2-1.js"></script>
+</body>
+</html>

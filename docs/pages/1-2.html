@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.2 Perceptrons and the first winter</title>
+<meta name="description" content="What a perceptron computes, how its learning rule works, why it fails on XOR, and what else caused the first fall in AI funding.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  .tool .plane { width: 100%; aspect-ratio: 1 / 1; max-width: 460px; outline-offset: 4px; }
+  #errs { margin-top: 0.8rem; }
+  .mini { width: 100%; aspect-ratio: 1 / 1; }
+  #hidden-controls { display: none; flex-direction: column; gap: 0.9rem; }
+  #hidden-controls.on { display: flex; }
+  #hidden-controls .unit { color: var(--quiet); font-style: italic; margin: 0.4rem 0 -0.4rem; }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="1.2">
+<article>
+<h1>Perceptrons and the first winter</h1>
+
+<section>
+<p>In 1943 Warren McCulloch and Walter Pitts described a simplified neuron as a unit that adds up its inputs and fires when the sum passes a threshold.<label for="sn-mp" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-mp" class="margin-toggle"><span class="sidenote">McCulloch and Pitts (1943), &ldquo;A logical calculus of the ideas immanent in nervous activity,&rdquo; <em>Bulletin of Mathematical Biophysics</em> 5: 115&ndash;133.</span> In 1958 Frank Rosenblatt added a way for such a unit to learn from examples, and called the result a <em>perceptron</em>.<label for="sn-ros" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-ros" class="margin-toggle"><span class="sidenote">Rosenblatt (1958), &ldquo;The perceptron: a probabilistic model for information storage and organization in the brain,&rdquo; <em>Psychological Review</em> 65: 386&ndash;408.</span></p>
+
+<p>A perceptron with two inputs \(x_1, x_2\) has two weights \(w_1, w_2\) and a bias \(b\). It outputs 1 if \(w_1 x_1 + w_2 x_2 + b &gt; 0\) and 0 otherwise. The inputs where the sum is exactly zero form a straight line in the plane, so a perceptron labels every point on one side of a line 1 and every point on the other side 0. With more inputs the line becomes a flat surface called a hyperplane.</p>
+
+<p>Rosenblatt&rsquo;s learning rule goes through the examples one at a time. When the perceptron labels an example correctly, nothing changes. When it outputs \(\hat y\) but the correct label is \(y\), the rule moves the weights toward the example:</p>
+$$w \leftarrow w + \eta\,(y - \hat y)\,x, \qquad b \leftarrow b + \eta\,(y - \hat y),$$
+<p>where \(\eta\) is the learning rate. Each such change is one update; going through all the examples once is one pass.</p>
+
+<p>The playground uses three functions of two inputs that are each 0 or 1. AND outputs 1 only when both inputs are 1. OR outputs 1 when at least one input is 1. XOR outputs 1 when exactly one input is 1.</p>
+</section>
+
+<section>
+<h2>Perceptron playground</h2>
+<p>The <span class="c-accent">filled points</span> have label 1 and the <span class="c-second">open points</span> label 0. The perceptron labels the shaded side of the line 1. A ring marks each point the perceptron gets wrong. Drag either dot on the line to move it, or select the picture and use the arrow keys (left and right turn the line; up and down shift it).</p>
+
+<div class="tool" id="tool">
+  <div class="row">
+    <div class="controls" id="controls"></div>
+    <div class="stage">
+      <canvas class="plane" id="plane" tabindex="0" aria-label="The four or more data points, the perceptron's line, and rings on wrongly labeled points"></canvas>
+      <div id="errs"></div>
+    </div>
+  </div>
+  <p class="readout" id="readout" aria-live="polite"></p>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="1.2-t1">
+    <p class="prompt">How many different lines separate the 1-point of AND from its three 0-points?</p>
+    <div class="choices" data-options="Exactly one|A few|Infinitely many"></div>
+    <div class="after"><p>Choose AND and drag the line until no point is ringed. Then move it a little and see whether it still works.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Any line that passes between (1, 1) and the other three points works, and there are infinitely many such lines. The learning rule only has to find one of them.</p></div></div>
+  </li>
+  <li class="task" data-id="1.2-t2">
+    <p class="prompt">Choose OR, press Reset line, and keep the learning rate at 1. If you press Run, how many passes will the rule make before a pass with no mistakes?</p>
+    <div class="choices" data-options="4 or fewer|About 20|About 100|It never gets there"></div>
+    <div class="after"><p>Press Run and read the chart of mistakes per pass. Then press Reset line and try the other learning rates.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Four passes: the rule makes 2, 2, and 1 mistakes, and the fourth pass has none, so the weights stop changing. From this starting line the other learning rates take 4 to 10 passes (10 at rate 0.1).</p></div></div>
+  </li>
+  <li class="task" data-id="1.2-t3">
+    <p class="prompt">Now choose XOR, press Reset line, and Run. Will the mistakes per pass reach zero?</p>
+    <div class="choices" data-options="Yes, after more passes than OR|No"></div>
+    <div class="after"><p>Run it, then use Step to watch single updates.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The mistakes never reach zero. At learning rate 1 the passes make 3, 3, then 4 mistakes, and from the third pass on the line ends every pass exactly where it started: within a pass it moves and comes back. The rule cycles forever. At the other learning rates the same thing happens, starting between pass 3 and pass 16.</p></div></div>
+  </li>
+  <li class="task" data-id="1.2-t4">
+    <p class="prompt">Switch on the hidden layer: two perceptrons \(h_1, h_2\) read the inputs, and an output perceptron reads \(h_1\) and \(h_2\). Can this network compute XOR?</p>
+    <div class="choices" data-options="Yes|No"></div>
+    <div class="after"><p>Set the nine sliders by hand until no point is ringed. If you are stuck, make \(h_1\) compute OR, make \(h_2\) compute AND, and make the output compute &ldquo;\(h_1\) and not \(h_2\)&rdquo;.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Yes. One setting: \(h_1\) has weights 1, 1 and bias \(-0.5\) (OR); \(h_2\) has weights 1, 1 and bias \(-1.5\) (AND); the output has weights 1, \(-1\) and bias \(-0.5\). Each hidden unit draws its own line, and the output combines the two half-planes into a band. But the learning rule cannot find these weights: it needs a correct label for each unit it trains, and nothing says what \(h_1\) and \(h_2\) should output. That is why Step and Run are off in this mode.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>What the perceptron can and cannot do</h2>
+<p><span class="claim">Theorem</span> If some line (in general, some hyperplane) separates the two classes, the perceptron learning rule finds a separating one after finitely many updates, from any starting weights and with any positive learning rate. This is the perceptron convergence theorem; proofs were published in 1962.<label for="sn-nov" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-nov" class="margin-toggle"><span class="sidenote">Novikoff (1962), &ldquo;On convergence proofs on perceptrons,&rdquo; Symposium on the Mathematical Theory of Automata, Polytechnic Institute of Brooklyn; Block (1962), &ldquo;The perceptron: a model for brain functioning,&rdquo; <em>Reviews of Modern Physics</em> 34: 123&ndash;135.</span> The theorem promises nothing when no such line exists, and for XOR none does. Its two 1-points sit on one diagonal of the square and its two 0-points on the other. A line that puts both 1-points on one side also puts the segment between them on that side, including the center of the square, and so does a line that puts both 0-points on the other side. The center cannot be on both sides.</p>
+
+<figure class="multiples" id="fig-xor" aria-describedby="fig-xor-desc"></figure>
+<p id="fig-xor-desc" class="caption">Three attempts to separate XOR with one line. Filled points have label 1 and open points label 0; the shaded side is labeled 1, and rings mark wrongly labeled points. Every line gets at least one point wrong.</p>
+
+<p>In 1969 Marvin Minsky and Seymour Papert published <em>Perceptrons</em>, a mathematical study of what perceptrons can compute.<label for="sn-mpb" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-mpb" class="margin-toggle"><span class="sidenote">Minsky and Papert (1969), <em>Perceptrons: An Introduction to Computational Geometry</em>, MIT Press. An expanded edition appeared in 1988.</span> They proved limits much broader than XOR: for example, when each unit before the output sees only a bounded part of the input, the network cannot tell whether the number of active inputs is even or odd, or whether a figure is connected. As the playground showed, a network with a hidden layer can compute XOR. Rosenblatt&rsquo;s machines did have units before the output, but their weights were fixed; only the output weights learned. A widely used method for training hidden layers came only with backpropagation in the 1980s (Section 1.3).</p>
+</section>
+
+<section>
+<h2>The first winter</h2>
+<p>In the early and mid-1970s, funding for AI research fell in Britain and the United States. The usual story says <em>Perceptrons</em> killed neural network research. <span class="claim">Argument</span> The limits the book proved were real, but the record shows other causes. In Britain, the Science Research Council asked the mathematician James Lighthill to assess AI research; his report, published in 1973, judged that the field had not delivered what it promised, and the council&rsquo;s support for AI was cut back.<label for="sn-lh" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-lh" class="margin-toggle"><span class="sidenote">Lighthill (1973), &ldquo;Artificial intelligence: a general survey,&rdquo; in <em>Artificial Intelligence: A Paper Symposium</em>, Science Research Council. Written in 1972. On its effects, see Agar (2020), &ldquo;What is science for? The Lighthill report on artificial intelligence reinterpreted,&rdquo; <em>British Journal for the History of Science</em> 53: 289&ndash;310.</span> In the United States, the Mansfield Amendment to the military authorization act passed in 1969 barred the Defense Department, then a major funder of AI, from supporting research without &ldquo;a direct and apparent relationship to a specific military function.&rdquo;<label for="sn-mans" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-mans" class="margin-toggle"><span class="sidenote">National Science Foundation, &ldquo;The Mansfield Amendment&rdquo; (NSF history, <em>nsf.gov</em>).</span> The sociologist Mikel Olazaran argues that reading the book as proof that neural networks could not progress was itself shaped by the rise of symbolic AI and its control over funding, and that the question was less settled than the official history says.<label for="sn-ola" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-ola" class="margin-toggle"><span class="sidenote">Olazaran (1996), &ldquo;A sociological study of the official history of the perceptrons controversy,&rdquo; <em>Social Studies of Science</em> 26: 611&ndash;659.</span></p>
+</section>
+
+<div class="check" data-id="1.2-c1" data-correct="0">
+  <p class="label">Check</p>
+  <p class="q">Can a single perceptron compute &ldquo;\(x_1\) and not \(x_2\)&rdquo;, which outputs 1 only for the input (1, 0)?</p>
+  <div class="options seg"><button>Yes</button><button>No</button></div>
+  <div class="feedback"><p>Yes. Its only 1-point, (1, 0), sits at a corner of the square, and a line can cut that corner off from the other three points. For example, weights 1 and \(-1\) with bias \(-0.5\).</p></div>
+</div>
+
+<div class="check" data-id="1.2-c2" data-correct="1">
+  <p class="q">Which statement fits the record best?</p>
+  <div class="options seg"><button>Minsky and Papert proved that networks with hidden layers cannot compute XOR, and this ended the funding</button><button>Minsky and Papert proved real limits of perceptrons, and AI funding also fell for other reasons</button><button>The perceptron convergence theorem was shown to be false</button></div>
+  <div class="feedback"><p>The book&rsquo;s theorems are correct. They concern perceptrons, and they do not show that every network with a hidden layer is limited in the same way. The fall in funding had several documented causes, including the Lighthill report and the Mansfield Amendment.</p></div>
+</div>
+
+<div class="explain" data-id="1.2-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: why does the learning rule settle on OR but cycle forever on XOR?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>A perceptron computes a linear threshold function: it labels the two sides of a line, or of a hyperplane. Its learning rule finds a separating line whenever one exists and cycles forever when none does, as for XOR. A hidden layer can compute XOR, but in the 1960s no widely used method could train one. The book <em>Perceptrons</em> proved real limits, but the fall in AI funding in the 1970s also had other causes.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/1-2.js"></script>
+</body>
+</html>

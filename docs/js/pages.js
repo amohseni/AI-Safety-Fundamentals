@@ -26,7 +26,7 @@ export const sections = [
         "id": "1.2",
         "title": "Perceptrons and the first winter (1943 to 1980)",
         "core": false,
-        "href": null
+        "href": "pages/1-2.html"
       },
       {
         "id": "1.3",
@@ -62,19 +62,19 @@ export const sections = [
         "id": "2.1",
         "title": "Learning means choosing parameters",
         "core": true,
-        "href": null
+        "href": "pages/2-1.html"
       },
       {
         "id": "2.2",
         "title": "The neuron",
         "core": false,
-        "href": null
+        "href": "pages/2-2.html"
       },
       {
         "id": "2.3",
         "title": "Why nonlinearity matters",
         "core": false,
-        "href": null
+        "href": "pages/2-3.html"
       },
       {
         "id": "2.4",
@@ -92,19 +92,19 @@ export const sections = [
         "id": "2.6",
         "title": "Gradient descent",
         "core": true,
-        "href": null
+        "href": "pages/2-6.html"
       },
       {
         "id": "2.7",
         "title": "Backpropagation",
         "core": true,
-        "href": null
+        "href": "pages/2-7.html"
       },
       {
         "id": "2.8",
         "title": "Overfitting and generalization",
         "core": false,
-        "href": null
+        "href": "pages/2-8.html"
       }
     ]
   },
