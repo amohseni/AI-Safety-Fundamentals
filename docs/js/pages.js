@@ -8,7 +8,7 @@ export const sections = [
         "id": "0.1",
         "title": "Start here",
         "core": false,
-        "href": null
+        "href": "pages/0-1.html"
       }
     ]
   },
@@ -290,7 +290,7 @@ export const sections = [
         "id": "7.1",
         "title": "Radical interpretation",
         "core": true,
-        "href": null
+        "href": "pages/7-1.html"
       },
       {
         "id": "7.2",
@@ -338,13 +338,13 @@ export const sections = [
         "id": "8.5",
         "title": "Learned optimizers and deceptive alignment",
         "core": true,
-        "href": null
+        "href": "pages/8-5.html"
       },
       {
         "id": "8.6",
         "title": "Oversight and control",
         "core": false,
-        "href": null
+        "href": "pages/8-6.html"
       }
     ]
   },
@@ -356,7 +356,7 @@ export const sections = [
         "id": "9.1",
         "title": "Open problems and how to start",
         "core": false,
-        "href": null
+        "href": "pages/9-1.html"
       }
     ]
   }

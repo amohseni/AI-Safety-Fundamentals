@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>0.1 Start here</title>
+<meta name="description" content="What this site can teach you, the order of its sections, how a page works, and the examples that run through it.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  svg.map text, svg.threads text { font-family: et-book, Georgia, serif; font-size: var(--text); fill: var(--ink); }
+  svg.map text.quiet, svg.threads text.quiet { fill: var(--quiet); }
+  svg.map text { paint-order: stroke; stroke: var(--paper); stroke-width: 5px; stroke-linejoin: round; }
+  svg.map .edge { fill: none; stroke: var(--rule); stroke-width: 1; }
+  svg.map .edge.pre { stroke: var(--accent); stroke-width: 2; }
+  svg.map .edge.post { stroke: var(--second); stroke-width: 2; }
+  svg.map .edge.path { stroke: var(--ink); stroke-width: 2.5; }
+  svg.map .edge.dim { opacity: 0.35; }
+  svg.map .node circle.dot { stroke: var(--ink); stroke-width: 1.2; fill: var(--paper); }
+  svg.map .node.planned circle.dot { stroke: var(--quiet); stroke-dasharray: 2 2; }
+  svg.map .node.done circle.dot { fill: var(--ink); }
+  svg.map .node.planned text { fill: var(--quiet); }
+  svg.map .node circle.ring { fill: none; stroke: none; stroke-width: 2; }
+  svg.map .node.ex circle.ring { stroke: var(--accent); }
+  svg.map .node.anc circle.ring { stroke: var(--accent); }
+  svg.map .node.sel circle.dot { stroke: var(--accent); stroke-width: 3; }
+  svg.map .node.onpath circle.dot { stroke-width: 3; }
+  svg.map .node.pre text { fill: var(--accent); }
+  svg.map .node.post text { fill: var(--second); }
+  svg.map .node { cursor: pointer; }
+  svg.map .node:focus { outline: none; }
+  svg.map .node:focus-visible circle.ring { stroke: var(--focus); stroke-dasharray: 3 2; }
+  svg.threads line.rowrule { stroke: var(--rule); stroke-width: 1; }
+  svg.threads line.thread { stroke: var(--ink); stroke-width: 2; }
+  svg.threads line.thread.gap { stroke: var(--quiet); stroke-width: 1; stroke-dasharray: 3 4; }
+  svg.threads circle { fill: var(--ink); }
+  .tool select { font: inherit; font-size: var(--text); color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 3px; padding: 0.1rem 0.3rem; }
+  .tool .pair { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+  .tool .pair label { display: flex; flex-direction: column; gap: 0.2rem; color: var(--quiet); }
+  #map-stage { min-height: 20rem; flex-basis: 100%; }
+  #tool .controls { max-width: none; flex-basis: 100%; flex-direction: row; flex-wrap: wrap; align-items: flex-end; }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="0.1">
+<article>
+<h1>Start here</h1>
+
+<section>
+<p>This site explains how modern AI systems work, in enough depth to follow current AI safety research and to start contributing to it. It assumes linear algebra, calculus, and probability, and no machine learning.</p>
+
+<p>After this page the site has nine sections. Section 1 is a short history. Sections 2 and 3 explain what a neural network is and how a transformer, the architecture behind current language models, computes its output. Section 4 explains how today&rsquo;s models are trained. Section 5 asks what these systems can do in principle and collects results that surprised the field. Sections 6 and 7 cover how researchers try to find out what a trained network has learned, and when it is correct to say a system believes or wants something. Section 8 explains why a trained system can pursue goals its designers did not intend. Section 9 lists open problems and ways to start on them.</p>
+
+<p>Every page answers one question with one interactive tool. Read the short text, make the prediction each task asks for, use the tool to check it, and then read what to notice. Each page ends with a check question and a box for explaining the idea in your own words. Your answers stay in this browser. Twenty pages, marked with a dot, form a core path of about five hours.</p>
+
+<p>Four objects recur, so later pages build on objects you already know: a small network that labels points in the plane; a small transformer that learns to add numbers modulo 113, which Section 6 opens up to find its algorithm; GPT-2 small, a real language model, used wherever one is needed; and a gridworld, a small grid in which an agent moves, used in Sections 7 and 8.</p>
+</section>
+
+<section>
+<h2>Site map</h2>
+<p>Each task below asks for a prediction first. Make it, then use the map to check it.</p>
+
+<div class="tool" id="tool">
+  <div class="panel">
+    <p class="panel-note">Each circle is a page, one row per section. A line joins two pages when the lower one uses an idea from the upper one. Select a page (tap it, or use the arrow keys and Enter) to see its question, the pages it <span class="c-accent">builds on</span>, and the pages that <span class="c-second">build on it</span>. A filled circle is a page whose check question you have answered; a dashed circle is a page not written yet.</p>
+    <div class="row"><div class="controls" id="controls"></div><div class="stage" id="map-stage"></div></div>
+    <p class="readout" id="readout" aria-live="polite"></p>
+  </div>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="0.1-t1">
+    <p class="prompt">How many pages lie between 2.5 (loss as a proper scoring rule) and 8.1 (optimizing a proxy) on the shortest chain of pages, each using an idea from the one before?</p>
+    <div class="choices" data-options="None|Two|About five|About ten"></div>
+    <div class="after"><p>Choose 2.5 and 8.1 under <em>Shortest path</em>.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Two. There are three shortest chains, all through 4.3 (optimizing a learned reward): one through 3.3, one through 4.1, and one through 4.2. The map shows the first of them.</p></div></div>
+  </li>
+  <li class="task" data-id="0.1-t2">
+    <p class="prompt">In which sections do the pages that use GPT-2 small lie?</p>
+    <div class="choices" data-options="Sections 2 and 5|Sections 3 and 6|Sections 3, 6, and 8"></div>
+    <div class="after"><p>Choose GPT-2 small under <em>Running example</em>.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Sections 3 and 6: twelve pages, from 3.1 to 3.7 and from 6.2 to 6.7 except 6.4. The other running examples have their own stretches: the plane classifier in Sections 1, 2, and 5, the modular-addition transformer in Sections 5 and 6, and the gridworld in Sections 7 and 8.</p></div></div>
+  </li>
+  <li class="task" data-id="0.1-t3">
+    <p class="prompt">Page 8.1 is on the core path. Counting pages it uses directly or through other pages, how many of the other 49 pages does it depend on?</p>
+    <div class="choices" data-options="About 10|About 25|About 45"></div>
+    <div class="after"><p>Select 8.1 and press <em>Show everything it depends on</em>. Try 8.5 and 8.6 too.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Nine: 1.1, 1.6, 2.1, 2.5, 3.1, 3.3, 4.1, 4.2, and 4.3. Page 8.4 depends on eleven. The later pages of Section 8 gather more (8.5 depends on 40), but a reader in a hurry can reach the first argument of Section 8 through a short path.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>The running examples</h2>
+<figure id="fig-threads" aria-describedby="fig-threads-desc"></figure>
+<p id="fig-threads-desc" class="caption">The four running examples as threads through the sections. A dot marks a section in which the example is used, and a dashed stretch passes over sections that do not use it: the plane classifier in Sections 1, 2, and 5; the modular-addition transformer in Sections 5 and 6; GPT-2 small in Sections 3 and 6; the gridworld in Sections 7 and 8.</p>
+</section>
+
+<div class="check" data-id="0.1-c1" data-correct="1">
+  <p class="label">Check</p>
+  <p class="q">Using the map: page 8.1 builds directly on one page. Which section is that page in?</p>
+  <div class="options seg"><button>Section 2, neural networks as functions</button><button>Section 4, how models are trained today</button><button>Section 6, mechanistic interpretability</button></div>
+  <div class="feedback"><p>Page 8.1 builds directly on 4.3, optimizing a learned reward: the problem of optimizing a proxy first appears when a model is trained against a learned reward model.</p></div>
+</div>
+
+<div class="explain" data-id="0.1-e1">
+  <p class="label">In your own words</p>
+  <p>Which path through the site will you take first, and why?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>The site goes from what a network computes (Sections 2 and 3), through how models are trained and what they can do (Sections 4 and 5), to how we find out what they have learned and want (Sections 6 and 7), why they can pursue unintended goals (Section 8), and where to start contributing (Section 9). Every page asks for a prediction before it shows the answer, and four running examples carry ideas from page to page.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/0-1.js"></script>
+</body>
+</html>

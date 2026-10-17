@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>9.1 Open problems and how to start</title>
+<meta name="description" content="Open problems in AI safety research, each tied to the pages that prepare for it, with a first project and a paper to start from.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  ol.problems { list-style: none; padding: 0; margin: 1rem 0 0; width: 61%; }
+  ol.problems > li { border-top: 1px solid var(--rule); padding: 0.8rem 0 0.9rem; }
+  ol.problems > li[hidden] { display: none; }
+  ol.problems h3 { font-size: var(--text); font-style: italic; margin: 0 0 0.3rem; font-weight: normal; }
+  ol.problems p { margin: 0.2rem 0; }
+  ol.problems .k { color: var(--quiet); }
+  ol.problems .pg a { text-decoration: none; background: none; border-bottom: 1px solid var(--rule); }
+  ol.problems .pg .fin { color: var(--accent); }
+  .tool .controls { max-width: none; flex-basis: 100%; }
+  ul.start { width: 61%; overflow-wrap: anywhere; }
+  @media (max-width: 760px) { ol.problems, ul.start { width: 100%; } }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="9.1">
+<article>
+<h1>Open problems and how to start</h1>
+
+<section>
+<p>Each problem below is open, matters for safety, and can be started with the ideas from this site and a single GPU or less. Each entry lists the pages that prepare you for the problem, a first project small enough for a semester, and a paper to start from. The tags for the kind of work and the setup needed are rough guides, not requirements.</p>
+</section>
+
+<section>
+<h2>Find a problem</h2>
+<div class="tool" id="tool">
+  <div class="panel">
+    <p class="panel-note">Filter the problems by the kind of work, by the setup you have, or by the pages you have finished. A page counts as finished when you have answered its check question; finished pages are shown in <span class="c-accent">blue</span> and marked &ldquo;finished&rdquo;.</p>
+    <div class="row"><div class="controls" id="controls"></div></div>
+    <p class="readout" id="readout" aria-live="polite"></p>
+    <ol class="problems" id="problems"></ol>
+  </div>
+</div>
+
+<h2>Places to start</h2>
+<ul class="start">
+<li>The ARENA curriculum: hands-on exercises in fundamentals, transformer interpretability, reinforcement learning, evaluations of language models, and alignment science, covering most of Sections 3 and 6 (<a href="https://learn.arena.education/">learn.arena.education</a>).</li>
+<li>The TransformerLens library, which loads many open language models and lets you read and change their internal activations (<a href="https://github.com/TransformerLensOrg/TransformerLens">github.com/TransformerLensOrg/TransformerLens</a>).</li>
+<li>The AI Alignment Forum, where much current safety research is posted and discussed (<a href="https://www.alignmentforum.org/">alignmentforum.org</a>).</li>
+<li>Mentorship programs: SPAR, a part-time remote research program that pairs new researchers with mentors (<a href="https://sparai.org/">sparai.org</a>), and MATS, a full-time research fellowship with mentors in Berkeley and London (<a href="https://www.matsprogram.org/">matsprogram.org</a>).</li>
+</ul>
+</section>
+
+<div class="check" data-id="9.1-c1" data-correct="0">
+  <p class="label">Check</p>
+  <p class="q">A reader has finished pages 6.3 and 7.2 and nothing in Section 4. Using the filter, which problem are they best prepared for?</p>
+  <div class="options seg"><button>Probes that generalize</button><button>Reward model overoptimization</button><button>Is written reasoning faithful?</button></div>
+  <div class="feedback"><p>&ldquo;Probes that generalize&rdquo; builds on 6.3 (linear probes) and 7.2 (belief). Reward model overoptimization needs 4.3, and the question about written reasoning needs 4.4.</p></div>
+</div>
+
+<div class="explain" data-id="9.1-e1">
+  <p class="label">In your own words</p>
+  <p>Which problem would you start on, and what is your first concrete step?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>Each open problem here builds on a few pages of this site and has a first project that fits in a semester. Pick one whose pages you have finished, read the paper listed with it, and start small.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/9-1.js"></script>
+</body>
+</html>

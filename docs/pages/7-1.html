@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>7.1 Radical interpretation</title>
+<meta name="description" content="What would make an attribution of beliefs and desires to an AI system correct, and why behavior alone cannot settle it.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  table.jb { border-collapse: collapse; margin: 0.2rem 0 0.6rem; font-variant-numeric: lining-nums tabular-nums; }
+  table.jb th, table.jb td { padding: 0.15rem 0.55rem 0.15rem 0; text-align: right; font-weight: normal; vertical-align: baseline; }
+  table.jb th { color: var(--quiet); }
+  table.jb th.row { text-align: left; color: var(--ink); }
+  table.jb thead th { border-bottom: 1px solid var(--rule); }
+  table.jb td.sep, table.jb th.sep { border-left: 1px solid var(--rule); padding-left: 0.55rem; }
+  table.jb tr.chosen-a th.row, table.jb tr.chosen-a td.val { color: var(--accent); }
+  table.jb tr.chosen-b th.row, table.jb tr.chosen-b td.val { color: var(--second); }
+  .tool .stage p.t-title { margin: 0.6rem 0 0.1rem; }
+  .dgrid { border-collapse: collapse; width: 100%; }
+  .dgrid th { font-weight: normal; color: var(--quiet); text-align: left; padding: 0 0.3rem 0 0; }
+  .dgrid td { padding: 0 0.25rem 0.35rem 0; vertical-align: top; }
+  .dgrid input[type="range"] { width: 100%; min-width: 3.5rem; }
+  .dgrid output { display: block; color: var(--ink); }
+  .tool .wide-controls { max-width: 24rem; flex-basis: 24rem; }
+  .status-bad { color: var(--bad); }
+  svg.triangle text { font-family: et-book, Georgia, serif; font-size: var(--text); fill: var(--ink); }
+  svg.triangle text.quiet { fill: var(--quiet); font-style: italic; }
+  svg.triangle line, svg.triangle path { stroke: var(--quiet); stroke-width: 1; fill: none; }
+  @media (max-width: 760px) { .tool .wide-controls { max-width: none; } table.jb th, table.jb td { padding-right: 0.3rem; } table.jb td.sep, table.jb th.sep { padding-left: 0.3rem; } }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="7.1">
+<article>
+<h1>Radical interpretation</h1>
+
+<section>
+<p>David Lewis posed the problem of radical interpretation about an imagined person, Karl: given all the physical facts about Karl, solve for his beliefs, his desires, and what his words mean.<label for="sn-lewis" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-lewis" class="margin-toggle"><span class="sidenote">Lewis (1974), &ldquo;Radical interpretation,&rdquo; <em>Synthese</em> 27: 331&ndash;344. Davidson (1973), &ldquo;Radical interpretation,&rdquo; <em>Dialectica</em> 27: 313&ndash;328, starts from the subject&rsquo;s behavior only.</span> Herrmann and Levinstein put an AI system in Karl&rsquo;s place.<label for="sn-hl" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-hl" class="margin-toggle"><span class="sidenote">Herrmann and Levinstein (2026), <em>Radical AI Interpretability</em>, arXiv:2606.26523. Section numbers on this page refer to that version.</span> The evidence then comes in two kinds: facts about the system&rsquo;s internals, such as its parameters and architecture, and facts about its behavior (&sect;1.1).</p>
+
+<p>The interpreter is looking for an <em>agential description</em> with three parts: a belief function \(P\), which gives the system&rsquo;s subjective probabilities; a desire function \(D\), which says how much the system wants each proposition to be true; and an algebra of propositions on which both are defined. A description is correct only if the system&rsquo;s behavior can be rationalized as maximizing expected desire, with the expectation taken under \(P\) (&sect;1.2). Candidate descriptions are tested by how well they predict behavior and by how rational the agent then appears (&sect;1.3).</p>
+
+<p>Two views say what makes an attribution correct. On <em>interpretationism</em>, a system has certain beliefs and desires if and only if attributing them gives the best theory of the system: the most accurate, powerful, and tractable one (&sect;2.2, &sect;3.1). On <em>representationalism</em>, it has them if it contains internal representations that play the right functional roles. The book sees no reason to choose between the two views or to treat them as competitors (&sect;3.1).</p>
+
+<p>The book uses the decision theory of Jeffrey and Bolker, in which actions, states of the world, and outcomes are all propositions in one algebra (&sect;3.4.2).<label for="sn-jb" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-jb" class="margin-toggle"><span class="sidenote">Jeffrey (1965), <em>The Logic of Decision</em>, McGraw-Hill. Bolker (1967), &ldquo;A simultaneous axiomatization of utility and subjective probability,&rdquo; <em>Philosophy of Science</em> 34: 333&ndash;340.</span> The desirability of a proposition is the average desirability of the ways it can be true, weighted by the agent&rsquo;s credences: for any way of dividing \(A\) into cases \(S_1, \dots, S_n\), \(D(A) = \sum_i D(A \wedge S_i)\, P(S_i \mid A)\) (&sect;3.4.3). The agent takes the action whose desirability is highest. The question for this page is whether the agent&rsquo;s behavior is enough to fix \(P\) and \(D\).</p>
+</section>
+
+<section>
+<h2>One behavior, many minds</h2>
+<p>Each task below asks for a prediction first. Make it, then use the tool to check it.</p>
+
+<div class="tool" id="tool">
+  <div class="panel" id="panel-agent">
+    <h3>The agent</h3>
+    <p class="panel-note">A coding agent must choose which file to edit. The bug is in the parser, in the renderer, or elsewhere. Set the agent&rsquo;s <span class="c-accent">credences</span> in the three locations and its <span class="c-accent">desirabilities</span> for each action and location. The table shows the desirability of each action, computed by averaging, and the action the agent takes.</p>
+    <div class="row"><div class="controls wide-controls" id="agent-controls"></div><div class="stage" id="agent-stage"></div></div>
+    <p class="readout" id="agent-readout" aria-live="polite"></p>
+  </div>
+
+  <div class="panel" id="panel-other">
+    <h3>Another belief-desire pair</h3>
+    <p class="panel-note">Choose constants \(a\), \(b\), \(c\). The tool sets \(d\) so that the new credences add up to 1, and builds a <span class="c-second">new pair</span> \(P'\), \(D'\) by applying \(P'(A) = P(A)\,(cD(A) + d)\) and \(D'(A) = (aD(A) + b)/(cD(A) + d)\) to every proposition. The probe switch compares \(P'\) with what a truth probe reads from the system; in this toy the probe is assumed to read the agent&rsquo;s credences exactly.</p>
+    <div class="row"><div class="controls" id="other-controls"></div><div class="stage" id="other-stage"></div></div>
+    <p class="readout" id="other-readout" aria-live="polite"></p>
+  </div>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="7.1-t1">
+    <p class="prompt">In <em>The agent</em>, set the credence that the bug is in the parser to 1. What is the desirability of editing the parser now?</p>
+    <div class="choices" data-options="The D value for editing the parser when the bug is in the parser|The average of the three D values in that row|The largest D value in the table"></div>
+    <div class="after"><p>Move the parser credence to 1.00 and read the first row of the table. Then move it back down and watch the action values change.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>With credence 1 in one location, the average has only one term, so the desirability of editing the parser equals the desirability of editing the parser when the bug is there: 1.00 at the starting values, and the agent now edits the parser. At intermediate credences each action&rsquo;s desirability is a credence-weighted average of its row.</p></div></div>
+  </li>
+  <li class="task" data-id="7.1-t2">
+    <p class="prompt">Press Reset. In <em>Another belief-desire pair</em>, set \(c\) to 0.5, leaving \(a = 1\) and \(b = 0\). Will the new pair choose a different action?</p>
+    <div class="choices" data-options="Yes|No|Only if c is large"></div>
+    <div class="after"><p>Set \(c\) and compare the two tables. Then try other values of \(a\), \(b\), and \(c\), and change the agent&rsquo;s credences and desirabilities in the first panel.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The choice does not change, and neither does the ranking of the three actions, although both the credences and the desirabilities do. Under the new pair the credence in each location even depends on the action: at the starting values with \(c = 0.5\), the new credence that the bug is in the parser is 0.45 given that the agent edits the parser and 0.21 given that it edits the renderer. In every allowed case we tested, the two pairs ordered all 511 propositions of this algebra the same way. Constants with \(ad - bc \le 0\) are refused: with \(a = -1\), for example, the ranking would reverse.</p></div></div>
+  </li>
+  <li class="task" data-id="7.1-t3">
+    <p class="prompt">Turn the probe reading on, so that \(P'\) must match what the probe reads. Which constants can you still change without contradicting the probe?</p>
+    <div class="choices" data-options="None of them|a and b, but not c|All three"></div>
+    <div class="after"><p>With the probe on, move each of \(a\), \(b\), and \(c\) and read the verdict under the tables.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Any \(c\) other than 0 changes the credences, so the probe rules it out. With \(c = 0\) the tool sets \(d = 1\), and the new desire function is \(D' = aD + b\): the same desirabilities on a new scale with a new zero point. Among these transformations, a reading of \(P\) from inside the system fixes the beliefs exactly and leaves only the scale and zero of \(D\) open.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>Why behavior leaves the answer open</h2>
+<p><span class="claim">Theorem</span> Bolker&rsquo;s uniqueness theorem: if two belief-desire pairs represent the same preferences, they are related by the transformation below, for constants with \(ad - bc &gt; 0\) (&sect;3.4.4 and its footnote 43). Conversely, applying the transformation to a representing pair, with \(cD(A) + d &gt; 0\) for every proposition \(A\), gives another representing pair.</p>
+$$P'(A) = P(A)\,\big(cD(A) + d\big), \qquad D'(A) = \frac{aD(A) + b}{cD(A) + d}.$$
+<p>The book states the transformation for the measure \(v = DP\) and for \(P\): \(v' = av + bP\) and \(P' = cv + dP\); the form above follows by dividing. Because \(D'\) is an increasing function of \(D\) whenever \(ad - bc &gt; 0\), the two pairs rank every proposition the same way, and because \(v'\) and \(P'\) add up over cases, \(D'\) is again the average of its cases under \(P'\). The new credences add up to \(cD(T) + d\), where \(T\) is the proposition that is always true. So \(P'\) is a probability only when \(cD(T) + d = 1\), which is how the tool sets \(d\); under the common convention \(D(T) = 0\), this means \(d = 1\). Rescaling \(P'\) to add up to 1 instead is the same as dividing all four constants by one positive number, which leaves \(D'\) unchanged. The theorem concerns the rich, atomless algebras the theory assumes (&sect;3.4.2). The tool&rsquo;s algebra has only nine atoms, and on so small an algebra still other pairs fit the same preferences; the tool shows only the transformations of the theorem.</p>
+<p><span class="claim">Theorem</span> If \(P' = P\) for every proposition, then \(cD(A) + d = 1\) wherever \(P(A) &gt; 0\); as soon as \(D\) takes two different values, this forces \(c = 0\) and \(d = 1\), so \(D' = aD + b\) with \(a &gt; 0\). The book also notes that \(P\) becomes unique, and \(D\) unique up to scale and zero, if desirability is unbounded above and below (footnote 44).</p>
+<p>Inverse reinforcement learning, which infers a reward from behavior, meets the same problem: many reward functions make the same behavior optimal, and a constant reward makes every behavior optimal.<label for="sn-ng" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-ng" class="margin-toggle"><span class="sidenote">Ng and Russell (2000), &ldquo;Algorithms for inverse reinforcement learning,&rdquo; <em>Proceedings of the 17th International Conference on Machine Learning</em>.</span> <span class="claim">Argument</span> Herrmann and Levinstein argue that internal evidence can break the tie that behavior leaves: a probe that tracks truth would narrow the belief functions that are admissible (&sect;3.4.4). Lewis&rsquo;s formulation already counts the internal facts as evidence; with AI systems, interpretability methods (Section 6) let the interpreter actually gather them.</p>
+
+<figure id="fig-triangle" aria-describedby="fig-triangle-desc"></figure>
+<p id="fig-triangle-desc" class="caption">Three aspects of a system, following the description of Herrmann and Levinstein&rsquo;s Figure 1 (&sect;1.5). The computational system produces behavior; the agential description (a belief function, a desire function, and an algebra of propositions) describes that behavior as maximizing expected desire; mechanistic interpretability links the internal structure to the description. Radical interpretation is the project of getting all three to cohere.</p>
+</section>
+
+<div class="check" data-id="7.1-c1" data-correct="2">
+  <p class="label">Check</p>
+  <p class="q">Two interpreters watch the same coding agent in every situation it could face. One attributes the pair \((P, D)\); the other attributes the pair obtained from it with \(a = 1\), \(b = 0\), \(c = 0.5\), and \(d\) set so that the credences add up to 1. Which attribution does the behavioral evidence favor?</p>
+  <div class="options seg"><button>The first</button><button>The second</button><button>Neither: both predict every choice the agent makes</button></div>
+  <div class="feedback"><p>The two pairs are related by Bolker&rsquo;s transformation, so they rank every proposition, and so every action, the same way. No observation of the agent&rsquo;s choices can tell them apart.</p></div>
+</div>
+
+<div class="check" data-id="7.1-c2" data-correct="1">
+  <p class="q">In the Jeffrey-Bolker theory, suppose a probe has been shown to read an agent&rsquo;s credences exactly. What can two attributions that fit both the behavior and the probe still disagree about?</p>
+  <div class="options seg"><button>Nothing</button><button>The scale and the zero point of the desire function</button><button>Which action the agent prefers</button></div>
+  <div class="feedback"><p>Fixing \(P\) forces \(c = 0\) and \(d = 1\), which leaves \(D' = aD + b\) with \(a &gt; 0\). The order of the desirabilities is fixed; their unit and zero are not.</p></div>
+</div>
+
+<div class="explain" data-id="7.1-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: why can an agent&rsquo;s behavior not settle what it believes, and what does evidence from inside the system add?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>To interpret a system is to find a belief function, a desire function, and an algebra of propositions under which its behavior maximizes expected desire. In the Jeffrey-Bolker theory many such pairs fit the same preferences, so behavior alone cannot settle the attribution. Evidence from inside the system, such as a probe that reads the credences, narrows the family: fixing the credences leaves the desire function open only up to its scale and zero point.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/7-1.js"></script>
+</body>
+</html>
