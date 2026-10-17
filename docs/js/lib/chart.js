@@ -43,7 +43,8 @@ export function chart(container, opts) {
       const finite = points.filter((p) => Number.isFinite(p[1]));
       get(id, 'path').attr('fill', 'none').attr('stroke', COLOR[color]).attr('stroke-width', w)
         .attr('stroke-dasharray', dash).attr('d', d3.line().x((p) => x(p[0])).y((p) => y(Math.min(p[1], y.domain()[1] * 4)))(finite));
-      if (label) {
+      const insideAny = finite.some((q) => q[1] <= y.domain()[1]);
+      if (label && insideAny) {
         const inside = finite.filter((q) => q[1] <= y.domain()[1]);
         const p = labelAt === 'end' ? inside[inside.length - 1] : inside[Math.round(labelAt * (inside.length - 1))];
         get(id + ':label', 'text').attr('x', x(p[0]) + 6).attr('y', y(Math.min(Math.max(p[1], y.domain()[0]), y.domain()[1])) + 4 + dy)

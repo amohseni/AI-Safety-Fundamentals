@@ -188,3 +188,12 @@ p, dl, ol, ul, li, blockquote, table, label, input, textarea, button, figcaption
 p, dl, ol, ul, .sidenote, .marginnote { line-height: 1.5; }
 .sidenote, .marginnote { vertical-align: baseline; }
 .sidenote-number::after, .sidenote::before { font-size: 0.75em; }
+
+/* Sidenote numbers come from site.js (data-n), not the CSS counter. */
+.sidenote-number[data-n]::after { content: attr(data-n); }
+.sidenote[data-n]::before { content: attr(data-n) " "; }
+/* Long single words in titles must not overflow on phones. */
+h1 { hyphens: auto; overflow-wrap: break-word; }
+.topline { flex-wrap: wrap; column-gap: 1.2rem; }
+/* A page's own canvas cap (e.g. .plane) wins over the generic max-width. */
+.tool .plane { max-width: 34rem; }

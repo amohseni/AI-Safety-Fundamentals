@@ -81,7 +81,7 @@ Four objects recur across the site, so the reader builds on the same objects ins
 | Object | What it is | Pages |
 | --- | --- | --- |
 | The plane classifier | A small network that labels points in the plane: 2 inputs, 1 to 3 hidden layers of width 2 to 8. Datasets: AND, OR, XOR, circles, spirals. | 1.2, 2.1 to 2.4, 2.6, 2.8, 5.5 |
-| The modular-addition transformer | A one-layer transformer trained on (a + b) mod 113, the model reverse-engineered by Nanda et al. (2023). | 5.4, 5.5, 6.7 |
+| The modular-addition transformer | A one-layer transformer trained on (a + b) mod 59, with the architecture reverse-engineered by Nanda et al. (2023), who used mod 113; 59 keeps training feasible on a CPU (see tools/modadd/README.md). | 5.4, 5.5, 6.7 |
 | GPT-2 small | The real language model used wherever one is needed: 12 layers, 12 heads per layer, 124 million parameters. It is open and the most studied model in interpretability. | 3.1 to 3.7, 6.2, 6.3, 6.5 to 6.7 |
 | The gridworld | A small grid environment with an agent, solved exactly by value iteration in the browser. | 7.3, 8.2 to 8.4 |
 

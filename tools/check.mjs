@@ -13,7 +13,7 @@ const docs = path.join(root, 'docs');
 const outDir = process.env.SHOTS || path.join(root, 'tools', 'shots');
 fs.mkdirSync(outDir, { recursive: true });
 
-const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.woff': 'font/woff', '.ttf': 'font/ttf', '.woff2': 'font/woff2', '.svg': 'image/svg+xml' };
+const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.woff': 'font/woff', '.ttf': 'font/ttf', '.woff2': 'font/woff2', '.svg': 'image/svg+xml', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg' };
 const server = http.createServer((req, res) => {
   const p = path.join(docs, decodeURIComponent(req.url.split('?')[0]));
   fs.readFile(p.endsWith('/') ? p + 'index.html' : p, (err, buf) => {

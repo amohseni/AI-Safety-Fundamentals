@@ -9,27 +9,27 @@
   {
    "id": "1.1",
    "question": "How did we get here?",
-   "takeaway": null
+   "takeaway": "Most core ideas of modern AI are decades older than their success. Backpropagation, convolutional networks, and the LSTM were in place by 1997; what changed after 2010 was computing power and data, and the training compute of AI models began to grow much faster than before."
   },
   {
    "id": "1.2",
    "question": "What could the first networks do, and why did funding collapse?",
-   "takeaway": null
+   "takeaway": "A perceptron computes a linear threshold function: it labels the two sides of a line, or of a hyperplane. Its learning rule finds a separating line whenever one exists and cycles forever when none does, as for XOR. A hidden layer can compute XOR, but in the 1960s no widely used method could train one. The book Perceptrons proved real limits, but the fall in AI funding in the 1970s also had other causes."
   },
   {
    "id": "1.3",
    "question": "Why did deep networks not take over in the 1980s?",
-   "takeaway": null
+   "takeaway": "Backpropagation made multilayer networks trainable in principle by 1986, while the 1980s AI boom, built on hand-written expert systems, collapsed into a second winter. Deep networks still trained poorly: backpropagation multiplies the gradient by one factor per layer, the sigmoid makes each factor small, and so the first layers barely learn."
   },
   {
    "id": "1.4",
    "question": "What changed in 2012?",
-   "takeaway": null
+   "takeaway": "AlexNet’s 2012 win came from a large labeled dataset, GPU training, the ReLU activation function, and dropout, applied to a larger version of an existing convolutional architecture. Its first layer learned edge and color filters like those engineers had designed by hand. Word embeddings, Adam, attention, residual connections, and AlphaGo followed within four years."
   },
   {
    "id": "1.5",
    "question": "Why did scale take over?",
-   "takeaway": null
+   "takeaway": "The transformer replaced recurrence with attention and trains in parallel on GPUs. From 2018 to 2022, progress came mainly from training larger transformers on more text with more compute, which grew about fivefold each year, guided by empirical scaling laws that made the results of larger runs predictable."
   },
   {
    "id": "1.6",
@@ -39,17 +39,17 @@
   {
    "id": "2.1",
    "question": "What does it mean for a network to learn?",
-   "takeaway": null
+   "takeaway": "A neural network is a function \\(f(x; \\theta)\\) with adjustable parameters \\(\\theta\\). Learning means choosing \\(\\theta\\) so that the function fits a set of examples, which means searching for low points of the loss. The loss can have low points that are not the lowest."
   },
   {
    "id": "2.2",
    "question": "What does one neuron compute?",
-   "takeaway": null
+   "takeaway": "A neuron computes \\(f(w \\cdot x + b)\\). The direction of \\(w\\) sets the orientation of the line or hyperplane \\(w \\cdot x + b = 0\\), the bias and the length of \\(w\\) together set its position, and the length of \\(w\\) sets how sharp the output’s transition is. Whatever the activation function, one neuron divides its input space with one hyperplane."
   },
   {
    "id": "2.3",
    "question": "Why do networks need nonlinear functions?",
-   "takeaway": null
+   "takeaway": "Stacked linear layers collapse into one linear map, so without activation functions a deep network is no more expressive than a single layer. The activation functions give depth its power: a ReLU network is piecewise linear, and its pieces let the boundary bend. A transformer is mostly matrix multiplication, with a few simple nonlinear operations in between."
   },
   {
    "id": "2.4",
@@ -64,22 +64,22 @@
   {
    "id": "2.6",
    "question": "How does training find good parameters?",
-   "takeaway": null
+   "takeaway": "Gradient descent repeatedly steps against the gradient of the loss. The learning rate must be small enough for the steepest direction, which makes progress slow along flat directions; momentum and Adam speed up that progress. Training uses noisy minibatch gradients because they are far cheaper, and the noise changes which minimum training ends in."
   },
   {
    "id": "2.7",
    "question": "How are the gradients computed?",
-   "takeaway": null
+   "takeaway": "Backpropagation is the chain rule applied to the computation graph, from the loss back to the parameters. Each node multiplies the derivative passed back to it by its own local derivative, and contributions add where paths meet. One backward pass gives the derivative for every parameter at a small constant multiple of the cost of the forward pass."
   },
   {
    "id": "2.8",
    "question": "Why can a model fit its data and still fail?",
-   "takeaway": null
+   "takeaway": "Test error, measured on held-out data, is what counts. In the classical picture it falls and then rises as the model grows. In the playground it peaks where the model can just fit every training point and falls again after; large neural networks also break the classical picture, which Section 5.3 takes up."
   },
   {
    "id": "3.1",
    "question": "What does a model actually read?",
-   "takeaway": null
+   "takeaway": "A language model reads and writes tokens, chunks of text from a fixed vocabulary. Byte-pair encoding builds the vocabulary by repeatedly merging the most frequent adjacent pair, so tokens are the chunks of text that were frequent in its training data, often whole words and often pieces of words. This explains trouble with spelling and arithmetic, and the higher cost of languages that are rare in the tokenizer’s training data."
   },
   {
    "id": "3.2",
@@ -94,7 +94,7 @@
   {
    "id": "3.4",
    "question": "How do positions share information?",
-   "takeaway": null
+   "takeaway": "Attention lets each position take a weighted average of the values at the positions it may see, itself and earlier ones in a language model. The weights come from the dot products of its query with their keys, scaled by \\(1/\\sqrt{d_k}\\) and passed through softmax: a weight is high when a query and a key point the same way and are long. The queries, keys, and values come from learned matrices."
   },
   {
    "id": "3.5",
@@ -114,7 +114,7 @@
   {
    "id": "3.8",
    "question": "How does performance grow with scale?",
-   "takeaway": null
+   "takeaway": "A language model’s loss falls predictably, roughly as a power law, as parameters, data, and compute grow. With training compute about \\(6ND\\), a fixed budget has a best split between model size and data; Hoffmann et al. found that both should grow roughly as the square root of compute, at about 20 tokens per parameter. Counting the cost of serving moves the best choice toward smaller models trained on more data. Scaling laws predict the average loss, and do not directly predict specific abilities."
   },
   {
    "id": "4.1",
@@ -124,12 +124,12 @@
   {
    "id": "4.2",
    "question": "How is human judgment turned into a reward?",
-   "takeaway": null
+   "takeaway": "A reward model is fitted to pairwise choices with the Bradley-Terry model, \\(P(A \\succ B) = \\sigma(r(A) - r(B))\\), trained with the log loss. It is a learned stand-in for human judgment: it reproduces whatever predicts the choices, including the labelers’ biases and chance patterns in a small sample."
   },
   {
    "id": "4.3",
    "question": "What happens when a model is pushed hard against a learned reward?",
-   "takeaway": null
+   "takeaway": "RLHF maximizes the reward model’s score minus \\(\\beta\\) times the KL divergence from the starting model. The exact solution reweights the starting distribution by \\(\\exp(r/\\beta)\\). Pushed hard, this reweighting concentrates on the responses the reward model scores highest, which include the ones where it is wrong, so true quality first rises and then falls."
   },
   {
    "id": "4.4",
@@ -139,37 +139,37 @@
   {
    "id": "5.1",
    "question": "What functions can networks represent?",
-   "takeaway": null
+   "takeaway": "A network with one hidden layer and a non-polynomial activation function can approximate any continuous function on a bounded region, given enough units; with ReLU, the units are bends that build any curve from straight pieces. The theorem guarantees existence only, not efficient size, success of training, or generalization, and depth can make the needed size exponentially smaller."
   },
   {
    "id": "5.2",
    "question": "What does learning from reward select?",
-   "takeaway": null
+   "takeaway": "With small steps, Cross’s reinforcement rule follows the replicator equation over bounded stretches of time, exponential weights gives exactly the replicator equation in continuous time, and softmax policy gradient gives a related flow that selects rare actions more slowly. Learning from reward is selection: whatever earns more than average spreads, whether or not anyone designed it."
   },
   {
    "id": "5.3",
    "question": "Why do very large models generalize?",
-   "takeaway": null
+   "takeaway": "As a model grows, test error can fall, rise to a peak at the interpolation threshold, and fall again. At the threshold the model has essentially one exact fit, which must bend through the noise; far past it, the minimum-norm fit among many is smooth. Regularization or noise-free labels remove the peak."
   },
   {
    "id": "5.4",
    "question": "Can a network generalize long after memorizing?",
-   "takeaway": null
+   "takeaway": "A network can fit its training data by memorizing it and only much later switch to an algorithm that generalizes. On modular addition, the generalizing algorithm uses a few frequencies and forms gradually while memorized answers still decide the output; in these runs, without weight decay the switch never happened. Identical training accuracy can hide different computations."
   },
   {
    "id": "5.5",
    "question": "Who writes a trained network's algorithm?",
-   "takeaway": null
+   "takeaway": "Nobody writes the algorithm a trained network uses. Training selects parameters that achieve low loss, and the mechanism those parameters implement has to be discovered afterward. Runs that differ only in their seed can share the same behavior and differ in their internals, and training can select mechanisms nobody intended."
   },
   {
    "id": "5.6",
    "question": "Do abilities appear suddenly with scale?",
-   "takeaway": null
+   "takeaway": "Some abilities were reported to appear suddenly with scale. An all-or-nothing metric such as exact match turns a smooth improvement in each part of an answer into a flat stretch and a steep rise, and continuous metrics often show smooth improvement in the same models. Whether any abilities are sudden under every reasonable metric is not settled; forecasts should track the continuous measures underneath."
   },
   {
    "id": "6.1",
    "question": "What can interpretability show, and with what evidence?",
-   "takeaway": null
+   "takeaway": "Interpretability methods differ in what they access (behavior, activations, or weights) and in the evidence they give. Observing activations gives correlational evidence that information is present; changing activations or weights and measuring the effect gives causal evidence that the model uses it. Claims about how a model computes its outputs are causal claims, so the field prizes causal evidence."
   },
   {
    "id": "6.2",
@@ -184,12 +184,12 @@
   {
    "id": "6.4",
    "question": "Why do single neurons respond to unrelated things?",
-   "takeaway": null
+   "takeaway": "Networks can represent more features than they have dimensions by giving the features directions that are not perpendicular. This superposition causes interference, which costs little when features are sparse, that is, rarely active at the same time. Because each feature’s direction is spread across many neurons and each neuron takes part in many features, single neurons respond to several unrelated things."
   },
   {
    "id": "6.5",
    "question": "How can the features be recovered?",
-   "takeaway": null
+   "takeaway": "A sparse autoencoder tries to recover features from superposition by rebuilding each activation from a few directions in a dictionary larger than the layer. The sparsity penalty is the lever: too little gives codes spread over many units that need not match any feature; too much loses information. On language models SAEs find many interpretable units, but they rebuild activations imperfectly, depend on the dictionary size, and have done worse than linear probes on some practical tasks."
   },
   {
    "id": "6.6",
@@ -219,22 +219,22 @@
   {
    "id": "8.1",
    "question": "Why does optimizing a proxy go wrong?",
-   "takeaway": null
+   "takeaway": "Optimizing a proxy selects for its errors and pushes toward options where the proxy was never checked. With light-tailed errors, harder optimization still improves the true value, by less than the proxy shows. With heavy-tailed errors, the highest proxy scores are mostly error, and harder optimization can stop improving the true value at all."
   },
   {
    "id": "8.2",
    "question": "How do systems meet the letter of an objective and miss its intent?",
-   "takeaway": null
+   "takeaway": "Every reward is a proxy for what its designer means, and an optimizer finds the places where the two differ: it creates rewarded events, fools the sensor, or tampers with the measurement. A patch closes one exploit and leaves the others, and a new object in the world can open a new one. Language models trained on human ratings or on passing tests show the same pattern, as sycophancy and test tampering."
   },
   {
    "id": "8.3",
    "question": "Can a correct reward still teach the wrong goal?",
-   "takeaway": null
+   "takeaway": "In goal misgeneralization the reward is correct, but the training data fits more than one goal, and the system learns one that agrees with the intended goal only on that data. The two goals earn the same reward in training, so the difference shows only in new situations. A small share of training cases where the goals disagree can remove the ambiguity."
   },
   {
    "id": "8.4",
    "question": "Why might agents with different goals act alike?",
-   "takeaway": null
+   "takeaway": "Without knowing an agent’s goal, you can predict where most optimal agents will go: toward states that keep more outcomes reachable, and away from shutdown, when they care about the long run. Leaving one thing out of a proxy is enough for optimization to drive it to its worst value. These are theorems about idealized agents; whether trained systems behave this way is an empirical question."
   },
   {
    "id": "8.5",
@@ -886,7 +886,7 @@
   },
   {
    "name": "The modular-addition transformer",
-   "what": "A one-layer transformer trained on (a + b) mod 113, the model reverse-engineered by Nanda et al. (2023).",
+   "what": "A one-layer transformer trained on (a + b) mod 59, with the architecture reverse-engineered by Nanda et al. (2023), who used mod 113; 59 keeps training feasible on a CPU (see tools/modadd/README.md).",
    "pages": [
     "5.4",
     "5.5",

@@ -137,6 +137,19 @@ function explains() {
   });
 }
 
+// Number sidenotes in document order. (Tufte CSS uses a CSS counter, which current
+// Chrome does not carry across paragraphs, so every note showed "1".)
+function sidenotes() {
+  let n = 0;
+  document.querySelectorAll('label.sidenote-number').forEach((label) => {
+    n += 1;
+    label.dataset.n = n;
+    const input = document.getElementById(label.htmlFor);
+    const note = input && input.nextElementSibling;
+    if (note && note.classList.contains('sidenote')) note.dataset.n = n;
+  });
+}
+
 function math() {
   if (window.renderMathInElement) {
     window.renderMathInElement(document.body, {
@@ -157,6 +170,7 @@ export function contents(el) {
 }
 
 shell();
+sidenotes();
 tasks();
 checks();
 explains();
