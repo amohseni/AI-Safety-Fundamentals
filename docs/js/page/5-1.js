@@ -164,7 +164,7 @@ function enableDrawing(c, active, onChange) {
     out.innerHTML = `Both networks have <b>${2 * k}</b> units. The sawtooth has ${2 ** k} straight pieces. ` +
       `<span class="c-accent">Deep network</span> (${k} layer${k > 1 ? 's' : ''} of 2): error <b>${ed.toFixed(3)}</b>. ` +
       `<span class="c-second">Shallow network</span> (1 layer of ${2 * k}): error <b>${es.toFixed(3)}</b>, at most ${piecesS} pieces. ` +
-      `To match the sawtooth exactly, one hidden layer needs ${2 ** k - 1} unit${k > 1 ? 's' : ''}.`;
+      `To match the sawtooth exactly, one hidden layer needs at least ${2 ** k - 1} unit${k > 1 ? 's' : ''}.`;
   }
   draw();
 })();

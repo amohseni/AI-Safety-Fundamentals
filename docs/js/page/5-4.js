@@ -98,7 +98,7 @@ async function load() {
   acc.line('train', pts('train_acc'), { color: 'second', label: LBL.train });
   acc.line('test', pts('test_acc'), { color: 'accent', label: LBL.test });
   acc.line('share', run.ckpt.step.map((s, i) => [Math.max(s, 1), run.share[i]]), { color: 'ink', width: 1.2, dash: '4 3', label: LBL.share });
-  acc.spreadLabels(['train', 'test', 'share'], 18);
+  acc.spreadLabels(['train', 'test', 'share'], 22);
   makeFreqChart(run.p, Math.max(...run.ckpt.spectrum.flat()) * 1.05);
   draw();
 }
