@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3.8 Scaling laws</title>
+<meta name="description" content="How a language model's loss falls with parameters, data, and compute, and how to split a compute budget between model size and data.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  .ctl input:disabled { opacity: 0.4; }
+  .btns { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="3.8">
+<article>
+<h1>Scaling laws</h1>
+
+<section>
+<p>Kaplan et al. (2020) trained many language models of different sizes and measured their loss on held-out text, the average next-token cross-entropy (Section 2.5).<label for="sn-kaplan" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-kaplan" class="margin-toggle"><span class="sidenote">Kaplan et al. (2020), &ldquo;Scaling Laws for Neural Language Models,&rdquo; arXiv:2001.08361.</span> <span class="claim">Empirical finding</span> The loss fell as a power law in the number of parameters \(N\), in the number of training tokens \(D\), and in the training compute \(C\), each as long as the other two were not the bottleneck, with some trends spanning more than seven orders of magnitude. On a plot with logarithmic axes, each of these relations is close to a straight line.</p>
+
+<p>Training compute is about \(C \approx 6ND\) floating-point operations (FLOPs): about 6 for each parameter and each training token, counting the forward and backward passes. So a fixed budget can buy a large model trained on few tokens, or a small model trained on many. Hoffmann et al. (2022) trained over 400 models to find the best split, and fitted this formula for the loss:<label for="sn-hoffmann" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-hoffmann" class="margin-toggle"><span class="sidenote">Hoffmann et al. (2022), &ldquo;Training Compute-Optimal Large Language Models,&rdquo; NeurIPS; the fit is their Approach 3. The paper&rsquo;s text rounds the constants. The tool uses the unrounded values from the paper&rsquo;s source, \(E = 1.6934\), \(\alpha = 0.3392\), \(\beta = 0.2849\), as reported by Besiroglu et al. (2024), &ldquo;Chinchilla Scaling: A replication attempt,&rdquo; arXiv:2404.10102. They reproduce the paper&rsquo;s own statements about this fit; the rounded values do not.</span></p>
+$$L(N, D) = E + \frac{A}{N^{\alpha}} + \frac{B}{D^{\beta}},$$
+<p>with \(E \approx 1.69\), \(A = 406.4\), \(B = 410.7\), \(\alpha \approx 0.34\), and \(\beta \approx 0.28\). \(E\) is the loss that would remain with unlimited parameters and data. The second term shrinks as the model grows, and the third as the data grows. With \(C\) fixed, a larger \(N\) means a smaller \(D = C/6N\), so the two terms pull in opposite directions, and some model size gives the lowest loss.</p>
+</section>
+
+<section>
+<h2>Spend a compute budget</h2>
+<p>Each task below asks for a prediction first. Make it, then use the tool to check it.</p>
+
+<div class="tool" id="tool">
+  <div class="row">
+    <div class="controls" id="controls"></div>
+    <div class="stage" id="chart"></div>
+  </div>
+  <p class="panel-note">The curve shows the loss the formula predicts for every model size, if the whole budget is spent on training it: \(D = C/6N\). <span class="c-accent">Your choice</span> is the dot; drag along the curve, or use the sliders. The grey dot marks the lowest point. With serving switched on, the budget must also pay for answering users after training, at about \(2N\) FLOPs per token served, and the <span class="c-second">curve with serving</span> is drawn as well.</p>
+  <p class="readout" id="readout" aria-live="polite"></p>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="3.8-t1">
+    <p class="prompt">With a budget of \(5.76 \times 10^{23}\) FLOPs, which model reaches the lower loss: 70 billion parameters, or 280 billion?</p>
+    <div class="choices" data-options="70 billion|280 billion|About the same"></div>
+    <div class="after"><p>Press &ldquo;Chinchilla&rsquo;s budget,&rdquo; then the 70B and 280B buttons.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The 70-billion-parameter model reaches 1.922; the 280-billion model reaches 1.959. With this budget the 70B model gets 1.37 trillion training tokens, about 20 per parameter, and the 280B model only 0.34 trillion. The formula&rsquo;s lowest point is lower still, at about 40 billion parameters and 2.4 trillion tokens (loss 1.918).</p></div></div>
+  </li>
+  <li class="task" data-id="3.8-t2">
+    <p class="prompt">Multiply the budget by 10. By about how much does the best model size grow?</p>
+    <div class="choices" data-options="About 10 times|About 3 times|It does not change"></div>
+    <div class="after"><p>Press &ldquo;Best size,&rdquo; note \(N\), press &ldquo;Budget &times; 10,&rdquo; and press &ldquo;Best size&rdquo; again.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The best \(N\) grows about 2.9 times, from 40 to 115 billion, and the best \(D\) about 3.5 times. Both grow, and by similar factors. A tenfold budget split evenly between the two would multiply each by \(\sqrt{10} \approx 3.2\).</p></div></div>
+  </li>
+  <li class="task" data-id="3.8-t3">
+    <p class="prompt">Go back to Chinchilla&rsquo;s budget and switch serving on, with \(10^{13}\) tokens served. Does the best model get larger or smaller?</p>
+    <div class="choices" data-options="Larger|Smaller|It does not change"></div>
+    <div class="after"><p>Switch serving on and off and watch the grey dot.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Smaller: about 12.5 billion parameters instead of 40, trained on more tokens (4.4 trillion instead of 2.4). Every token served costs about \(2N\), so a smaller model leaves more of the budget for training. The more tokens served, the smaller the best model.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>What Chinchilla showed</h2>
+<p><span class="claim">Empirical finding</span> Hoffmann et al. tested their prediction with Chinchilla, a 70-billion-parameter model trained on 1.4 trillion tokens. It outperformed the 280-billion-parameter Gopher, trained on 300 billion tokens with about the same compute, on a large range of downstream tasks. Their three ways of estimating the best split all found that the best \(N\) and \(D\) both grow roughly as the square root of compute (exponents 0.50, 0.49, and 0.46 for \(N\)). The first two give about 20 tokens per parameter across the budgets they consider, which is how Chinchilla was sized: 1.4 trillion tokens for 70 billion parameters.</p>
+<p>The fitted formula in the tool, their third way, gives a different number. At Chinchilla&rsquo;s budget its best split is about 60 tokens per parameter, and the best ratio grows with the budget, from about 19 at \(10^{18}\) FLOPs to about 90 at \(10^{26}\). <span class="claim">Empirical finding</span> Besiroglu et al. (2024) refitted the formula to the paper&rsquo;s data and found that the published fit was poorly converged; their refit agrees with the first two methods, at about 20 tokens per parameter. So the tool&rsquo;s exact numbers come from one fitted formula, and the paper&rsquo;s main result is the rule of about 20 tokens per parameter.</p>
+
+<figure id="fig-frontier" aria-describedby="fig-frontier-desc"></figure>
+<p id="fig-frontier-desc" class="caption">Predicted loss against training compute for five model sizes, from the fitted formula. Each curve flattens, because a model of fixed size cannot get below \(E + A/N^{\alpha}\) however long it trains. The <span class="c-accent">compute-optimal frontier</span> runs along their lower edge: for each budget, the size that reaches the lowest loss.</p>
+
+<p><span class="claim">Argument</span> Labs often train smaller models on more data than the compute-optimal split, because a smaller model is cheaper to run for every user once it is deployed.<label for="sn-llama" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-llama" class="margin-toggle"><span class="sidenote">Touvron et al. (2023), &ldquo;LLaMA: Open and Efficient Foundation Language Models,&rdquo; arXiv:2302.13971, trained a 7-billion-parameter model on 1 trillion tokens for this reason. Sardana et al. (2024), &ldquo;Beyond Chinchilla-Optimal: Accounting for Inference in Language Model Scaling Laws,&rdquo; ICML, work out the split with serving costs included.</span></p>
+<p>Scaling laws predict the loss, the average over all next tokens. They do not directly predict which tasks a model will be able to do; Section 5.6 looks at abilities that seem to appear suddenly as models grow.</p>
+</section>
+
+<div class="check" data-id="3.8-c1" data-correct="0">
+  <p class="label">Check</p>
+  <p class="q">A lab has 100 times Chinchilla&rsquo;s compute (70 billion parameters, 1.4 trillion tokens) and follows the rule of about 20 tokens per parameter, with \(C \approx 6ND\). Which model should it train?</p>
+  <div class="options seg"><button>700 billion parameters on 14 trillion tokens</button><button>7 trillion parameters on 1.4 trillion tokens</button><button>70 billion parameters on 140 trillion tokens</button></div>
+  <div class="feedback"><p>With \(D = 20N\), compute is \(C \approx 120N^2\), so 100 times the compute means \(\sqrt{100} = 10\) times the parameters and 10 times the tokens.</p></div>
+</div>
+
+<div class="check" data-id="3.8-c2" data-correct="1">
+  <p class="q">A scaling law predicts that a new model ten times larger will have a lower loss. What does that tell you about whether it will be able to do three-digit multiplication?</p>
+  <div class="options seg"><button>It will, because lower loss means every task improves</button><button>Not directly: the law predicts the next-token loss averaged over all text, and one task is a small part of that average</button><button>It will not, because loss and abilities are unrelated</button></div>
+  <div class="feedback"><p>The loss is an average over all the next tokens in the test text. A lower average is compatible with large gains on some tasks and none on others.</p></div>
+</div>
+
+<div class="explain" data-id="3.8-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: why is there a best model size for a fixed compute budget?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>A language model&rsquo;s loss falls predictably, roughly as a power law, as parameters, data, and compute grow. With training compute about \(6ND\), a fixed budget has a best split between model size and data; Hoffmann et al. found that both should grow roughly as the square root of compute, at about 20 tokens per parameter. Counting the cost of serving moves the best choice toward smaller models trained on more data. Scaling laws predict the average loss, and do not directly predict specific abilities.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/3-8.js"></script>
+</body>
+</html>

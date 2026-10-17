@@ -116,7 +116,7 @@ export const sections = [
         "id": "3.1",
         "title": "Tokens",
         "core": false,
-        "href": null
+        "href": "pages/3-1.html"
       },
       {
         "id": "3.2",
@@ -134,7 +134,7 @@ export const sections = [
         "id": "3.4",
         "title": "Attention",
         "core": true,
-        "href": null
+        "href": "pages/3-4.html"
       },
       {
         "id": "3.5",
@@ -158,7 +158,7 @@ export const sections = [
         "id": "3.8",
         "title": "Scaling laws",
         "core": false,
-        "href": null
+        "href": "pages/3-8.html"
       }
     ]
   },

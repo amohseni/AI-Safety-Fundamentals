@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3.4 Attention</title>
+<meta name="description" content="Attention as each position taking a weighted average of earlier positions' values, with weights from query-key dot products passed through softmax.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  #controls { flex-direction: row; flex-wrap: wrap; gap: 0.9rem 1.6rem; max-width: none; margin-bottom: 1.2rem; align-items: flex-end; }
+  .planes { display: flex; flex-wrap: wrap; gap: 1.2rem 1.6rem; align-items: flex-start; }
+  .planes > div { flex: 1 1 18rem; min-width: 0; max-width: 26rem; }
+  .handle { cursor: grab; outline: none; }
+  .handle:focus-visible .ring { stroke: var(--focus); stroke-width: 2; }
+  table.wts { border-collapse: collapse; margin: 0.4rem 0 0; font-variant-numeric: lining-nums tabular-nums; }
+  table.wts th, table.wts td { white-space: nowrap; padding: 0.15rem 0.45rem; text-align: right; font-weight: normal; }
+  table.wts th { color: var(--quiet); }
+  table.wts tr.sel th { color: var(--accent); }
+  table.wts tbody tr { cursor: pointer; }
+  table.wts td.masked { color: var(--quiet); }
+  .small-title { margin: 0 0 0.2rem; }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="3.4">
+<article>
+<h1>Attention</h1>
+
+<section>
+<p>A transformer keeps one vector for each position in its input, one per token. Attention is the only step in which information moves between positions. Every other step acts on each position separately.</p>
+
+<p>At each position, a layer computes three vectors from the vector that position carries (its residual stream, Section 3.6): a <em>query</em>, which describes what the position is looking for; a <em>key</em>, which describes what the position offers to positions that look at it; and a <em>value</em>, which is what the position passes along when another position attends to it. Position \(i\) takes the dot product of its query with the key of every position \(j\) it is allowed to see, divides each product by \(\sqrt{d_k}\), where \(d_k\) is the length of the query and key vectors, and turns the results into <em>attention weights</em> with softmax (these are computed for each input, and are not parameters), which takes the exponential of each score and divides by the sum of the exponentials, so the weights are positive and add up to 1. Position \(i\) receives the weighted average of the values. In a language model, a position may attend only to itself and earlier positions; this restriction is called the <em>causal mask</em>. In matrix form, with one row per position,<label for="sn-vaswani" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-vaswani" class="margin-toggle"><span class="sidenote">Vaswani et al. (2017), &ldquo;Attention Is All You Need,&rdquo; NeurIPS. Attention between two sequences was introduced earlier for translation by Bahdanau, Cho, and Bengio (2014), &ldquo;Neural Machine Translation by Jointly Learning to Align and Translate,&rdquo; published at ICLR 2015. For a visual introduction, see 3Blue1Brown (2024), &ldquo;Attention in transformers, visually explained,&rdquo; chapter 6 of the series on deep learning.</span></p>
+$$\mathrm{Attention}(Q, K, V) = \mathrm{softmax}\!\left(\frac{QK^{\top}}{\sqrt{d_k}} + M\right) V,$$
+<p>where the mask \(M\) is 0 for allowed pairs and \(-\infty\) for later positions, so those get weight 0. The query, key, and value vectors come from three learned weight matrices, so what each position looks for, and what it offers, is learned in training.</p>
+</section>
+
+<section>
+<h2>Attention by hand</h2>
+<p>Four tokens, each with a query and a key in the plane, so \(d_k = 2\). Each task below asks for a prediction first. Make it, then use the tool to check it.</p>
+
+<div class="tool" id="tool">
+  <div class="controls" id="controls"></div>
+  <div class="planes">
+    <div><p class="small-title">Queries and keys</p><div id="qk"></div></div>
+    <div><p class="small-title" id="vo-title">Values and the output</p><div id="vo"></div></div>
+  </div>
+  <p class="panel-note">Drag the tip of <span class="c-accent">the selected token&rsquo;s query</span> or of any key, or select a tip with the Tab key and move it with the arrow keys. A key snaps onto another key when you bring it close. In <em>Values and the output</em>, the thickness of each line from the <span class="c-accent">output</span> to a value shows that value&rsquo;s weight. Keys and values the selected token may not see are drawn faint.</p>
+  <div id="table"></div>
+  <p class="readout" id="readout" aria-live="polite"></p>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="3.4-t1">
+    <p class="prompt">Make token 4 put a weight above 0.9 on token 2. Will it be enough to turn \(q_4\) so that it points the same way as \(k_2\), keeping its length?</p>
+    <div class="choices" data-options="Yes|No"></div>
+    <div class="after"><p>Select token 4 and turn \(q_4\) toward \(k_2\). Then make \(q_4\) longer.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Pointing \(q_4\) along \(k_2\) at its starting length gives token 2 a weight of only about 0.64. The score is a dot product, so it grows with the lengths of the query and the key as well as with how closely they point the same way. Making \(q_4\) about twice as long, about 2.7, raises the weight above 0.9. Lengthening \(k_2\) works too.</p></div></div>
+  </li>
+  <li class="task" data-id="3.4-t2">
+    <p class="prompt">Drag \(k_3\) onto \(k_2\), so the two keys are identical. How will token 4&rsquo;s weights on tokens 2 and 3 compare?</p>
+    <div class="choices" data-options="Equal, wherever q4 points|Token 2 gets more, because it comes first|It depends on where q4 points"></div>
+    <div class="after"><p>Snap \(k_3\) onto \(k_2\), then move \(q_4\) around.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The two weights stay equal for every \(q_4\). Attention sees a position only through its key: two positions with the same key get the same score, so the same weight, whatever their order.</p></div></div>
+  </li>
+  <li class="task" data-id="3.4-t3">
+    <p class="prompt">With the causal mask on, select token 1 and drag \(q_1\) anywhere. What weight does token 1 put on itself?</p>
+    <div class="choices" data-options="It changes as q1 moves|Always 1|Always 1/4"></div>
+    <div class="after"><p>Try it, then switch the causal mask off.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The weight is always 1. With the mask on, token 1 may see only itself, and softmax over a single score gives weight 1, so token 1&rsquo;s output is its own value whatever its query. With the mask off, token 1 can attend to later tokens; at the starting positions it puts 0.40 of its weight on token 2.</p></div></div>
+  </li>
+  <li class="task" data-id="3.4-t4">
+    <p class="prompt">Select token 4 and click Start over. If you switch the scaling off, so the scores are no longer divided by \(\sqrt{2}\), will token 4&rsquo;s largest weight go up or down?</p>
+    <div class="choices" data-options="Up|Down|It stays the same"></div>
+    <div class="after"><p>Switch the scaling off and on, and watch row 4 of the table.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>It goes up, from 0.45 to 0.48. Without the division every score is larger in size, and the gaps between scores grow, so softmax gives more of the weight to the highest score. This always happens unless all of a token&rsquo;s scores are equal.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>Why the scores are divided by \(\sqrt{d_k}\)</h2>
+<p>In GPT-2 small each query and key has \(d_k = 64\) entries. If their entries are independent with mean 0 and variance 1, the dot product has variance \(d_k\), so without the division its typical size grows with \(d_k\). Large scores make softmax put almost all the weight on one position and make its gradients very small, which slows training. Dividing by \(\sqrt{d_k}\) brings the variance back to 1. <span class="claim">Argument</span> This is the reason Vaswani et al. give for the scaling.</p>
+
+<figure class="multiples" id="fig-attn" aria-describedby="fig-attn-desc"></figure>
+<p id="fig-attn-desc" class="caption">Attention for token 3 of three, computed step by step. Left: its query and the three keys. Middle: the scores \(q_3 \cdot k_j / \sqrt{2}\) are 0.91, 1.65, and &minus;0.98, and softmax turns them into the weights 0.31, 0.65, and 0.05. Right: the output is the weighted average of the three values, so it lies between them, nearest the value of token 2.</p>
+</section>
+
+<div class="check" data-id="3.4-c1" data-correct="1">
+  <p class="label">Check</p>
+  <p class="q">In a model with the causal mask, every position has the same key. What does position 3 receive?</p>
+  <div class="options seg"><button>Its own value, \(v_3\)</button><button>\((v_1 + v_2 + v_3)/3\)</button><button>\((v_1 + v_2 + v_3 + v_4)/4\)</button></div>
+  <div class="feedback"><p>Equal keys give equal scores for any query, so softmax gives equal weights to all the positions position 3 may see: 1/3 each to positions 1, 2, and 3. Position 4 is masked.</p></div>
+</div>
+
+<div class="check" data-id="3.4-c2" data-correct="2">
+  <p class="q">With the causal mask on, which change can make token 2&rsquo;s output depend on token 3?</p>
+  <div class="options seg"><button>Point \(q_2\) along \(k_3\)</button><button>Make \(k_3\) very long</button><button>None of these</button></div>
+  <div class="feedback"><p>The mask gives token 3 a weight of exactly 0 for token 2, whatever the scores, so nothing about token 3 reaches token 2 in this layer.</p></div>
+</div>
+
+<div class="explain" data-id="3.4-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: how does a position decide how much of each earlier position&rsquo;s value to take?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>Attention lets each position take a weighted average of the values at the positions it may see, itself and earlier ones in a language model. The weights come from the dot products of its query with their keys, scaled by \(1/\sqrt{d_k}\) and passed through softmax: a weight is high when a query and a key point the same way and are long. The queries, keys, and values come from learned matrices.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/3-4.js"></script>
+</body>
+</html>
