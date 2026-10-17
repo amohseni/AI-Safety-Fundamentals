@@ -55,14 +55,17 @@ function recompute() {
 
 function build() {
   for (const id of ['fit-chart', 'err-chart']) document.getElementById(id).innerHTML = '';
-  fc = fitChart(document.getElementById('fit-chart'), data, state.deg);
+  // The stages start empty, so their width is read from the tool; charts are drawn at their true width.
+  const avail = document.getElementById('tool').clientWidth || 420;
+  fc = fitChart(document.getElementById('fit-chart'), data, state.deg, { width: Math.min(420, avail) });
   const thr = state.n - 1;
-  ec = chart(document.getElementById('err-chart'), { width: 420, height: 300, margin: { top: 34, right: 54, bottom: 50, left: 58 },
+  ec = chart(document.getElementById('err-chart'), { width: Math.min(420, avail), height: 300, margin: { top: 34, right: 54, bottom: 50, left: 58 },
     x: { domain: [0, 30], label: 'degree', ticks: 6 }, y: { domain: [LO, HI], log: true, ticks: 5, format: pow10, label: 'mean squared error' },
     title: 'Training and test error against degree' });
   if (thr <= 30) ec.vline('thr', thr, { color: 'quiet', label: null });
-  ec.line('train', errs.map((e, d) => [d, clampE(e[0])]), { color: 'accent', label: 'train', labelAt: 0.12, dy: 16 });
-  ec.line('test', errs.map((e, d) => [d, clampE(e[1])]), { color: 'second', label: 'test', labelAt: 0.12, dy: -20 });
+  ec.line('train', errs.map((e, d) => [d, clampE(e[0])]), { color: 'accent', label: 'train' });
+  ec.line('test', errs.map((e, d) => [d, clampE(e[1])]), { color: 'second', label: 'test' });
+  ec.spreadLabels(['train', 'test'], 22);
   draw();
 }
 

@@ -10,7 +10,7 @@ const MAX = { bowl: 3000, valley: 5000, rosenbrock: 20000, two: 1000 };
 const OPT = { gd: 'plain gradient descent', momentum: 'momentum', adam: 'Adam' };
 const sig3 = (v) => Number(v.toPrecision(3));
 const SUP = { '-': '⁻', 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹' };
-const pow10 = (d) => { const e = Math.round(Math.log10(d)); return e % 2 !== 0 ? '' : `10${String(e).split('').map((c) => SUP[c]).join('')}`; };
+const pow10 = (d) => { const e = Math.round(Math.log10(d)); return e % 2 !== 0 ? '' : e === 0 ? '1' : `10${String(e).split('').map((c) => SUP[c]).join('')}`; };
 
 // Contour map of a surface inside a chart made by chart().
 function contourMap(c, S) {

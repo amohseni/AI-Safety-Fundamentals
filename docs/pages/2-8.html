@@ -22,7 +22,7 @@
 <h1>Overfitting and generalization</h1>
 
 <section>
-<p>The goal of training is low error on new examples. The error on the training examples is the <em>training error</em>. The error on held-out examples, drawn from the same source but not used in training, is the <em>test error</em>, and it is the estimate of how well the model will do on new data.</p>
+<p>The goal of training is low error on new examples. The error on the training examples is the <em>training error</em>. The error on held-out examples, drawn from the same source but not used in training, is the <em>test error</em>, and it is an estimate of how well the model will do on new data.</p>
 <p>A model with too few parameters cannot fit the pattern in the data; this is <em>underfitting</em>. In the classical picture, a model with too many parameters fits the noise in the training set as well as the pattern; this is <em>overfitting</em>, and test error rises. Classical statistics therefore recommends a model size in between.</p>
 <p>The playground fits polynomials to noisy points from a smooth curve. A polynomial of degree \(d\) has \(d + 1\) coefficients, which play the role of parameters. With 12 points, degree 11 is the lowest degree that can pass through every point exactly. Past degree 11 many polynomials pass through every point, and the fit uses the one whose coefficients have the smallest sum of squares (the minimum-norm solution).<label for="sn-leg" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-leg" class="margin-toggle"><span class="sidenote">The polynomials are written in the Legendre basis, \(f(x) = \sum_{k=0}^{d} c_k P_k(x)\) on \([-1, 1]\), so &ldquo;smallest sum of squares&rdquo; refers to these coefficients \(c_k\). Below the threshold the fit is ordinary least squares, the same in any basis.</span></p>
 </section>
@@ -56,7 +56,7 @@
     <div class="choices" data-options="Still near degree 11|Near degree 23|There will be no peak"></div>
     <div class="after"><p>Set the number of points to 24 and look at the test error curve.</p>
       <button class="show" type="button">Show what to notice</button>
-      <div class="notice"><p>Near degree 23. The peak follows the number of points: it sits at the degree where the polynomial has exactly as many coefficients as there are points, so that it can just barely pass through all of them. With 12 points that is degree 11.</p></div></div>
+      <div class="notice"><p>Near degree 23. The peak follows the number of points: it sits at or near the degree where the polynomial has exactly as many coefficients as there are points, so that it can just barely pass through all of them. With 12 points that is degree 11. Over 100 sets of points we drew, the highest test error was at degree 11 in 97 sets of 12 points, and at degree 23 in 54 sets of 24 points (between 22 and 24 in 84).</p></div></div>
   </li>
   <li class="task" data-id="2.8-t3">
     <p class="prompt">Back at 12 points: what happens to the test error as the degree goes past 11, up to 30?</p>
@@ -70,7 +70,7 @@
 
 <section>
 <h2>Past the threshold</h2>
-<p>The classical picture predicts that test error only rises once a model can fit every training point. The playground shows a peak at that point and a fall after it. <span class="claim">Argument</span> Just at the threshold, only one polynomial passes through every point, and to do so it usually has to swing wildly between them. Past the threshold, the minimum-norm rule picks the smoothest of the many fits that pass through every point, in the sense of the smallest coefficients, and with more coefficients to spread over, that fit can stay smaller between the points.</p>
+<p>The classical picture predicts that test error only rises once a model can fit every training point. The playground shows a peak at that point and a fall after it. <span class="claim">Argument</span> Just at the threshold, only one polynomial passes through every point, and to do so it usually has to swing wildly between them. Past the threshold, the minimum-norm rule picks, of the many fits that pass through every point, the one with the smallest coefficients, and with more coefficients to spread the fit over, that fit can stay smaller between the points.</p>
 <p><span class="claim">Empirical finding</span> Large neural networks have many more parameters than training examples. They can fit randomly relabeled training data perfectly, so they can memorize, and yet on real data they generalize well.<label for="sn-zhang" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-zhang" class="margin-toggle"><span class="sidenote">Zhang, Bengio, Hardt, Recht, and Vinyals (2017), &ldquo;Understanding deep learning requires rethinking generalization,&rdquo; <em>International Conference on Learning Representations</em>.</span> That combination contradicts the classical picture. Section 5.3 shows what happens instead, including the second descent seen here, which is called double descent. Regularization methods, such as weight decay (a penalty on large parameters), dropout, and stopping training early, reduce overfitting in both pictures.</p>
 </section>
 
@@ -78,7 +78,7 @@
   <p class="label">Check</p>
   <p class="q">A model&rsquo;s training error is zero. What do you know about its test error?</p>
   <div class="options seg"><button>It is also zero</button><button>It must be large, because the model has overfit</button><button>Nothing yet; it has to be measured on held-out data</button></div>
-  <div class="feedback"><p>Zero training error is consistent with any test error. In the playground, degrees 11 and 30 both have zero training error, and their test errors differ by a factor of millions. Only held-out data tells them apart.</p></div>
+  <div class="feedback"><p>Zero training error is consistent with any test error. In the playground, degrees 11 and 30 both have zero training error, and for the first set of points their test errors are about 300,000 and 1.0. Only held-out data tells them apart.</p></div>
 </div>
 
 <div class="check" data-id="2.8-c2" data-correct="1">

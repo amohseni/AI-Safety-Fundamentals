@@ -36,7 +36,7 @@ $$\text{output} = f(w \cdot x + b).$$
 
 <section>
 <h2>Perceptron playground, neuron mode</h2>
-<p>The <span class="c-accent">arrow</span> is the weight vector \(w\), drawn from the origin at one quarter of its length. Drag its tip, or select the picture and use the arrow keys (left and right turn it; up and down lengthen and shorten it). The <span class="c-accent">shading</span> shows the neuron&rsquo;s output: the darker, the larger. The black line is where \(w \cdot x + b = 0\). Filled points have label 1, open points label 0, and a ring marks each point on the wrong side of the line.</p>
+<p>The <span class="c-accent">arrow</span> is the weight vector \(w\), drawn from the origin at one quarter of its length. Drag its tip, or select the picture and use the arrow keys (left and right turn it; up and down lengthen and shorten it). The <span class="c-accent">shading</span> shows the neuron&rsquo;s output: the heavier the shading, the larger the output. The solid line is where \(w \cdot x + b = 0\). Filled points have label 1, open points label 0, and a ring marks each point on the wrong side of the line.</p>
 
 <div class="tool" id="tool">
   <div class="row">
@@ -80,8 +80,8 @@ $$\text{output} = f(w \cdot x + b).$$
 
 <section>
 <h2>What the arrow and the bias do</h2>
-<p><span class="claim">Theorem</span> The line \(w \cdot x + b = 0\) is perpendicular to \(w\), and its distance from the origin is \(|b| / \lVert w \rVert\). So the direction of \(w\) sets the line&rsquo;s orientation, and the bias, measured against the length of \(w\), sets its position. The length of \(w\) also sets how fast the sum changes as an input crosses the line, which is how sharp the transition in the output is. Multiplying \(w\) and \(b\) by the same positive number leaves the line where it is and sharpens the transition.</p>
-<p>A neuron&rsquo;s output depends on the input only through the sum \(w \cdot x + b\), which is the signed distance from the line, multiplied by \(\lVert w \rVert\). So a single neuron, whatever its activation function, can separate two classes only with a line, or in more dimensions a hyperplane. This is the perceptron&rsquo;s limit from Section 1.2, and it is why networks stack neurons in layers (Sections 2.3 and 2.4).</p>
+<p><span class="claim">Theorem</span> For any weight vector \(w\) other than zero, the line \(w \cdot x + b = 0\) is perpendicular to \(w\), and its distance from the origin is \(|b| / \lVert w \rVert\). So the direction of \(w\) sets the line&rsquo;s orientation, and the bias, measured against the length of \(w\), sets its position. The length of \(w\) also sets how fast the sum changes as an input crosses the line, which is how sharp the transition in the output is. Multiplying \(w\) and \(b\) by the same number greater than 1 leaves the line where it is and sharpens the transition.</p>
+<p>A neuron&rsquo;s output depends on the input only through the sum \(w \cdot x + b\), which is the signed distance from the line, multiplied by \(\lVert w \rVert\). Every input on a line parallel to \(w \cdot x + b = 0\) gets the same output. If the activation function never decreases, as with step, sigmoid, and ReLU, then for any threshold, the inputs whose output is above it lie on one side of one such line. So a single neuron with such an activation function can separate two classes only with a line, or in more dimensions a hyperplane. This is the perceptron&rsquo;s limit from Section 1.2, and it is why networks stack neurons in layers (Sections 2.3 and 2.4).</p>
 </section>
 
 <div class="check" data-id="2.2-c1" data-correct="1">
@@ -100,7 +100,7 @@ $$\text{output} = f(w \cdot x + b).$$
 
 <div class="takeaway">
   <p class="label">Takeaway</p>
-  <p>A neuron computes \(f(w \cdot x + b)\). The direction of \(w\) sets the orientation of the line or hyperplane \(w \cdot x + b = 0\), the bias and the length of \(w\) together set its position, and the length of \(w\) sets how sharp the output&rsquo;s transition is. Whatever the activation function, one neuron divides its input space with one hyperplane.</p>
+  <p>A neuron computes \(f(w \cdot x + b)\). The direction of \(w\) sets the orientation of the line or hyperplane \(w \cdot x + b = 0\), the bias and the length of \(w\) together set its position, and the length of \(w\) sets how sharp the output&rsquo;s transition is. With an activation function that never decreases, one neuron divides its input space with one hyperplane.</p>
 </div>
 </article>
 <script type="module" src="../js/site.js"></script>

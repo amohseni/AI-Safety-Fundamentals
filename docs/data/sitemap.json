@@ -44,7 +44,7 @@
   {
    "id": "2.2",
    "question": "What does one neuron compute?",
-   "takeaway": "A neuron computes \\(f(w \\cdot x + b)\\). The direction of \\(w\\) sets the orientation of the line or hyperplane \\(w \\cdot x + b = 0\\), the bias and the length of \\(w\\) together set its position, and the length of \\(w\\) sets how sharp the output’s transition is. Whatever the activation function, one neuron divides its input space with one hyperplane."
+   "takeaway": "A neuron computes \\(f(w \\cdot x + b)\\). The direction of \\(w\\) sets the orientation of the line or hyperplane \\(w \\cdot x + b = 0\\), the bias and the length of \\(w\\) together set its position, and the length of \\(w\\) sets how sharp the output’s transition is. With an activation function that never decreases, one neuron divides its input space with one hyperplane."
   },
   {
    "id": "2.3",
@@ -64,7 +64,7 @@
   {
    "id": "2.6",
    "question": "How does training find good parameters?",
-   "takeaway": "Gradient descent repeatedly steps against the gradient of the loss. The learning rate must be small enough for the steepest direction, which makes progress slow along flat directions; momentum and Adam speed up that progress. Training uses noisy minibatch gradients because they are far cheaper, and the noise changes which minimum training ends in."
+   "takeaway": "Gradient descent repeatedly steps against the gradient of the loss. The learning rate must be small enough for the steepest direction, which makes progress slow along flat directions; momentum, and Adam at a suitable learning rate, speed up that progress. Training uses noisy minibatch gradients because they are far cheaper, and the noise changes which minimum training ends in."
   },
   {
    "id": "2.7",

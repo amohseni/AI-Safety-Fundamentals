@@ -18,7 +18,7 @@ const MAX_STEPS = 2000, LR = 0.01, LO = -1.2, HI = 1.2, GRID = 300;
     const box = document.createElement('div');
     box.innerHTML = `<p class="small-title">${name}</p>`;
     fig.append(box);
-    const c = chart(box, { width: 220, height: 190, margin: { top: 16, right: 14, bottom: 34, left: 40 }, x: { domain: [-3, 3], ticks: 3 }, y: { domain: yd, ticks: 3 }, title: `${name} activation function` });
+    const c = chart(box, { width: 300, height: 190, margin: { top: 16, right: 14, bottom: 34, left: 40 }, x: { domain: [-3, 3], ticks: 3 }, y: { domain: yd, ticks: 3 }, title: `${name} activation function` });
     c.line('f', d3.range(-3, 3.001, 0.05).map((z) => [z, f(z)]), { color: 'ink', width: 2 });
   }
   // Softmax of the scores (2, 1, 0).
