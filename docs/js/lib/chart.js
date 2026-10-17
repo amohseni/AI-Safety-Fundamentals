@@ -8,7 +8,7 @@ export function chart(container, opts) {
   const { height = 320, margin = { top: 34, right: 120, bottom: 52, left: 60 }, x: xo, y: yo, title } = opts;
   // Draw at the container's real width (capped), so text stays at its set size on phones.
   const avail = container.clientWidth || opts.width || 560;
-  const width = Math.max(280, Math.min(opts.width || 560, avail));
+  const width = Math.max(200, Math.min(opts.width || 560, avail));
   const svg = d3.select(container).append('svg')
     .attr('class', 'chart').attr('viewBox', `0 0 ${width} ${height}`).attr('width', width).attr('height', height)
     .attr('role', 'img').attr('aria-label', title || '');

@@ -22,7 +22,7 @@
     --ink: #e6e4dc;
     --quiet: #a3a196;
     --rule: #3b3a34;
-    --faint: #22221f;
+    --faint: #2c2b27;
     --accent: #8fa8ec;
     --second: #dba64a;
     --good: #8cc488;
@@ -31,7 +31,7 @@
   }
 }
 :root[data-theme="dark"] {
-  --paper: #161614; --ink: #e6e4dc; --quiet: #a3a196; --rule: #3b3a34; --faint: #22221f;
+  --paper: #161614; --ink: #e6e4dc; --quiet: #a3a196; --rule: #3b3a34; --faint: #2c2b27;
   --accent: #8fa8ec; --second: #dba64a; --good: #8cc488; --bad: #e08a80; --focus: #8fa8ec;
 }
 
