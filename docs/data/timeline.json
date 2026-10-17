@@ -1,0 +1,703 @@
+{
+ "description": "Events for the timeline on page 1.1. Every date and statement was checked on 2026-10-16 against the source given (source2 is a second source). date is YYYY, YYYY-MM, or YYYY-MM-DD.",
+ "lanes": [
+  [
+   "ideas",
+   "Ideas"
+  ],
+  [
+   "compute",
+   "Computing power and data"
+  ],
+  [
+   "funding",
+   "Funding climate"
+  ]
+ ],
+ "categories": [
+  [
+   "architectures",
+   "Architectures"
+  ],
+  [
+   "training",
+   "Training methods"
+  ],
+  [
+   "data",
+   "Data and hardware"
+  ],
+  [
+   "games",
+   "Games and benchmarks"
+  ],
+  [
+   "funding",
+   "Funding and policy"
+  ]
+ ],
+ "winters": [
+  {
+   "from": 1974,
+   "to": 1980,
+   "label": "first winter",
+   "text": "Funding for AI fell sharply in the US and UK, after the Lighthill report, the Mansfield Amendment, and DARPA’s 1974 cancellation of its speech understanding program. Dates vary by source; 1974 to 1980 is the usual range.",
+   "source": "https://en.wikipedia.org/wiki/AI_winter",
+   "page": "1.2"
+  },
+  {
+   "from": 1987,
+   "to": 1993,
+   "label": "second winter",
+   "text": "The expert-system boom ended: the Lisp machine market collapsed in 1987, DARPA cut AI funding, and many companies abandoned their expert systems. Dates vary by source; some accounts extend it to 2000.",
+   "source": "https://en.wikipedia.org/wiki/AI_winter",
+   "page": "1.3"
+  }
+ ],
+ "events": [
+  {
+   "date": "1943",
+   "lane": "ideas",
+   "cat": "architectures",
+   "label": "McCulloch and Pitts",
+   "title": "A logical model of the neuron",
+   "what": "Warren McCulloch and Walter Pitts described idealized neurons that switch on when their inputs pass a threshold, and showed that networks of them can compute logical functions.",
+   "why": "It is the first mathematical model of a neural network, and the ancestor of the artificial neuron used today.",
+   "page": "2.2",
+   "source": "https://doi.org/10.1007/BF02478259"
+  },
+  {
+   "date": "1950",
+   "lane": "ideas",
+   "cat": "games",
+   "label": "Turing's imitation game",
+   "title": "Turing, “Computing Machinery and Intelligence”",
+   "what": "Alan Turing proposed replacing the question “can machines think?” with a test, the imitation game, and discussed machines that learn.",
+   "why": "It set an early benchmark for machine intelligence and raised the idea of a learning machine.",
+   "source": "https://doi.org/10.1093/mind/LIX.236.433"
+  },
+  {
+   "date": "1956",
+   "lane": "funding",
+   "cat": "funding",
+   "label": "Dartmouth workshop",
+   "title": "The Dartmouth workshop",
+   "what": "A summer research project at Dartmouth College, organized by John McCarthy, Marvin Minsky, Nathaniel Rochester, and Claude Shannon, gathered researchers on machine intelligence.",
+   "why": "It gave the field its name and its first community.",
+   "lore": "The name “artificial intelligence” was coined at the 1956 Dartmouth workshop.",
+   "record": "The name appears in the organizers’ funding proposal, dated August 31, 1955, nearly a year before the workshop met in the summer of 1956.",
+   "source": "https://www.historyofinformation.com/detail.php?id=734"
+  },
+  {
+   "date": "1958-07-08",
+   "lane": "ideas",
+   "cat": "architectures",
+   "label": "Perceptron",
+   "title": "Rosenblatt’s perceptron",
+   "what": "Frank Rosenblatt described the perceptron, a single artificial neuron with a rule that adjusts its parameters after each mistake. The Office of Naval Research demonstrated a version simulated on an IBM 704 computer in July 1958.",
+   "why": "It was the first neural network that learned from examples, and the first to attract wide public attention.",
+   "page": "1.2",
+   "lore": "Rosenblatt’s machine was announced as an electronic brain that would soon walk, talk, see, write, reproduce itself, and be conscious of its existence.",
+   "record": "Those words come from a New York Times story of July 8, 1958 (page 25), which attributed the expectation to the Navy. The demonstration itself was modest: after 50 trials, the IBM 704 taught itself to tell punch cards marked on the left from cards marked on the right.",
+   "source": "https://doi.org/10.1037/h0042519",
+   "source2": "https://nbb.cornell.edu/news/professors-perceptron-paved-way-ai-60-years-too-soon"
+  },
+  {
+   "date": "1965-04-19",
+   "lane": "compute",
+   "cat": "data",
+   "label": "Moore’s law",
+   "title": "Moore’s law",
+   "what": "Gordon Moore observed that the number of components on a chip was doubling every year; in 1975 he revised the rate to every two years.",
+   "why": "Cheaper computation is the slow, steady trend under the whole timeline.",
+   "source": "https://en.wikipedia.org/wiki/Moore%27s_law"
+  },
+  {
+   "date": "1966",
+   "lane": "funding",
+   "cat": "funding",
+   "label": "ALPAC report",
+   "title": "The ALPAC report on machine translation",
+   "what": "A US government committee concluded that machine translation was slower, less accurate, and more expensive than human translation.",
+   "why": "US funding for machine translation was cut sharply, an early sign of the coming winter.",
+   "source": "https://en.wikipedia.org/wiki/AI_winter"
+  },
+  {
+   "date": "1969",
+   "lane": "ideas",
+   "cat": "architectures",
+   "label": "Minsky and Papert",
+   "title": "Minsky and Papert, Perceptrons",
+   "what": "Marvin Minsky and Seymour Papert published a mathematical analysis of what single-layer perceptrons can and cannot compute.",
+   "why": "It proved that a perceptron cannot compute some simple functions, such as XOR, and it became the standard explanation of why neural network research declined.",
+   "page": "1.2",
+   "lore": "The book killed neural network research for more than a decade.",
+   "record": "The book proved limits of single-layer perceptrons. Research on perceptrons was already in trouble: groups at Stanford and SRI had failed to train networks with more than one layer, and symbolic AI was gaining ground in the competition for funding. The sociologist Mikel Olazaran argues that the book was the final push, and that the story of the book as the cause was built later by the side that won the controversy.",
+   "source": "https://doi.org/10.1177/030631296026003005",
+   "source2": "https://www.gwern.net/doc/ai/nn/1993-olazaran.pdf"
+  },
+  {
+   "date": "1969",
+   "lane": "funding",
+   "cat": "funding",
+   "label": "Mansfield Amendment",
+   "title": "The Mansfield Amendment",
+   "what": "The US Congress required military research agencies to fund work with a direct military application.",
+   "why": "DARPA moved away from open-ended AI research, one of the causes of the first winter.",
+   "page": "1.2",
+   "source": "https://en.wikipedia.org/wiki/AI_winter"
+  },
+  {
+   "date": "1970",
+   "lane": "ideas",
+   "cat": "training",
+   "label": "Linnainmaa: reverse mode",
+   "title": "Linnainmaa describes reverse-mode differentiation",
+   "what": "In his master’s thesis at the University of Helsinki, Seppo Linnainmaa described the reverse mode of automatic differentiation, which computes the derivatives of a long chain of operations by working backward through it.",
+   "why": "Backpropagation is reverse-mode differentiation applied to a neural network’s loss. The mathematics was in place 16 years before backpropagation became widely known.",
+   "page": "2.7",
+   "source": "https://www.math.uni-bielefeld.de/documenta/vol-ismp/52_griewank-andreas-b.pdf"
+  },
+  {
+   "date": "1973",
+   "lane": "funding",
+   "cat": "funding",
+   "label": "Lighthill report",
+   "title": "The Lighthill report",
+   "what": "Asked by the UK Science Research Council to assess AI, the mathematician James Lighthill judged that it had failed to deliver on its promises.",
+   "why": "The UK cut most of its AI research funding.",
+   "page": "1.2",
+   "source": "https://en.wikipedia.org/wiki/AI_winter"
+  },
+  {
+   "date": "1974",
+   "lane": "ideas",
+   "cat": "training",
+   "label": "Werbos",
+   "title": "Werbos proposes backpropagation for neural networks",
+   "what": "Paul Werbos’s Harvard PhD thesis, “Beyond Regression,” described training a network by propagating derivatives of the error backward through it.",
+   "why": "It was an early proposal to train neural networks this way, but it went largely unnoticed for a decade.",
+   "page": "2.7",
+   "source": "https://en.wikipedia.org/wiki/Paul_Werbos"
+  },
+  {
+   "date": "1980",
+   "lane": "ideas",
+   "cat": "architectures",
+   "label": "Neocognitron",
+   "title": "Fukushima’s neocognitron",
+   "what": "Kunihiko Fukushima published the neocognitron, a layered network for recognizing patterns in which each unit looks at a small patch of the layer below.",
+   "why": "Its layered, local design is the model for the convolutional networks that later won ImageNet.",
+   "page": "1.4",
+   "source": "https://doi.org/10.1007/BF00344251"
+  },
+  {
+   "date": "1980",
+   "lane": "funding",
+   "cat": "funding",
+   "label": "XCON",
+   "title": "XCON: expert systems go to work",
+   "what": "Digital Equipment Corporation began using XCON, a program of hand-written rules developed by John McDermott at Carnegie Mellon, to configure its computer orders.",
+   "why": "Its reported savings set off the 1980s boom in expert systems.",
+   "page": "1.3",
+   "source": "https://en.wikipedia.org/wiki/Xcon"
+  },
+  {
+   "date": "1982",
+   "lane": "ideas",
+   "cat": "architectures",
+   "label": "Hopfield networks",
+   "title": "Hopfield networks",
+   "what": "John Hopfield described a network of connected units that settles into stored patterns, so it can recall a whole memory from part of it.",
+   "why": "It brought methods from physics into neural network research and helped revive the field. Hopfield shared the 2024 Nobel Prize in Physics for this line of work.",
+   "source": "https://doi.org/10.1073/pnas.79.8.2554"
+  },
+  {
+   "date": "1982",
+   "lane": "funding",
+   "cat": "funding",
+   "label": "Fifth Generation",
+   "title": "Japan’s Fifth Generation project",
+   "what": "Japan’s Ministry of International Trade and Industry began a ten-year national project to build computers for logic programming and AI.",
+   "why": "It prompted large AI programs in the US and UK. The project ended in 1992 without reaching its goals.",
+   "source": "https://en.wikipedia.org/wiki/Fifth_Generation_Computer_Systems"
+  },
+  {
+   "date": "1983",
+   "lane": "funding",
+   "cat": "funding",
+   "label": "Strategic Computing",
+   "title": "DARPA’s Strategic Computing Initiative",
+   "what": "DARPA began a large program to fund AI research aimed at military applications.",
+   "why": "It restored US funding for AI. DARPA cut the program back from 1987.",
+   "source": "https://en.wikipedia.org/wiki/AI_winter"
+  },
+  {
+   "date": "1986-10-09",
+   "lane": "ideas",
+   "cat": "training",
+   "label": "Backpropagation popularized",
+   "title": "Rumelhart, Hinton, and Williams popularize backpropagation",
+   "what": "A short paper in Nature showed that backpropagation trains networks with hidden layers, and that the hidden units learn useful internal representations.",
+   "why": "It made backpropagation the standard way to train neural networks.",
+   "page": "1.3",
+   "source": "https://doi.org/10.1038/323533a0"
+  },
+  {
+   "date": "1987",
+   "lane": "funding",
+   "cat": "funding",
+   "label": "Lisp machines collapse",
+   "title": "The Lisp machine market collapses",
+   "what": "The market for specialized AI computers collapsed as cheaper general-purpose computers caught up with them.",
+   "why": "Together with the high cost of maintaining expert systems, it ended the 1980s boom.",
+   "page": "1.3",
+   "source": "https://en.wikipedia.org/wiki/AI_winter"
+  },
+  {
+   "date": "1989",
+   "lane": "ideas",
+   "cat": "architectures",
+   "label": "LeCun: zip codes",
+   "title": "LeCun’s convolutional network reads zip codes",
+   "what": "Yann LeCun and colleagues at Bell Labs trained a convolutional network with backpropagation to read handwritten zip codes from US mail.",
+   "why": "It is the direct ancestor of the networks that won ImageNet in 2012.",
+   "page": "1.4",
+   "source": "https://doi.org/10.1162/neco.1989.1.4.541"
+  },
+  {
+   "date": "1989-12",
+   "lane": "ideas",
+   "cat": "architectures",
+   "label": "Cybenko",
+   "title": "Cybenko’s universal approximation theorem",
+   "what": "George Cybenko proved that a network with one hidden layer of sigmoid units can approximate any continuous function on a bounded region as closely as wanted, given enough units.",
+   "why": "It showed that neural networks are expressive enough in principle; it says nothing about how to train them.",
+   "page": "5.1",
+   "source": "https://doi.org/10.1007/BF02551274"
+  },
+  {
+   "date": "1991",
+   "lane": "ideas",
+   "cat": "training",
+   "label": "Vanishing gradients",
+   "title": "Hochreiter identifies vanishing gradients",
+   "what": "Sepp Hochreiter’s diploma thesis at the Technical University of Munich analyzed why error signals shrink, or sometimes blow up, as backpropagation passes them through many layers or time steps.",
+   "why": "It explained why deep and recurrent networks trained poorly, and led to the LSTM.",
+   "page": "1.3",
+   "source": "https://people.idsia.ch/~juergen/fundamentaldeeplearningproblem.html"
+  },
+  {
+   "date": "1997-05-11",
+   "lane": "compute",
+   "cat": "games",
+   "label": "Deep Blue",
+   "title": "Deep Blue beats Kasparov",
+   "what": "IBM’s Deep Blue beat the world chess champion Garry Kasparov 3.5 to 2.5 in a six-game match in New York.",
+   "why": "It showed what special-purpose hardware and search could do in a well-defined game.",
+   "lore": "Deep Blue was an artificial intelligence that learned to play chess.",
+   "record": "Deep Blue did not learn in the modern sense. It searched about 200 million positions per second on custom chips and scored them with an evaluation function written by its programmers with advice from grandmasters.",
+   "source": "https://www.ibm.com/history/deep-blue"
+  },
+  {
+   "date": "1997-11-15",
+   "lane": "ideas",
+   "cat": "architectures",
+   "label": "LSTM",
+   "title": "Long short-term memory (LSTM)",
+   "what": "Hochreiter and Schmidhuber introduced the LSTM, a recurrent network with gated memory cells that carry information across many time steps.",
+   "why": "It worked around vanishing gradients in recurrent networks and became the standard model for sequences until the transformer.",
+   "page": "1.3",
+   "source": "https://doi.org/10.1162/neco.1997.9.8.1735"
+  },
+  {
+   "date": "1998-11",
+   "lane": "compute",
+   "cat": "data",
+   "label": "MNIST",
+   "title": "The MNIST dataset",
+   "what": "LeCun and colleagues released MNIST: 60,000 training images and 10,000 test images of handwritten digits.",
+   "why": "It became the standard small benchmark for neural networks for two decades.",
+   "source": "https://doi.org/10.1109/5.726791"
+  },
+  {
+   "date": "2006",
+   "lane": "ideas",
+   "cat": "training",
+   "label": "Deep belief nets",
+   "title": "Hinton, Osindero, and Teh: deep belief networks",
+   "what": "Geoffrey Hinton, Simon Osindero, and Yee-Whye Teh trained a many-layered network one layer at a time, then fine-tuned the whole network.",
+   "why": "It renewed interest in networks with many layers and is often given as the start of “deep learning.”",
+   "lore": "Deep learning began in 2006.",
+   "record": "Networks with several layers had been trained with backpropagation since the 1980s, for example LeCun’s 1989 zip-code reader. What 2006 changed was a training recipe that made deeper networks work, and the start of the name. The layer-by-layer recipe was soon dropped: after 2012, deep networks were trained end to end with backpropagation, ReLU, and GPUs.",
+   "source": "https://doi.org/10.1162/neco.2006.18.7.1527"
+  },
+  {
+   "date": "2007-02-15",
+   "lane": "compute",
+   "cat": "data",
+   "label": "CUDA",
+   "title": "NVIDIA releases CUDA",
+   "what": "NVIDIA released CUDA, which lets programmers run general computations on graphics processors (GPUs).",
+   "why": "GPUs do many multiplications in parallel, which is what training a neural network needs. CUDA made them programmable for that.",
+   "source": "https://en.wikipedia.org/wiki/CUDA"
+  },
+  {
+   "date": "2009-06-15",
+   "lane": "compute",
+   "cat": "data",
+   "label": "GPUs for deep nets",
+   "title": "Deep networks trained on GPUs",
+   "what": "Raina, Madhavan, and Ng reported that training deep belief networks on a GPU was up to 70 times faster than on a dual-core CPU.",
+   "why": "It showed that GPUs could make large neural networks practical to train.",
+   "source": "https://icml.cc/imls/conferences/2009/papers/218.pdf"
+  },
+  {
+   "date": "2009-06-20",
+   "lane": "compute",
+   "cat": "data",
+   "label": "ImageNet",
+   "title": "The ImageNet dataset",
+   "what": "Fei-Fei Li’s group presented ImageNet, millions of images labeled by crowd workers with thousands of categories. The ImageNet challenge, using 1.2 million training images in 1,000 categories, began in 2010.",
+   "why": "It was the large labeled dataset that deep networks needed, and its yearly challenge became the field’s scoreboard.",
+   "page": "1.4",
+   "source": "https://doi.org/10.1109/CVPR.2009.5206848"
+  },
+  {
+   "date": "2012-09-30",
+   "lane": "ideas",
+   "cat": "games",
+   "label": "AlexNet",
+   "title": "AlexNet wins ImageNet",
+   "what": "A convolutional network from Krizhevsky, Sutskever, and Hinton, trained on two GPUs, won the ImageNet challenge with a top-5 error of 15.3% (16.4% without extra training data). The runner-up had 26.2%.",
+   "why": "The size of the margin convinced the field that large neural networks trained on GPUs worked, and the field changed within a few years.",
+   "page": "1.4",
+   "source": "https://image-net.org/challenges/LSVRC/2012/results.html",
+   "source2": "https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks"
+  },
+  {
+   "date": "2013-01-16",
+   "lane": "ideas",
+   "cat": "architectures",
+   "label": "word2vec",
+   "title": "word2vec",
+   "what": "Tomas Mikolov and colleagues at Google trained simple networks to predict words from their neighbors, producing a vector for each word.",
+   "why": "Directions in the learned space captured relations between words, an early sign of the linear structure studied in interpretability.",
+   "page": "3.2",
+   "source": "https://arxiv.org/abs/1301.3781"
+  },
+  {
+   "date": "2013-12-19",
+   "lane": "ideas",
+   "cat": "games",
+   "label": "DQN plays Atari",
+   "title": "DQN learns Atari games from pixels",
+   "what": "DeepMind trained a network with reinforcement learning to play Atari games from the screen pixels and the score alone.",
+   "why": "It combined deep networks with reinforcement learning, the line of work that led to AlphaGo.",
+   "source": "https://arxiv.org/abs/1312.5602"
+  },
+  {
+   "date": "2014-01-26",
+   "lane": "funding",
+   "cat": "funding",
+   "label": "Google buys DeepMind",
+   "title": "Google acquires DeepMind",
+   "what": "Google bought DeepMind, a London company founded in 2010 to build general AI.",
+   "why": "It was an early sign that large technology companies would pay heavily for deep learning research.",
+   "source": "https://en.wikipedia.org/wiki/Google_DeepMind"
+  },
+  {
+   "date": "2014-06-10",
+   "lane": "ideas",
+   "cat": "architectures",
+   "label": "GANs",
+   "title": "Generative adversarial networks",
+   "what": "Ian Goodfellow and colleagues trained two networks against each other: one generates samples, and the other tries to tell them from real data.",
+   "why": "It was the leading method for generating realistic images for several years.",
+   "source": "https://arxiv.org/abs/1406.2661"
+  },
+  {
+   "date": "2014-09-01",
+   "lane": "ideas",
+   "cat": "architectures",
+   "label": "Attention",
+   "title": "Sequence-to-sequence learning and attention",
+   "what": "Sutskever, Vinyals, and Le translated sentences with one LSTM that reads the input and another that writes the output. Bahdanau, Cho, and Bengio added attention, which lets the writer look back at any input word.",
+   "why": "Attention is the core operation of the transformer.",
+   "page": "3.4",
+   "source": "https://arxiv.org/abs/1409.0473",
+   "source2": "https://arxiv.org/abs/1409.3215"
+  },
+  {
+   "date": "2014-12-22",
+   "lane": "ideas",
+   "cat": "training",
+   "label": "Adam",
+   "title": "The Adam optimizer",
+   "what": "Diederik Kingma and Jimmy Ba proposed Adam, a version of gradient descent that adapts the step size for each parameter.",
+   "why": "It is still the default optimizer for training large networks.",
+   "page": "2.6",
+   "source": "https://arxiv.org/abs/1412.6980"
+  },
+  {
+   "date": "2015-12-10",
+   "lane": "ideas",
+   "cat": "architectures",
+   "label": "ResNet",
+   "title": "Residual networks (ResNet)",
+   "what": "Kaiming He and colleagues added shortcut connections that let each layer add to its input instead of replacing it, and trained networks with 152 layers.",
+   "why": "Residual connections made very deep networks trainable. Every transformer uses them; the result is the residual stream.",
+   "page": "3.6",
+   "source": "https://arxiv.org/abs/1512.03385"
+  },
+  {
+   "date": "2016-03-15",
+   "lane": "ideas",
+   "cat": "games",
+   "label": "AlphaGo",
+   "title": "AlphaGo beats Lee Sedol",
+   "what": "DeepMind’s AlphaGo beat Lee Sedol, one of the strongest Go players, four games to one in Seoul.",
+   "why": "Go had been expected to resist computers for years. AlphaGo combined networks trained on human games and on self-play with tree search. Its move 37 in game 2, which DeepMind says had a 1 in 10,000 chance of being played by a human, became the best-known example of a machine making a move experts had not considered.",
+   "page": "1.4",
+   "source": "https://deepmind.google/research/breakthroughs/alphago/"
+  },
+  {
+   "date": "2016-05-18",
+   "lane": "compute",
+   "cat": "data",
+   "label": "TPU",
+   "title": "Google announces the TPU",
+   "what": "Google announced the tensor processing unit, a chip designed for neural network computations, which it had used in its data centers for more than a year.",
+   "why": "Chips built for neural networks became a central part of the competition in AI.",
+   "source": "https://en.wikipedia.org/wiki/Tensor_Processing_Unit"
+  },
+  {
+   "date": "2017-06-12",
+   "lane": "ideas",
+   "cat": "architectures",
+   "label": "Transformer",
+   "title": "The transformer: “Attention Is All You Need”",
+   "what": "Vaswani and colleagues at Google built a translation model entirely from attention and feed-forward layers, with no recurrence.",
+   "why": "It is the architecture of every large language model since.",
+   "page": "1.5",
+   "source": "https://arxiv.org/abs/1706.03762"
+  },
+  {
+   "date": "2017-06-12",
+   "lane": "ideas",
+   "cat": "training",
+   "label": "Learning from preferences",
+   "title": "Deep reinforcement learning from human preferences",
+   "what": "Christiano and colleagues trained a reward model from people’s choices between pairs of short video clips, then trained a policy to maximize that reward.",
+   "why": "It is the method later used to turn language models into assistants.",
+   "page": "4.2",
+   "source": "https://arxiv.org/abs/1706.03741"
+  },
+  {
+   "date": "2018-06-11",
+   "lane": "ideas",
+   "cat": "training",
+   "label": "GPT-1 and BERT",
+   "title": "GPT-1 and BERT",
+   "what": "OpenAI’s GPT-1 (June 2018) and Google’s BERT (October 2018) were transformers pretrained on large amounts of text and then adapted to many tasks.",
+   "why": "Pretraining on unlabeled text, then adapting, became the standard recipe for language.",
+   "page": "1.5",
+   "source": "https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf",
+   "source2": "https://arxiv.org/abs/1810.04805"
+  },
+  {
+   "date": "2019-02-14",
+   "lane": "funding",
+   "cat": "funding",
+   "label": "GPT-2 staged release",
+   "title": "GPT-2 and its staged release",
+   "what": "OpenAI announced GPT-2, a 1.5-billion-parameter language model, but at first released only smaller versions, citing possible misuse. It released the full model on November 5, 2019.",
+   "why": "It was the first public argument over whether to release a model’s parameters.",
+   "page": "1.5",
+   "source": "https://openai.com/index/gpt-2-1-5b-release/"
+  },
+  {
+   "date": "2019-03-13",
+   "lane": "compute",
+   "cat": "training",
+   "label": "The Bitter Lesson",
+   "title": "Sutton, “The Bitter Lesson”",
+   "what": "Richard Sutton argued that, over 70 years, general methods that make use of more computation have beaten methods built on human knowledge.",
+   "why": "It states the view that guided the scaling period.",
+   "page": "1.5",
+   "source": "http://www.incompleteideas.net/IncIdeas/BitterLesson.html"
+  },
+  {
+   "date": "2019-07-22",
+   "lane": "funding",
+   "cat": "funding",
+   "label": "Microsoft and OpenAI",
+   "title": "Microsoft invests $1 billion in OpenAI",
+   "what": "Microsoft agreed to invest $1 billion in OpenAI and to supply its computing.",
+   "why": "Training at the frontier now needed the capital and computers of the largest companies.",
+   "source": "https://techcrunch.com/2019/07/22/microsoft-invests-1-billion-in-openai-in-new-multiyear-partnership/"
+  },
+  {
+   "date": "2020-01-23",
+   "lane": "compute",
+   "cat": "training",
+   "label": "Scaling laws",
+   "title": "Scaling laws for language models",
+   "what": "Kaplan and colleagues at OpenAI found that a language model’s loss falls as a power law in its parameters, training data, and training compute.",
+   "why": "The laws made the results of larger training runs predictable, which justified spending on them.",
+   "page": "3.8",
+   "source": "https://arxiv.org/abs/2001.08361"
+  },
+  {
+   "date": "2020-05-28",
+   "lane": "ideas",
+   "cat": "architectures",
+   "label": "GPT-3",
+   "title": "GPT-3",
+   "what": "OpenAI described GPT-3, a transformer with 175 billion parameters trained to predict the next token.",
+   "why": "It could do many tasks from a few examples in the prompt, without further training.",
+   "page": "1.5",
+   "source": "https://arxiv.org/abs/2005.14165"
+  },
+  {
+   "date": "2020-11-30",
+   "lane": "ideas",
+   "cat": "games",
+   "label": "AlphaFold 2",
+   "title": "AlphaFold 2",
+   "what": "DeepMind’s AlphaFold 2 predicted protein structures from their amino-acid sequences at the CASP14 assessment, with accuracy close to experimental methods for many proteins.",
+   "why": "It was the clearest case of deep learning solving a long-standing scientific problem. Hassabis and Jumper shared the 2024 Nobel Prize in Chemistry for it.",
+   "source": "https://deepmind.google/discover/blog/alphafold-a-solution-to-a-50-year-old-grand-challenge-in-biology/"
+  },
+  {
+   "date": "2022-01-28",
+   "lane": "ideas",
+   "cat": "training",
+   "label": "Chain of thought",
+   "title": "Chain-of-thought prompting",
+   "what": "Wei and colleagues showed that large models answer multi-step problems more accurately when the prompt includes examples of writing out the steps first.",
+   "why": "Writing out steps became a central technique, and later the basis of reasoning models.",
+   "page": "4.4",
+   "source": "https://arxiv.org/abs/2201.11903"
+  },
+  {
+   "date": "2022-03-04",
+   "lane": "ideas",
+   "cat": "training",
+   "label": "InstructGPT",
+   "title": "InstructGPT",
+   "what": "OpenAI fine-tuned GPT-3 on human demonstrations, then trained it with reinforcement learning against a reward model of human preferences.",
+   "why": "This is the recipe that turned a base model into an assistant, and the method behind ChatGPT.",
+   "page": "4.1",
+   "source": "https://arxiv.org/abs/2203.02155"
+  },
+  {
+   "date": "2022-03-29",
+   "lane": "compute",
+   "cat": "training",
+   "label": "Chinchilla",
+   "title": "Chinchilla",
+   "what": "Hoffmann and colleagues at DeepMind found that, for a fixed compute budget, models should be smaller and trained on more data than before: about 20 tokens per parameter.",
+   "why": "It changed how compute budgets were split between model size and data.",
+   "page": "3.8",
+   "source": "https://arxiv.org/abs/2203.15556"
+  },
+  {
+   "date": "2022-11-30",
+   "lane": "funding",
+   "cat": "funding",
+   "label": "ChatGPT",
+   "title": "ChatGPT",
+   "what": "OpenAI released ChatGPT, a chat assistant built on a GPT-3.5 model with the InstructGPT recipe.",
+   "why": "It brought language models to the public, and investment in AI rose sharply.",
+   "page": "4.1",
+   "source": "https://openai.com/index/chatgpt/"
+  },
+  {
+   "date": "2023-02-24",
+   "lane": "funding",
+   "cat": "funding",
+   "label": "Llama",
+   "title": "Meta’s Llama models",
+   "what": "Meta released LLaMA, a family of language models whose parameters researchers could download, followed by Llama 2 in July 2023 under a license that allowed commercial use.",
+   "why": "Open-weight models let researchers outside the largest labs study and modify strong models.",
+   "source": "https://arxiv.org/abs/2302.13971"
+  },
+  {
+   "date": "2023-03-14",
+   "lane": "ideas",
+   "cat": "games",
+   "label": "GPT-4",
+   "title": "GPT-4",
+   "what": "OpenAI released GPT-4, which accepts text and images and scored in the top 10% of test takers on a simulated bar exam, according to its technical report.",
+   "why": "It marked the point where language models passed many exams designed for people.",
+   "source": "https://arxiv.org/abs/2303.08774"
+  },
+  {
+   "date": "2023-11-01",
+   "lane": "funding",
+   "cat": "funding",
+   "label": "AI Safety Summit",
+   "title": "The first AI Safety Summit",
+   "what": "The UK government hosted the first international AI Safety Summit at Bletchley Park on November 1 and 2, 2023.",
+   "why": "Risks from advanced AI became a subject for governments.",
+   "page": "8.6",
+   "source": "https://www.gov.uk/government/topical-events/ai-safety-summit-2023/about"
+  },
+  {
+   "date": "2024-08-01",
+   "lane": "funding",
+   "cat": "funding",
+   "label": "EU AI Act",
+   "title": "The EU AI Act enters into force",
+   "what": "The European Union’s AI Act, a law regulating AI systems by their level of risk, entered into force, with its obligations phased in over the following years.",
+   "why": "It is the first broad law regulating AI.",
+   "source": "https://www.rpclegal.com/snapshots/technology-digital/autumn-2024/eu-ai-act-into-force-1-august-2024/"
+  },
+  {
+   "date": "2024-09-12",
+   "lane": "ideas",
+   "cat": "training",
+   "label": "o1",
+   "title": "OpenAI o1, a reasoning model",
+   "what": "OpenAI released o1-preview, a model trained with reinforcement learning to write a long chain of thought before answering.",
+   "why": "It was the first widely released reasoning model, and showed that spending more computation at answer time improves results.",
+   "page": "4.4",
+   "source": "https://openai.com/index/learning-to-reason-with-llms/"
+  },
+  {
+   "date": "2024-10-08",
+   "lane": "funding",
+   "cat": "funding",
+   "label": "Nobel Prizes",
+   "title": "Nobel Prizes for neural networks and AlphaFold",
+   "what": "The 2024 Nobel Prize in Physics went to John Hopfield and Geoffrey Hinton for work that enables machine learning with neural networks. The Chemistry prize went half to David Baker for protein design and half to Demis Hassabis and John Jumper for AlphaFold.",
+   "why": "Neural networks were recognized as a scientific contribution in physics and chemistry.",
+   "source": "https://www.nobelprize.org/prizes/physics/2024/summary/",
+   "source2": "https://www.nobelprize.org/prizes/chemistry/2024/summary/"
+  },
+  {
+   "date": "2025-01-20",
+   "lane": "ideas",
+   "cat": "training",
+   "label": "DeepSeek-R1",
+   "title": "DeepSeek-R1",
+   "what": "DeepSeek released R1, a reasoning model trained largely with reinforcement learning, with its parameters openly available and the method described in a paper.",
+   "why": "It showed that the reasoning-model recipe could be reproduced and published outside the largest US labs.",
+   "page": "4.4",
+   "source": "https://arxiv.org/abs/2501.12948"
+  },
+  {
+   "date": "2025-02-24",
+   "lane": "ideas",
+   "cat": "training",
+   "label": "Coding agents",
+   "title": "Agents for software engineering",
+   "what": "Anthropic released Claude Code (February 2025) and OpenAI released Codex (May 2025): models that work through programming tasks on their own, reading code, running tests, and making changes.",
+   "why": "Models began to carry out long tasks with many steps, which raises new questions about oversight (Section 8).",
+   "page": "8.6",
+   "source": "https://www.anthropic.com/news/claude-3-7-sonnet",
+   "source2": "https://openai.com/index/introducing-codex/"
+  }
+ ]
+}

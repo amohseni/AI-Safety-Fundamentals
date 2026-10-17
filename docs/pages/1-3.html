@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.3 Backpropagation and the second winter</title>
+<meta name="description" content="Backpropagation made multilayer networks trainable in principle; expert systems drove the 1980s boom and its collapse; deep networks still trained poorly because the gradient shrinks as it passes back through many sigmoid layers.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  h1 { hyphens: auto; overflow-wrap: break-word; }
+  .exp { vertical-align: 0.45em; line-height: 0; }
+  #fig-two { gap: 2rem; }
+  #fig-two .rule { font-variant-numeric: lining-nums; line-height: 1.6; margin: 0.4rem 0 0; }
+  #fig-two .rule span { color: var(--quiet); font-style: italic; }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="1.3">
+<article>
+<h1>Backpropagation and the second winter</h1>
+
+<section>
+<p>Backpropagation computes, for every parameter of a network with several layers, how much a small change in that parameter would change the loss. With those numbers, called the gradient, training can adjust all the parameters at once. Section 2.7 explains how the computation works. The method was derived by Seppo Linnainmaa in 1970,<label for="sn-lin" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-lin" class="margin-toggle"><span class="sidenote">Linnainmaa described the reverse mode of automatic differentiation in his 1970 master&rsquo;s thesis at the University of Helsinki. See Griewank (2012), &ldquo;Who invented the reverse mode of differentiation?&rdquo;, <em>Documenta Mathematica</em>, Extra Volume ISMP: 389&ndash;400.</span> proposed for neural networks by Paul Werbos in his 1974 PhD thesis, and became widely known through a 1986 paper by David Rumelhart, Geoffrey Hinton, and Ronald Williams.<label for="sn-rhw" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-rhw" class="margin-toggle"><span class="sidenote">Rumelhart, Hinton, and Williams (1986), &ldquo;Learning representations by back-propagating errors,&rdquo; <em>Nature</em> 323: 533&ndash;536.</span></p>
+
+<p>The AI boom of the 1980s was mostly about expert systems: programs built from if-then rules written down by interviewing human experts. The best-known success, XCON, configured computer orders at Digital Equipment Corporation from 1980. Expert systems worked in narrow settings and were expensive to build and maintain. The market for specialized AI computers, called Lisp machines, collapsed in 1987, and a second winter followed.<label for="sn-nil" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-nil" class="margin-toggle"><span class="sidenote">Nilsson (2009), <em>The Quest for Artificial Intelligence</em>, Cambridge University Press, tells the history of expert systems and the funding cycles. Page 1.1 shows the dates on one axis.</span></p>
+</section>
+
+<figure class="multiples" id="fig-two" aria-describedby="fig-two-desc">
+  <div>
+    <p class="small-title">Knowledge written by hand</p>
+    <p class="rule">IF the patient has a fever<br>AND the patient has a rash<br>THEN measles, certainty 0.7<br><span>one rule of hundreds</span></p>
+  </div>
+  <div>
+    <p class="small-title">Knowledge learned from examples</p>
+    <div id="fig-net"></div>
+  </div>
+</figure>
+<p id="fig-two-desc" class="caption">Two ways to build an AI system in the 1980s. Left: a rule in the style of an expert system (an illustration, not a rule from a real system); every rule and its certainty were written by people. Right: a network with two hidden layers; its parameters, one for each connection, are set by backpropagation from labeled examples.</p>
+
+<section>
+<p>Neural networks kept improving on a smaller scale. Yann LeCun&rsquo;s convolutional networks read handwritten zip codes by 1989, and the LSTM (1997) handled sequences. But networks with many layers trained poorly. In 1991 Sepp Hochreiter identified one reason, in his diploma thesis at the Technical University of Munich.<label for="sn-hoch" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-hoch" class="margin-toggle"><span class="sidenote">Hochreiter (1991), <em>Untersuchungen zu dynamischen neuronalen Netzen</em>, diploma thesis, Technische Universit&auml;t M&uuml;nchen. The analysis was extended in Hochreiter and Schmidhuber (1997), &ldquo;Long short-term memory,&rdquo; <em>Neural Computation</em> 9: 1735&ndash;1780.</span> The tool below lets you find it. It builds a real network with many layers, sets its parameters at random as at the start of training, and computes the gradient by backpropagation.</p>
+</section>
+
+<section>
+<h2>Where did the gradient go?</h2>
+<p>The network has 2 inputs, a number of hidden layers of 16 units each, and one output. Its task is to classify the circles dataset from page 2.4. Each bar shows the size of the gradient for one layer&rsquo;s weight matrix: the root mean square of the gradient&rsquo;s entries, averaged over the whole dataset. The scale is logarithmic, so each step up the axis is ten times larger. Gradient descent changes each parameter in proportion to its gradient, so a layer with a tiny bar barely learns.</p>
+
+<div class="tool" id="tool">
+  <div class="row">
+    <div class="controls" id="controls"></div>
+    <div class="stage" id="chart"></div>
+  </div>
+  <p class="readout" id="readout" aria-live="polite"></p>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="1.3-t1">
+    <p class="prompt">Sigmoid, 10 hidden layers, initial weight scale 1. How does the gradient at layer 1 compare with the gradient at layer 10?</p>
+    <div class="choices" data-options="About the same|About 100 times smaller|More than 100,000 times smaller"></div>
+    <div class="after"><p>Set the controls and read the bars. Press New random start a few times.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p><span class="claim">Empirical finding</span> In the 20 random starts we tested, the gradient at layer 1 was between 400,000 and 17 million times smaller than at layer 10. The bars fall by a roughly constant factor per layer, so on the log scale they form a straight slope. Add layers and the first layers&rsquo; gradients become smaller still: with 20 layers, typically a few trillion times smaller than the last.</p></div></div>
+  </li>
+  <li class="task" data-id="1.3-t2">
+    <p class="prompt">Keep 10 layers and scale 1, and switch the activation function to ReLU. Now how does layer 1 compare with layer 10?</p>
+    <div class="choices" data-options="Still far smaller|Within a factor of about 20|Far larger"></div>
+    <div class="after"><p>Switch to ReLU and try several random starts. Try tanh too.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>With ReLU the bars stay roughly level: in our 20 starts, layer 1&rsquo;s gradient was between 1/14 of and 1.7 times layer 10&rsquo;s. Tanh at scale 1 behaves much the same at this depth (between 0.3 and 6 times). Only the sigmoid makes the gradient collapse.</p></div></div>
+  </li>
+  <li class="task" data-id="1.3-t3">
+    <p class="prompt">Choose tanh and 20 layers. Raise the initial weight scale from 1 to 4. What happens to layer 1&rsquo;s gradient compared with layer 20&rsquo;s?</p>
+    <div class="choices" data-options="It becomes much smaller|It stays about equal|It becomes much larger"></div>
+    <div class="after"><p>Move the scale slider slowly and watch the slope of the bars turn.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The slope reverses. At scale 4, layer 1&rsquo;s gradient was between 130 and 3,600 times larger than layer 20&rsquo;s in our 20 starts: the gradient explodes instead of vanishing. A training step large enough to move the last layers would then throw the first layers&rsquo; parameters far off. With ReLU the bars stay level, but at scale 2 or more every layer&rsquo;s gradient grows together as you add layers; at 20 layers and scale 4 they are all above 100,000.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>Why the gradient vanishes</h2>
+<p>Backpropagation passes the gradient from the output back toward the input one layer at a time. At each layer the gradient is multiplied by that layer&rsquo;s weight matrix and by the derivative of the activation function at each unit. For a chain with one unit per layer, the gradient that reaches the first layer is</p>
+$$\frac{\partial L}{\partial h_1} \;=\; \frac{\partial L}{\partial h_n}\,\prod_{l=2}^{n} w_l\,\sigma'(z_l),$$
+<p>where \(h_l\) is layer \(l\)&rsquo;s activation, \(z_l\) the input to its activation function, and \(w_l\) the weight into it. <span class="claim">Theorem</span> The sigmoid&rsquo;s derivative is never larger than 0.25. With weights of moderate size, each factor in the product is well below 1, and the product shrinks geometrically with the number of layers. That is the vanishing gradient problem. When the factors are larger than 1, the product grows geometrically instead, and the gradient explodes.</p>
+<p>Several fixes came later. The LSTM (1997) routes information through memory cells that are updated by addition, so the signal is not multiplied down at every step. The ReLU activation function has derivative 1 wherever it is active. Starting weights scaled to the layer&rsquo;s width keep each factor near 1.<label for="sn-init" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-init" class="margin-toggle"><span class="sidenote">Glorot and Bengio (2010), &ldquo;Understanding the difficulty of training deep feedforward neural networks,&rdquo; <em>AISTATS</em>; He, Zhang, Ren, and Sun (2015), &ldquo;Delving deep into rectifiers,&rdquo; which recommends scale \(\sqrt{2} \approx 1.41\) for ReLU networks.</span> Residual connections (2015, page 1.4) add each layer&rsquo;s output to its input, which gives the gradient a path around every layer.</p>
+</section>
+
+<div class="check" data-id="1.3-c1" data-correct="1">
+  <p class="label">Check</p>
+  <p class="q">Suppose an activation function&rsquo;s derivative is never larger than 0.5, and each layer&rsquo;s weights multiply the signal by about 1. In a network with 12 layers, at most how large can the gradient at layer 1 be, compared with the gradient at layer 12?</p>
+  <div class="options seg"><button>About 1/12 as large</button><button>About 1/2,000 as large</button><button>The same size</button></div>
+  <div class="feedback"><p>Backpropagation multiplies the gradient by one factor of at most 0.5 for each of the 11 layers between layer 12 and layer 1, and \(0.5^{11} = 1/2{,}048\). The shrinkage is geometric in depth, not proportional to it.</p></div>
+</div>
+
+<div class="check" data-id="1.3-c2" data-correct="0">
+  <p class="q">In the tool, raising the initial weight scale to 4 in a sigmoid network with 10 layers still leaves layer 1&rsquo;s gradient more than 100 times smaller than layer 10&rsquo;s. Why do large weights not cure the problem?</p>
+  <div class="options seg"><button>Large weights push the sigmoid&rsquo;s inputs far from zero, where its derivative is close to zero</button><button>Large weights make the loss zero, so there is nothing to learn</button><button>The sigmoid ignores the size of its input</button></div>
+  <div class="feedback"><p>Each factor is a weight times the sigmoid&rsquo;s derivative. Larger weights raise the first part but push units toward 0 or 1, where the sigmoid is flat and its derivative nearly 0. The two effects partly cancel, and the product stays below 1.</p></div>
+</div>
+
+<div class="explain" data-id="1.3-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: why did deep networks with sigmoid units train poorly, even after backpropagation was known?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>Backpropagation made multilayer networks trainable in principle by 1986, while the 1980s AI boom, built on hand-written expert systems, collapsed into a second winter. Deep networks still trained poorly: backpropagation multiplies the gradient by one factor per layer, the sigmoid makes each factor small, and so the first layers barely learn.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/1-3.js"></script>
+</body>
+</html>

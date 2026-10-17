@@ -1,0 +1,818 @@
+{
+ "description": "Training compute (FLOP) of AI models. All values are from Epoch AI's dataset of notable AI models, as republished by Our World in Data (charts 'artificial-intelligence-training-computation' and 'artificial-intelligence-parameter-count'), read on 2026-10-16. Points with selected=true are the notable models shown on page 1.5; the others are every model in that dataset published before 2010, used on page 1.1. Domains (language, vision, games, other) were assigned on this site.",
+ "datasetUrl": "https://epoch.ai/data/notable-ai-models",
+ "mirrorUrl": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation",
+ "points": [
+  {
+   "name": "Theseus",
+   "date": "1950-07-02",
+   "flop": 40.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Theseus"
+  },
+  {
+   "name": "Perceptron Mark I",
+   "date": "1957-01-01",
+   "flop": 694894.9,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Perceptron%20Mark%20I"
+  },
+  {
+   "name": "Pandemonium (morse)",
+   "date": "1959-02-01",
+   "flop": 600000000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Pandemonium%20%28morse%29"
+  },
+  {
+   "name": "Samuel Neural Checkers",
+   "date": "1959-07-01",
+   "flop": 428400000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Samuel%20Neural%20Checkers"
+  },
+  {
+   "name": "Perceptron (1960)",
+   "date": "1960-03-30",
+   "flop": 720000000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Perceptron%20%281960%29"
+  },
+  {
+   "name": "ADALINE",
+   "date": "1960-06-30",
+   "flop": 6600.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~ADALINE"
+  },
+  {
+   "name": "Linear Decision Functions",
+   "date": "1962-06-01",
+   "flop": 1559250.1,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Linear%20Decision%20Functions"
+  },
+  {
+   "name": "Print Recognition Logic",
+   "date": "1963-01-01",
+   "flop": 22500000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Print%20Recognition%20Logic"
+  },
+  {
+   "name": "Heuristic Reinforcement Learning",
+   "date": "1965-10-01",
+   "flop": 1080000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Heuristic%20Reinforcement%20Learning"
+  },
+  {
+   "name": "LTE speaker verification system",
+   "date": "1966-11-01",
+   "flop": 105917060.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~LTE%20speaker%20verification%20system"
+  },
+  {
+   "name": "Cognitron",
+   "date": "1975-09-01",
+   "flop": 5184000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Cognitron"
+  },
+  {
+   "name": "Neocognitron",
+   "date": "1980-04-01",
+   "flop": 273738240.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Neocognitron"
+  },
+  {
+   "name": "ASE+ACE",
+   "date": "1983-09-01",
+   "flop": 324000000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~ASE%2BACE"
+  },
+  {
+   "name": "Distributed representation NN",
+   "date": "1986-08-15",
+   "flop": 388800000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Distributed%20representation%20NN"
+  },
+  {
+   "name": "MLP with back-propagation",
+   "date": "1986-10-01",
+   "flop": 673920000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~MLP%20with%20back-propagation"
+  },
+  {
+   "name": "NetTalk (dictionary)",
+   "date": "1987-06-06",
+   "flop": 27664064000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~NetTalk%20%28dictionary%29"
+  },
+  {
+   "name": "NetTalk (transcription)",
+   "date": "1987-06-06",
+   "flop": 28328002000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~NetTalk%20%28transcription%29"
+  },
+  {
+   "name": "Translation-invariant MLP",
+   "date": "1987-06-15",
+   "flop": 18032948000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Translation-invariant%20MLP"
+  },
+  {
+   "name": "MLN-ASR",
+   "date": "1988-08-01",
+   "flop": 296425000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~MLN-ASR"
+  },
+  {
+   "name": "Invariant image recognition",
+   "date": "1989-06-18",
+   "flop": 27000000000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Invariant%20image%20recognition"
+  },
+  {
+   "name": "Handwritten digit recognition network",
+   "date": "1989-11-27",
+   "flop": 181440000000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Handwritten%20digit%20recognition%20network"
+  },
+  {
+   "name": "Speaker-independent vowel classification",
+   "date": "1989-11-27",
+   "flop": 7485696000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Speaker-independent%20vowel%20classification"
+  },
+  {
+   "name": "Zip CNN",
+   "date": "1989-12-01",
+   "flop": 1496338000000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Zip%20CNN"
+  },
+  {
+   "name": "NETtalk reimplementation",
+   "date": "1990-06-01",
+   "flop": 35811936000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~NETtalk%20reimplementation"
+  },
+  {
+   "name": "Bankruptcy-NN",
+   "date": "1990-06-17",
+   "flop": 3059337800.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Bankruptcy-NN"
+  },
+  {
+   "name": "SexNet compression",
+   "date": "1990-10-01",
+   "flop": 78775200000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~SexNet%20compression"
+  },
+  {
+   "name": "Weight Decay",
+   "date": "1991-12-02",
+   "flop": 75474000000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Weight%20Decay"
+  },
+  {
+   "name": "TD-Gammon",
+   "date": "1992-05-01",
+   "flop": 18232157000000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~TD-Gammon"
+  },
+  {
+   "name": "Cancer drug mechanism prediction",
+   "date": "1992-10-16",
+   "flop": 53460000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Cancer%20drug%20mechanism%20prediction"
+  },
+  {
+   "name": "Siamese-TDNN",
+   "date": "1993-08-01",
+   "flop": 12869570000000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Siamese-TDNN"
+  },
+  {
+   "name": "ANN Eye Tracker",
+   "date": "1993-11-29",
+   "flop": 17534401000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~ANN%20Eye%20Tracker"
+  },
+  {
+   "name": "Ceramic-MLP",
+   "date": "1994-01-07",
+   "flop": 4531200000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Ceramic-MLP"
+  },
+  {
+   "name": "JPMAX",
+   "date": "1994-12-02",
+   "flop": 80828280.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~JPMAX"
+  },
+  {
+   "name": "Mixture of linear models",
+   "date": "1994-12-02",
+   "flop": 453600000000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Mixture%20of%20linear%20models"
+  },
+  {
+   "name": "NeuroChess",
+   "date": "1994-12-02",
+   "flop": 858730800000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~NeuroChess"
+  },
+  {
+   "name": "Predictive Coding NN",
+   "date": "1994-12-02",
+   "flop": 18621901000000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Predictive%20Coding%20NN"
+  },
+  {
+   "name": "LISSOM",
+   "date": "1995-11-27",
+   "flop": 195544800000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~LISSOM"
+  },
+  {
+   "name": "MUSIC perceptron",
+   "date": "1996-06-03",
+   "flop": 881733600000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~MUSIC%20perceptron"
+  },
+  {
+   "name": "System 11",
+   "date": "1996-06-18",
+   "flop": 25859617000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~System%2011"
+  },
+  {
+   "name": "SOM-CNN",
+   "date": "1997-01-31",
+   "flop": 31431601999.999996,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~SOM-CNN"
+  },
+  {
+   "name": "LSTM",
+   "date": "1997-11-15",
+   "flop": 31512000000000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~LSTM"
+  },
+  {
+   "name": "LeNet-5",
+   "date": "1998-11-01",
+   "flop": 2810937600000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~LeNet-5"
+  },
+  {
+   "name": "RECONTRA-categorized",
+   "date": "1999-06-02",
+   "flop": 8013600500000.001,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~RECONTRA-categorized"
+  },
+  {
+   "name": "RECONTRA-uncategorized",
+   "date": "1999-06-02",
+   "flop": 3864000000000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~RECONTRA-uncategorized"
+  },
+  {
+   "name": "Neural LM",
+   "date": "2000-11-28",
+   "flop": 6339000000000000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Neural%20LM"
+  },
+  {
+   "name": "PoE MNIST",
+   "date": "2000-11-28",
+   "flop": 51810004000000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~PoE%20MNIST"
+  },
+  {
+   "name": "Decision tree (classification)",
+   "date": "2001-12-08",
+   "flop": 63000000000000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Decision%20tree%20%28classification%29"
+  },
+  {
+   "name": "NPLM (AP News)",
+   "date": "2003-03-15",
+   "flop": 1666869200000000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~NPLM%20%28AP%20News%29"
+  },
+  {
+   "name": "NPLM (Brown)",
+   "date": "2003-03-15",
+   "flop": 132076260000000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~NPLM%20%28Brown%29"
+  },
+  {
+   "name": "Invariant CNN",
+   "date": "2004-06-27",
+   "flop": 974230000000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Invariant%20CNN"
+  },
+  {
+   "name": "LMICA",
+   "date": "2004-12-01",
+   "flop": 2782080200000000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~LMICA"
+  },
+  {
+   "name": "Hierarchical LM",
+   "date": "2005-01-06",
+   "flop": 115848005000000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Hierarchical%20LM"
+  },
+  {
+   "name": "RankNet",
+   "date": "2005-08-07",
+   "flop": 3482081700000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~RankNet"
+  },
+  {
+   "name": "SVM-CNN",
+   "date": "2006-06-17",
+   "flop": 745200000000000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~SVM-CNN"
+  },
+  {
+   "name": "KN-LM",
+   "date": "2007-06-22",
+   "flop": 7.7303815e+17,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~KN-LM"
+  },
+  {
+   "name": "SB-LM",
+   "date": "2007-06-22",
+   "flop": 1.4494465e+18,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~SB-LM"
+  },
+  {
+   "name": "GNN",
+   "date": "2008-12-09",
+   "flop": 1614599900.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~GNN"
+  },
+  {
+   "name": "GPU DBNs",
+   "date": "2009-06-15",
+   "flop": 1000000000000000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~GPU%20DBNs"
+  },
+  {
+   "name": "Two Stage Feature Extraction (MNIST)",
+   "date": "2009-09-01",
+   "flop": 20754000000000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Two%20Stage%20Feature%20Extraction%20%28MNIST%29"
+  },
+  {
+   "name": "LCNP LabelMe",
+   "date": "2009-11-22",
+   "flop": 3295150300000000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~LCNP%20LabelMe"
+  },
+  {
+   "name": "LCNP MNIST",
+   "date": "2009-11-22",
+   "flop": 4181852300000000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~LCNP%20MNIST"
+  },
+  {
+   "name": "LCNP NORB",
+   "date": "2009-11-22",
+   "flop": 2452090000000000.0,
+   "selected": false,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~LCNP%20NORB"
+  },
+  {
+   "name": "AlexNet",
+   "label": "AlexNet",
+   "date": "2012-09-30",
+   "flop": 4.7e+17,
+   "domain": "vision",
+   "selected": true,
+   "parameters": 60000000,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~AlexNet",
+   "parametersSource": "https://ourworldindata.org/grapher/artificial-intelligence-parameter-count?country=~AlexNet"
+  },
+  {
+   "name": "Word2Vec (large)",
+   "label": "word2vec",
+   "date": "2013-10-16",
+   "flop": 3.8879997e+16,
+   "domain": "language",
+   "selected": true,
+   "parameters": 692000000,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Word2Vec%20%28large%29",
+   "parametersSource": "https://ourworldindata.org/grapher/artificial-intelligence-parameter-count?country=~Word2Vec%20%28large%29"
+  },
+  {
+   "name": "DQN",
+   "label": "DQN",
+   "date": "2013-12-19",
+   "flop": 2846884000000000.0,
+   "domain": "games",
+   "selected": true,
+   "parameters": 836096,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~DQN",
+   "parametersSource": "https://ourworldindata.org/grapher/artificial-intelligence-parameter-count?country=~DQN"
+  },
+  {
+   "name": "VGG16",
+   "label": "VGG16",
+   "date": "2014-09-04",
+   "flop": 1.2291e+19,
+   "domain": "vision",
+   "selected": true,
+   "parameters": 138000000,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~VGG16",
+   "parametersSource": "https://ourworldindata.org/grapher/artificial-intelligence-parameter-count?country=~VGG16"
+  },
+  {
+   "name": "Seq2Seq LSTM",
+   "label": "Seq2seq",
+   "date": "2014-09-10",
+   "flop": 5.6e+19,
+   "domain": "language",
+   "selected": true,
+   "parameters": 384000000,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Seq2Seq%20LSTM",
+   "parametersSource": "https://arxiv.org/abs/1409.3215",
+   "parametersNote": "Parameter count from the paper (384M); the Epoch entry lists 1.92 billion."
+  },
+  {
+   "name": "Inception v3",
+   "label": "Inception v3",
+   "date": "2015-12-02",
+   "flop": 1e+20,
+   "domain": "vision",
+   "selected": true,
+   "parameters": 23626728,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Inception%20v3",
+   "parametersSource": "https://ourworldindata.org/grapher/artificial-intelligence-parameter-count?country=~Inception%20v3"
+  },
+  {
+   "name": "ResNet-152 (ImageNet)",
+   "label": "ResNet-152",
+   "date": "2015-12-10",
+   "flop": 1.0414081e+19,
+   "domain": "vision",
+   "selected": true,
+   "parameters": 60200000,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~ResNet-152%20%28ImageNet%29",
+   "parametersSource": "https://ourworldindata.org/grapher/artificial-intelligence-parameter-count?country=~ResNet-152%20%28ImageNet%29"
+  },
+  {
+   "name": "AlphaGo Lee",
+   "label": "AlphaGo",
+   "date": "2016-01-27",
+   "flop": 1.9e+21,
+   "domain": "games",
+   "selected": true,
+   "parameters": null,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~AlphaGo%20Lee"
+  },
+  {
+   "name": "GNMT",
+   "label": "GNMT",
+   "date": "2016-09-26",
+   "flop": 6.62e+21,
+   "domain": "language",
+   "selected": true,
+   "parameters": 278000000,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~GNMT",
+   "parametersSource": "https://ourworldindata.org/grapher/artificial-intelligence-parameter-count?country=~GNMT"
+  },
+  {
+   "name": "Xception",
+   "label": "Xception",
+   "date": "2016-10-07",
+   "flop": 4.36e+20,
+   "domain": "vision",
+   "selected": true,
+   "parameters": 22855952,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Xception",
+   "parametersSource": "https://ourworldindata.org/grapher/artificial-intelligence-parameter-count?country=~Xception"
+  },
+  {
+   "name": "Transformer (2017)",
+   "label": "Transformer",
+   "date": "2017-06-12",
+   "flop": 7.424525e+18,
+   "domain": "language",
+   "selected": true,
+   "parameters": 213000000,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Transformer%20%282017%29",
+   "parametersSource": "https://ourworldindata.org/grapher/artificial-intelligence-parameter-count?country=~Transformer%20%282017%29"
+  },
+  {
+   "name": "GPT-1",
+   "label": "GPT-1",
+   "date": "2018-06-01",
+   "flop": 1.7578125e+19,
+   "domain": "language",
+   "selected": true,
+   "parameters": 117000000,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~GPT-1",
+   "parametersSource": "https://ourworldindata.org/grapher/artificial-intelligence-parameter-count?country=~GPT-1"
+  },
+  {
+   "name": "BERT-Large",
+   "label": "BERT",
+   "date": "2018-10-11",
+   "flop": 2.85e+20,
+   "domain": "language",
+   "selected": true,
+   "parameters": 340000000,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~BERT-Large",
+   "parametersSource": "https://ourworldindata.org/grapher/artificial-intelligence-parameter-count?country=~BERT-Large"
+  },
+  {
+   "name": "GPT-2 (1.5B)",
+   "label": "GPT-2",
+   "date": "2019-02-14",
+   "flop": 1.9200001e+21,
+   "domain": "language",
+   "selected": true,
+   "parameters": 1500000000,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~GPT-2%20%281.5B%29",
+   "parametersSource": "https://ourworldindata.org/grapher/artificial-intelligence-parameter-count?country=~GPT-2%20%281.5B%29"
+  },
+  {
+   "name": "T5-11B",
+   "label": "T5-11B",
+   "date": "2019-10-23",
+   "flop": 3.3e+22,
+   "domain": "language",
+   "selected": true,
+   "parameters": 11000000000,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~T5-11B",
+   "parametersSource": "https://ourworldindata.org/grapher/artificial-intelligence-parameter-count?country=~T5-11B"
+  },
+  {
+   "name": "AlphaStar",
+   "label": "AlphaStar",
+   "date": "2019-10-30",
+   "flop": 1.07734e+23,
+   "domain": "games",
+   "selected": true,
+   "parameters": 139000000,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~AlphaStar",
+   "parametersSource": "https://ourworldindata.org/grapher/artificial-intelligence-parameter-count?country=~AlphaStar"
+  },
+  {
+   "name": "OpenAI Five",
+   "label": "OpenAI Five",
+   "date": "2019-12-13",
+   "flop": 6.7000004e+22,
+   "domain": "games",
+   "selected": true,
+   "parameters": 159000000,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~OpenAI%20Five",
+   "parametersSource": "https://ourworldindata.org/grapher/artificial-intelligence-parameter-count?country=~OpenAI%20Five"
+  },
+  {
+   "name": "Turing-NLG",
+   "label": "Turing-NLG",
+   "date": "2020-02-13",
+   "flop": 1.57e+22,
+   "domain": "language",
+   "selected": true,
+   "parameters": 17000000000,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Turing-NLG",
+   "parametersSource": "https://ourworldindata.org/grapher/artificial-intelligence-parameter-count?country=~Turing-NLG"
+  },
+  {
+   "name": "GPT-3 175B (davinci)",
+   "label": "GPT-3",
+   "date": "2020-05-28",
+   "flop": 3.14e+23,
+   "domain": "language",
+   "selected": true,
+   "parameters": 174600000000,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~GPT-3%20175B%20%28davinci%29",
+   "parametersSource": "https://ourworldindata.org/grapher/artificial-intelligence-parameter-count?country=~GPT-3%20175B%20%28davinci%29"
+  },
+  {
+   "name": "AlphaFold 2",
+   "label": "AlphaFold 2",
+   "date": "2020-11-30",
+   "flop": 2.99e+21,
+   "domain": "other",
+   "selected": true,
+   "parameters": 93000000,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~AlphaFold%202",
+   "parametersSource": "https://ourworldindata.org/grapher/artificial-intelligence-parameter-count?country=~AlphaFold%202"
+  },
+  {
+   "name": "CLIP (ViT L/14@336px)",
+   "label": "CLIP",
+   "date": "2021-01-05",
+   "flop": 1.05e+22,
+   "domain": "vision",
+   "selected": true,
+   "parameters": 370000000,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~CLIP%20%28ViT%20L/14%40336px%29",
+   "parametersSource": "https://ourworldindata.org/grapher/artificial-intelligence-parameter-count?country=~CLIP%20%28ViT%20L/14%40336px%29"
+  },
+  {
+   "name": "Megatron-Turing NLG 530B",
+   "label": "Megatron-Turing NLG",
+   "date": "2021-10-11",
+   "flop": 8.5860006e+23,
+   "domain": "language",
+   "selected": true,
+   "parameters": 530000000000,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Megatron-Turing%20NLG%20530B",
+   "parametersSource": "https://ourworldindata.org/grapher/artificial-intelligence-parameter-count?country=~Megatron-Turing%20NLG%20530B"
+  },
+  {
+   "name": "Gopher (280B)",
+   "label": "Gopher",
+   "date": "2021-12-08",
+   "flop": 6.31e+23,
+   "domain": "language",
+   "selected": true,
+   "parameters": 280000000000,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Gopher%20%28280B%29",
+   "parametersSource": "https://ourworldindata.org/grapher/artificial-intelligence-parameter-count?country=~Gopher%20%28280B%29"
+  },
+  {
+   "name": "Chinchilla",
+   "label": "Chinchilla",
+   "date": "2022-03-29",
+   "flop": 5.76e+23,
+   "domain": "language",
+   "selected": true,
+   "parameters": 70000000000,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Chinchilla",
+   "parametersSource": "https://ourworldindata.org/grapher/artificial-intelligence-parameter-count?country=~Chinchilla"
+  },
+  {
+   "name": "PaLM (540B)",
+   "label": "PaLM",
+   "date": "2022-04-04",
+   "flop": 2.5272e+24,
+   "domain": "language",
+   "selected": true,
+   "parameters": 540350000000,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~PaLM%20%28540B%29",
+   "parametersSource": "https://ourworldindata.org/grapher/artificial-intelligence-parameter-count?country=~PaLM%20%28540B%29"
+  },
+  {
+   "name": "OPT-175B",
+   "label": "OPT-175B",
+   "date": "2022-05-02",
+   "flop": 4.3000003e+23,
+   "domain": "language",
+   "selected": true,
+   "parameters": 175000000000,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~OPT-175B",
+   "parametersSource": "https://ourworldindata.org/grapher/artificial-intelligence-parameter-count?country=~OPT-175B"
+  },
+  {
+   "name": "BLOOM-176B",
+   "label": "BLOOM",
+   "date": "2022-07-11",
+   "flop": 3.65664e+23,
+   "domain": "language",
+   "selected": true,
+   "parameters": 176247271424,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~BLOOM-176B",
+   "parametersSource": "https://ourworldindata.org/grapher/artificial-intelligence-parameter-count?country=~BLOOM-176B"
+  },
+  {
+   "name": "Whisper",
+   "label": "Whisper",
+   "date": "2022-09-21",
+   "flop": 4.2072665e+21,
+   "domain": "other",
+   "selected": true,
+   "parameters": 1550000000,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Whisper",
+   "parametersSource": "https://ourworldindata.org/grapher/artificial-intelligence-parameter-count?country=~Whisper"
+  },
+  {
+   "name": "LLaMA-65B",
+   "label": "LLaMA-65B",
+   "date": "2023-02-24",
+   "flop": 5.5e+23,
+   "domain": "language",
+   "selected": true,
+   "parameters": 65200000000,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~LLaMA-65B",
+   "parametersSource": "https://ourworldindata.org/grapher/artificial-intelligence-parameter-count?country=~LLaMA-65B"
+  },
+  {
+   "name": "GPT-4 (Mar 2023)",
+   "label": "GPT-4",
+   "date": "2023-03-15",
+   "flop": 2.1e+25,
+   "domain": "language",
+   "selected": true,
+   "parameters": null,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~GPT-4%20%28Mar%202023%29",
+   "note": "The developer did not publish the training compute; the value is Epoch AI's estimate.",
+   "parametersNote": "Not published by the developer."
+  },
+  {
+   "name": "Claude 2",
+   "label": "Claude 2",
+   "date": "2023-07-11",
+   "flop": 3.8660001e+24,
+   "domain": "language",
+   "selected": true,
+   "parameters": null,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Claude%202",
+   "note": "The developer did not publish the training compute; the value is Epoch AI's estimate.",
+   "parametersNote": "Not published by the developer."
+  },
+  {
+   "name": "Llama 2-70B",
+   "label": "Llama 2 70B",
+   "date": "2023-07-18",
+   "flop": 8.1e+23,
+   "domain": "language",
+   "selected": true,
+   "parameters": 70000000000,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Llama%202-70B",
+   "parametersSource": "https://ourworldindata.org/grapher/artificial-intelligence-parameter-count?country=~Llama%202-70B"
+  },
+  {
+   "name": "Gemini 1.0 Ultra",
+   "label": "Gemini Ultra",
+   "date": "2023-12-06",
+   "flop": 5.0000003e+25,
+   "domain": "language",
+   "selected": true,
+   "parameters": null,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Gemini%201.0%20Ultra",
+   "note": "The developer did not publish the training compute; the value is Epoch AI's estimate.",
+   "parametersNote": "Not published by the developer."
+  },
+  {
+   "name": "Llama 3.1-405B",
+   "label": "Llama 3.1 405B",
+   "date": "2024-07-23",
+   "flop": 3.8e+25,
+   "domain": "language",
+   "selected": true,
+   "parameters": 405000000000,
+   "source": "https://ourworldindata.org/grapher/artificial-intelligence-training-computation?country=~Llama%203.1-405B",
+   "parametersSource": "https://ourworldindata.org/grapher/artificial-intelligence-parameter-count?country=~Llama%203.1-405B"
+  }
+ ]
+}

@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.4 Deep learning</title>
+<meta name="description" content="What changed in 2012: AlexNet's ingredients (a large labeled dataset, GPU training, ReLU, dropout, and a larger version of an existing architecture), what a convolutional filter computes, and the advances that followed through AlphaGo.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  h1 { hyphens: auto; overflow-wrap: break-word; }
+  .images { display: flex; flex-wrap: wrap; gap: 1.2rem; }
+  .images > div { flex: 1 1 15rem; min-width: 0; max-width: 24rem; }
+  .images canvas { width: 100%; height: auto; image-rendering: pixelated; display: block; }
+  .kernel { display: grid; grid-template-columns: repeat(3, 4.2rem); gap: 0.3rem; }
+  .kernel input { width: 4.2rem; font: inherit; font-size: var(--text); color: var(--ink); background: transparent;
+    border: 1px solid var(--rule); border-radius: 3px; padding: 0.1rem 0.3rem; text-align: right; font-variant-numeric: lining-nums tabular-nums; }
+  .kernel input:disabled { color: var(--quiet); }
+  #alex-panel { margin-top: 1.4rem; }
+  .alex { display: grid; grid-template-columns: repeat(auto-fill, minmax(34px, 1fr)); gap: 4px; max-width: 40rem; margin-top: 0.6rem; }
+  .alex button { padding: 0; border: 2px solid transparent; border-radius: 2px; line-height: 0; background: none; }
+  .alex button[aria-pressed="true"] { border-color: var(--accent); }
+  .alex canvas { width: 100%; height: auto; image-rendering: pixelated; }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="1.4">
+<article>
+<h1>Deep learning</h1>
+
+<section>
+<p>In 2012 a convolutional network called AlexNet won the ImageNet image-classification challenge with a top-5 error of 15.3%: for 15.3% of the test images, the correct label was not among the network&rsquo;s five best guesses. That figure is for its entry trained with extra data; trained without it, the error was 16.4%. The next-best entry, which did not use a neural network, had 26.2%.<label for="sn-ilsvrc" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-ilsvrc" class="margin-toggle"><span class="sidenote">ILSVRC 2012 results, image-net.org; Russakovsky et al. (2015), &ldquo;ImageNet large scale visual recognition challenge,&rdquo; <em>International Journal of Computer Vision</em> 115: 211&ndash;252.</span></p>
+
+<p>The architecture was not new: it was a larger version of LeCun&rsquo;s convolutional network. What was new was the combination of 1.2 million labeled training images; training on two consumer graphics cards (GPUs); the ReLU activation function, which lessens the vanishing gradient problem of page 1.3; and dropout, a method that reduces overfitting by switching off a random half of the units at each training step.<label for="sn-kri" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-kri" class="margin-toggle"><span class="sidenote">Krizhevsky, Sutskever, and Hinton (2012), &ldquo;ImageNet classification with deep convolutional neural networks,&rdquo; <em>Advances in Neural Information Processing Systems</em> 25. The network had 60 million parameters and trained for five to six days on two NVIDIA GTX 580 cards. Dropout: Hinton et al. (2012), arXiv:1207.0580.</span></p>
+
+<p>A convolutional network applies the same small learned filter at every position of an image. A filter is a small grid of numbers. At each position, the filter&rsquo;s numbers are multiplied by the pixel values under them and the products are added up; the result, one number per position, is called a feature map. The tool below lets you do this by hand.</p>
+</section>
+
+<section>
+<h2>What a filter sees</h2>
+<p>Choose an image and a filter. The output is computed in your browser at every position of the image. When a filter&rsquo;s numbers add up to zero, the output shows the size of the response: white where it is strong, black where it is zero. You can type your own numbers into the grid. The photo is Chelsea the cat, by St&eacute;fan van der Walt, released under CC0 with the scikit-image sample data.</p>
+
+<div class="tool" id="tool">
+  <div class="row">
+    <div class="controls" id="controls"></div>
+    <div class="stage">
+      <div class="images">
+        <div><p class="small-title">Image</p><canvas id="in" aria-label="The input image"></canvas></div>
+        <div><p class="small-title" id="out-title">Output of the filter</p><canvas id="out" aria-label="The filter's output, the feature map"></canvas></div>
+      </div>
+    </div>
+  </div>
+  <div id="alex-panel">
+    <h3>AlexNet&rsquo;s first-layer filters</h3>
+    <p class="panel-note">These 96 filters were learned from ImageNet&rsquo;s training images; no one designed them. Each is 11 by 11 pixels with three color channels, shown here enlarged, with gray for zero. Select one to apply it to the image.</p>
+    <div class="alex" id="alex" role="group" aria-label="AlexNet's 96 learned first-layer filters"></div>
+  </div>
+  <p class="readout" id="readout" aria-live="polite"></p>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="1.4-t1">
+    <p class="prompt">Apply the vertical-edge filter to the shapes image. Which edges will show up in the output?</p>
+    <div class="choices" data-options="The vertical edges|The horizontal edges|All edges equally"></div>
+    <div class="after"><p>Choose the shapes image and the vertical-edge filter.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The left and right sides of the square light up, and its top and bottom vanish. The circle lights up most at its left and right, where its edge runs vertically, and fades to nothing at its top and bottom. The diagonal band shows at three-quarters strength. The filter compares the column of pixels on its right with the column on its left, so it responds only to brightness that changes from left to right.</p></div></div>
+  </li>
+  <li class="task" data-id="1.4-t2">
+    <p class="prompt">An edge filter&rsquo;s numbers add up to zero. What will its output be inside a region of constant brightness?</p>
+    <div class="choices" data-options="Zero|The region&rsquo;s brightness|Nine times the brightness"></div>
+    <div class="after"><p>Look at the inside of the square and the background in the output.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Zero, shown as black. Over a constant region every product is the same brightness times a filter number, so the sum is the brightness times the sum of the filter&rsquo;s numbers, which is zero. An edge filter reports change, not brightness. The blur filter&rsquo;s numbers add up to 1, so it keeps the brightness.</p></div></div>
+  </li>
+  <li class="task" data-id="1.4-t3">
+    <p class="prompt">Which filter responds to edges that run diagonally, like the slash /? Rows are separated by semicolons.</p>
+    <div class="choices" data-options="2 1 0; 1 0 &minus;1; 0 &minus;1 &minus;2|1 1 1; 0 0 0; &minus;1 &minus;1 &minus;1|0 1 2; &minus;1 0 1; &minus;2 &minus;1 0"></div>
+    <div class="after"><p>Type each candidate into the grid and apply it to the shapes image. The diagonal band runs like /.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The first filter lights up both edges of the band at full strength, and the third gives exactly zero along them; the second is a horizontal-edge filter. A / edge separates the upper left from the lower right, so the filter that detects it has positive numbers in its upper left and negative numbers in its lower right.</p></div></div>
+  </li>
+  <li class="task" data-id="1.4-t4">
+    <p class="prompt">AlexNet learned its 96 first-layer filters from images, with no one designing them. Will some of them look like the edge filters you just used?</p>
+    <div class="choices" data-options="Yes, several|No, they will look like noise"></div>
+    <div class="after"><p>Look over the grid of AlexNet&rsquo;s filters and apply a few to the photo.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Many are black-and-white stripes at many angles: edge and line detectors like the ones engineers used to design by hand, only larger. Most of the others respond to color: blobs of one color, or an edge between two colors. Apply a striped filter to the photo and the output picks out the lines of the cat&rsquo;s fur and face that run at that angle.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>From edges to objects</h2>
+<p><span class="claim">Empirical finding</span> In trained convolutional networks, the first layer learns filters for edges and colors, as AlexNet&rsquo;s do. Later layers apply filters to the feature maps of earlier layers, so they combine edges into textures, textures into parts, and parts into objects.<label for="sn-zf" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-zf" class="margin-toggle"><span class="sidenote">Zeiler and Fergus (2014), &ldquo;Visualizing and understanding convolutional networks,&rdquo; <em>ECCV</em>. The filters in the tool come from the BVLC replication of AlexNet (Caffe model zoo, trained by Evan Shelhamer, released for unrestricted use), because the original 2012 parameters were not released in a standard format.</span></p>
+
+<p>Within a few years neural networks led in image recognition, speech recognition, and machine translation. Several inventions from these years are still in use: word embeddings (word2vec, 2013), the Adam optimizer (2014), attention for translation (2014), and residual connections (ResNet, 2015), which made it possible to train networks with more than 100 layers. In 2016 DeepMind&rsquo;s AlphaGo beat Lee Sedol at Go, four games to one, by combining neural networks trained on human games and on self-play with tree search.<label for="sn-sil" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-sil" class="margin-toggle"><span class="sidenote">Silver et al. (2016), &ldquo;Mastering the game of Go with deep neural networks and tree search,&rdquo; <em>Nature</em> 529: 484&ndash;489.</span></p>
+
+<figure id="fig-imagenet" aria-describedby="fig-imagenet-desc"></figure>
+<p id="fig-imagenet-desc" class="caption">Winning top-5 error in the ImageNet challenge, 2010 to 2017, with the winning team. The 2010 and 2011 winners classified features designed by hand; every winner from 2012 on was a convolutional network. The 2012 bar is AlexNet&rsquo;s entry trained with extra data (16.4% without). The dashed line is 5.1%, the error of one trained person, Andrej Karpathy, on 1,500 test images; less practiced labelers did worse.<label for="sn-karp" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-karp" class="margin-toggle"><span class="sidenote">Russakovsky et al. (2015), which reports the human comparison; Karpathy (2014), &ldquo;What I learned from competing against a ConvNet on ImageNet,&rdquo; karpathy.github.io. 2016 and 2017 results from image-net.org.</span></p>
+</section>
+
+<div class="check" data-id="1.4-c1" data-correct="1">
+  <p class="label">Check</p>
+  <p class="q">Which of these was not new in AlexNet in 2012?</p>
+  <div class="options seg"><button>Training a large network on GPUs</button><button>A convolutional network trained with backpropagation</button><button>A labeled training set of more than a million images</button></div>
+  <div class="feedback"><p>LeCun&rsquo;s networks were convolutional and trained with backpropagation in 1989. The new parts were the data, the GPU training, ReLU, and dropout.</p></div>
+</div>
+
+<div class="check" data-id="1.4-c2" data-correct="0">
+  <p class="q">A layer that connected every pixel of a 240 by 160 image to every position of a 240 by 160 output would need about 1.5 billion parameters. A convolutional layer with one 3 by 3 filter needs 9. Why so few?</p>
+  <div class="options seg"><button>The same filter is reused at every position</button><button>It looks at only some of the pixels</button><button>It uses the ReLU activation function</button></div>
+  <div class="feedback"><p>Every position uses the same nine numbers, and each output depends only on the nearby pixels. A detector for an edge is useful anywhere in the image, so one copy of it serves every position.</p></div>
+</div>
+
+<div class="explain" data-id="1.4-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: what changed in 2012, and what did not?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>AlexNet&rsquo;s 2012 win came from a large labeled dataset, GPU training, the ReLU activation function, and dropout, applied to a larger version of an existing convolutional architecture. Its first layer learned edge and color filters like those engineers had designed by hand. Word embeddings, Adam, attention, residual connections, and AlphaGo followed within four years.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/1-4.js"></script>
+</body>
+</html>
