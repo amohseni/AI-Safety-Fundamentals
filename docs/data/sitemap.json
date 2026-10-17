@@ -169,7 +169,7 @@
   {
    "id": "6.1",
    "question": "What can interpretability show, and with what evidence?",
-   "takeaway": "Interpretability methods differ in what they access (behavior, activations, or weights) and in the evidence they give. Observing activations gives correlational evidence that information is present; changing activations or weights and measuring the effect gives causal evidence that the model uses it. Claims about how a model computes its outputs are causal claims, so the field prizes causal evidence."
+   "takeaway": "Interpretability methods differ in what they access (behavior, activations, or parameters) and in the evidence they give. Observing activations gives correlational evidence that information is present; changing activations or parameters and measuring the effect gives causal evidence that the model uses it. Claims about how a model computes its outputs are causal claims, so the field prizes causal evidence."
   },
   {
    "id": "6.2",

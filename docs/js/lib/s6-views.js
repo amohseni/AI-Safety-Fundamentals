@@ -82,11 +82,6 @@ export class ArrowView {
         ctx.lineWidth = k === this.highlight ? 1.5 : 1;
         ctx.setLineDash([]);
         ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
-        ctx.fillStyle = col(k === this.highlight ? 'accent' : 'quiet');
-        ctx.textAlign = 'center';
-        const lp = P(e.map((v) => v * 1.02));
-        const off = this._axisLabelOffset(k);
-        ctx.fillText(this.axes[k], Math.min(side - 30, Math.max(30, lp[0] + off[0])), Math.min(side - 12, Math.max(12, lp[1] + off[1])));
       }
     }
     // Points.
@@ -98,7 +93,7 @@ export class ArrowView {
     }
     // Arrows, far ones first.
     const order = this.items.map((it, i) => [i, P(it.vec)[2]]).sort((a, b) => b[1] - a[1]).map((d) => d[0]);
-    const placed = [];
+    const placed = [], segs = [];
     const o = P([0, 0, 0]);
     for (const i of order) {
       const it = this.items[i];
@@ -119,6 +114,7 @@ export class ArrowView {
         ctx.closePath(); ctx.fill();
       }
       ctx.globalAlpha = 1;
+      segs.push([o, t]);
       if (it.label && len > 14) {
         const ux = (t[0] - o[0]) / len, uy = (t[1] - o[1]) / len;
         const w = ctx.measureText(it.label).width;
@@ -133,11 +129,33 @@ export class ArrowView {
         ctx.fillText(it.label, x, y);
       }
     }
+    // Axis names last, at the first candidate spot that clears the arrows and their labels.
+    if (this.axes) {
+      const hits = (box) => placed.some((b) => box[0] < b[2] && box[2] > b[0] && box[1] < b[3] && box[3] > b[1]) ||
+        segs.some(([a, b]) => { for (let u = 0; u <= 1; u += 0.04) { const x = a[0] + u * (b[0] - a[0]), y = a[1] + u * (b[1] - a[1]); if (x > box[0] && x < box[2] && y > box[1] && y < box[3]) return true; } return false; });
+      for (let k = 0; k < this.dim; k++) {
+        const e = [0, 0, 0]; e[k] = this.extent;
+        const lp = P(e.map((v) => v * 1.02));
+        const w = ctx.measureText(this.axes[k]).width;
+        let pick = null;
+        for (const off of this._axisLabelOffsets(k, w)) {
+          const x = Math.min(side - w / 2 - 2, Math.max(w / 2 + 2, lp[0] + off[0])), y = Math.min(side - 12, Math.max(12, lp[1] + off[1]));
+          const box = [x - w / 2 - 2, y - 11, x + w / 2 + 2, y + 11];
+          if (!pick) pick = [x, y, box];
+          if (!hits(box)) { pick = [x, y, box]; break; }
+        }
+        placed.push(pick[2]);
+        ctx.fillStyle = col(k === this.highlight ? 'accent' : 'quiet');
+        ctx.textAlign = 'center';
+        ctx.fillText(this.axes[k], pick[0], pick[1]);
+      }
+    }
   }
 
-  _axisLabelOffset(k) {
-    if (this.dim === 2) return k === 0 ? [-40, 16] : [52, 10];
-    return [0, -14];
+  // Candidate offsets for an axis name from the end of its axis, in order of preference.
+  _axisLabelOffsets(k, w) {
+    if (this.dim === 2) return k === 0 ? [[-w / 2, 16], [-w / 2, -16], [-w / 2, 40], [-w / 2, -40]] : [[w / 2 + 8, 10], [-w / 2 - 8, 10], [w / 2 + 8, 34], [-w / 2 - 8, 34]];
+    return [[0, -14], [0, 14], [w / 2 + 8, 0]];
   }
 }
 
@@ -176,12 +194,12 @@ export function heatmap(container, { title = '', maxWidth = 360 } = {}) {
 // ---- Bar chart with a zero line, optional dashed reference lines, and value-free labels ----
 export function bars(container, { title = '', height = 250, maxWidth = 420 } = {}) {
   const svg = d3.select(container).append('svg').attr('class', 'chart').attr('role', 'img').attr('aria-label', title);
-  const m = { top: 44, right: 12, bottom: 44, left: 48 };
+  const m = { top: 44, right: 12, bottom: 58, left: 48 };
   const g = svg.append('g').attr('transform', `translate(${m.left},${m.top})`);
   const axY = g.append('g').attr('class', 'axis');
   const axX = g.append('g').attr('class', 'axis');
-  const refs = g.append('g');
   const body = g.append('g');
+  const refs = g.append('g'); // above the bars, so reference labels stay readable
   const yl = svg.append('text').attr('x', 4).attr('y', 18);
   const xl = svg.append('text').attr('text-anchor', 'end');
   return {
@@ -194,7 +212,8 @@ export function bars(container, { title = '', height = 250, maxWidth = 420 } = {
       axY.call(d3.axisLeft(y).ticks(4).tickSizeOuter(0));
       axX.attr('transform', `translate(0,${y(Math.max(domain[0], 0))})`)
         .call(d3.axisBottom(x).tickValues(values.map((_, i) => i).filter((i) => i % every === 0)).tickFormat(tickLabel).tickSizeOuter(0));
-      if (domain[0] < 0) axX.selectAll('text').attr('transform', `translate(0,${ih - y(0)})`);
+      // Tick labels sit below the plot; reset the shift when the domain changes back to nonnegative.
+      axX.selectAll('text').attr('transform', domain[0] < 0 ? `translate(0,${ih - y(0)})` : null);
       const cl = (v) => Math.max(domain[0], Math.min(domain[1], v));
       body.selectAll('rect').data(values).join('rect')
         .attr('x', (_, i) => x(i)).attr('width', x.bandwidth())
@@ -202,9 +221,10 @@ export function bars(container, { title = '', height = 250, maxWidth = 420 } = {
         .attr('fill', `var(--${color})`);
       refs.selectAll('line').data(ref).join('line').attr('x1', 0).attr('x2', iw).attr('y1', (r) => y(r.v)).attr('y2', (r) => y(r.v))
         .attr('stroke', 'var(--quiet)').attr('stroke-dasharray', '3 3');
-      refs.selectAll('text').data(ref.filter((r) => r.label)).join('text').attr('x', iw).attr('y', (r) => y(r.v) - 5).attr('text-anchor', 'end').text((r) => r.label);
+      refs.selectAll('text').data(ref.filter((r) => r.label)).join('text').attr('x', iw).attr('y', (r) => y(r.v) - 5).attr('text-anchor', 'end')
+        .attr('stroke', 'var(--paper)').attr('stroke-width', 5).attr('paint-order', 'stroke').attr('stroke-linejoin', 'round').text((r) => r.label);
       yl.text(yLabel);
-      xl.attr('x', avail - m.right).attr('y', height - 4).text(xLabel);
+      xl.attr('x', avail - m.right).attr('y', height - 6).text(xLabel);
     },
   };
 }
