@@ -94,7 +94,7 @@
   {
    "id": "3.4",
    "question": "How do positions share information?",
-   "takeaway": "Attention lets each position take a weighted average of the values at the positions it may see, itself and earlier ones in a language model. The weights come from the dot products of its query with their keys, scaled by \\(1/\\sqrt{d_k}\\) and passed through softmax: a weight is high when a query and a key point the same way and are long. The queries, keys, and values come from learned matrices."
+   "takeaway": "Attention lets each position take a weighted average of the values at the positions it may see, itself and earlier ones in a language model. The weights come from the dot products of its query with their keys, scaled by \\(1/\\sqrt{d_k}\\) and passed through softmax: the weight on a position is high when the query’s dot product with that position’s key is large compared with its dot products with the other keys, which happens when the query and key point the same way and are long. The queries, keys, and values come from learned matrices."
   },
   {
    "id": "3.5",

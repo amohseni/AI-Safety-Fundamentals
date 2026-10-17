@@ -33,7 +33,7 @@
 <section>
 <p>A transformer keeps one vector for each position in its input, one per token. Attention is the only step in which information moves between positions. Every other step acts on each position separately.</p>
 
-<p>At each position, a layer computes three vectors from the vector that position carries (its residual stream, Section 3.6): a <em>query</em>, which describes what the position is looking for; a <em>key</em>, which describes what the position offers to positions that look at it; and a <em>value</em>, which is what the position passes along when another position attends to it. Position \(i\) takes the dot product of its query with the key of every position \(j\) it is allowed to see, divides each product by \(\sqrt{d_k}\), where \(d_k\) is the length of the query and key vectors, and turns the results into <em>attention weights</em> with softmax (these are computed for each input, and are not parameters), which takes the exponential of each score and divides by the sum of the exponentials, so the weights are positive and add up to 1. Position \(i\) receives the weighted average of the values. In a language model, a position may attend only to itself and earlier positions; this restriction is called the <em>causal mask</em>. In matrix form, with one row per position,<label for="sn-vaswani" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-vaswani" class="margin-toggle"><span class="sidenote">Vaswani et al. (2017), &ldquo;Attention Is All You Need,&rdquo; NeurIPS. Attention between two sequences was introduced earlier for translation by Bahdanau, Cho, and Bengio (2014), &ldquo;Neural Machine Translation by Jointly Learning to Align and Translate,&rdquo; published at ICLR 2015. For a visual introduction, see 3Blue1Brown (2024), &ldquo;Attention in transformers, visually explained,&rdquo; chapter 6 of the series on deep learning.</span></p>
+<p>At each position, a layer computes three vectors from the vector that position carries (its residual stream, Section 3.6): a <em>query</em>, which describes what the position is looking for; a <em>key</em>, which describes what the position offers to positions that look at it; and a <em>value</em>, which is what the position passes along when another position attends to it. Position \(i\) takes the dot product of its query with the key of every position \(j\) it is allowed to see, and divides each product by \(\sqrt{d_k}\), where \(d_k\) is the number of entries in each query and key vector. The results are the <em>scores</em>. Softmax turns the scores into <em>attention weights</em>: it takes the exponential of each score and divides by the sum of the exponentials, so the weights are positive and add up to 1. The attention weights are computed afresh for each input; they are not parameters. Position \(i\) receives the weighted average of the values, with these weights. In a language model, a position may attend only to itself and earlier positions; this restriction is called the <em>causal mask</em>. In matrix form, with one row per position,<label for="sn-vaswani" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-vaswani" class="margin-toggle"><span class="sidenote">Vaswani et al. (2017), &ldquo;Attention Is All You Need,&rdquo; NeurIPS. Attention between two sequences was introduced earlier for translation by Bahdanau, Cho, and Bengio (2014), &ldquo;Neural Machine Translation by Jointly Learning to Align and Translate,&rdquo; published at ICLR 2015. For a visual introduction, see 3Blue1Brown (2024), &ldquo;Attention in transformers, visually explained,&rdquo; chapter 6 of the series on deep learning.</span></p>
 $$\mathrm{Attention}(Q, K, V) = \mathrm{softmax}\!\left(\frac{QK^{\top}}{\sqrt{d_k}} + M\right) V,$$
 <p>where the mask \(M\) is 0 for allowed pairs and \(-\infty\) for later positions, so those get weight 0. The query, key, and value vectors come from three learned weight matrices, so what each position looks for, and what it offers, is learned in training.</p>
 </section>
@@ -59,14 +59,14 @@ $$\mathrm{Attention}(Q, K, V) = \mathrm{softmax}\!\left(\frac{QK^{\top}}{\sqrt{d
     <div class="choices" data-options="Yes|No"></div>
     <div class="after"><p>Select token 4 and turn \(q_4\) toward \(k_2\). Then make \(q_4\) longer.</p>
       <button class="show" type="button">Show what to notice</button>
-      <div class="notice"><p>Pointing \(q_4\) along \(k_2\) at its starting length gives token 2 a weight of only about 0.64. The score is a dot product, so it grows with the lengths of the query and the key as well as with how closely they point the same way. Making \(q_4\) about twice as long, about 2.7, raises the weight above 0.9. Lengthening \(k_2\) works too.</p></div></div>
+      <div class="notice"><p>Pointing \(q_4\) along \(k_2\) at its starting length gives token 2 a weight of only about 0.64. The score is a dot product, so it grows with the lengths of the query and the key as well as with how closely they point the same way. Making \(q_4\) about twice as long, about 2.7, raises the weight above 0.9. Lengthening \(k_2\) raises the weight too, but with \(q_4\) at its starting length it stays below 0.9 everywhere in the plane (at most about 0.89).</p></div></div>
   </li>
   <li class="task" data-id="3.4-t2">
     <p class="prompt">Drag \(k_3\) onto \(k_2\), so the two keys are identical. How will token 4&rsquo;s weights on tokens 2 and 3 compare?</p>
     <div class="choices" data-options="Equal, wherever q4 points|Token 2 gets more, because it comes first|It depends on where q4 points"></div>
     <div class="after"><p>Snap \(k_3\) onto \(k_2\), then move \(q_4\) around.</p>
       <button class="show" type="button">Show what to notice</button>
-      <div class="notice"><p>The two weights stay equal for every \(q_4\). Attention sees a position only through its key: two positions with the same key get the same score, so the same weight, whatever their order.</p></div></div>
+      <div class="notice"><p>The two weights stay equal for every \(q_4\). The weight a position receives depends only on the query and that position&rsquo;s key: two positions with the same key get the same score, so the same weight, whatever their order.</p></div></div>
   </li>
   <li class="task" data-id="3.4-t3">
     <p class="prompt">With the causal mask on, select token 1 and drag \(q_1\) anywhere. What weight does token 1 put on itself?</p>
@@ -86,11 +86,14 @@ $$\mathrm{Attention}(Q, K, V) = \mathrm{softmax}\!\left(\frac{QK^{\top}}{\sqrt{d
 </section>
 
 <section>
-<h2>Why the scores are divided by \(\sqrt{d_k}\)</h2>
-<p>In GPT-2 small each query and key has \(d_k = 64\) entries. If their entries are independent with mean 0 and variance 1, the dot product has variance \(d_k\), so without the division its typical size grows with \(d_k\). Large scores make softmax put almost all the weight on one position and make its gradients very small, which slows training. Dividing by \(\sqrt{d_k}\) brings the variance back to 1. <span class="claim">Argument</span> This is the reason Vaswani et al. give for the scaling.</p>
-
+<h2>One position, step by step</h2>
 <figure class="multiples" id="fig-attn" aria-describedby="fig-attn-desc"></figure>
 <p id="fig-attn-desc" class="caption">Attention for token 3 of three, computed step by step. Left: its query and the three keys. Middle: the scores \(q_3 \cdot k_j / \sqrt{2}\) are 0.91, 1.65, and &minus;0.98, and softmax turns them into the weights 0.31, 0.65, and 0.05. Right: the output is the weighted average of the three values, so it lies between them, nearest the value of token 2.</p>
+</section>
+
+<section>
+<h2>Why the scores are divided by \(\sqrt{d_k}\)</h2>
+<p>In GPT-2 small each query and key has \(d_k = 64\) entries. If their entries are independent with mean 0 and variance 1, the dot product has variance \(d_k\), so without the division its typical size grows with \(d_k\). Large scores make softmax put almost all the weight on one position and make its gradients very small, which slows training. Dividing by \(\sqrt{d_k}\) brings the variance back to 1. <span class="claim">Argument</span> This is the reason Vaswani et al. suggest for the scaling.</p>
 </section>
 
 <div class="check" data-id="3.4-c1" data-correct="1">
@@ -106,6 +109,12 @@ $$\mathrm{Attention}(Q, K, V) = \mathrm{softmax}\!\left(\frac{QK^{\top}}{\sqrt{d
   <div class="feedback"><p>The mask gives token 3 a weight of exactly 0 for token 2, whatever the scores, so nothing about token 3 reaches token 2 in this layer.</p></div>
 </div>
 
+<div class="check" data-id="3.4-c3" data-correct="1">
+  <p class="q">Compute this one by hand. Queries and keys have \(d_k = 4\) entries. Position 2 has query \(q_2 = (1.1, 1.1, 0, 0)\); the keys are \(k_1 = (0, 0, 1, 1)\) and \(k_2 = (1, 1, 0, 0)\); the values are \(v_1 = (4, 0)\) and \(v_2 = (0, 4)\). Use \(e^{1.1} \approx 3\). What does position 2 receive?</p>
+  <div class="options seg"><button>\((2, 2)\)</button><button>\((1, 3)\)</button><button>\((3, 1)\)</button></div>
+  <div class="feedback"><p>The dot products are 0 and 2.2; divided by \(\sqrt{4} = 2\), the scores are 0 and 1.1. Softmax gives weights \(1/(1+3) = 1/4\) and \(3/4\). The output is \(\tfrac14 (4, 0) + \tfrac34 (0, 4) = (1, 3)\).</p></div>
+</div>
+
 <div class="explain" data-id="3.4-e1">
   <p class="label">In your own words</p>
   <p>In one or two sentences: how does a position decide how much of each earlier position&rsquo;s value to take?</p>
@@ -115,7 +124,7 @@ $$\mathrm{Attention}(Q, K, V) = \mathrm{softmax}\!\left(\frac{QK^{\top}}{\sqrt{d
 
 <div class="takeaway">
   <p class="label">Takeaway</p>
-  <p>Attention lets each position take a weighted average of the values at the positions it may see, itself and earlier ones in a language model. The weights come from the dot products of its query with their keys, scaled by \(1/\sqrt{d_k}\) and passed through softmax: a weight is high when a query and a key point the same way and are long. The queries, keys, and values come from learned matrices.</p>
+  <p>Attention lets each position take a weighted average of the values at the positions it may see, itself and earlier ones in a language model. The weights come from the dot products of its query with their keys, scaled by \(1/\sqrt{d_k}\) and passed through softmax: the weight on a position is high when the query&rsquo;s dot product with that position&rsquo;s key is large compared with its dot products with the other keys, which happens when the query and key point the same way and are long. The queries, keys, and values come from learned matrices.</p>
 </div>
 </article>
 <script type="module" src="../js/site.js"></script>

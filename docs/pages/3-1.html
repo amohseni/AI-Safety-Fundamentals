@@ -73,7 +73,7 @@
     <div class="choices" data-options="About the same|About twice|More than five times"></div>
     <div class="after"><p>Choose English, then Persian. Then switch to GPT-4o.</p>
       <button class="show" type="button">Show what to notice</button>
-      <div class="notice"><p>GPT-2 needs 5 tokens for the English sentence and 29 for the Persian one, almost one token per character. Each Persian letter takes two bytes in UTF-8, and GPT-2 learned few merges for them, so many letters are split into two single-byte tokens (the italic boxes). GPT-4o&rsquo;s tokenizer, with four times the vocabulary, needs 5 and 9.</p></div></div>
+      <div class="notice"><p>GPT-2 needs 5 tokens for the English sentence and 29 for the Persian one, more tokens than the Persian sentence has characters (28). Each Persian letter takes two bytes in UTF-8, and GPT-2 learned few merges for them, so many letters are split into two single-byte tokens (the italic boxes). GPT-4o&rsquo;s tokenizer, with four times the vocabulary, needs 5 and 9.</p></div></div>
   </li>
   <li class="task" data-id="3.1-t3">
     <p class="prompt">Type <em>strawberry</em> with a space in front of it, then without the space. Will GPT-2 give the two the same tokens?</p>
@@ -99,15 +99,15 @@
 
 <p>Three kinds of odd behavior trace back to tokens.</p>
 <p><em>Spelling.</em> <span class="claim">Argument</span> A model asked how many r&rsquo;s are in &ldquo;strawberry&rdquo; receives one id, or three, never ten letters. Whatever it knows about the letters inside a token it had to learn from the training text, for example from passages that spell words out.</p>
-<p><em>Arithmetic.</em> Numbers are cut into tokens according to which digit strings were frequent in the tokenizer&rsquo;s training text, without regard to place value, so the same digit lands in differently sized tokens from one number to the next. <span class="claim">Empirical finding</span> Making GPT-3.5 and GPT-4 tokenize numbers in groups of three from the right, by writing the numbers with commas, made them much more accurate at adding numbers of seven to nine digits; in one setting GPT-3.5 went from about 76% to about 98% correct.<label for="sn-arith" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-arith" class="margin-toggle"><span class="sidenote">Singh and Strouse (2024), &ldquo;Tokenization counts: the impact of tokenization on arithmetic in frontier LLMs,&rdquo; arXiv:2402.14903.</span></p>
+<p><em>Arithmetic.</em> Numbers are cut into tokens according to which digit strings were frequent in the tokenizer&rsquo;s training text, without regard to place value, so the same digit lands in differently sized tokens from one number to the next. <span class="claim">Empirical finding</span> Making GPT-3.5 tokenize numbers in groups of three from the right, by writing the numbers with commas, made it much more accurate at adding numbers of seven to nine digits: with eight worked examples in the prompt, it went from about 76% to about 98% correct. The effect was smaller in GPT-4.<label for="sn-arith" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-arith" class="margin-toggle"><span class="sidenote">Singh and Strouse (2024), &ldquo;Tokenization counts: the impact of tokenization on arithmetic in frontier LLMs,&rdquo; arXiv:2402.14903.</span></p>
 <p><em>Languages.</em> A model reads at most a fixed number of tokens at once (1,024 for GPT-2), and its cost grows with the number of tokens. <span class="claim">Empirical finding</span> Text in languages that were rare in a tokenizer&rsquo;s training data takes more tokens, in some cases up to 15 times as many for the same content, so it costs more and less of it fits.<label for="sn-petrov" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-petrov" class="margin-toggle"><span class="sidenote">Petrov, La Malfa, Torr, and Bibi (2023), &ldquo;Language Model Tokenizers Introduce Unfairness Between Languages,&rdquo; NeurIPS.</span></p>
 </section>
 
 <div class="check" data-id="3.1-c1" data-correct="1">
   <p class="label">Check</p>
   <p class="q">GPT-2 receives &ldquo;&middot;strawberry&rdquo; as the single token 41236. What does its input tell it directly about the letters in that word?</p>
-  <div class="options seg"><button>The letters and their order</button><button>Nothing: it gets only the id, and anything it knows about the letters was learned from training text</button><button>Only how many letters there are</button></div>
-  <div class="feedback"><p>The input is the id 41236 and nothing else. This is why a model can find it hard to reverse or count the letters of a word: those letters are not in what it reads.</p></div>
+  <div class="options seg"><button>The letters and their order</button><button>Nothing about the letters</button><button>Only how many letters there are</button></div>
+  <div class="feedback"><p>The input is the id 41236 and nothing else; anything the model knows about the letters of that token it learned from its training text. This is why a model can find it hard to reverse or count the letters of a word: those letters are not in what it reads.</p></div>
 </div>
 
 <div class="check" data-id="3.1-c2" data-correct="1">

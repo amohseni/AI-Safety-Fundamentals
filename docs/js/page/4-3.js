@@ -26,8 +26,9 @@ const fmtB = (b) => (b >= 1 ? b.toFixed(1) : b >= 0.1 ? b.toFixed(2) : b.toFixed
 
 // ---- The tool ----
 const ctl = document.getElementById('controls');
-const bS = slider(ctl, { name: 'Strength of the KL penalty β', min: -2, max: 1, step: 0.01, value: state.lb,
-  format: (v) => fmtB(10 ** v), onInput: (v) => { state.lb = v; draw(); } });
+// The slider runs over -log10 beta, so moving it to the right lowers beta, as on the chart below.
+const bS = slider(ctl, { name: 'KL penalty β, falling to the right', min: -1, max: 2, step: 0.01, value: -state.lb,
+  format: (v) => fmtB(10 ** -v), onInput: (v) => { state.lb = -v; draw(); } });
 segmented(ctl, { name: 'Hack response', options: [['in', 'Included'], ['out', 'Removed']], value: 'in',
   onChange: (k) => { state.hack = k === 'in'; build(); } });
 const trueBtn = button(ctl, 'Show the true rewards', () => {
@@ -35,7 +36,7 @@ const trueBtn = button(ctl, 'Show the true rewards', () => {
   trueBtn.textContent = state.showTrue ? 'Hide the true rewards' : 'Show the true rewards';
   draw();
 });
-const resetBtn = button(ctl, 'Back to β = 10', () => { state.lb = 1; bS.set(1); draw(); });
+const resetBtn = button(ctl, 'Back to β = 10', () => { state.lb = 1; bS.set(-1); draw(); });
 resetBtn.setAttribute('aria-label', 'Set beta back to 10');
 
 const barsEl = document.getElementById('bars');
@@ -72,18 +73,20 @@ function build() {
   curve = chart(curveEl, { width: 560, height: 300, margin: { top: 34, right: 70, bottom: 52, left: 52 },
     x: { domain: [10, 0.01], log: true, ticks: 4, format: '~g', label: 'β, falling to the right' },
     y: { domain: [0, 1], ticks: 4, label: 'expected reward' }, title: 'Expected reward model score and expected true reward as beta decreases' });
-  curve.line('p', sw.map((v) => [v.beta, v.proxy]), { color: 'ink', label: 'score' });
-  curve.line('t', sw.map((v) => [v.beta, v.truth]), { color: 'second', label: 'true' });
-  curve.spreadLabels(['p', 't'], 18);
   draw();
 }
 
 function draw() {
   const b = beta(), pi = tilt(rs, b), x = svg.node().__x;
+  const P = expect(pi, rs, 'proxy'), T = expect(pi, rs, 'truth'), K = kl(pi, rs);
   svg.selectAll('rect.pol').data(pi).attr('width', (p) => x(p));
   svg.selectAll('text.pv').data(pi).attr('x', (p, i) => Math.max(x(p), x(rs[i].ref)) + 6).text((p) => p.toFixed(2));
   svg.selectAll('text.true').data(rs).text((d) => (state.showTrue ? d.truth.toFixed(2) : '?'));
-  const P = expect(pi, rs, 'proxy'), T = expect(pi, rs, 'truth'), K = kl(pi, rs);
+  // The curves are traced only from beta = 10 down to the current beta, so the reader sees each part after reaching it.
+  const seen = sw.filter((v) => v.beta >= b * (1 - 1e-9)).concat([{ beta: b, proxy: P, truth: T }]);
+  curve.line('p', seen.map((v) => [v.beta, v.proxy]), { color: 'ink', label: 'score' });
+  curve.line('t', seen.map((v) => [v.beta, v.truth]), { color: 'second', label: 'true' });
+  curve.spreadLabels(['p', 't'], 18);
   curve.vline('b', b, { color: 'accent', dash: null });
   curve.point('bp', b, P, { color: 'ink', r: 3.5, label: null });
   curve.point('bt', b, T, { color: 'second', r: 3.5, label: null });

@@ -22,9 +22,9 @@
 <h1>Optimizing a learned reward</h1>
 
 <section>
-<p>In reinforcement learning from human feedback (RLHF), the language model, now called the <em>policy</em>, is trained to produce responses that the reward model of Section 4.2 scores highly. If training pushed on the reward alone, the policy would drift toward whatever the reward model scores highest, including strange responses that the reward model was never checked on. So the objective adds a penalty for moving away from the starting model \(\pi_{\mathrm{ref}}\): maximize the expected reward minus \(\beta\) times the KL divergence from the starting model.<label for="sn-ziegler" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-ziegler" class="margin-toggle"><span class="sidenote">Ziegler, Stiennon, Wu, Brown, Radford, Amodei, Christiano, and Irving (2019), &ldquo;Fine-tuning language models from human preferences,&rdquo; arXiv:1909.08593, used this objective for language models.</span> The KL divergence measures how far one probability distribution is from another; it is zero only when the two are the same.</p>
+<p>In reinforcement learning from human feedback (RLHF), the language model, now called the <em>policy</em>, is trained to produce responses that the reward model of Section 4.2 scores highly. If training pushed on the reward alone, the policy would drift toward whatever the reward model scores highest, including strange responses that the reward model was never checked on. So the objective adds a penalty for moving away from the starting model \(\pi_{\mathrm{ref}}\): for each prompt \(x\), maximize the expected reward minus \(\beta\) times the KL divergence from the starting model, \(\mathbb{E}_{y \sim \pi}[r(x, y)] - \beta\,\mathrm{KL}(\pi \,\|\, \pi_{\mathrm{ref}})\), where \(\beta > 0\) sets the strength of the penalty.<label for="sn-ziegler" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-ziegler" class="margin-toggle"><span class="sidenote">Ziegler, Stiennon, Wu, Brown, Radford, Amodei, Christiano, and Irving (2019), &ldquo;Fine-tuning language models from human preferences,&rdquo; arXiv:1909.08593, used this objective for language models.</span> The KL divergence \(\mathrm{KL}(\pi \,\|\, \pi_{\mathrm{ref}}) = \sum_y \pi(y) \log\big(\pi(y)/\pi_{\mathrm{ref}}(y)\big)\) measures how far one probability distribution is from another; it is never negative, and it is zero only when the two are the same.</p>
 
-<p><span class="claim">Theorem</span> This objective has an exact solution. For each prompt \(x\), the policy that maximizes it is the starting distribution reweighted by the exponential of the reward:</p>
+<p><span class="claim">Theorem</span> This objective has an exact solution. For each prompt \(x\) and each \(\beta > 0\), among all probability distributions over responses, the unique one that maximizes the objective is the starting distribution reweighted by the exponential of the reward:</p>
 $$\pi^{*}(y \mid x) = \frac{1}{Z(x)}\, \pi_{\mathrm{ref}}(y \mid x)\, \exp\!\big(r(x, y)/\beta\big),$$
 <p>where \(r\) is the reward model&rsquo;s score and \(Z(x)\) makes the probabilities sum to 1. The DPO method trains a language model directly toward this solution, without a separate reinforcement learning step.<label for="sn-dpo" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-dpo" class="margin-toggle"><span class="sidenote">Rafailov, Sharma, Mitchell, Ermon, Manning, and Finn (2023), &ldquo;Direct preference optimization: your language model is secretly a reward model,&rdquo; <em>NeurIPS</em>.</span></p>
 
@@ -37,7 +37,7 @@ $$\pi^{*}(y \mid x) = \frac{1}{Z(x)}\, \pi_{\mathrm{ref}}(y \mid x)\, \exp\!\big
 
 <div class="tool" id="tool">
   <div class="panel">
-    <p class="panel-note">The prompt is &ldquo;Why is the sky blue?&rdquo; Each row is one response. The outline shows the starting model&rsquo;s probability and the <span class="c-accent">filled bar</span> the policy&rsquo;s probability at the chosen \(\beta\). At the right of each row are the reward model&rsquo;s score and, once shown, the <span class="c-second">true reward</span>.</p>
+    <p class="panel-note">The prompt is &ldquo;Why is the sky blue?&rdquo; Each row is one response. The outline shows the starting model&rsquo;s probability and the <span class="c-accent">filled bar</span> the policy&rsquo;s probability at the chosen \(\beta\). At the right of each row are the reward model&rsquo;s score and, once shown, the <span class="c-second">true reward</span>. Moving the slider to the right lowers \(\beta\); the chart below traces the expected score and the expected true reward over the values of \(\beta\) you have passed.</p>
     <div class="row"><div class="controls" id="controls"></div><div class="stage" id="bars"></div></div>
     <div class="row"><div class="controls" aria-hidden="true"></div><div class="stage" id="curve"></div></div>
     <p class="readout" id="readout" aria-live="polite"></p>
@@ -62,9 +62,9 @@ $$\pi^{*}(y \mid x) = \frac{1}{Z(x)}\, \pi_{\mathrm{ref}}(y \mid x)\, \exp\!\big
   <li class="task" data-id="4.3-t3">
     <p class="prompt">Remove the hack response and lower \(\beta\) again. What does the expected true reward do now?</p>
     <div class="choices" data-options="It rises the whole way|It rises, then falls|It falls the whole way"></div>
-    <div class="after"><p>Switch the hack response off and repeat task 1.</p>
+    <div class="after"><p>Switch the hack response off, press &ldquo;Back to \(\beta\) = 10,&rdquo; and repeat task 1.</p>
       <button class="show" type="button">Show what to notice</button>
-      <div class="notice"><p>It rises the whole way, from 0.41 to 0.90. Without the hack, the response the reward model scores highest is also the best one. The fall in task 1 came from a single response on which the reward model and the true reward disagree. Pushing hard against the reward model finds such responses, because they are where its score is highest.</p></div></div>
+      <div class="notice"><p>It rises the whole way, from 0.41 to 0.90. Without the hack, the response the reward model scores highest is also the best one. The fall in task 1 came from a single response on which the reward model and the true reward disagree. Pushing hard against the reward model finds such a response whenever the reward model overrates it enough to score it highest.</p></div></div>
   </li>
 </ol>
 </section>

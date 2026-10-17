@@ -69,7 +69,7 @@ $$L(N, D) = E + \frac{A}{N^{\alpha}} + \frac{B}{D^{\beta}},$$
 <section>
 <h2>What Chinchilla showed</h2>
 <p><span class="claim">Empirical finding</span> Hoffmann et al. tested their prediction with Chinchilla, a 70-billion-parameter model trained on 1.4 trillion tokens. It outperformed the 280-billion-parameter Gopher, trained on 300 billion tokens with about the same compute, on a large range of downstream tasks. Their three ways of estimating the best split all found that the best \(N\) and \(D\) both grow roughly as the square root of compute (exponents 0.50, 0.49, and 0.46 for \(N\)). The first two give about 20 tokens per parameter across the budgets they consider, which is how Chinchilla was sized: 1.4 trillion tokens for 70 billion parameters.</p>
-<p>The fitted formula in the tool, their third way, gives a different number. At Chinchilla&rsquo;s budget its best split is about 60 tokens per parameter, and the best ratio grows with the budget, from about 19 at \(10^{18}\) FLOPs to about 90 at \(10^{26}\). <span class="claim">Empirical finding</span> Besiroglu et al. (2024) refitted the formula to the paper&rsquo;s data and found that the published fit was poorly converged; their refit agrees with the first two methods, at about 20 tokens per parameter. So the tool&rsquo;s exact numbers come from one fitted formula, and the paper&rsquo;s main result is the rule of about 20 tokens per parameter.</p>
+<p>The fitted formula in the tool, their third way, gives a different number. At Chinchilla&rsquo;s budget its best split is about 60 tokens per parameter, and the best ratio grows with the budget, from about 19 at \(10^{18}\) FLOPs to about 90 at \(10^{26}\). <span class="claim">Empirical finding</span> Besiroglu et al. (2024) refitted the formula to data they reconstructed from one of the paper&rsquo;s figures, and found that the published fit had stopped before it converged; their refit agrees with the first two methods, at about 20 tokens per parameter. So the tool&rsquo;s exact numbers come from one fitted formula, and the paper&rsquo;s main result is the rule of about 20 tokens per parameter.</p>
 
 <figure id="fig-frontier" aria-describedby="fig-frontier-desc"></figure>
 <p id="fig-frontier-desc" class="caption">Predicted loss against training compute for five model sizes, from the fitted formula. Each curve flattens, because a model of fixed size cannot get below \(E + A/N^{\alpha}\) however long it trains. The <span class="c-accent">compute-optimal frontier</span> runs along their lower edge: for each budget, the size that reaches the lowest loss.</p>
@@ -87,8 +87,8 @@ $$L(N, D) = E + \frac{A}{N^{\alpha}} + \frac{B}{D^{\beta}},$$
 
 <div class="check" data-id="3.8-c2" data-correct="1">
   <p class="q">A scaling law predicts that a new model ten times larger will have a lower loss. What does that tell you about whether it will be able to do three-digit multiplication?</p>
-  <div class="options seg"><button>It will, because lower loss means every task improves</button><button>Not directly: the law predicts the next-token loss averaged over all text, and one task is a small part of that average</button><button>It will not, because loss and abilities are unrelated</button></div>
-  <div class="feedback"><p>The loss is an average over all the next tokens in the test text. A lower average is compatible with large gains on some tasks and none on others.</p></div>
+  <div class="options seg"><button>It will, because lower loss improves every task</button><button>Nothing directly about that one task</button><button>It will not, because loss and abilities are unrelated</button></div>
+  <div class="feedback"><p>The law predicts the next-token loss averaged over all the test text, and one task is a small part of that average. A lower average is compatible with large gains on some tasks and none on others.</p></div>
 </div>
 
 <div class="explain" data-id="3.8-e1">
