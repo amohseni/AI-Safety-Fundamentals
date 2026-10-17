@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>6.1 What interpretability tries to do</title>
+<meta name="description" content="Interpretability methods sorted by what they access and by the kind of evidence they give.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  #map { display: grid; grid-template-columns: minmax(8rem, 1.1fr) repeat(3, minmax(0, 1fr)); gap: 0; max-width: 54rem; margin: 0.6rem 0 1rem; }
+  #map .map-col { color: var(--quiet); padding: 0 0.5rem 0.4rem; border-bottom: 1px solid var(--rule); }
+  #map .map-corner { border-bottom: 1px solid var(--rule); }
+  #map .map-row { color: var(--quiet); padding: 0.6rem 0.5rem 0.6rem 0; border-bottom: 1px solid var(--rule); line-height: 1.35; }
+  #map .map-row .kind { font-style: italic; }
+  #map .map-cell { display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem; padding: 0.6rem 0.5rem; border-bottom: 1px solid var(--rule); }
+  #map .map-cell button { text-align: left; line-height: 1.3; padding: 0.2rem 0.55rem; }
+  #map .map-cell button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+  #card, #quiz { width: 61%; min-height: 6rem; }
+  #card dl { margin: 0.3rem 0 0; }
+  #card dt { color: var(--quiet); font-style: italic; margin-top: 0.4rem; }
+  #card dd { margin: 0 0 0 1.2rem; }
+  #card p, #quiz p { margin: 0.3rem 0; }
+  .quiet { color: var(--quiet); }
+  #map, #card, #quiz, #map .map-row, #map .map-col { font-size: var(--text); }
+  #quiz .claim-text { margin: 0.5rem 0 0.6rem; }
+  #quiz #kind { margin: 0.6rem 0; }
+  #quiz #qbtns { margin: 0.3rem 0 0.6rem; }
+  #mode { margin-bottom: 0.4rem; }
+  @media (max-width: 760px) {
+    #card, #quiz { width: 100%; }
+    #map { grid-template-columns: 1fr; }
+    #map .map-col, #map .map-corner { display: none; }
+    #map .map-row { border-bottom: 0; padding-top: 1rem; color: var(--ink); }
+    #map .map-cell { border-bottom: 0; padding: 0.2rem 0 0.4rem; }
+    #map .map-cell::before { content: attr(data-label); color: var(--quiet); font-style: italic; }
+  }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="6.1">
+<article>
+<h1>What interpretability tries to do</h1>
+
+<section>
+<p>Interpretability is the study of what a trained network has learned and how it computes its outputs. Methods differ first in what they access. <em>Black-box</em> methods use only inputs and outputs. <em>White-box</em> methods also look inside: at the network&rsquo;s activations, the numbers computed at each layer for a given input, and at its weights, the parameters that compute those activations. <em>Mechanistic interpretability</em> aims at the most detailed account: the algorithm a network uses, stated in terms of the network&rsquo;s parts.<label for="sn-zoom" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-zoom" class="margin-toggle"><span class="sidenote">Olah et al. (2020), &ldquo;Zoom In: An Introduction to Circuits,&rdquo; <em>Distill</em>, set out this program for image models. Bereska and Gavves (2024), &ldquo;Mechanistic Interpretability for AI Safety: A Review,&rdquo; <em>Transactions on Machine Learning Research</em>, survey the field.</span></p>
+
+<p>Methods also differ in the kind of evidence they give. <em>Correlational</em> evidence comes from observing what goes with what: a pattern in the activations that is present whenever the input has some property. <em>Causal</em> evidence comes from changing one thing while holding the rest fixed and measuring what else changes. The two kinds of evidence support different claims about a network.</p>
+</section>
+
+<section>
+<h2>Methods map</h2>
+<p>The map sorts eight methods by what they access (columns) and by whether they observe or intervene (rows). In <em>Explore</em> mode, select a method to open its card. In <em>Quiz</em> mode, you are given a claim about a model; select every method in the map that could support it, choose the kind of evidence it needs, and press Check.</p>
+
+<div class="tool" id="tool">
+  <div class="panel">
+    <div id="mode"></div>
+    <div id="map" role="group"></div>
+    <div id="card" aria-live="polite"></div>
+    <div id="quiz"></div>
+  </div>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="6.1-t1">
+    <p class="prompt">Claim: &ldquo;The model uses its representation of truth when it answers.&rdquo; Which row of the map can support this claim?</p>
+    <div class="choices" data-options="Observe|Change one thing|Either row"></div>
+    <div class="after"><p>Switch to Quiz mode; this is claim 2. Answer it and press Check. Compare claim 1.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Only the row that changes something. Claim 1 says the information is present in the activations, and a probe can show that. Claim 2 says the model uses the information, which is a claim about what makes a difference to the output. Information can be present without being used, so only changing the activations and watching the output can support claim 2.</p></div></div>
+  </li>
+  <li class="task" data-id="6.1-t2">
+    <p class="prompt">Work through all seven claims. Some of them no method in the observe row could support. What do those claims have in common?</p>
+    <div class="choices" data-options="They are about the model&rsquo;s outputs|They say that something makes a difference to the output|They are about the weights"></div>
+    <div class="after"><p>Use Next claim to move through the quiz.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Claims 2, 4, and 6, and the second half of claim 7, say that something makes a difference: a representation, an input detail, a layer, a unit. Each needs an intervention. Claims about outputs alone (claim 3) or about what the parameters compute (claim 5) can be supported without one.</p></div></div>
+  </li>
+  <li class="task" data-id="6.1-t3">
+    <p class="prompt">Reading an attention head&rsquo;s weights shows that the head copies the token it attends to. Does that show the model relies on this head when it completes a sentence?</p>
+    <div class="choices" data-options="Yes|No"></div>
+    <div class="after"><p>Open the cards for Reading the weights and for Activation patching in Explore mode.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>No. The weights show what the head can compute. Whether the model relies on it for this sentence is a causal claim: patch or remove the head&rsquo;s output and see whether the completion changes. Circuit analyses usually combine both kinds of evidence (page 6.7).</p></div></div>
+  </li>
+</ol>
+
+<figure class="multiples" id="fig-evidence" aria-describedby="fig-evidence-desc"></figure>
+<p id="fig-evidence-desc" class="caption">Two ways to study a representation. Left: a probe reads the activations while the model runs unchanged; it can show that information is present. Right: steering adds a vector to the activations and checks whether the output changes; it can show that the model uses the information.</p>
+</section>
+
+<section>
+<h2>Why causal evidence matters</h2>
+<p>A probe (page 6.3) is a classifier trained on activations. <span class="claim">Argument</span> If it predicts a property with high accuracy, the property can be read off the activations, but the model may never use it: the information can be a by-product of other computations, and a flexible probe can learn part of the task itself.<label for="sn-probe" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-probe" class="margin-toggle"><span class="sidenote">Hewitt and Liang (2019), &ldquo;Designing and Interpreting Probes with Control Tasks,&rdquo; EMNLP; Belinkov (2022), &ldquo;Probing Classifiers: Promises, Shortcomings, and Advances,&rdquo; <em>Computational Linguistics</em> 48: 207&ndash;219.</span> Steering (page 6.6) and activation patching (page 6.7) change the activations and measure the effect on the output, so they can show that the model uses what the probe found. This is why the field prizes causal evidence: claims about how a network computes its outputs are claims about what makes a difference.</p>
+<p><span class="claim">Argument</span> For safety, interpretability is meant to answer questions that behavior cannot settle: whether a model represents facts it does not report, which goals or rules of thumb drive its outputs, and whether it behaves differently when it believes it is being tested. Each of these is a claim about what the model represents and uses, so each needs both kinds of evidence.</p>
+</section>
+
+<div class="check" data-id="6.1-c1" data-correct="1">
+  <p class="label">Check</p>
+  <p class="q">A probe reads &ldquo;the input is in French&rdquo; from layer 6 with 99% accuracy. Does the model use that information?</p>
+  <div class="options seg"><button>Yes: 99% accuracy shows the model relies on it</button><button>The probe does not show it; that needs a causal test</button><button>No: if the model used it, a probe would not be needed</button></div>
+  <div class="feedback"><p>The probe shows that the information is present at layer 6. Whether the model uses it is a causal question: change the activations along the probed direction, or patch them in from another input, and see whether the model&rsquo;s behavior changes.</p></div>
+</div>
+
+<div class="check" data-id="6.1-c2" data-correct="2">
+  <p class="q">Which result would show that a model uses information about the language of its input?</p>
+  <div class="options seg"><button>A probe on layer 6 predicts the language with 99% accuracy</button><button>An SAE unit at layer 6 is active on French text and silent on English text</button><button>Copying layer 6&rsquo;s activations from a French input into a run on an English input makes the model answer in French</button></div>
+  <div class="feedback"><p>The first two are observations: they show the information is present. The third changes the activations and finds that the output changes, which is causal evidence that the model uses what layer 6 carries.</p></div>
+</div>
+
+<div class="explain" data-id="6.1-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: what is the difference between showing that information is present in a network and showing that the network uses it?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>Interpretability methods differ in what they access (behavior, activations, or weights) and in the evidence they give. Observing activations gives correlational evidence that information is present; changing activations or weights and measuring the effect gives causal evidence that the model uses it. Claims about how a model computes its outputs are causal claims, so the field prizes causal evidence.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/6-1.js"></script>
+</body>
+</html>

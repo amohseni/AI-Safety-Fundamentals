@@ -242,7 +242,7 @@ export const sections = [
         "id": "6.1",
         "title": "What interpretability tries to do",
         "core": false,
-        "href": null
+        "href": "pages/6-1.html"
       },
       {
         "id": "6.2",
@@ -260,13 +260,13 @@ export const sections = [
         "id": "6.4",
         "title": "Superposition and polysemanticity",
         "core": true,
-        "href": null
+        "href": "pages/6-4.html"
       },
       {
         "id": "6.5",
         "title": "Sparse dictionary learning",
         "core": false,
-        "href": null
+        "href": "pages/6-5.html"
       },
       {
         "id": "6.6",

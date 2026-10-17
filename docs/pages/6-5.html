@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>6.5 Sparse dictionary learning</title>
+<meta name="description" content="A sparse autoencoder, trained live, recovers the feature directions of a toy model in superposition.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  .tool .readout + .panel-note { margin-top: 1.2rem; }
+  #fig-decomp canvas { display: block; }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="6.5">
+<article>
+<h1>Sparse dictionary learning</h1>
+
+<section>
+<p>On page 6.4 we knew each feature&rsquo;s direction because we built the model. In a real network we see only the activations. If each activation vector is a sum of a few feature directions out of many, we can try to recover the directions from the activations alone.</p>
+
+<p>A <em>sparse autoencoder</em> (SAE) is trained to rebuild a layer&rsquo;s activations as a combination of a few directions taken from a larger learned set, called the <em>dictionary</em>. It is a network with one wide hidden layer, whose hidden units we call the dictionary units. For an activation vector \(h\) it computes</p>
+$$f = \mathrm{ReLU}\big(E(h - c) + e\big), \qquad \hat h = D f + c,$$
+<p>where the columns of \(D\), each kept at length 1, are the dictionary directions, and \(f_k\) is how strongly unit \(k\) is active. The loss is the squared rebuilding error \(\lVert h - \hat h \rVert^2\) plus a penalty \(\lambda \sum_k f_k\), which pushes most units to zero on each input. The hope is that each unit ends up matching one feature.<label for="sn-sae" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-sae" class="margin-toggle"><span class="sidenote">This is the form used by Bricken et al. (2023), &ldquo;Towards Monosemanticity: Decomposing Language Models With Dictionary Learning,&rdquo; Transformer Circuits Thread; and, with small differences, by Cunningham et al. (2023), &ldquo;Sparse Autoencoders Find Highly Interpretable Features in Language Models,&rdquo; ICLR 2024.</span></p>
+
+<p>Here the SAE is trained on the hidden activations of the pentagon model from page 6.4: five features in two dimensions, sparsity 0.9, equal importance. On average 0.5 features are active per input. Because we built that model, we can check the SAE against the true directions. We count a feature as <em>recovered</em> when some unit&rsquo;s direction has cosine similarity above 0.95 with it.</p>
+</section>
+
+<section>
+<h2>Decompose an activation</h2>
+<p>Each change to a control trains the SAE again from a new random start, for 3,000 steps. <em>New start</em> tries another starting point with the same settings.</p>
+
+<div class="tool" id="tool">
+  <div class="panel">
+    <p class="panel-note">Gray dots are activation vectors of the toy model (the many inputs with no active feature all sit at the center). Black lines are the five true feature directions. <span class="c-accent">Arrows</span> are the SAE&rsquo;s dictionary directions, all drawn at the same length and labeled with letters; a dashed gray arrow is a unit that never fires.</p>
+    <div class="row">
+      <div class="controls" id="controls"></div>
+      <div class="stage"><canvas id="plane" aria-label="Activations, true feature directions, and dictionary directions"></canvas></div>
+    </div>
+    <p class="readout" id="readout" aria-live="polite"></p>
+    <p class="panel-note">Cosine similarity between each true feature (rows) and each unit&rsquo;s direction (columns): <span class="c-accent">positive</span> or <span class="c-second">negative</span>, darker when larger in size. A recovered feature has one dark square near 1 in its row.</p>
+    <div id="sim"></div>
+    <p class="readout" id="matches"></p>
+  </div>
+</div>
+
+<p>The <em>rebuild error</em> is the share of the activations&rsquo; variance that the rebuilt vectors \(\hat h\) miss: 0 means a perfect rebuild, 1 means the SAE does no better than outputting the average activation.</p>
+
+<ol class="tasks">
+  <li class="task" data-id="6.5-t1">
+    <p class="prompt">With a dictionary of 5 units, one per true feature, which penalty recovers all five feature directions most reliably?</p>
+    <div class="choices" data-options="A small one (0 to 0.1)|A middle one (0.3 to 0.5)|The largest (2)"></div>
+    <div class="after"><p>Try 0, 0.03, 0.5, and 2, and press New start a few times at each. Watch the rebuild error and the number of active units too.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p><span class="claim">Empirical finding</span> A middle one. In our tests with ten starting points each, penalty 0.5 recovered all five features every time, with about 0.4 units active per input. Penalties from 0 to 0.1 rebuilt the activations almost perfectly (rebuild error at most 0.012) but recovered only one to four features: with 0.7 to 3 units active per input, the SAE spreads each activation over several units whose directions need not match any feature. Penalty 2 left the units silent on almost every input, with a rebuild error near 0.97, and recovered at most two features. Even at 0.5 the rebuild error is 0.17, because the penalty also shrinks the values of the active units.</p></div></div>
+  </li>
+  <li class="task" data-id="6.5-t2">
+    <p class="prompt">Shrink the dictionary to 3 units. How many of the five features can it recover?</p>
+    <div class="choices" data-options="All five|At most three|None"></div>
+    <div class="after"><p>Try penalties 0.3, 0.5, and 1.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>At most three: each unit has one direction, and neighboring features are 72 degrees apart, so one unit cannot match two features. In our tests (ten starts at each of the three penalties) the SAE recovered one to three. The activations live in two dimensions, yet three units are too few, because there are five features. A dictionary must have at least as many units as there are features, which under superposition is more than the number of dimensions.</p></div></div>
+  </li>
+  <li class="task" data-id="6.5-t3">
+    <p class="prompt">Set the penalty to 0.5 and double the dictionary from 5 units to 10. What do the five extra units do?</p>
+    <div class="choices" data-options="Each finds a new feature|They never fire, or copy a feature already found|Each true feature splits into two narrower ones"></div>
+    <div class="after"><p>Look for dashed arrows and for two arrows on the same line. Try a few starts, and try 20 units.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p><span class="claim">Empirical finding</span> They never fire, or they copy a feature already found. In ten starts at 10 units, all five features were recovered every time; one to four units never fired, and one to four more pointed at a feature that another unit already matched, and in some starts one unit pointed at no feature. Such a copy fires on mostly the same inputs as its twin (on at least 79% of the inputs where either fires, in our tests), and the two share the activation between them. Nothing splits, because in this toy each feature is a single direction with no finer structure to split into.</p></div></div>
+  </li>
+</ol>
+
+<figure class="multiples" id="fig-decomp" aria-describedby="fig-decomp-desc"></figure>
+<p id="fig-decomp-desc" class="caption">One activation of the toy model, with feature 1 at value 0.9 and feature 3 at 0.6, decomposed by a 5-unit dictionary trained at penalty 0.5. Unit C matches feature 1 (cosine 0.997) and unit B matches feature 3 (cosine 0.998). The code has two nonzero entries, C = 0.90 and B = 0.68; the other three units are silent. Adding C&rsquo;s and B&rsquo;s directions, scaled by those values, gives approximately the activation \(h\).</p>
+</section>
+
+<section>
+<h2>What SAEs have found in language models</h2>
+<p>On a language model there are no true directions to compare against, so the units are judged by what they respond to and by what happens when they are changed. <span class="claim">Empirical finding</span> Bricken et al. (2023) trained SAEs on a one-layer transformer and found units for DNA sequences, Arabic script, and base64 strings, among many others. Cunningham et al. (2023) found SAE units in a small open language model easier to interpret than the model&rsquo;s neurons. Templeton et al. (2024) trained SAEs with up to 34 million units on the middle layer of Claude 3 Sonnet and found units for the Golden Gate Bridge, for code with security flaws, and for flattering praise.<label for="sn-scale" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-scale" class="margin-toggle"><span class="sidenote">Templeton et al. (2024), &ldquo;Scaling Monosemanticity: Extracting Interpretable Features from Claude 3 Sonnet,&rdquo; Transformer Circuits Thread.</span> A unit can be tested causally by turning it up or down (page 6.6): fixing the Golden Gate Bridge unit at a high value made the model describe itself as the bridge.</p>
+
+<h2>Limitations</h2>
+<p>SAEs do not rebuild activations perfectly, and the part they miss can matter for the model&rsquo;s behavior. The units found depend on the dictionary size. <span class="claim">Empirical finding</span> In language models, unlike the toy above, a unit in a small dictionary can split into several narrower units in a larger one: Bricken et al. report that a base64 unit in their 512-unit dictionary split into three units in their 4,096-unit dictionary. On some practical tasks, SAE units have done worse than simple linear probes (page 6.3). In 2025, Google DeepMind&rsquo;s interpretability team reported that probes built on SAE units detected harmful user intent less reliably on new kinds of prompts than linear probes on the activations, and said they were deprioritizing fundamental SAE research.<label for="sn-gdm" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-gdm" class="margin-toggle"><span class="sidenote">Smith, Rajamanoharan, Conmy, McDougall, Lieberum, Kram&aacute;r, Shah, and Nanda (2025), &ldquo;Negative Results for SAEs On Downstream Tasks and Deprioritising SAE Research,&rdquo; AI Alignment Forum, March 26.</span> Newer methods, such as transcoders, crosscoders, and attribution graphs, apply the same idea to trace computations across layers (page 6.7).</p>
+</section>
+
+<div class="check" data-id="6.5-c1" data-correct="0">
+  <p class="label">Check</p>
+  <p class="q">An SAE for a layer with 512 neurons is given exactly 512 units. Even with a well-chosen penalty, why might it fail to find the layer&rsquo;s features?</p>
+  <div class="options seg"><button>Under superposition the layer can hold more than 512 features, so 512 units are too few</button><button>With 512 units the codes cannot be sparse</button><button>It will not fail: any 512-dimensional activation is a combination of 512 directions</button></div>
+  <div class="feedback"><p>Rebuilding the activations is not the same as recovering the features. Any basis of 512 directions can rebuild a 512-dimensional activation, as the small penalties did in task 1, but under superposition there are more features than dimensions, and each unit can match only one of them.</p></div>
+</div>
+
+<div class="check" data-id="6.5-c2" data-correct="1">
+  <p class="q">An SAE rebuilds the activations with almost no error. What does that show about whether its units match the model&rsquo;s features?</p>
+  <div class="options seg"><button>They match, since the rebuild is almost perfect</button><button>Not much: in the toy, the units matched the features best at a penalty that left a rebuild error of 0.17</button><button>They cannot match, since a perfect rebuild needs dense codes</button></div>
+  <div class="feedback"><p>With little penalty the SAE rebuilt the toy&rsquo;s activations almost perfectly while its directions missed most features. Recovery needed a penalty large enough to force sparse codes, at some cost in rebuild error.</p></div>
+</div>
+
+<div class="explain" data-id="6.5-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: what does the sparsity penalty do, and why does too little or too much of it fail to recover the features?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>A sparse autoencoder tries to recover features from superposition by rebuilding each activation from a few directions in a dictionary larger than the layer. The sparsity penalty is the lever: too little gives codes spread over many units that need not match any feature; too much loses information. On language models SAEs find many interpretable units, but they rebuild activations imperfectly, depend on the dictionary size, and have done worse than linear probes on some practical tasks.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/6-5.js"></script>
+</body>
+</html>
