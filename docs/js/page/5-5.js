@@ -200,7 +200,7 @@ window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() =
     // Number the key frequencies, nudging labels apart when two are close.
     let lastX = -Infinity;
     s.key_freqs.forEach((k) => {
-      const px = c.x(k), shift = px - lastX < 22 ? 22 - (px - lastX) : 0;
+      const px = c.x(k), shift = px - lastX < 30 ? 30 - (px - lastX) : 0;
       lastX = px + shift;
       c.text(`t${k}`, c.x.invert(px + shift), s.spectrum[k - 1] + yMax * 0.05, String(k), { color: 'accent', anchor: 'middle' });
     });
