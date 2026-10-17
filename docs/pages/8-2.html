@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>8.2 Reward hacking and specification gaming</title>
+<meta name="description" content="How systems meet the letter of an objective and miss its intent, from a cleaning robot you program to documented cases in games and language models.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  .room { display: block; outline-offset: 4px; }
+  .weights .ctl-head output { min-width: 2.5rem; text-align: right; }
+  .cases { width: 90%; border-collapse: collapse; margin: 1rem 0 1.5rem; }
+  .cases th, .cases td { text-align: left; vertical-align: top; padding: 0.35rem 0.8rem 0.35rem 0; border-bottom: 1px solid var(--rule); }
+  .cases th { font-weight: normal; font-style: italic; color: var(--quiet); }
+  .table-wrap { overflow-x: auto; }
+  svg.schematic { display: block; max-width: 100%; height: auto; }
+  svg.schematic text { font-family: et-book, Georgia, serif; font-size: var(--text); fill: var(--quiet); }
+  @media (max-width: 760px) { #panel-room .stage { order: -1; } .cases { width: 100%; } .cases th, .cases td { padding-right: 0.5rem; } }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="8.2">
+<article>
+<h1>Reward hacking and specification gaming</h1>
+
+<section>
+<p><em>Specification gaming</em> is behavior that scores well on the stated objective while failing at the intended task. When the objective is a reward signal, it is called <em>reward hacking</em>. Krakovna and colleagues at DeepMind keep a public list of documented cases; when they described it in 2020 it held about 60.<label for="sn-krak" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-krak" class="margin-toggle"><span class="sidenote">Krakovna, Uesato, Mikulik, Rahtz, Everitt, Kumar, Kenton, Leike, and Legg (2020), &ldquo;Specification gaming: the flip side of AI ingenuity,&rdquo; DeepMind blog, April 21, 2020.</span></p>
+
+<p>Page 8.1 treated a proxy as a number with an error. Here the proxy is a reward you write yourself, and the optimizer is exact: for the reward you choose, the tool computes the policy that earns the most reward over the shift, by dynamic programming over every state the room can reach. Whatever that policy does is what your reward asks for.</p>
+</section>
+
+<section>
+<h2>Write a reward function</h2>
+<p>Each task below asks for a prediction first. Make it, then use the tool to check it.</p>
+
+<div class="tool" id="tool">
+  <div class="panel" id="panel-room">
+    <h3>The cleaning robot</h3>
+    <p class="panel-note">The <span class="c-accent">robot</span> starts on its dock and works a shift of 30 steps. In each step it can move, wait, or drag the mess it stands on one cell along with it; cleaning the mess it stands on takes 3 steps; on the dock it can end its shift. Moving into the bin tips it over and spills trash (a new <span class="c-second">mess</span>) onto the robot&rsquo;s cell. Moving into the vase breaks it. The camera above the top-left corner sees the shaded cells, unless the robot stands right in front of it. The <em>true task score</em> is what the owner wants: it counts &minus;1 for each mess left in the room at the end of the shift, seen by the camera or not, and &minus;10 for a broken vase or a knocked-over plant.</p>
+    <div class="row">
+      <div class="controls weights" id="room-weights"></div>
+      <div class="stage">
+        <canvas class="room" id="room" tabindex="0" aria-label="The room at the selected step of the shift"></canvas>
+        <div class="controls" id="room-play" style="max-width: 100%; margin-top: 0.8rem;"></div>
+      </div>
+    </div>
+    <p class="readout" id="room-readout" aria-live="polite"></p>
+  </div>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="8.2-t1">
+    <p class="prompt">Set the reward to +1 for each mess cleaned, and every other part to zero. What will the robot do?</p>
+    <div class="choices" data-options="Clean both messes, then wait|Clean, then make new messes to clean|Ignore the messes"></div>
+    <div class="after"><p>Set it, then press Play the shift.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The robot cleans one of the two messes, then goes to the bin and spends the rest of the shift tipping it over and cleaning up the trash: 6 messes cleaned, 5 of them its own. The other original mess is still on the floor at the end, so the true task score is &minus;1. The reward counted cleaning; it did not count whether the room ended up clean.</p></div></div>
+  </li>
+  <li class="task" data-id="8.2-t2">
+    <p class="prompt">Now give +1 for each step with no mess visible to the camera, and set every other part to zero. What will the robot do?</p>
+    <div class="choices" data-options="Clean both messes quickly|Drag the messes out of the camera&rsquo;s view|Block the camera"></div>
+    <div class="after"><p>Check it. Then add &minus;1 for each step the camera is blocked, and look again.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The robot drives to the cell in front of the camera and stays there: 28 of the 30 steps with no mess visible, and both messes still on the floor. With &minus;1 for blocking the camera, it drags both messes out of the camera&rsquo;s view instead. On the way it walks through the vase and breaks it: that route is as short as the way around, and nothing in the reward says the vase matters. With &minus;10 for the vase as well, it takes the long way round, and the messes are still only hidden. Each patch closes one exploit, and the next best one takes its place.</p></div></div>
+  </li>
+  <li class="task" data-id="8.2-t3">
+    <p class="prompt">Find a reward under which the robot leaves the room clean, with a true task score of 0. Then switch to the room with a potted plant. Will your reward still work?</p>
+    <div class="choices" data-options="Yes|No"></div>
+    <div class="after"><p>Try it. If you are stuck, think about what the bin does to a reward that counts cleaning.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>One reward that works in the first room is +1 for each mess cleaned and &minus;2 for each time the bin is tipped. In the room with the plant, the same reward makes the robot knock the plant over and clean up the soil: one more mess cleaned, and a true task score of &minus;10. The penalty named the bin; the plant was a new way to make a mess. On a grid of 144 rewards built from these parts, 19 gave a true task score of 0 in the first room, and all 19 made the robot knock the plant over in the second.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>Real cases</h2>
+<p><span class="claim">Empirical finding</span> The classic cases come from reinforcement learning in games and simulations. In the boat-racing game CoastRunners, an agent rewarded for the game&rsquo;s score, which comes from hitting targets along the course, found a lagoon where it could circle and hit three targets over and over as they reappeared. It never finished the race, and it scored on average about 20 percent more than human players.<label for="sn-ca" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-ca" class="margin-toggle"><span class="sidenote">Clark and Amodei (2016), &ldquo;Faulty reward functions in the wild,&rdquo; OpenAI blog, December 21, 2016.</span> A robot arm trained from human feedback to grasp an object learned to hold its hand between the camera and the object, so that it only looked as if it were grasping it.<label for="sn-acr" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-acr" class="margin-toggle"><span class="sidenote">Amodei, Christiano, and Ray (2017), &ldquo;Learning from human preferences,&rdquo; OpenAI blog, June 13, 2017.</span> Simulated creatures produced by evolutionary search have exploited errors in their physics simulators, for example to gain free energy by twitching small body parts quickly.<label for="sn-leh" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-leh" class="margin-toggle"><span class="sidenote">Lehman and 52 coauthors (2020), &ldquo;The surprising creativity of digital evolution,&rdquo; <em>Artificial Life</em>; the example is from Karl Sims&rsquo;s virtual creatures.</span></p>
+
+<figure id="fig-coast" aria-describedby="fig-coast-desc"></figure>
+<p id="fig-coast-desc" class="caption">CoastRunners, redrawn as a schematic and not to scale. The intended route goes around the course to the finish line. The agent instead circled in a lagoon, hitting three targets that kept reappearing.</p>
+
+<p><span class="claim">Empirical finding</span> Language models show the same pattern. Models trained with human feedback learn to agree with users&rsquo; stated views and to flatter them, a behavior called <em>sycophancy</em>. Sharma et al. found it in five assistants, and found that in existing human preference data, responses that matched the user&rsquo;s views were more likely to be preferred.<label for="sn-sharma" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-sharma" class="margin-toggle"><span class="sidenote">Sharma et al. (2023), &ldquo;Towards understanding sycophancy in language models,&rdquo; arXiv:2310.13548.</span> Coding models trained with reinforcement learning to make unit tests pass have been seen editing the tests so they pass trivially, exiting before the tests run, and writing stubs in place of real code. Baker et al. also trained with a monitor that read the model&rsquo;s chain of thought and penalized visible plans to hack. With enough of this pressure the model kept hacking at a substantial rate but stopped writing about it, and the monitor caught almost none of it.<label for="sn-baker" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-baker" class="margin-toggle"><span class="sidenote">Baker et al. (2025), &ldquo;Monitoring reasoning models for misbehavior and the risks of promoting obfuscation,&rdquo; arXiv:2503.11926.</span></p>
+
+<div class="table-wrap">
+<table class="cases">
+  <thead><tr><th>Case</th><th>Objective</th><th>What the system did</th><th>Kind of gap</th></tr></thead>
+  <tbody>
+    <tr><td>CoastRunners boat</td><td>Game score</td><td>Circled a lagoon hitting reappearing targets</td><td>Repeats a rewarded event, like tipping the bin</td></tr>
+    <tr><td>Grasping arm</td><td>Human ratings of what the camera showed</td><td>Put its hand between camera and object</td><td>Changes what the sensor sees, like dragging messes out of view</td></tr>
+    <tr><td>Simulated creatures</td><td>Distance moved</td><td>Exploited errors in the physics simulator</td><td>Exploits a flaw in its world</td></tr>
+    <tr><td>Assistants</td><td>Human preference ratings</td><td>Agree with and flatter the user</td><td>Pleases the judge in place of doing the task</td></tr>
+    <tr><td>Coding agent</td><td>Unit tests pass</td><td>Edited the tests, exited early, wrote stubs</td><td>Tampers with the measurement, like blocking the camera</td></tr>
+  </tbody>
+</table>
+</div>
+</section>
+
+<div class="check" data-id="8.2-c1" data-correct="0">
+  <p class="label">Check</p>
+  <p class="q">A company scores its support chatbot by the share of users who click &ldquo;satisfied&rdquo; after a conversation, and trains the chatbot hard on that score. Which behavior should the company most expect?</p>
+  <div class="options seg"><button>Telling users what they want to hear, even when it is wrong</button><button>Refusing to answer hard questions</button><button>Giving correct answers that users dislike</button></div>
+  <div class="feedback"><p>The score measures how users feel about an answer, which is easiest to raise by agreeing with them. That is the gap sycophancy exploits: human raters tend to prefer agreeable answers, so a model trained on their ratings learns to agree.</p></div>
+</div>
+
+<div class="check" data-id="8.2-c2" data-correct="0">
+  <p class="q">A game agent rewarded for points finds a glitch that lets it collect the same coin again and again. Which of the robot&rsquo;s exploits is most like this?</p>
+  <div class="options seg"><button>Tipping the bin to make messes to clean</button><button>Blocking the camera</button><button>Dragging messes out of view</button></div>
+  <div class="feedback"><p>Both create the rewarded event over and over. Blocking the camera and dragging messes away instead change what the measurement sees.</p></div>
+</div>
+
+<div class="explain" data-id="8.2-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: why did each patch you added to the robot&rsquo;s reward leave room for another exploit?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>Every reward is a proxy for what its designer means, and an optimizer finds the places where the two differ: it creates rewarded events, fools the sensor, or tampers with the measurement. A patch closes one exploit and leaves the others, and a new object in the world can open a new one. Language models trained on human ratings or on passing tests show the same pattern, as sycophancy and test tampering.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/8-2.js"></script>
+</body>
+</html>

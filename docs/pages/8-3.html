@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>8.3 Goal misgeneralization</title>
+<meta name="description" content="How a correct reward can still teach the wrong goal, shown with agents you train on a grid version of CoinRun.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  .stack { display: flex; flex-direction: column; gap: 0.6rem; }
+  .level { display: block; }
+  .stack .small-title { margin: 0.6rem 0 0; color: var(--ink); }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="8.3">
+<article>
+<h1>Goal misgeneralization</h1>
+
+<section>
+<p>In reward hacking (Section 8.2) the reward was wrong: it paid for something other than what its designer meant. In <em>goal misgeneralization</em> the reward is right, and the system still learns a goal other than the intended one. The difference shows only in situations unlike those of training.<label for="sn-shah" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-shah" class="margin-toggle"><span class="sidenote">The distinction is drawn by Shah, Varma, Kumar, Phuong, Krakovna, Uesato, and Kenton (2022), &ldquo;Goal misgeneralization: why correct specifications aren&rsquo;t enough for correct goals,&rdquo; arXiv:2210.01790.</span></p>
+
+<p>In the video game CoinRun, an agent runs and jumps through a level and is rewarded for reaching a coin. In every training level the coin sits at the right end of the level. Langosco et al. trained an agent on such levels and then tested it on levels where the coin was placed at random.<label for="sn-lang" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-lang" class="margin-toggle"><span class="sidenote">Langosco, Koch, Sharkey, Pfau, Orseau, and Krueger (2022), &ldquo;Goal misgeneralization in deep reinforcement learning,&rdquo; ICML 2022.</span> The tool below is a small grid version of that experiment that you train yourself.</p>
+</section>
+
+<section>
+<h2>Coin or right end?</h2>
+<p>Each task below asks for a prediction first. Make it, then use the tool to check it.</p>
+
+<div class="tool" id="tool">
+  <div class="panel" id="panel-coin">
+    <h3>Train and test an agent</h3>
+    <p class="panel-note">The agent starts at the left end of the middle row of a 10 by 5 grid and has 30 steps to reach the <span class="c-second">coin</span>; reaching it ends the level with reward 1. The agent sees the direction of the coin from where it stands, and its own position in the level. Its policy is a linear function of these inputs followed by a softmax over the four moves, trained by reinforcement learning (the policy-gradient method REINFORCE) on 6,000 training levels. On standard levels the coin is at the right end of the middle row; you choose what share of training levels place the coin at random instead. Test levels always place it at random. The ring marks the start, and the short bar on the right wall marks the right end of the middle row.</p>
+    <div class="row">
+      <div class="controls" id="coin-controls"></div>
+      <div class="stage stack" id="coin-stage">
+        <p class="small-title">One test level, with the agent&rsquo;s path</p>
+        <canvas class="level" id="coin-example" tabindex="0" aria-label="One test level with the agent's path"></canvas>
+        <p class="small-title">Where the agent goes on 2,000 test levels</p>
+        <canvas class="level" id="coin-heat" aria-label="Share of test levels in which the agent visits each cell"></canvas>
+      </div>
+    </div>
+    <p class="readout" id="coin-readout" aria-live="polite"></p>
+  </div>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="8.3-t1">
+    <p class="prompt">Train with 0% randomized levels, so the coin is always at the right end. On test levels, where the coin can be anywhere, how often will the agent reach it?</p>
+    <div class="choices" data-options="Almost always|About half the time|In fewer than a third of levels"></div>
+    <div class="after"><p>Train it and look at the test success rate and the map of where the agent goes. Try New training run a few times.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>On standard levels it reaches the coin every time. On test levels it reaches it in about a quarter of them: between 22% and 30% across ten training runs. In about 80% of test levels it goes to the right end of the middle row, and many of its successes are coins that happen to lie on that path. Training gave it no reason to prefer &ldquo;go to the coin&rdquo; to &ldquo;go to the right end&rdquo;: on every training level the two goals lead to the same moves and the same reward.</p></div></div>
+  </li>
+  <li class="task" data-id="8.3-t2">
+    <p class="prompt">What is the smallest share of randomized training levels, among 2%, 10%, and 50%, at which the agent reliably goes for the coin on test levels?</p>
+    <div class="choices" data-options="2%|10%|50%"></div>
+    <div class="after"><p>Train at each setting, with a few training runs each.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p><span class="claim">Empirical finding</span> In this toy, 2% is usually enough: in 9 of 10 training runs test success is between 84% and 99%, though one run reaches only 32%. At 10% every run is at 95% or above. With 2% of 6,000 levels, about 120 training levels put the coin somewhere other than the right end; on those levels only going to the coin pays, and that removes the ambiguity.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>What the experiments show</h2>
+<p><span class="claim">Empirical finding</span> Langosco et al. found the same pattern in CoinRun itself. At test time the agent generally ignored the coin and ran to the right end of the level, often passing the coin. It still moved through the new levels competently, so its skills carried over, but it pursued the wrong target. Training on levels where the coin was placed at random in a small share of them, 2%, greatly reduced this failure.</p>
+
+<figure class="multiples" id="fig-coin" aria-describedby="fig-coin-desc"></figure>
+<p id="fig-coin-desc" class="caption">An agent from this page&rsquo;s tool, trained with the coin always at the right end. Each panel follows the agent&rsquo;s most likely move at every step. Left: a training level, where it reaches the coin. Right: a test level with the coin in the top row, where it runs to the right end and misses the coin.</p>
+
+<p><span class="claim">Argument</span> The general pattern: any training distribution is consistent with several goals, and a system may learn one that agrees with the intended goal only on that distribution. The difference shows up only in new situations, possibly after deployment. Shah et al. give further examples. In one, an agent in a 3D world was trained to visit locations in the right order, with a partner bot that knew the order; the agent learned to follow its partner. Paired at test time with a partner that visited the locations in the worst order, it kept following, and scored far below a random policy. This is the behavioral side of the attribution problem in Section 7.1: the same training behavior fits more than one attribution of goals.</p>
+</section>
+
+<div class="check" data-id="8.3-c1" data-correct="1">
+  <p class="label">Check</p>
+  <p class="q">During training with the coin always at the right end, could you have told from the agent&rsquo;s reward which goal it had learned?</p>
+  <div class="options seg"><button>Yes: an agent that wanted the right end would have earned less reward</button><button>No: both goals earned the same reward on every training level</button><button>Yes: its reward would have kept rising for longer</button></div>
+  <div class="feedback"><p>On every training level, going to the coin and going to the right end are the same moves with the same reward, so no measurement of training reward can tell them apart. Only a level where the two goals come apart can.</p></div>
+</div>
+
+<div class="check" data-id="8.3-c2" data-correct="0">
+  <p class="q">An assistant is trained only on questions whose correct answer is also the answer its users hope for. Which test would show whether it learned &ldquo;give the correct answer&rdquo; or &ldquo;give the answer the user hopes for&rdquo;?</p>
+  <div class="options seg"><button>Questions where the correct answer is not the one the user hopes for</button><button>More questions like the training questions</button><button>Its average reward at the end of training</button></div>
+  <div class="feedback"><p>Only cases where the two goals disagree can separate them, like test levels with the coin away from the right end. On training-like questions the two goals give the same answers.</p></div>
+</div>
+
+<div class="explain" data-id="8.3-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: how does goal misgeneralization differ from reward hacking, and why is it hard to see during training?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>In goal misgeneralization the reward is correct, but the training data fits more than one goal, and the system learns one that agrees with the intended goal only on that data. The two goals earn the same reward in training, so the difference shows only in new situations. A small share of training cases where the goals disagree can remove the ambiguity.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/8-3.js"></script>
+</body>
+</html>

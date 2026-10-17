@@ -314,25 +314,25 @@ export const sections = [
         "id": "8.1",
         "title": "Optimizing a proxy (Goodhart's law)",
         "core": true,
-        "href": null
+        "href": "pages/8-1.html"
       },
       {
         "id": "8.2",
         "title": "Reward hacking and specification gaming",
         "core": true,
-        "href": null
+        "href": "pages/8-2.html"
       },
       {
         "id": "8.3",
         "title": "Goal misgeneralization",
         "core": false,
-        "href": null
+        "href": "pages/8-3.html"
       },
       {
         "id": "8.4",
         "title": "Instrumental convergence",
         "core": true,
-        "href": null
+        "href": "pages/8-4.html"
       },
       {
         "id": "8.5",

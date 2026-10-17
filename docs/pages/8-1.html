@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>8.1 Optimizing a proxy</title>
+<meta name="description" content="Why strong optimization of a measure correlated with a goal tends to break the correlation, and why heavy-tailed errors make it much worse.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  .stack { display: flex; flex-direction: column; gap: 1.2rem; }
+  .chart .dot { fill: var(--quiet); fill-opacity: 0.35; }
+  .chart .dot-top { fill: var(--accent); fill-opacity: 0.85; }
+  .chart .winner { fill: var(--ink); }
+  .chart .datum { fill: var(--quiet); }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="8.1">
+<article>
+<h1>Optimizing a proxy</h1>
+
+<section>
+<p>In 1975 the economist Charles Goodhart wrote that &ldquo;any observed statistical regularity will tend to collapse once pressure is placed upon it for control purposes.&rdquo;<label for="sn-goodhart" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-goodhart" class="margin-toggle"><span class="sidenote">Goodhart (1975), &ldquo;Problems of monetary management: the U.K. experience,&rdquo; <em>Papers in Monetary Economics</em>, Reserve Bank of Australia.</span> The anthropologist Marilyn Strathern later stated the idea in the form most people now quote: &ldquo;When a measure becomes a target, it ceases to be a good measure.&rdquo;<label for="sn-strathern" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-strathern" class="margin-toggle"><span class="sidenote">Strathern (1997), &ldquo;&lsquo;Improving ratings&rsquo;: audit in the British University system,&rdquo; <em>European Review</em> 5: 305&ndash;321, p. 308. The short form is hers; Goodhart&rsquo;s own wording is the one quoted first.</span> The idea is called Goodhart&rsquo;s law.</p>
+
+<p>In AI the measure is a reward function, a reward model (Section 4.2), a test suite, or a benchmark score. This site calls any measure optimized in place of the intended goal a <em>proxy</em>. This page uses the simplest model of one. Each option has a true value \(V\), and its proxy score is the true value plus an error, \(U = V + E\), where the error is independent of the true value. An optimizer that compares \(k\) options and keeps the one with the highest proxy score applies more pressure the larger \(k\) is.</p>
+
+<p>Manheim and Garrabrant distinguish four ways Goodhart&rsquo;s law can operate; two matter most here.<label for="sn-mg" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-mg" class="margin-toggle"><span class="sidenote">Manheim and Garrabrant (2018), &ldquo;Categorizing variants of Goodhart&rsquo;s law,&rdquo; arXiv:1803.04585. The other two are causal and adversarial Goodhart.</span> In <em>regressional</em> Goodhart, selecting on the proxy also selects on its error: the options with the highest proxy scores are disproportionately those with large positive errors. In <em>extremal</em> Goodhart, the proxy and the goal are related one way over ordinary options and another way at the extremes a strong optimizer reaches.</p>
+</section>
+
+<section>
+<h2>Select on the proxy</h2>
+<p>Each task below asks for a prediction first. Make it, then use the tool to check it.</p>
+
+<div class="tool" id="tool">
+  <div class="panel" id="panel-reg">
+    <h3>Selecting on error</h3>
+    <p class="panel-note">True values are drawn from a normal distribution with mean 0 and standard deviation 1; the error has the chosen distribution and size. The upper chart shows, for every selection strength \(k\), the expected <span class="c-second">proxy score</span> and the expected <span class="c-accent">true value</span> of the option with the highest proxy among \(k\). These curves are computed exactly. The lower chart shows 2,000 options in gray and, in black, the winner of one best-of-\(k\) draw.</p>
+    <div class="row"><div class="controls" id="reg-controls"></div><div class="stage stack" id="reg-stage"><div id="reg-curve"></div><div id="reg-scatter"></div></div></div>
+    <p class="readout" id="reg-readout" aria-live="polite"></p>
+  </div>
+
+  <div class="panel" id="panel-ext">
+    <h3>Pushing past the data</h3>
+    <p class="panel-note">The <span class="c-accent">true value</span> of a design \(x\) rises to a peak at \(x = 4\) and then falls. The <span class="c-second">proxy</span> is a straight line fitted to 24 noisy measurements of designs between 0 and the end of the data. The optimizer picks the design with the highest proxy score within its search limit.</p>
+    <div class="row"><div class="controls" id="ext-controls"></div><div class="stage" id="ext-chart"></div></div>
+    <p class="readout" id="ext-readout" aria-live="polite"></p>
+  </div>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="8.1-t1">
+    <p class="prompt">Normal errors of size 1. As the selection strength grows from 1 to 1,000,000, what happens to the expected true value of the selected option?</p>
+    <div class="choices" data-options="It keeps rising|It rises, then levels off|It rises, then falls"></div>
+    <div class="after"><p>Check it: choose Normal, set the error size to 1, and move the selection strength from left to right.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>It keeps rising, and it stays at exactly half the expected proxy score: at \(k\) = 1,000,000 the expected proxy score is 6.88 and the expected true value is 3.44. Selection still pays, but half of the winner&rsquo;s proxy score is error. A larger error size lowers that share: with errors of size 2, the true value at \(k\) = 1,000,000 is 2.17 and the proxy 10.87.</p></div></div>
+  </li>
+  <li class="task" data-id="8.1-t2">
+    <p class="prompt">Switch to Student&rsquo;s t with 3 degrees of freedom, error size 1. These errors are heavy-tailed: very large errors are far more common than under the normal distribution. Near what selection strength does the expected true value stop rising?</p>
+    <div class="choices" data-options="It never stops rising|Near k = 20|Near k = 10,000"></div>
+    <div class="after"><p>Check it, then try other degrees of freedom. Fewer degrees of freedom means heavier tails.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The true value peaks at 0.88 near \(k\) = 22 and then falls. At \(k\) = 1,000,000 it is 0.03, close to 0, the true value of an average option, while the expected proxy score is 140. The winners are now almost all options with huge errors. With 10 degrees of freedom the peak comes later, near \(k\) = 900; with 30, the true value is still rising at \(k\) = 1,000,000 and peaks only near \(k\) = 20 million.</p></div></div>
+  </li>
+  <li class="task" data-id="8.1-t3">
+    <p class="prompt">Choose rare huge errors: one option in 1,000 has an error 30 times the usual size. With error size 1, compare selecting the best of 100 with selecting the best of 10,000.</p>
+    <div class="choices" data-options="Both do about as well as with normal errors|Best of 100 does well; best of 10,000 does much worse|Both do much worse than with normal errors"></div>
+    <div class="after"><p>Check it, and look at the scatter: where does the winner come from?</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Best of 100 gives an expected true value of 1.70, close to the 1.77 that normal errors give. Best of 10,000 gives 0.09. Among 10,000 options about ten have a huge error, and one of them almost always has the top proxy score. A proxy can work well under moderate pressure and fail under strong pressure. Past about \(k\) = 17,000 the true value rises again, very slowly (0.11 at 1,000,000), because these errors are still normal in their far tail.</p></div></div>
+  </li>
+  <li class="task" data-id="8.1-t4">
+    <p class="prompt">In <em>Pushing past the data</em>, fit the proxy on designs from 0 to 3, and let the optimizer search up to 12. Compared with the best design between 0 and 3, is the design it picks better, about the same, or worse?</p>
+    <div class="choices" data-options="Better|About the same|Worse"></div>
+    <div class="after"><p>Check it, then widen the data range and see whether a straight line can ever point the optimizer to the peak.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Worse. Between 0 and 3 the fitted line tracks the true value closely and keeps rising, so the optimizer picks the largest design it may, 12, where the true value is &minus;6. The best design between 0 and 3 has true value 1.9. Widening the data does not fix this: a line rises everywhere or falls everywhere, so the optimizer always picks an end of its range, never the peak at 4.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>Why the tails decide</h2>
+<p>For normal errors of size \(s\), the expected true value of an option given its proxy score \(u\) is a straight line in \(u\):</p>
+$$\mathbb{E}[V \mid U = u] = \frac{u}{1 + s^2}.$$
+<p>So a higher proxy score always buys more true value, at a fixed rate. With error size 1 the rate is one half, which is why the true-value curve in task 1 stayed at half the proxy curve. With heavy-tailed errors the expected true value given the proxy score rises and then falls back toward zero as \(u\) grows: a very high proxy score is much more likely to come from a large error than from a large true value, because large errors are far more common than large true values.</p>
+
+<p><span class="claim">Theorem</span> Kwa, Thomas, and Garriga-Alonso prove the version of this with a threshold in place of best-of-\(k\).<label for="sn-kwa" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-kwa" class="margin-toggle"><span class="sidenote">Kwa, Thomas, and Garriga-Alonso (2024), &ldquo;Catastrophic Goodhart: regularizing RLHF with KL divergence does not mitigate heavy-tailed reward misspecification,&rdquo; arXiv:2407.14503, Theorems 5 and 6.</span> Let the error be independent of the true value. If the error is light-tailed, as normal errors are, and the true value has no upper bound, then the expected true value of the options whose proxy exceeds a threshold grows without limit as the threshold rises. If the error is heavy-tailed, with a tail much heavier than the true value&rsquo;s, that expected true value tends to the average true value of all options: harder selection eventually buys nothing.</p>
+
+<p>Their main result concerns reinforcement learning from human feedback, where the policy is trained to maximize the reward model&rsquo;s score minus a penalty on its KL divergence from the base model (Section 4.3). With heavy-tailed reward-model error, some policies reach arbitrarily high reward at arbitrarily small KL divergence from the base model while gaining no true value over it. They call this <em>catastrophic Goodhart</em>. <span class="claim">Empirical finding</span> When they measured the tails of the scores given by open reward models, the tails were consistent with light-tailed error. The theorem is therefore a warning about reward sources that may have heavy-tailed error in the future.</p>
+
+<figure class="multiples" id="fig-tails" aria-describedby="fig-tails-desc"></figure>
+<p id="fig-tails-desc" class="caption">Ten thousand options with errors of size 1: proxy score across, true value up. The top 1% by proxy score are in <span class="c-accent">color</span>. With normal errors (left) they have mean proxy score <span id="cap-n-u">3.9</span> and mean true value <span id="cap-n-v">2.0</span>. With errors from Student&rsquo;s t with 3 degrees of freedom (right) their mean proxy score is higher, <span id="cap-t-u">6.7</span>, and their mean true value is lower, <span id="cap-t-v">0.7</span>. The two panels share the vertical scale; the horizontal scales differ.</p>
+</section>
+
+<section>
+<h2>Past the edge of the data</h2>
+<p><span class="claim">Argument</span> The second panel shows extremal Goodhart. Inside the range of the data the fitted line is a good proxy. Outside it, nothing makes the line follow the true value, and an optimizer that searches beyond the data finds the designs where the two come apart. A reward model trained on ordinary outputs faces the same problem when reinforcement learning pushes the policy toward outputs unlike those it was trained on. <span class="claim">Empirical finding</span> Gao, Schulman, and Hilton measured this directly: as a policy was optimized harder against a learned reward model, its score under a separate &ldquo;gold&rdquo; reward model, which stood in for the true goal, first rose and then fell (Section 4.3).<label for="sn-gao" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-gao" class="margin-toggle"><span class="sidenote">Gao, Schulman, and Hilton (2022), &ldquo;Scaling laws for reward model overoptimization,&rdquo; arXiv:2210.10760; published at ICML 2023.</span></p>
+</section>
+
+<div class="check" data-id="8.1-c1" data-correct="1">
+  <p class="label">Check</p>
+  <p class="q">You pick the best of a million candidate answers using a reward model whose errors are heavy-tailed. What should you expect of the winner?</p>
+  <div class="options seg"><button>Its true quality is far above average, because a million candidates is strong selection</button><button>It probably won because of a large error, and its true quality may be close to average</button><button>Its true quality is probably far below average</button></div>
+  <div class="feedback"><p>With heavy-tailed errors, the highest proxy scores come mostly from large errors. Independent errors do not push the true value below average; they make the winner&rsquo;s true value close to that of a typical candidate.</p></div>
+</div>
+
+<div class="check" data-id="8.1-c2" data-correct="1">
+  <p class="q">A reward model was trained on answers of ordinary length. During reinforcement learning the policy finds that ever longer answers get ever higher reward, while their true quality drops. Which mechanism is this mainly?</p>
+  <div class="options seg"><button>Regressional: selection picks up the reward model&rsquo;s random errors</button><button>Extremal: optimization reaches answers far outside the range the reward model was trained on</button></div>
+  <div class="feedback"><p>The reward model&rsquo;s link between length and quality held over ordinary answers. The optimizer pushed into lengths where that link was never checked, as the optimizer in the second panel pushed past the end of the data.</p></div>
+</div>
+
+<div class="explain" data-id="8.1-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: why can harder selection on a proxy stop improving the true value, and what decides whether it does?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>Optimizing a proxy selects for its errors and pushes toward options where the proxy was never checked. With light-tailed errors, harder optimization still improves the true value, by less than the proxy shows. With heavy-tailed errors, the highest proxy scores are mostly error, and harder optimization can stop improving the true value at all.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/8-1.js"></script>
+</body>
+</html>
