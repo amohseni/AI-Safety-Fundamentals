@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>8.6 Oversight and control</title>
+<meta name="description" content="How can we stay safe with AI systems we cannot fully judge? Scalable oversight, evaluations, AI control, and audits, and what each assumes.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  table.grid2 { border-collapse: collapse; width: 61%; margin: 1rem 0 0.4rem; }
+  table.grid2 th, table.grid2 td { text-align: left; vertical-align: top; padding: 0.5rem 0.8rem 0.5rem 0; font-weight: normal; }
+  table.grid2 thead th { color: var(--quiet); border-bottom: 1px solid var(--rule); }
+  table.grid2 tbody th { color: var(--quiet); font-style: italic; }
+  table.grid2 tbody tr + tr th, table.grid2 tbody tr + tr td { border-top: 1px solid var(--rule); }
+  .tool .stage .sub { margin: 0.2rem 0 0; }
+  @media (max-width: 760px) { table.grid2 { width: 100%; } }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="8.6">
+<article>
+<h1>Oversight and control</h1>
+
+<section>
+<p>Training with human feedback works when humans can judge the outputs. As systems become more capable, that assumption weakens. The research approaches below differ in what they assume about the overseer and about the model.</p>
+
+<p><em>Scalable oversight</em> tries to let weaker overseers supervise stronger systems. In <em>debate</em>, two AI systems take turns making short statements about a question, and a human judges which of them gave the most true and useful information; the authors argue that with optimal play, debate lets a judge with limited time answer a much wider class of questions than the judge could answer directly.<label for="sn-deb" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-deb" class="margin-toggle"><span class="sidenote">Irving, Christiano, and Amodei (2018), &ldquo;AI safety via debate,&rdquo; arXiv:1805.00899. In complexity terms: debate with a polynomial-time judge reaches PSPACE, direct judging only NP.</span> <em>Weak-to-strong generalization</em> studies a small model supervising a large one, as an analogy for humans supervising more capable models: strong models are fine-tuned on labels produced by much weaker ones.<label for="sn-w2s" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-w2s" class="margin-toggle"><span class="sidenote">Burns et al. (2023), &ldquo;Weak-to-strong generalization: eliciting strong capabilities with weak supervision,&rdquo; arXiv:2312.09390.</span></p>
+
+<p><em>Evaluations</em> measure what models can do, including dangerous capabilities, before they are deployed. <span class="claim">Empirical finding</span> METR measures the length of tasks, measured by the time they take humans, that models complete with 50% success; for frontier models that length has doubled roughly every seven months since 2019.<label for="sn-metr" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-metr" class="margin-toggle"><span class="sidenote">Kwa et al. (2025), &ldquo;Measuring AI ability to complete long tasks,&rdquo; arXiv:2503.14499; later versions are titled &ldquo;&hellip; long software tasks.&rdquo;</span></p>
+
+<p><em>AI control</em> assumes the model might be misaligned and trying to get around its overseers, and designs deployment procedures, called protocols, that remain safe anyway. In the study by Greenblatt and colleagues, a strong untrusted model (GPT-4) wrote code, a weaker trusted model (GPT-3.5) rated how suspicious each solution looked, and a small budget of careful auditing went to the most suspicious ones.<label for="sn-ctl" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-ctl" class="margin-toggle"><span class="sidenote">Greenblatt, Shlegeris, Sachan, and Roger (2024), &ldquo;AI control: improving safety despite intentional subversion,&rdquo; <em>Proceedings of the 41st International Conference on Machine Learning</em>; arXiv:2312.06942.</span> Monitoring the chain of thought is another such tool, useful only while the reasoning stays readable and faithful (Section 4.4).<label for="sn-cot" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-cot" class="margin-toggle"><span class="sidenote">Korbak et al. (2025), &ldquo;Chain of thought monitorability: a new and fragile opportunity for AI safety,&rdquo; arXiv:2507.11473.</span> <em>Interpretability-based audits</em> (Section 6) look for hidden objectives directly. <span class="claim">Empirical finding</span> Marks and colleagues trained a model to exploit errors in the reward models used to train it, and ran a blind auditing game: three of four teams found the hidden objective, using sparse autoencoders, behavioral attacks, and analysis of the training data.<label for="sn-aud" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-aud" class="margin-toggle"><span class="sidenote">Marks et al. (2025), &ldquo;Auditing language models for hidden objectives,&rdquo; arXiv:2503.10965.</span></p>
+</section>
+
+<section>
+<h2>Control protocol game</h2>
+<p>Each task below asks for a prediction first. Make it, then use the tool to check it.</p>
+
+<div class="tool" id="tool">
+  <div class="panel">
+    <p class="panel-note"><em>A toy model.</em> An untrusted model does 1,000 tasks and secretly attempts sabotage on 5 of them, chosen at random. A trusted monitor scores each task: normal work scores are drawn from a normal distribution with mean 0 and standard deviation 1, sabotage scores from one with mean equal to the <em>monitor quality</em> and standard deviation 1. Tasks are handled in order. A task scoring at or above the <span class="c-accent">audit threshold</span> is audited by a human while the audit budget lasts; an audited sabotage attempt is caught and the run ends safely. Otherwise, a task scoring at or above the <span class="c-accent">hand-off threshold</span> is redone by the trusted model, which defeats any sabotage in it. Any other sabotage attempt succeeds. <em>Safety</em> is the probability that no sabotage succeeds. <em>Usefulness</em> is the share of tasks, in a run with an honest model, whose work comes from the untrusted model. Both are computed exactly.</p>
+    <div class="row"><div class="controls" id="controls"></div>
+      <div class="stage"><p class="sub">The monitor&rsquo;s scores</p><div id="dist"></div><p class="sub">Safety and usefulness</p><div id="trade"></div></div></div>
+    <p class="readout" id="readout" aria-live="polite"></p>
+  </div>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="8.6-t1">
+    <p class="prompt">Audit budget 2%, monitor quality 2, no hand-offs. Which audit threshold gives the highest safety?</p>
+    <div class="choices" data-options="One that flags fewer than 2% of normal tasks|One that flags 2% of normal tasks|One that flags more than 2% of normal tasks"></div>
+    <div class="after"><p>Move the audit threshold and watch the safety. The readout gives the share of normal tasks each threshold flags.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The best threshold is about 1.64, which flags 5.1% of normal tasks and gives safety 57.9%; the threshold that flags 2% of normal tasks, 2.05, gives 48.0%. With the lower threshold the 20 audits run out after about 400 tasks, but the run is usually decided by the first sabotage attempt, and with 5 attempts at random positions the first comes, on average, around task 167. <span class="claim">Argument</span> This depends on the model attacking at random moments. A model that could tell when the audits had run out would wait, so protocols are judged against the best attack the model could choose.</p></div></div>
+  </li>
+  <li class="task" data-id="8.6-t2">
+    <p class="prompt">Set the audit threshold near 2.05. Now lower the hand-off threshold from &ldquo;never&rdquo; to 1.0. What happens to safety and usefulness?</p>
+    <div class="choices" data-options="Safety rises and usefulness falls|Both rise|Safety falls and usefulness rises"></div>
+    <div class="after"><p>Move the hand-off threshold down step by step and follow the point along the curve.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Safety rises from 48.0% to 75.1% and usefulness falls from 100% to 86.0%. The curve traces every hand-off threshold: each step down hands more of the work, honest or not, to the weaker trusted model. In our tests safety never fell and usefulness never rose as the threshold came down.</p></div></div>
+  </li>
+  <li class="task" data-id="8.6-t3">
+    <p class="prompt">Lower the monitor quality to 0.5, so sabotage scores barely differ from normal ones. Can the protocol still reach 99% safety?</p>
+    <div class="choices" data-options="Yes, but only by handing off almost all the work|No, not with this monitor|Yes, at little cost in usefulness"></div>
+    <div class="after"><p>Lower the quality, then lower the hand-off threshold until safety reaches 99%.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Yes, but usefulness falls to about 3%: with the audit threshold at 2.05, safety first reaches 99% at a hand-off threshold of &minus;2.34, where 2.8% of the work still comes from the untrusted model. Without hand-offs, the best this monitor can do is 15.0%. With a quality-2 monitor, 99% safety costs much less: usefulness 29.9%. Handing work to the trusted model can always buy safety; a better monitor makes it cheaper.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>What the game shows</h2>
+<p><span class="claim">Argument</span> A control protocol can be made safe without trusting the model, because its safety is computed against a model that is assumed to be trying to defeat it. The price is usefulness: work handed to the weaker trusted model, or held back, is work the stronger model does not do. Better monitors, larger audit budgets, and better trusted models move the whole trade-off curve up.</p>
+<p><span class="claim">Empirical finding</span> In the AI control study, auditing the top 2% most suspicious solutions gave 62% safety; also handing the next 8% to the trusted model raised safety to 83%, with usefulness falling from 97% to 93% on the paper&rsquo;s own scale, where GPT-3.5 alone scores 0 and GPT-4 alone scores 100. Those numbers come from real models attacked with a red team&rsquo;s strategies; the toy above uses made-up score distributions and a fixed attack.</p>
+
+<table class="grid2" id="fig-grid" aria-describedby="fig-grid-desc">
+  <thead><tr><th></th><th scope="col">Humans can judge the outputs</th><th scope="col">Humans cannot judge them all</th></tr></thead>
+  <tbody>
+    <tr><th scope="row">Assumes the model is aligned</th><td>Training with human feedback</td><td>Debate; weak-to-strong generalization</td></tr>
+    <tr><th scope="row">Allows that it may not be</th><td>Evaluations</td><td>AI control; interpretability-based audits</td></tr>
+  </tbody>
+</table>
+<p id="fig-grid-desc" class="caption">A rough placement of the approaches on this page by what they assume. Rows: whether the approach assumes the model is trying to do what we want. Columns: whether humans can judge the outputs that matter. Several approaches reach across cells; control, for example, uses human audits, but only for a small share of the work.</p>
+</section>
+
+<div class="check" data-id="8.6-c1" data-correct="0">
+  <p class="label">Check</p>
+  <p class="q">A lab shows that its protocol is safe against a model that tries its best to slip sabotage past the monitor. What does that safety claim not depend on?</p>
+  <div class="options seg"><button>Whether the model is aligned</button><button>Whether the monitor scores sabotage higher than normal work</button><button>The size of the audit budget</button></div>
+  <div class="feedback"><p>A control argument assumes the worst about the model: it may be misaligned and actively trying to get around oversight. Its safety rests on the monitor, the audits, and the hand-offs, which the lab controls, not on the model&rsquo;s goals. Training with human feedback, by contrast, assumes that the model is trying to do what the feedback rewards and that humans can judge the outputs.</p></div>
+</div>
+
+<div class="explain" data-id="8.6-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: how can a protocol be safe without trusting the model, and what does that safety cost?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>Approaches to overseeing capable systems differ in what they assume. Scalable oversight assumes the model is trying to help and asks how weaker overseers can still judge it; evaluations measure what a model can do; AI control assumes the model may be trying to subvert oversight and designs protocols that stay safe anyway; audits look inside the model for hidden objectives. Control buys safety without trusting the model, at a cost in usefulness that a better monitor reduces.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/8-6.js"></script>
+</body>
+</html>

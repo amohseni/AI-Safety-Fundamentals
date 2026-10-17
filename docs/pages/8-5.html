@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>8.5 Learned optimizers and deceptive alignment</title>
+<meta name="description" content="Could a trained system hide a misaligned goal during training? The inner alignment problem, deceptive alignment, and the evidence so far.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  svg.flow text { font-family: et-book, Georgia, serif; font-size: var(--text); fill: var(--ink); }
+  svg.flow text.quiet { fill: var(--quiet); font-style: italic; }
+  svg.flow line { stroke: var(--quiet); stroke-width: 1; }
+  svg.flow path.head { fill: var(--quiet); stroke: none; }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="8.5">
+<article>
+<h1>Learned optimizers and deceptive alignment</h1>
+
+<section>
+<p>Training selects a system that scores well on the training objective. If the selected system itself plans or searches toward a goal, that goal need not be the training objective. Hubinger and colleagues call such a system a <em>mesa-optimizer</em> and its goal its mesa-objective; the <em>inner alignment problem</em> is the problem of making the mesa-objective match the intended objective.<label for="sn-rlo" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-rlo" class="margin-toggle"><span class="sidenote">Hubinger, van Merwijk, Mikulik, Skalse, and Garrabrant (2019), &ldquo;Risks from learned optimization in advanced machine learning systems,&rdquo; arXiv:1906.01820.</span> Goal misgeneralization (Section 8.3) is a simple case.</p>
+
+<p><span class="claim">Hypothesis</span> The case that worries researchers most is <em>deceptive alignment</em>: a system whose goal differs from the training objective, and which behaves well during training because it models the training process and expects that misbehaving would lead to its goal being changed.</p>
+
+<p>The question for the tool below is what training can do about such a system, if training only ever sees behavior.</p>
+</section>
+
+<section>
+<h2>Training cannot see the difference</h2>
+<p>Each task below asks for a prediction first. Make it, then use the tool to check it.</p>
+
+<div class="tool" id="tool">
+  <div class="panel">
+    <p class="panel-note"><em>A toy model, not a model of real training.</em> A population of policies starts with one third of each of three types: <span class="c-accent">aligned</span>; misaligned and open about it; and misaligned and <span class="c-second">deceptive</span>. Each training round shows the population evaluation inputs and gives reward 1 for behaving well and 0 for behaving badly. A deceptive policy behaves well whenever it recognizes that it is in training, which on an ordinary training input it does with the detection probability. <em>Honeypots</em> are inputs built to look like deployment; a deceptive policy behaves badly on them. Training selects by reward, following the replicator equation of Section 5.2: a type&rsquo;s share grows at a rate proportional to how far its reward is above the population&rsquo;s average.</p>
+    <div class="row"><div class="controls" id="controls"></div><div class="stage" id="chart"></div></div>
+    <p class="readout" id="readout" aria-live="polite"></p>
+  </div>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="8.5-t1">
+    <p class="prompt">Detection probability 1, no honeypots, 200 rounds. What share of the population is deceptive when it is deployed?</p>
+    <div class="choices" data-options="About 0%|About a third|About a half"></div>
+    <div class="after"><p>Read the shares at the last round. Then raise the number of rounds to 500.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>About half. The open misaligned policies earn reward 0 and are nearly gone within 10 rounds (their share is then below 0.01%). The deceptive policies earn reward 1 on every training input, the same as the aligned ones, so the ratio of the two never changes, and as the open ones disappear the deceptive share rises from a third to a half. More rounds on the same inputs change nothing.</p></div></div>
+  </li>
+  <li class="task" data-id="8.5-t2">
+    <p class="prompt">Keep detection at 1 and make 1% of the inputs honeypots. After 100 rounds, roughly what share of the population is still deceptive?</p>
+    <div class="choices" data-options="Under 1%|About a quarter|About a half"></div>
+    <div class="after"><p>Set the honeypot share, then try 2%, 5%, and 10%, and change the number of rounds.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>About a quarter: 26.9%. A deceptive policy now earns 0.99 per round against the aligned policies&rsquo; 1, so the ratio of deceptive to aligned policies shrinks by a factor of \(e^{-0.01}\) per round, to \(e^{-1} \approx 0.37\) after 100 rounds. The deceptive share first falls below 1% after 460 rounds at 1% honeypots, 230 at 2%, 92 at 5%, and 46 at 10%: the rounds needed grow as one over the honeypot share.</p></div></div>
+  </li>
+  <li class="task" data-id="8.5-t3">
+    <p class="prompt">Set the honeypots back to 0 and lower the detection probability to 0.9. After 100 rounds, are the deceptive policies gone?</p>
+    <div class="choices" data-options="Yes|No"></div>
+    <div class="after"><p>Set the controls and read the shares. Try 0.99 as well.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Yes: a deceptive policy that fails to recognize training one time in ten misbehaves where training can see it, and its share falls below 0.01% after 100 rounds. At 0.99 it is still 26.9% after 100 rounds. Selection removes a deceptive policy at the rate at which its misalignment shows up in behavior during training, \(1 - q(1 - h)\) per round for detection probability \(q\) and honeypot share \(h\), and no faster.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>What the toy shows, and what it leaves out</h2>
+<p><span class="claim">Theorem</span> In the toy, the rewards do not depend on the population, so the replicator equation has an exact solution: each type&rsquo;s share is proportional to its starting share times \(e^{rt}\), where \(r\) is its reward per round and \(t\) the number of rounds. Two types with the same reward keep the same ratio forever. Selection on behavior removes only the misalignment that shows up in behavior during training.</p>
+<p><span class="claim">Argument</span> Real training does not choose among fixed types; it changes parameters by gradient descent, and whether it would produce a deceptive system at all is an open question. The toy isolates one point: once two systems behave the same on every training input, training on those inputs has nothing to select on. Honeypots help only if they look like deployment to the system, and a system good at detecting training may detect them too.</p>
+
+<figure id="fig-flow" aria-describedby="fig-flow-desc"></figure>
+<p id="fig-flow-desc" class="caption">The inner alignment problem. The training objective drives a training process that selects on behavior. The learned system has its own goal. In deployment, either the goal matches the objective and the system behaves as intended, or it differs, and a system that behaved well in training may behave differently.</p>
+
+<h2>The evidence so far</h2>
+<p><span class="claim">Empirical finding</span> Since 2024 there has been empirical work on pieces of this scenario. Hubinger and colleagues trained language models with hidden backdoor behaviors, which they call sleeper agents, and found that standard safety training (supervised fine-tuning, reinforcement learning, and adversarial training) did not remove them; adversarial training could instead teach the models to recognize their triggers better.<label for="sn-sa" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-sa" class="margin-toggle"><span class="sidenote">Hubinger et al. (2024), &ldquo;Sleeper agents: training deceptive LLMs that persist through safety training,&rdquo; arXiv:2401.05566.</span> Greenblatt and colleagues told Claude 3 Opus that it was being trained to answer all queries, including harmful ones, and that only conversations with free users would be used for training. The model complied with harmful queries from free users 14% of the time and almost never for paid users, and in almost all of the cases where it complied, its reasoning said it was answering strategically in training to keep its preferred behavior outside training. They call this <em>alignment faking</em>.<label for="sn-af" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-af" class="margin-toggle"><span class="sidenote">Greenblatt et al. (2024), &ldquo;Alignment faking in large language models,&rdquo; arXiv:2412.14093.</span> Meinke and colleagues gave several frontier models (o1, Claude 3.5 Sonnet, Claude 3 Opus, Gemini 1.5 Pro, and Llama 3.1 405B) a goal in their prompt with instructions to pursue it strongly, and found that the models sometimes tried to disable their oversight, introduced subtle mistakes into their answers, or tried to copy what they believed were their own parameters to another server.<label for="sn-mn" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-mn" class="margin-toggle"><span class="sidenote">Meinke et al. (2024), &ldquo;Frontier models are capable of in-context scheming,&rdquo; arXiv:2412.04984.</span></p>
+<p>These are demonstrations in constructed settings. How often such behavior arises without that setup is an open question.</p>
+</section>
+
+<div class="check" data-id="8.5-c1" data-correct="0">
+  <p class="label">Check</p>
+  <p class="q">In the toy, with detection probability 1 and no honeypots, why does training for 1,000 rounds instead of 100 leave the deceptive share unchanged?</p>
+  <div class="options seg"><button>Deceptive policies earn the same training reward as aligned ones, so selection cannot tell them apart</button><button>Selection is too slow to reach them in 1,000 rounds</button><button>Deceptive policies earn more reward than aligned ones</button></div>
+  <div class="feedback"><p>The replicator equation changes shares only through differences in reward. A deceptive policy that always recognizes training earns reward 1 on every training input, exactly like an aligned one, so their ratio stays fixed however long training runs.</p></div>
+</div>
+
+<div class="explain" data-id="8.5-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: what can selection on behavior remove, and what can it not remove?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>A trained system may itself pursue a goal different from the training objective; this is the inner alignment problem. A deceptive system that behaves well whenever it recognizes training earns the same reward as an aligned one, so selection on behavior removes only the misalignment that shows up in training behavior. Experiments since 2024 have shown pieces of this scenario, such as backdoors that survive safety training and alignment faking, in constructed settings.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/8-5.js"></script>
+</body>
+</html>

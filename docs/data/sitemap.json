@@ -1,0 +1,925 @@
+{
+ "generated": "by tools/build-sitemap.mjs from specs/ and docs/pages/",
+ "nodes": [
+  {
+   "id": "0.1",
+   "question": "What can this site teach me, and in what order?",
+   "takeaway": "The site goes from what a network computes (Sections 2 and 3), through how models are trained and what they can do (Sections 4 and 5), to how we find out what they have learned and want (Sections 6 and 7), why they can pursue unintended goals (Section 8), and where to start contributing (Section 9). Every page asks for a prediction before it shows the answer, and four running examples carry ideas from page to page."
+  },
+  {
+   "id": "1.1",
+   "question": "How did we get here?",
+   "takeaway": null
+  },
+  {
+   "id": "1.2",
+   "question": "What could the first networks do, and why did funding collapse?",
+   "takeaway": null
+  },
+  {
+   "id": "1.3",
+   "question": "Why did deep networks not take over in the 1980s?",
+   "takeaway": null
+  },
+  {
+   "id": "1.4",
+   "question": "What changed in 2012?",
+   "takeaway": null
+  },
+  {
+   "id": "1.5",
+   "question": "Why did scale take over?",
+   "takeaway": null
+  },
+  {
+   "id": "1.6",
+   "question": "How did a text predictor become an assistant?",
+   "takeaway": null
+  },
+  {
+   "id": "2.1",
+   "question": "What does it mean for a network to learn?",
+   "takeaway": null
+  },
+  {
+   "id": "2.2",
+   "question": "What does one neuron compute?",
+   "takeaway": null
+  },
+  {
+   "id": "2.3",
+   "question": "Why do networks need nonlinear functions?",
+   "takeaway": null
+  },
+  {
+   "id": "2.4",
+   "question": "What do hidden layers do?",
+   "takeaway": "A multilayer network is a sequence of geometric transformations: linear maps that rotate, stretch, and flatten, and activation functions that bend. The hidden layers move the data until a single hyperplane separates the classes, and the output draws that hyperplane."
+  },
+  {
+   "id": "2.5",
+   "question": "What does the training loss reward?",
+   "takeaway": "Cross-entropy is the logarithmic scoring rule. It is strictly proper, so the best a model can do is report the probabilities the data supports, and next-token training pushes models toward calibration. Pretraining is supervised learning; reinforcement learning comes later."
+  },
+  {
+   "id": "2.6",
+   "question": "How does training find good parameters?",
+   "takeaway": null
+  },
+  {
+   "id": "2.7",
+   "question": "How are the gradients computed?",
+   "takeaway": null
+  },
+  {
+   "id": "2.8",
+   "question": "Why can a model fit its data and still fail?",
+   "takeaway": null
+  },
+  {
+   "id": "3.1",
+   "question": "What does a model actually read?",
+   "takeaway": null
+  },
+  {
+   "id": "3.2",
+   "question": "How does a token become a vector?",
+   "takeaway": null
+  },
+  {
+   "id": "3.3",
+   "question": "How does a model produce text?",
+   "takeaway": null
+  },
+  {
+   "id": "3.4",
+   "question": "How do positions share information?",
+   "takeaway": null
+  },
+  {
+   "id": "3.5",
+   "question": "What do different heads do?",
+   "takeaway": null
+  },
+  {
+   "id": "3.6",
+   "question": "Where does the model keep its working state?",
+   "takeaway": null
+  },
+  {
+   "id": "3.7",
+   "question": "What happens in one full pass?",
+   "takeaway": null
+  },
+  {
+   "id": "3.8",
+   "question": "How does performance grow with scale?",
+   "takeaway": null
+  },
+  {
+   "id": "4.1",
+   "question": "How does a base model become an assistant?",
+   "takeaway": null
+  },
+  {
+   "id": "4.2",
+   "question": "How is human judgment turned into a reward?",
+   "takeaway": null
+  },
+  {
+   "id": "4.3",
+   "question": "What happens when a model is pushed hard against a learned reward?",
+   "takeaway": null
+  },
+  {
+   "id": "4.4",
+   "question": "Why does writing out steps help, and is the writing faithful?",
+   "takeaway": null
+  },
+  {
+   "id": "5.1",
+   "question": "What functions can networks represent?",
+   "takeaway": null
+  },
+  {
+   "id": "5.2",
+   "question": "What does learning from reward select?",
+   "takeaway": null
+  },
+  {
+   "id": "5.3",
+   "question": "Why do very large models generalize?",
+   "takeaway": null
+  },
+  {
+   "id": "5.4",
+   "question": "Can a network generalize long after memorizing?",
+   "takeaway": null
+  },
+  {
+   "id": "5.5",
+   "question": "Who writes a trained network's algorithm?",
+   "takeaway": null
+  },
+  {
+   "id": "5.6",
+   "question": "Do abilities appear suddenly with scale?",
+   "takeaway": null
+  },
+  {
+   "id": "6.1",
+   "question": "What can interpretability show, and with what evidence?",
+   "takeaway": null
+  },
+  {
+   "id": "6.2",
+   "question": "Are concepts directions?",
+   "takeaway": null
+  },
+  {
+   "id": "6.3",
+   "question": "What does a probe's accuracy show?",
+   "takeaway": null
+  },
+  {
+   "id": "6.4",
+   "question": "Why do single neurons respond to unrelated things?",
+   "takeaway": null
+  },
+  {
+   "id": "6.5",
+   "question": "How can the features be recovered?",
+   "takeaway": null
+  },
+  {
+   "id": "6.6",
+   "question": "Can editing activations change behavior?",
+   "takeaway": null
+  },
+  {
+   "id": "6.7",
+   "question": "How do we find the parts that do a task?",
+   "takeaway": null
+  },
+  {
+   "id": "7.1",
+   "question": "What would make an attribution of beliefs and desires correct?",
+   "takeaway": "To interpret a system is to find a belief function, a desire function, and an algebra of propositions under which its behavior maximizes expected desire. In the Jeffrey-Bolker theory many such pairs fit the same preferences, so behavior alone cannot settle the attribution. Evidence from inside the system, such as a probe that reads the credences, narrows the family: fixing the credences leaves the desire function open only up to its scale and zero point."
+  },
+  {
+   "id": "7.2",
+   "question": "When does an internal state count as a belief?",
+   "takeaway": null
+  },
+  {
+   "id": "7.3",
+   "question": "When is it correct to say a system wants something?",
+   "takeaway": null
+  },
+  {
+   "id": "8.1",
+   "question": "Why does optimizing a proxy go wrong?",
+   "takeaway": null
+  },
+  {
+   "id": "8.2",
+   "question": "How do systems meet the letter of an objective and miss its intent?",
+   "takeaway": null
+  },
+  {
+   "id": "8.3",
+   "question": "Can a correct reward still teach the wrong goal?",
+   "takeaway": null
+  },
+  {
+   "id": "8.4",
+   "question": "Why might agents with different goals act alike?",
+   "takeaway": null
+  },
+  {
+   "id": "8.5",
+   "question": "Could a system hide a misaligned goal during training?",
+   "takeaway": "A trained system may itself pursue a goal different from the training objective; this is the inner alignment problem. A deceptive system that behaves well whenever it recognizes training earns the same reward as an aligned one, so selection on behavior removes only the misalignment that shows up in training behavior. Experiments since 2024 have shown pieces of this scenario, such as backdoors that survive safety training and alignment faking, in constructed settings."
+  },
+  {
+   "id": "8.6",
+   "question": "How can we stay safe with systems we cannot fully judge?",
+   "takeaway": "Approaches to overseeing capable systems differ in what they assume. Scalable oversight assumes the model is trying to help and asks how weaker overseers can still judge it; evaluations measure what a model can do; AI control assumes the model may be trying to subvert oversight and designs protocols that stay safe anyway; audits look inside the model for hidden objectives. Control buys safety without trusting the model, at a cost in usefulness that a better monitor reduces."
+  },
+  {
+   "id": "9.1",
+   "question": "Where can I contribute?",
+   "takeaway": "Each open problem here builds on a few pages of this site and has a first project that fits in a semester. Pick one whose pages you have finished, read the paper listed with it, and start small."
+  }
+ ],
+ "edges": [
+  {
+   "from": "1.1",
+   "to": "1.2",
+   "source": "1.1"
+  },
+  {
+   "from": "1.1",
+   "to": "1.3",
+   "source": "1.1"
+  },
+  {
+   "from": "1.1",
+   "to": "1.4",
+   "source": "1.1"
+  },
+  {
+   "from": "1.1",
+   "to": "1.5",
+   "source": "1.1"
+  },
+  {
+   "from": "1.1",
+   "to": "1.6",
+   "source": "1.1"
+  },
+  {
+   "from": "1.2",
+   "to": "2.2",
+   "source": "2.2"
+  },
+  {
+   "from": "1.2",
+   "to": "2.3",
+   "source": "1.2"
+  },
+  {
+   "from": "1.3",
+   "to": "2.7",
+   "source": "2.7"
+  },
+  {
+   "from": "1.3",
+   "to": "2.3",
+   "source": "1.3"
+  },
+  {
+   "from": "1.3",
+   "to": "1.4",
+   "source": "1.4"
+  },
+  {
+   "from": "1.4",
+   "to": "2.3",
+   "source": "1.4"
+  },
+  {
+   "from": "1.4",
+   "to": "2.8",
+   "source": "1.4"
+  },
+  {
+   "from": "1.5",
+   "to": "3.4",
+   "source": "1.5"
+  },
+  {
+   "from": "1.5",
+   "to": "3.8",
+   "source": "3.8"
+  },
+  {
+   "from": "1.6",
+   "to": "4.1",
+   "source": "4.1"
+  },
+  {
+   "from": "1.6",
+   "to": "4.2",
+   "source": "1.6"
+  },
+  {
+   "from": "1.6",
+   "to": "4.3",
+   "source": "1.6"
+  },
+  {
+   "from": "1.6",
+   "to": "4.4",
+   "source": "4.4"
+  },
+  {
+   "from": "2.1",
+   "to": "2.5",
+   "source": "2.1"
+  },
+  {
+   "from": "2.1",
+   "to": "2.6",
+   "source": "2.6"
+  },
+  {
+   "from": "2.2",
+   "to": "2.3",
+   "source": "2.3"
+  },
+  {
+   "from": "2.3",
+   "to": "2.4",
+   "source": "2.4"
+  },
+  {
+   "from": "2.3",
+   "to": "3.6",
+   "source": "2.3"
+  },
+  {
+   "from": "2.3",
+   "to": "6.2",
+   "source": "6.2"
+  },
+  {
+   "from": "2.4",
+   "to": "3.6",
+   "source": "2.4"
+  },
+  {
+   "from": "2.4",
+   "to": "6.2",
+   "source": "2.4"
+  },
+  {
+   "from": "2.5",
+   "to": "3.3",
+   "source": "3.3"
+  },
+  {
+   "from": "2.5",
+   "to": "4.1",
+   "source": "4.1"
+  },
+  {
+   "from": "2.5",
+   "to": "4.2",
+   "source": "4.2"
+  },
+  {
+   "from": "2.6",
+   "to": "2.7",
+   "source": "2.7"
+  },
+  {
+   "from": "2.7",
+   "to": "6.7",
+   "source": "2.7"
+  },
+  {
+   "from": "2.8",
+   "to": "5.3",
+   "source": "5.3"
+  },
+  {
+   "from": "2.8",
+   "to": "5.4",
+   "source": "5.4"
+  },
+  {
+   "from": "3.1",
+   "to": "3.2",
+   "source": "3.1"
+  },
+  {
+   "from": "3.1",
+   "to": "3.3",
+   "source": "3.1"
+  },
+  {
+   "from": "3.2",
+   "to": "6.2",
+   "source": "6.2"
+  },
+  {
+   "from": "3.3",
+   "to": "4.3",
+   "source": "4.3"
+  },
+  {
+   "from": "3.4",
+   "to": "3.5",
+   "source": "3.5"
+  },
+  {
+   "from": "3.4",
+   "to": "3.6",
+   "source": "3.4"
+  },
+  {
+   "from": "3.4",
+   "to": "6.7",
+   "source": "3.4"
+  },
+  {
+   "from": "3.5",
+   "to": "6.7",
+   "source": "6.7"
+  },
+  {
+   "from": "3.6",
+   "to": "3.7",
+   "source": "3.7"
+  },
+  {
+   "from": "3.6",
+   "to": "6.2",
+   "source": "3.6"
+  },
+  {
+   "from": "3.6",
+   "to": "6.6",
+   "source": "3.6"
+  },
+  {
+   "from": "3.1",
+   "to": "3.7",
+   "source": "3.7"
+  },
+  {
+   "from": "3.2",
+   "to": "3.7",
+   "source": "3.7"
+  },
+  {
+   "from": "3.3",
+   "to": "3.7",
+   "source": "3.7"
+  },
+  {
+   "from": "3.4",
+   "to": "3.7",
+   "source": "3.7"
+  },
+  {
+   "from": "3.5",
+   "to": "3.7",
+   "source": "3.7"
+  },
+  {
+   "from": "3.8",
+   "to": "5.6",
+   "source": "5.6"
+  },
+  {
+   "from": "4.1",
+   "to": "4.2",
+   "source": "4.1"
+  },
+  {
+   "from": "4.1",
+   "to": "4.3",
+   "source": "4.1"
+  },
+  {
+   "from": "4.1",
+   "to": "4.4",
+   "source": "4.1"
+  },
+  {
+   "from": "4.2",
+   "to": "4.3",
+   "source": "4.3"
+  },
+  {
+   "from": "4.2",
+   "to": "8.2",
+   "source": "8.2"
+  },
+  {
+   "from": "4.3",
+   "to": "8.1",
+   "source": "8.1"
+  },
+  {
+   "from": "4.3",
+   "to": "8.2",
+   "source": "4.3"
+  },
+  {
+   "from": "3.7",
+   "to": "4.4",
+   "source": "4.4"
+  },
+  {
+   "from": "4.4",
+   "to": "8.2",
+   "source": "4.4"
+  },
+  {
+   "from": "4.4",
+   "to": "8.6",
+   "source": "8.6"
+  },
+  {
+   "from": "2.3",
+   "to": "5.1",
+   "source": "5.1"
+  },
+  {
+   "from": "5.1",
+   "to": "5.3",
+   "source": "5.1"
+  },
+  {
+   "from": "5.2",
+   "to": "8.2",
+   "source": "8.2"
+  },
+  {
+   "from": "5.2",
+   "to": "8.4",
+   "source": "5.2"
+  },
+  {
+   "from": "5.2",
+   "to": "8.5",
+   "source": "8.5"
+  },
+  {
+   "from": "5.3",
+   "to": "5.4",
+   "source": "5.4"
+  },
+  {
+   "from": "5.4",
+   "to": "5.5",
+   "source": "5.5"
+  },
+  {
+   "from": "5.4",
+   "to": "6.7",
+   "source": "6.7"
+  },
+  {
+   "from": "5.2",
+   "to": "5.5",
+   "source": "5.5"
+  },
+  {
+   "from": "5.5",
+   "to": "6.1",
+   "source": "6.1"
+  },
+  {
+   "from": "5.5",
+   "to": "8.3",
+   "source": "8.3"
+  },
+  {
+   "from": "5.6",
+   "to": "8.6",
+   "source": "5.6"
+  },
+  {
+   "from": "6.1",
+   "to": "6.2",
+   "source": "6.1"
+  },
+  {
+   "from": "6.1",
+   "to": "6.3",
+   "source": "6.3"
+  },
+  {
+   "from": "6.1",
+   "to": "6.4",
+   "source": "6.1"
+  },
+  {
+   "from": "6.1",
+   "to": "6.5",
+   "source": "6.1"
+  },
+  {
+   "from": "6.1",
+   "to": "6.6",
+   "source": "6.1"
+  },
+  {
+   "from": "6.1",
+   "to": "6.7",
+   "source": "6.7"
+  },
+  {
+   "from": "6.1",
+   "to": "7.2",
+   "source": "6.1"
+  },
+  {
+   "from": "6.2",
+   "to": "6.3",
+   "source": "6.3"
+  },
+  {
+   "from": "6.2",
+   "to": "6.4",
+   "source": "6.4"
+  },
+  {
+   "from": "6.2",
+   "to": "6.5",
+   "source": "6.2"
+  },
+  {
+   "from": "6.2",
+   "to": "6.6",
+   "source": "6.6"
+  },
+  {
+   "from": "6.2",
+   "to": "7.2",
+   "source": "7.2"
+  },
+  {
+   "from": "6.3",
+   "to": "7.2",
+   "source": "7.2"
+  },
+  {
+   "from": "6.3",
+   "to": "8.6",
+   "source": "8.6"
+  },
+  {
+   "from": "6.4",
+   "to": "6.5",
+   "source": "6.5"
+  },
+  {
+   "from": "6.5",
+   "to": "6.6",
+   "source": "6.6"
+  },
+  {
+   "from": "6.5",
+   "to": "6.7",
+   "source": "6.5"
+  },
+  {
+   "from": "6.6",
+   "to": "7.2",
+   "source": "7.2"
+  },
+  {
+   "from": "6.6",
+   "to": "8.6",
+   "source": "6.6"
+  },
+  {
+   "from": "6.7",
+   "to": "7.3",
+   "source": "6.7"
+  },
+  {
+   "from": "6.7",
+   "to": "9.1",
+   "source": "6.7"
+  },
+  {
+   "from": "6.1",
+   "to": "7.1",
+   "source": "7.1"
+  },
+  {
+   "from": "6.3",
+   "to": "7.1",
+   "source": "7.1"
+  },
+  {
+   "from": "7.1",
+   "to": "7.2",
+   "source": "7.1"
+  },
+  {
+   "from": "7.1",
+   "to": "7.3",
+   "source": "7.3"
+  },
+  {
+   "from": "7.1",
+   "to": "8.3",
+   "source": "8.3"
+  },
+  {
+   "from": "7.2",
+   "to": "8.6",
+   "source": "7.2"
+  },
+  {
+   "from": "7.2",
+   "to": "9.1",
+   "source": "9.1 table"
+  },
+  {
+   "from": "5.2",
+   "to": "7.3",
+   "source": "7.3"
+  },
+  {
+   "from": "6.6",
+   "to": "7.3",
+   "source": "7.3"
+  },
+  {
+   "from": "7.3",
+   "to": "8.3",
+   "source": "7.3"
+  },
+  {
+   "from": "7.3",
+   "to": "8.5",
+   "source": "8.5"
+  },
+  {
+   "from": "7.3",
+   "to": "9.1",
+   "source": "9.1 table"
+  },
+  {
+   "from": "8.1",
+   "to": "8.2",
+   "source": "8.2"
+  },
+  {
+   "from": "8.1",
+   "to": "9.1",
+   "source": "9.1 table"
+  },
+  {
+   "from": "8.2",
+   "to": "8.6",
+   "source": "8.2"
+  },
+  {
+   "from": "8.3",
+   "to": "8.5",
+   "source": "8.5"
+  },
+  {
+   "from": "4.3",
+   "to": "8.4",
+   "source": "8.4"
+  },
+  {
+   "from": "8.1",
+   "to": "8.4",
+   "source": "8.4"
+  },
+  {
+   "from": "8.4",
+   "to": "8.5",
+   "source": "8.4"
+  },
+  {
+   "from": "8.4",
+   "to": "9.1",
+   "source": "9.1 table"
+  },
+  {
+   "from": "8.5",
+   "to": "8.6",
+   "source": "8.6"
+  },
+  {
+   "from": "8.6",
+   "to": "9.1",
+   "source": "9.1 table"
+  },
+  {
+   "from": "6.2",
+   "to": "9.1",
+   "source": "9.1 table"
+  },
+  {
+   "from": "6.4",
+   "to": "9.1",
+   "source": "9.1 table"
+  },
+  {
+   "from": "4.4",
+   "to": "9.1",
+   "source": "9.1 table"
+  },
+  {
+   "from": "6.3",
+   "to": "9.1",
+   "source": "9.1 table"
+  },
+  {
+   "from": "4.3",
+   "to": "9.1",
+   "source": "9.1 table"
+  },
+  {
+   "from": "7.1",
+   "to": "9.1",
+   "source": "9.1 table"
+  },
+  {
+   "from": "5.2",
+   "to": "9.1",
+   "source": "9.1 table"
+  },
+  {
+   "from": "5.6",
+   "to": "9.1",
+   "source": "9.1 table"
+  }
+ ],
+ "examples": [
+  {
+   "name": "The plane classifier",
+   "what": "A small network that labels points in the plane: 2 inputs, 1 to 3 hidden layers of width 2 to 8. Datasets: AND, OR, XOR, circles, spirals.",
+   "pages": [
+    "1.2",
+    "2.1",
+    "2.2",
+    "2.3",
+    "2.4",
+    "2.6",
+    "2.8",
+    "5.5"
+   ]
+  },
+  {
+   "name": "The modular-addition transformer",
+   "what": "A one-layer transformer trained on (a + b) mod 113, the model reverse-engineered by Nanda et al. (2023).",
+   "pages": [
+    "5.4",
+    "5.5",
+    "6.7"
+   ]
+  },
+  {
+   "name": "GPT-2 small",
+   "what": "The real language model used wherever one is needed: 12 layers, 12 heads per layer, 124 million parameters. It is open and the most studied model in interpretability.",
+   "pages": [
+    "3.1",
+    "3.2",
+    "3.3",
+    "3.4",
+    "3.5",
+    "3.6",
+    "3.7",
+    "6.2",
+    "6.3",
+    "6.5",
+    "6.6",
+    "6.7"
+   ]
+  },
+  {
+   "name": "The gridworld",
+   "what": "A small grid environment with an agent, solved exactly by value iteration in the browser.",
+   "pages": [
+    "7.3",
+    "8.2",
+    "8.3",
+    "8.4"
+   ]
+  }
+ ]
+}
