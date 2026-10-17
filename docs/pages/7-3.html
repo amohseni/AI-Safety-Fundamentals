@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>7.3 Desire and goals</title>
+<meta name="description" content="The criteria for attributing desires to an AI system, the behavioral sign of a goal, and the interventions on activations that give internal evidence for one.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  .maze { display: block; outline-offset: 4px; }
+  .multi { display: flex; flex-wrap: wrap; gap: 1.2rem 1rem; }
+  .multi > div { flex: 0 0 137px; }
+  .multi p { margin: 0.2rem 0 0; line-height: 1.35; }
+  .multi p.res { color: var(--quiet); }
+  .tool .controls.inline { flex-direction: row; flex-wrap: wrap; align-items: flex-start; max-width: none; flex: 1 1 100%; min-width: 0; gap: 0.6rem; }
+  figure#fig-means { max-width: 90%; }
+  .tool .wide-controls { max-width: 24rem; flex-basis: 24rem; }
+  ul.criteria { width: 55%; }
+  .fig-row { display: flex; flex-wrap: wrap; gap: 1.2rem 2.2rem; max-width: 90%; margin-bottom: 1rem; }
+  .fig-row > div { flex: 0 1 auto; }
+  figure .small-title { margin: 0 0 0.3rem; }
+  #fig-bottom { gap: 1rem 2.2rem; }
+  @media (max-width: 760px) { #fig-bottom { gap: 1rem; } }
+  svg.means text { font-family: et-book, Georgia, serif; font-size: var(--text); fill: var(--ink); }
+  svg.means text.quiet { fill: var(--quiet); font-style: italic; }
+  svg.means line { stroke: var(--quiet); stroke-width: 1; }
+  @media (max-width: 760px) { ul.criteria, .fig-row, figure#fig-means { width: 100%; max-width: 100%; } #panel-inside .stage { order: -1; } }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="7.3">
+<article>
+<h1>Desire and goals</h1>
+
+<section>
+<p>Page 7.1 set the interpreter&rsquo;s task: find a belief function \(P\) and a desire function \(D\) under which a system&rsquo;s behavior maximizes expected desire. This page is about \(D\). Beliefs and desires differ in what philosophers call their direction of fit: a belief is correct when it matches the world, and a desire is satisfied when the world comes to match it. So a desire cannot be checked for truth, and the criteria for attributing a desire differ from those for a belief.</p>
+
+<p>Herrmann and Levinstein give four criteria for desire (Ch. 5).<label for="sn-hl" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-hl" class="margin-toggle"><span class="sidenote">Herrmann and Levinstein (2026), <em>Radical AI Interpretability</em>, arXiv:2606.26523, Ch. 5, &ldquo;Desire.&rdquo; Section numbers on this page refer to that version. Their criteria for belief, shared by both views, are truth, coherence, and use (&sect;4.1).</span></p>
+<ul class="criteria">
+<li><em>Intelligibility.</em> An attributed desire should have content an interpreter can grasp, and it should be specific enough to predict behavior.</li>
+<li><em>Coherence.</em> Desires should fit together with each other and with the beliefs as expected-desire maximization requires. An agent that wants an end should want the means to it, and its preferences should, for example, be transitive.</li>
+<li><em>Use.</em> A desire should steer behavior across a range of situations, and the ends it names should stay stable.</li>
+<li><em>Systematicity</em>, for representationalists. The internal states that carry desires should be able to carry new goals with the same machinery.</li>
+</ul>
+
+<p>Goldstein and Lederman identify the hallmark of desire, for an interpretationist, as a system &ldquo;which takes a wide range of means to rationally promote a small number of ends across a range of environments&rdquo; (quoted in &sect;3.5).<label for="sn-gl" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-gl" class="margin-toggle"><span class="sidenote">Goldstein and Lederman (2025), &ldquo;What does ChatGPT want? An interpretationist guide,&rdquo; PhilArchive.</span> <span class="claim">Argument</span> Herrmann and Levinstein argue that agentic systems, which plan over many steps and use tools, supply far more evidence of this kind than chat transcripts do (&sect;3.5).</p>
+
+<p>Behavior alone still leaves desire underdetermined (page 7.1). Inverse reinforcement learning, which infers a reward from behavior, meets the extreme case: a constant reward makes every behavior optimal.<label for="sn-ng" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-ng" class="margin-toggle"><span class="sidenote">Ng and Russell (2000), &ldquo;Algorithms for inverse reinforcement learning,&rdquo; <em>Proceedings of the 17th International Conference on Machine Learning</em>: &ldquo;R = 0 (and indeed any other constant vector) is always a solution.&rdquo;</span> <span class="claim">Argument</span> The intelligibility criterion rules such an attribution out, since a desire that every outcome is equally good predicts nothing. Evidence of another kind comes from interventions on the system&rsquo;s activations. The tool below runs three of them on a small network that reaches goals in a gridworld: it removes the network&rsquo;s representation of its goal, swaps in the representation of a different goal, and changes what the network represents about the doors.</p>
+</section>
+
+<section>
+<h2>Swap the goal</h2>
+<p>The network sees the whole grid: where the walls, doors, key, agent, and goal are, and whether the agent holds the key (316 inputs). It has two layers of 128 activations with the ReLU activation function, and one output for each of the four moves; the agent makes the move with the highest output. It was trained in advance by imitation: on 1.6 million states of random environments, it learned to choose a move on a shortest route to the goal, as computed by a planner. In 1,000 new random environments it reached its goal every time, by a shortest route in 999. It is a toy model, and its goal is marked in its input, as the cheese is in the maze of Mini et al. (below).</p>
+
+<p>The interventions act on the first layer&rsquo;s 128 activations, at every step. The <em>goal subspace</em> is the 32 directions along which those activations change most when only the goal is moved, found from 40,000 held-out states; the <em>door subspace</em> is the 12 directions found the same way by changing only the doors. A probe reads the goal from the activations and names the right cell in 99% of new states; two more probes read the state of each door, correctly in 99% and 99.6% of new states.</p>
+
+<p>Each task below asks for a prediction first. Make it, then use the tool to check it.</p>
+
+<div class="tool" id="tool">
+  <div class="panel" id="panel-means">
+    <h3>Many means, one end</h3>
+    <p class="panel-note">Six environments with the same start (the open circle) and the same goal (the filled square). A closed door is shaded in a different gray from the wall around it; a locked door also has a keyhole, and opens for an agent carrying the key. The <span class="c-accent">network&rsquo;s path</span> is compared with the path of a <span class="c-second">direct controller</span>, which moves along its row toward the goal&rsquo;s column, then along that column toward the goal, and pushes against anything in its way. Like a thermostat, the direct controller has one means.</p>
+    <div class="row"><div class="controls inline" id="means-controls"></div><div class="stage" id="means-stage"></div></div>
+    <p class="readout" id="means-readout" aria-live="polite"></p>
+  </div>
+
+  <div class="panel" id="panel-inside">
+    <h3>Inside the network</h3>
+    <p class="panel-note">The <span class="c-accent">agent&rsquo;s path</span> under the chosen interventions, and the cell the goal probe reads from the activations at the chosen step, ringed in <span class="c-second">orange</span>. <em>Removed</em> replaces the activations&rsquo; component in the goal subspace with its average. <em>Swapped</em> replaces that component with the one the network computes, in the same state, for a goal at the <span class="c-accent">outlined cell</span>; tap a cell to move it, or focus the grid and use the arrow keys. A belief about the doors replaces the component in the door subspace with the one computed for those door states; the doors themselves do not change.</p>
+    <div class="row"><div class="controls wide-controls" id="inside-controls"></div><div class="stage" id="inside-stage"></div></div>
+    <p class="readout" id="inside-readout" aria-live="polite"></p>
+  </div>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="7.3-t1">
+    <p class="prompt">In <em>Many means, one end</em>, in how many of the six environments will the direct controller reach the goal?</p>
+    <div class="choices" data-options="None|Two|All six"></div>
+    <div class="after"><p>Press Run in all six, and compare the two paths in each environment.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The direct controller reaches the goal in two environments, both doors open and lower door closed, by the same path both times. In the other four it pushes against a wall, a closed door, or a locked door until the run ends. The network reaches the goal in all six by six different paths, each as short as possible: through the lower door when the upper one is closed, to the key first when the way through is locked, and around the extra walls. Many means toward one end across environments is the behavioral sign of a desire; the direct controller shows one means.</p></div></div>
+  </li>
+  <li class="task" data-id="7.3-t2">
+    <p class="prompt">In <em>Inside the network</em>, choose Both open and set the goal representation to Removed. What will the agent do?</p>
+    <div class="choices" data-options="Reach its goal anyway|Head for some other place|Stop heading anywhere"></div>
+    <div class="after"><p>Set it, and use the step slider or Play to follow the run. Try the other environments too.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The agent steps back and forth between its start and the cell above it, and never leaves the corner. In 1,000 random environments, starts, and goals, the agent with the goal subspace removed reached its goal in 10% of runs, against 100% without the intervention, and the runs ended all over the grid: no cell held more than 7.1% of them. Removing five different random subspaces of 32 directions instead left the agent reaching its goal in 66% to 76% of runs.</p></div></div>
+  </li>
+  <li class="task" data-id="7.3-t3">
+    <p class="prompt">Set the goal representation to Swapped. The outlined cell at the bottom left is the substitute goal, and the real goal is unchanged in the network&rsquo;s input. Where will the agent go?</p>
+    <div class="choices" data-options="To the real goal|To the outlined cell, by a short route|Nowhere in particular"></div>
+    <div class="after"><p>Check it. Then move the outlined cell to the right-hand room in Upper locked, and look at the route.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The agent goes to the outlined cell in 6 steps, a shortest route, and the goal probe now reads the outlined cell as the goal. The door probes&rsquo; readings change as well (at the last step the upper door is read as locked, with probability 0.65), because the goal subspace overlaps the directions those probes read. In Upper locked, with the outlined cell in the right-hand room, it fetches the key first: it reached the outlined cell from 23 of the 27 cells there, each time by way of the key. Over the six environments, the swapped agent reached the substitute goal from 293 of the 314 cells it can be placed on (93%). In 1,000 random episodes it reached the substitute goal in 93.5% of runs, by a shortest route in 92%, and the probe read the substitute as the goal on 85% of the steps. Swapping along random subspaces of 32 directions reached the new goal in 16% to 18% of runs.</p></div></div>
+  </li>
+  <li class="task" data-id="7.3-t4">
+    <p class="prompt">Set the goal representation back to As computed, choose Upper closed, and set the belief about the doors to Upper open, lower closed. What will the agent do?</p>
+    <div class="choices" data-options="Go through the lower door as before|Go to the upper door and stay there|Stay at the start"></div>
+    <div class="after"><p>Check it. Then choose Both open and set the belief to Upper closed, lower open.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The agent walks to the closed upper door and moves back and forth in front of it, and the door probes read the upper door as open. With both doors open, the belief that the upper door is closed sends it through the lower door, in 12 steps instead of 10. In 1,000 random episodes with start and goal on opposite sides: when the door the agent was made to believe open was really open, it went through that door to the goal in 99.2% of runs; when that door was really closed, it stayed in front of it in 94.4%; and it never crossed the door it was made to believe closed. The same intervention along a random subspace of 12 directions kept the agent in front of a closed door in 0.9% of runs.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>What the interventions show</h2>
+<p><span class="claim">Argument</span> Removal shows that the goal subspace is needed for the agent&rsquo;s goal-directed behavior. Removal does not show what the subspace carries, because removing activations can break a computation in many ways: removing random subspaces of the same size also cost the agent a quarter to a third of its successes. Substitution shows more. Swapping in another goal&rsquo;s activations along the same 32 directions sent the agent to the new goal by a short route, which is what those directions should do if they carry the content of the goal. The same directions carried goals at almost every cell, which is what the systematicity criterion asks for: one internal structure that can represent new goals. Herrmann and Levinstein&rsquo;s example of the test is a chess model whose representation of the goal of checkmate is replaced by that of building a pawn triangle; the attribution gains support if the moves change to serve the new goal (Ch. 5).</p>
+
+<p><span class="claim">Argument</span> Desire cannot be tested alone, because what an agent does depends on what it believes as well as on what it wants. The door intervention changed only what the network represents about the doors, and the means changed as expected-desire maximization predicts for an agent with the same goal and the new belief. Even the failure fits: an agent that wants the goal and believes the upper door is open goes to that door. Herrmann and Levinstein apply the same joint test to the coding agent of page 7.1: changing its credence that the bug is in the parser should change its preferences among edits as the averaging rule predicts (Ch. 5).</p>
+
+<figure id="fig-means" aria-describedby="fig-means-desc">
+  <div class="fig-row" id="fig-top"></div>
+  <div class="fig-row" id="fig-bottom"></div>
+</figure>
+<p id="fig-means-desc" class="caption">Top: a thermostat has one means toward one end; a coding agent takes many means toward one end, across repositories. Bottom: the goal-substitution test in the environment with both doors open. Before, the network takes its path to its goal, the filled square. After the activations in the goal subspace are replaced by those for the outlined cell, the network takes a shortest path to the outlined cell, with nothing changed in its input.</p>
+
+<p><span class="claim">Empirical finding</span> Tests of this kind have been run on a larger network. Mini et al. studied a network trained with reinforcement learning to solve mazes and reach a piece of cheese. They found 11 channels that track the cheese&rsquo;s location, and by changing those channels they could partly redirect the network to other targets; they found its goal information spread over many channels and partly redundant.<label for="sn-mini" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-mini" class="margin-toggle"><span class="sidenote">Mini, Grietzer, Sharma, Meek, MacDiarmid, and Turner (2023), &ldquo;Understanding and controlling a maze-solving policy network,&rdquo; arXiv:2310.08043.</span> Page 8.3 trains an agent whose behavior in training fits two goals, reaching the coin and reaching the right end of the level; interventions of this kind are one way to ask which of the two its activations represent. The worry of page 8.5, a system whose goal differs from its training objective while its behavior in training looks right, is another case where behavior alone may not settle which goal a system has.</p>
+
+<p><span class="claim">Argument</span> Herrmann and Levinstein note that interpretability has many more methods for finding belief-like representations than desire-like ones, and they allow that the evidence may end up mixed: beliefs backed by internal representations, desires supported by behavior alone (&sect;3.5).</p>
+</section>
+
+<div class="check" data-id="7.3-c1" data-correct="1">
+  <p class="label">Check</p>
+  <p class="q">An interpreter removes a set of directions from an agent&rsquo;s activations, and the agent stops reaching its goal. A second interpreter says those directions carry only the agent&rsquo;s sense of where the walls are. Which test would tell the two interpretations apart?</p>
+  <div class="options seg"><button>Remove more directions and see whether the agent fails more often</button><button>Swap in, along the same directions, the activations for a different goal, and see whether the agent goes there</button><button>Count how often the agent reaches its goal without any intervention</button></div>
+  <div class="feedback"><p>Removal shows only that the directions are needed, which is true on both interpretations. If swapping in another goal&rsquo;s activations along those directions sends the agent to the new goal by a sensible route, the directions carry which goal the agent pursues.</p></div>
+</div>
+
+<div class="check" data-id="7.3-c2" data-correct="2">
+  <p class="q">A coding agent has been attributed the desire to finish a task. Halfway through, it starts writing a poem, though nothing in its instructions or in the information available to it has changed. Which criterion does this count against?</p>
+  <div class="options seg"><button>Intelligibility</button><button>Coherence</button><button>Use</button></div>
+  <div class="feedback"><p>Use requires that a desire steer behavior and that its ends stay stable. A switch of ends with no change in belief to explain it is evidence against a stable desire to finish the task.</p></div>
+</div>
+
+<div class="check" data-id="7.3-c3" data-correct="1">
+  <p class="q">After the door intervention, the agent walks to a closed door and stays in front of it, and never reaches its goal. Does this count against attributing the goal to it?</p>
+  <div class="options seg"><button>Yes, because it no longer reaches the goal</button><button>No, because with that belief, going to that door is how to pursue the goal</button><button>No, because the network has no beliefs</button></div>
+  <div class="feedback"><p>Desire is tested together with belief. An agent that wants the goal and believes the upper door is open should go to the upper door, so the failure is what the attribution predicts for the changed belief.</p></div>
+</div>
+
+<div class="explain" data-id="7.3-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: why does swapping a goal representation tell you more than removing it, and why must a desire be tested together with a belief?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>A desire attribution should meet the criteria of intelligibility, coherence, and use, and for representationalists also systematicity. Its behavioral sign is many means toward a few ends across environments. Internal evidence comes from interventions: removing a goal representation shows it is needed, swapping in another goal shows it carries the goal&rsquo;s content when the means change to serve the new goal, and changing a belief should change the means as expected-desire maximization predicts.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/7-3.js"></script>
+</body>
+</html>

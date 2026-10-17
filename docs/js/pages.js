@@ -302,7 +302,7 @@ export const sections = [
         "id": "7.3",
         "title": "Desire and goals",
         "core": false,
-        "href": null
+        "href": "pages/7-3.html"
       }
     ]
   },
