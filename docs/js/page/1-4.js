@@ -25,11 +25,18 @@ function imagenetFigure() {
   const x = d3.scaleLinear().domain([0, 30]).range([0, iw]);
   const top = (i) => i * rowH;
   g.append('g').attr('class', 'axis').attr('transform', `translate(0,${rowH * n})`)
-    .call(d3.axisBottom(x).ticks(3).tickFormat((v) => `${v}%`).tickSizeOuter(0));
+    .call(d3.axisBottom(x).ticks(3).tickFormat((v) => `${v}%`).tickSizeOuter(0))
+    // Keep the first and last tick labels inside the chart.
+    .call((a) => { a.selectAll('.tick text').filter((v) => v === 0).attr('text-anchor', 'start'); a.selectAll('.tick text').filter((v) => v === 30).attr('text-anchor', 'end'); });
   g.append('text').attr('x', iw).attr('y', rowH * n + 42).attr('text-anchor', 'end').text('winning top-5 error');
   const hx = x(5.1);
-  g.append('line').attr('x1', hx).attr('x2', hx).attr('y1', -8).attr('y2', rowH * n)
+  // The dashed line runs through the bars only, so it never crosses a row's label.
+  g.append('line').attr('x1', hx).attr('x2', hx).attr('y1', -8).attr('y2', 0)
     .attr('stroke', 'var(--ink)').attr('stroke-dasharray', '3 3');
+  for (let i = 0; i < n; i++) {
+    g.append('line').attr('x1', hx).attr('x2', hx).attr('y1', top(i) + 23).attr('y2', i === n - 1 ? rowH * n : top(i) + rowH)
+      .attr('stroke', 'var(--ink)').attr('stroke-dasharray', '3 3');
+  }
   g.append('text').attr('x', hx + 4).attr('y', -14).attr('text-anchor', 'start').attr('class', 'label-ink').text('one trained person, 5.1%');
   const row = g.selectAll('g.row').data(IMAGENET).join('g').attr('class', 'row').attr('transform', (d, i) => `translate(0,${top(i)})`);
   row.append('text').attr('x', 0).attr('y', 18).attr('class', (d) => (d[0] === 2012 ? 'label-accent' : 'label-ink'))

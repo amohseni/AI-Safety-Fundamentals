@@ -70,7 +70,7 @@
    "date": "1950",
    "lane": "ideas",
    "cat": "games",
-   "label": "Turing's imitation game",
+   "label": "Turing’s imitation game",
    "title": "Turing, “Computing Machinery and Intelligence”",
    "what": "Alan Turing proposed replacing the question “can machines think?” with a test, the imitation game, and discussed machines that learn.",
    "why": "It set an early benchmark for machine intelligence and raised the idea of a learning machine.",
@@ -329,11 +329,11 @@
    "what": "Geoffrey Hinton, Simon Osindero, and Yee-Whye Teh trained a many-layered network one layer at a time, then fine-tuned the whole network.",
    "why": "It renewed interest in networks with many layers and is often given as the start of “deep learning.”",
    "lore": "Deep learning began in 2006.",
-   "record": "Networks with several layers had been trained with backpropagation since the 1980s, for example LeCun’s 1989 zip-code reader. What 2006 changed was a training recipe that made deeper networks work, and the start of the name. The layer-by-layer recipe was soon dropped: after 2012, deep networks were trained end to end with backpropagation, ReLU, and GPUs.",
+   "record": "Networks with several layers had been trained with backpropagation since the 1980s, for example LeCun’s 1989 zip-code reader. What 2006 changed was a training recipe that made deeper networks work; the name “deep learning,” used earlier in other senses, came into wide use for neural networks in the following years. The layer-by-layer recipe was soon dropped: after 2012, deep networks were trained end to end with backpropagation, ReLU, and GPUs.",
    "source": "https://doi.org/10.1162/neco.2006.18.7.1527"
   },
   {
-   "date": "2007-02-15",
+   "date": "2007-02",
    "lane": "compute",
    "cat": "data",
    "label": "CUDA",
@@ -364,7 +364,7 @@
    "source": "https://doi.org/10.1109/CVPR.2009.5206848"
   },
   {
-   "date": "2012-09-30",
+   "date": "2012-10-13",
    "lane": "ideas",
    "cat": "games",
    "label": "AlexNet",
@@ -381,7 +381,7 @@
    "cat": "architectures",
    "label": "word2vec",
    "title": "word2vec",
-   "what": "Tomas Mikolov and colleagues at Google trained simple networks to predict words from their neighbors, producing a vector for each word.",
+   "what": "Tomas Mikolov and colleagues at Google trained simple networks to predict a word from its neighbors, or its neighbors from the word, producing a vector for each word.",
    "why": "Directions in the learned space captured relations between words, an early sign of the linear structure studied in interpretability.",
    "page": "3.2",
    "source": "https://arxiv.org/abs/1301.3781"
@@ -478,7 +478,7 @@
    "label": "Transformer",
    "title": "The transformer: “Attention Is All You Need”",
    "what": "Vaswani and colleagues at Google built a translation model entirely from attention and feed-forward layers, with no recurrence.",
-   "why": "It is the architecture of every large language model since.",
+   "why": "It is the architecture of almost every large language model since.",
    "page": "1.5",
    "source": "https://arxiv.org/abs/1706.03762"
   },
@@ -512,7 +512,7 @@
    "label": "GPT-2 staged release",
    "title": "GPT-2 and its staged release",
    "what": "OpenAI announced GPT-2, a 1.5-billion-parameter language model, but at first released only smaller versions, citing possible misuse. It released the full model on November 5, 2019.",
-   "why": "It was the first public argument over whether to release a model’s parameters.",
+   "why": "It was an early and widely covered public argument over whether to release a model’s parameters.",
    "page": "1.5",
    "source": "https://openai.com/index/gpt-2-1-5b-release/"
   },

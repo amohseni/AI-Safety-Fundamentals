@@ -14,7 +14,7 @@
   {
    "id": "1.2",
    "question": "What could the first networks do, and why did funding collapse?",
-   "takeaway": "A perceptron computes a linear threshold function: it labels the two sides of a line, or of a hyperplane. Its learning rule finds a separating line whenever one exists and cycles forever when none does, as for XOR. A hidden layer can compute XOR, but in the 1960s no widely used method could train one. The book Perceptrons proved real limits, but the fall in AI funding in the 1970s also had other causes."
+   "takeaway": "A perceptron computes a linear threshold function: it labels the two sides of a line, or of a hyperplane. Its learning rule finds a separating line whenever one exists; when none exists, as for XOR, the rule never stops making mistakes, and on XOR it cycles forever. A hidden layer can compute XOR, but in the 1960s no widely used method could train one. The book Perceptrons proved real limits, but the fall in AI funding in the 1970s also had other causes."
   },
   {
    "id": "1.3",

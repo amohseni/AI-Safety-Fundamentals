@@ -52,10 +52,12 @@ function staticFigure(tl) {
     .attr('role', 'img').attr('aria-label', 'Timeline from 1940 to 2025: ' + ev.map((e) => `${e.date.slice(0, 4)} ${e.label}`).join(', ') + '; AI winters about 1974 to 1980 and 1987 to 1993.');
   tl.winters.forEach((w) => {
     svg.append('rect').attr('x', m.left).attr('width', W - m.left).attr('y', y(w.from)).attr('height', y(w.to) - y(w.from)).attr('fill', 'var(--faint)');
-    svg.append('text').attr('x', W - 4).attr('y', y((w.from + w.to) / 2) + 6).attr('text-anchor', 'end').attr('font-style', 'italic').text(w.label);
   });
   svg.append('g').attr('class', 'axis').attr('transform', `translate(${m.left},0)`).call(d3.axisLeft(y).tickValues(d3.range(1940, 2030, 10)).tickFormat(String).tickSizeOuter(0));
   // Place labels top to bottom, pushing each down if it would overlap the one above.
+  // A short label keeps each line inside a phone-width figure.
+  const SHORT = { 'Backpropagation popularized': 'Backpropagation' };
+  const boxes = [];
   let last = -Infinity;
   ev.forEach((e) => {
     const yy = y(toYear(e.date));
@@ -63,7 +65,19 @@ function staticFigure(tl) {
     last = ly;
     svg.append('circle').attr('cx', m.left).attr('cy', yy).attr('r', 4).attr('fill', 'var(--ink)');
     svg.append('line').attr('x1', m.left + 4).attr('x2', m.left + 14).attr('y1', yy).attr('y2', ly - 6).attr('stroke', 'var(--rule)');
-    svg.append('text').attr('x', m.left + 18).attr('y', ly).attr('class', 'label-ink').text(`${e.date.slice(0, 4)} ${e.label}`);
+    const t = svg.append('text').attr('x', m.left + 18).attr('y', ly).attr('class', 'label-ink').text(`${e.date.slice(0, 4)} ${SHORT[e.label] || e.label}`);
+    boxes.push({ x0: m.left + 18, x1: m.left + 18 + t.node().getComputedTextLength(), y0: ly - 16, y1: ly + 4 });
+  });
+  // Winter labels go at the right edge, inside the band if no event label is in the way,
+  // otherwise just below or above the band.
+  tl.winters.forEach((w) => {
+    const t = svg.append('text').attr('x', W - 4).attr('text-anchor', 'end').attr('font-style', 'italic').text(w.label);
+    const wl = t.node().getComputedTextLength();
+    const free = (base) => !boxes.some((b) => b.x1 > W - 4 - wl - 6 && b.y1 > base - 16 && b.y0 < base + 4);
+    const cands = [y((w.from + w.to) / 2) + 6, y(w.to) + 20, y(w.from) - 6];
+    const base = cands.find(free) ?? cands[0];
+    t.attr('y', base);
+    boxes.push({ x0: W - 4 - wl, x1: W - 4, y0: base - 16, y1: base + 4 });
   });
 }
 
@@ -264,7 +278,7 @@ function tool(tl, comp) {
     const lane = LANES.find((l) => l[0] === e.lane)[1], cat = CATS.find((c) => c[0] === e.cat)[1];
     let gap = '';
     if (state.prev && !state.prev.winter && state.prev !== e) {
-      const dy = Math.round(e.year) - Math.round(state.prev.year);
+      const dy = Number(e.date.slice(0, 4)) - Number(state.prev.date.slice(0, 4));
       const yrs = Math.abs(dy);
       gap = `<p class="meta">${yrs === 0 ? 'Same year as' : `${yrs} year${yrs === 1 ? '' : 's'} ${dy > 0 ? 'after' : 'before'}`} the card you opened before, ${state.prev.label} (${state.prev.date.slice(0, 4)}).</p>`;
     }

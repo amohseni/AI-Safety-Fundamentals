@@ -44,3 +44,25 @@ for (const lr of [0.1, 0.25, 0.5, 1]) {
     seen.set(k, p);
   }
 }
+
+// Assertions for the numbers quoted in the 1.2 notices.
+import assert from 'node:assert/strict';
+{
+  const or1 = run('or', 1);
+  assert.deepEqual(or1.hist, [2, 2, 1, 0], 'task 2: OR at rate 1 makes 2, 2, 1, then 0 mistakes');
+  const orPasses = [0.1, 0.25, 0.5].map((lr) => run('or', lr).passes);
+  assert.ok(Math.min(...orPasses) >= 4 && Math.max(...orPasses) === 10 && run('or', 0.1).passes === 10, 'task 2: other rates take 4 to 10 passes, 10 at 0.1');
+  const x1 = run('xor', 1);
+  assert.deepEqual(x1.hist.slice(0, 3), [3, 3, 4], 'task 3: XOR at rate 1 makes 3, 3, 4 mistakes');
+  for (const lr of [0.1, 0.25, 0.5, 1]) assert.ok(!run('xor', lr, 1000).converged, `task 3: XOR never converges at rate ${lr}`);
+  const cycleStart = [0.1, 0.25, 0.5, 1].map((lr) => {
+    const { X, Y } = datasets.xor(); const s = { w: START.w.slice(), b: START.b }; const seen = new Map();
+    for (let p = 1; p <= 1000; p++) { perceptronPass(s, X, Y, lr); const k = `${s.w.map((v) => v.toFixed(9))},${s.b.toFixed(9)}`; if (seen.has(k)) return p; seen.set(k, p); }
+    return Infinity;
+  });
+  assert.equal(cycleStart[3], 3, 'task 3: at rate 1 the pass-long cycle starts at pass 3');
+  assert.ok(Math.min(...cycleStart) === 3 && Math.max(...cycleStart) === 16, 'task 3: cycles start between pass 3 and pass 16');
+  assert.deepEqual(X.map((x) => hiddenOut(H, x)), Y, 'task 4: the stated hidden-layer weights compute XOR');
+  assert.equal(best, 1, 'every line gets at least one XOR point wrong');
+  console.log('ok   all 1.2 assertions');
+}

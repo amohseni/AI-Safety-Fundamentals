@@ -151,8 +151,8 @@ function build() {
       const p = byId.get(sel), n = q.get(sel);
       parts.push(`<b>${sel} ${p.title}</b>${p.core ? ' (core path)' : ''}. ${n.question}` +
         (n.takeaway ? ` <em>Takeaway:</em> ${n.takeaway}` : '') +
-        ` <span class="c-accent">Builds on:</span> ${pre.size ? [...pre].map(link).join(', ') : 'no earlier page'}.` +
-        ` <span class="c-second">Built on by:</span> ${post.size ? [...post].map(link).join(', ') : 'no later page'}.` +
+        ` <span class="c-accent">Builds on:</span> ${pre.size ? [...pre].sort((a, b) => parseFloat(a) - parseFloat(b)).map(link).join(', ') : 'no earlier page'}.` +
+        ` <span class="c-second">Built on by:</span> ${post.size ? [...post].sort((a, b) => parseFloat(a) - parseFloat(b)).map(link).join(', ') : 'no later page'}.` +
         (state.anc ? ` It depends, directly or through other pages, on ${anc.size} page${anc.size === 1 ? '' : 's'}: ${[...anc].sort((a, b) => parseFloat(a) - parseFloat(b)).join(', ')}.` : '') +
         (p.href ? ` <a href="../${p.href}">Open page ${sel}</a>.` : ' Not written yet.'));
     }

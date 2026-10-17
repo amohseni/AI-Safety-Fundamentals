@@ -98,7 +98,7 @@ function draw() {
   yAxis.selectAll('.tick text').each(function (v) { setPow(d3.select(this), 1, Math.round(Math.log10(v))); });
   const every = iw / names.length < 26 ? 5 : 1;
   const narrow = x.bandwidth() / 0.75 < 32;
-  const shown = names.filter((n, i) => (n === 'out' && !narrow) || i === 0 || i === L - 1 || ((i + 1) % every === 0 && L - (i + 1) > 2));
+  const shown = names.filter((n, i) => (n === 'out' && !narrow) || i === 0 || i === L - 1 || ((i + 1) % every === 0 && (every === 1 || L - (i + 1) > 2)));
   xAxis.call(d3.axisBottom(x).tickValues(shown).tickSizeOuter(0));
   bars.selectAll('rect').data(vals).join('rect')
     .attr('x', (_, i) => x(names[i])).attr('width', x.bandwidth())
@@ -109,7 +109,15 @@ function draw() {
     .attr('x', ([i]) => x(names[i]) + x.bandwidth() / 2)
     .attr('y', ([i]) => Math.max(14, y(vals[i]) - 8))
     .attr('text-anchor', ([i]) => (i === 0 ? 'start' : 'end'))
-    .each(function ([i]) { const k = Math.floor(Math.log10(vals[i])); setPow(d3.select(this), vals[i] / 10 ** k, k); });
+    .each(function ([i]) { const k = Math.floor(Math.log10(vals[i])); setPow(d3.select(this), vals[i] / 10 ** k, k); })
+    // Raise each value label above every bar it spans, so it never sits on top of a bar.
+    .each(function ([i]) {
+      const len = this.getComputedTextLength();
+      const cx = x(names[i]) + x.bandwidth() / 2;
+      const a = i === 0 ? cx : cx - len, b = i === 0 ? cx + len : cx;
+      const tops = names.map((n, j) => [x(n), x(n) + x.bandwidth(), y(vals[j])]).filter(([u, v]) => v > a && u < b).map((t) => t[2]);
+      d3.select(this).attr('y', Math.max(14, Math.min(...tops) - 8));
+    });
   svg.attr('aria-label', `Gradient size for each of ${L} hidden layers and the output layer, log scale. Layer 1: ${sci(vals[0], false)}; layer ${L}: ${sci(vals[L - 1], false)}.`);
 
   const r = vals[0] / vals[L - 1];

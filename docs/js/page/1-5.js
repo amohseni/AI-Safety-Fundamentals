@@ -49,9 +49,16 @@ function drawChart(box, { scale, pts, trend, interactive, sel }) {
     yAxisG.selectAll('.tick text').each(function (v) { setPow(d3.select(this), v, { bare: true }); });
   } else {
     yAxisG.call(d3.axisLeft(c.y).ticks(4).tickFormat(() => '').tickSizeOuter(0));
-    yAxisG.selectAll('.tick text').each(function (v) { if (v === 0) d3.select(this).text('0'); else setPow(d3.select(this), v, { digits: 0 }); });
+    // Plain multiples of 10^25, so the labels fit in the left margin; the unit is in the axis title.
+    yAxisG.selectAll('.tick text').each(function (v) { d3.select(this).text(String(Math.round(v / 1e23) / 100)); });
   }
-  c.g.append('text').attr('x', -66).attr('y', -28).text('training compute (FLOP)');
+  const yTitle = c.g.append('text').attr('x', -66).attr('y', log ? -28 : -20);
+  if (log) yTitle.text('training compute (FLOP)');
+  else {
+    yTitle.append('tspan').text('training compute (units of 10');
+    yTitle.append('tspan').attr('dy', '-0.45em').text('25');
+    yTitle.append('tspan').attr('dy', '0.45em').text(' FLOP)');
+  }
   let f = null;
   if (trend && pts.length >= 6) {
     f = fit(pts);
@@ -69,11 +76,17 @@ function drawChart(box, { scale, pts, trend, interactive, sel }) {
     circles.attr('tabindex', 0).attr('role', 'button').attr('aria-label', (p) => `${p.label}, ${p.date.slice(0, 4)}`);
   }
   // Labels on a few landmark points, and on the selected point.
-  const labelSet = pts.filter((p) => LABELED.has(p.label) || (sel && p.name === sel.name));
+  // On the linear axis, landmark points on the floor are left unlabeled, since their labels would sit on the year axis.
+  const cyOf = (p) => c.y(Math.max(p.flop, c.y.domain()[0]));
+  const floor = (p) => !log && c.y.range()[0] - cyOf(p) < 24;
+  const isSel = (p) => sel && p.name === sel.name;
+  const labelSet = pts.filter((p) => (LABELED.has(p.label) && !floor(p)) || isSel(p));
   g.selectAll('text').data(labelSet).join('text')
     .attr('class', (p) => (sel && p.name === sel.name ? 'label-accent' : 'label-ink'))
-    .attr('x', (p) => c.x(p.year) + (p.year > 2018 ? -9 : 9)).attr('y', (p) => c.y(Math.max(p.flop, c.y.domain()[0])) + (p.year > 2018 ? -6 : 16))
+    .attr('x', (p) => c.x(p.year) + (p.year > 2018 ? -9 : 9)).attr('y', (p) => cyOf(p) + (p.year > 2018 || floor(p) ? (floor(p) ? -14 : -6) : 16))
     .attr('text-anchor', (p) => (p.year > 2018 ? 'end' : 'start'))
+    // A halo in the paper color keeps each label legible over nearby points and the trend line.
+    .attr('stroke', 'var(--paper)').attr('stroke-width', 3).attr('paint-order', 'stroke').attr('pointer-events', 'none')
     .text((p) => p.label);
   return { c, circles, f };
 }

@@ -47,7 +47,7 @@
 
 <section>
 <h2>Where did the gradient go?</h2>
-<p>The network has 2 inputs, a number of hidden layers of 16 units each, and one output. Its task is to classify the circles dataset from page 2.4. Each bar shows the size of the gradient for one layer&rsquo;s weight matrix: the root mean square of the gradient&rsquo;s entries, averaged over the whole dataset. The scale is logarithmic, so each step up the axis is ten times larger. Gradient descent changes each parameter in proportion to its gradient, so a layer with a tiny bar barely learns.</p>
+<p>The network has 2 inputs, a number of hidden layers of 16 units each, and one output. Its task is to classify the circles dataset from page 2.4. Each bar shows the size of the gradient for one layer&rsquo;s weight matrix: the root mean square of the entries of the gradient, where the loss is averaged over the whole dataset. The scale is logarithmic, so each step up the axis is ten times larger. Gradient descent changes each parameter in proportion to its gradient, so a layer with a tiny bar barely learns.</p>
 
 <div class="tool" id="tool">
   <div class="row">

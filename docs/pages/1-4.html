@@ -34,7 +34,7 @@
 <section>
 <p>In 2012 a convolutional network called AlexNet won the ImageNet image-classification challenge with a top-5 error of 15.3%: for 15.3% of the test images, the correct label was not among the network&rsquo;s five best guesses. That figure is for its entry trained with extra data; trained without it, the error was 16.4%. The next-best entry, which did not use a neural network, had 26.2%.<label for="sn-ilsvrc" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-ilsvrc" class="margin-toggle"><span class="sidenote">ILSVRC 2012 results, image-net.org; Russakovsky et al. (2015), &ldquo;ImageNet large scale visual recognition challenge,&rdquo; <em>International Journal of Computer Vision</em> 115: 211&ndash;252.</span></p>
 
-<p>The architecture was not new: it was a larger version of LeCun&rsquo;s convolutional network. What was new was the combination of 1.2 million labeled training images; training on two consumer graphics cards (GPUs); the ReLU activation function, which lessens the vanishing gradient problem of page 1.3; and dropout, a method that reduces overfitting by switching off a random half of the units at each training step.<label for="sn-kri" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-kri" class="margin-toggle"><span class="sidenote">Krizhevsky, Sutskever, and Hinton (2012), &ldquo;ImageNet classification with deep convolutional neural networks,&rdquo; <em>Advances in Neural Information Processing Systems</em> 25. The network had 60 million parameters and trained for five to six days on two NVIDIA GTX 580 cards. Dropout: Hinton et al. (2012), arXiv:1207.0580.</span></p>
+<p>The architecture was not new: it was a larger version of LeCun&rsquo;s convolutional network. What was new was the combination of 1.2 million labeled training images; training on two consumer graphics cards (GPUs); the ReLU activation function, which lessens the vanishing gradient problem of page 1.3; and dropout, a method that reduces overfitting by switching off a random half of the units in some layers at each training step.<label for="sn-kri" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-kri" class="margin-toggle"><span class="sidenote">Krizhevsky, Sutskever, and Hinton (2012), &ldquo;ImageNet classification with deep convolutional neural networks,&rdquo; <em>Advances in Neural Information Processing Systems</em> 25. The network had 60 million parameters and trained for five to six days on two NVIDIA GTX 580 cards. Dropout: Hinton et al. (2012), arXiv:1207.0580.</span></p>
 
 <p>A convolutional network applies the same small learned filter at every position of an image. A filter is a small grid of numbers. At each position, the filter&rsquo;s numbers are multiplied by the pixel values under them and the products are added up; the result, one number per position, is called a feature map. The tool below lets you do this by hand.</p>
 </section>
@@ -105,9 +105,9 @@
 
 <div class="check" data-id="1.4-c1" data-correct="1">
   <p class="label">Check</p>
-  <p class="q">Which of these was not new in AlexNet in 2012?</p>
-  <div class="options seg"><button>Training a large network on GPUs</button><button>A convolutional network trained with backpropagation</button><button>A labeled training set of more than a million images</button></div>
-  <div class="feedback"><p>LeCun&rsquo;s networks were convolutional and trained with backpropagation in 1989. The new parts were the data, the GPU training, ReLU, and dropout.</p></div>
+  <p class="q">Which of these did LeCun&rsquo;s 1989 zip-code network already have?</p>
+  <div class="options seg"><button>Training on GPUs</button><button>A convolutional architecture trained with backpropagation</button><button>More than a million labeled training images</button></div>
+  <div class="feedback"><p>LeCun&rsquo;s network was convolutional and trained with backpropagation in 1989. AlexNet added a far larger labeled dataset, training on GPUs, ReLU, and dropout.</p></div>
 </div>
 
 <div class="check" data-id="1.4-c2" data-correct="0">
