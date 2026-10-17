@@ -219,7 +219,7 @@
   {
    "id": "8.1",
    "question": "Why does optimizing a proxy go wrong?",
-   "takeaway": "Optimizing a proxy selects for its errors and pushes toward options where the proxy was never checked. With light-tailed errors, harder optimization still improves the true value, by less than the proxy shows. With heavy-tailed errors, the highest proxy scores are mostly error, and harder optimization can stop improving the true value at all."
+   "takeaway": "Optimizing a proxy selects for its errors and pushes toward options where the proxy was never checked. With light-tailed errors, harder optimization still improves the true value, by less than the proxy shows. With heavy-tailed errors, the highest proxy scores are mostly error, and harder optimization can stop improving the true value altogether."
   },
   {
    "id": "8.2",
@@ -234,7 +234,7 @@
   {
    "id": "8.4",
    "question": "Why might agents with different goals act alike?",
-   "takeaway": "Without knowing an agent’s goal, you can predict where most optimal agents will go: toward states that keep more outcomes reachable, and away from shutdown, when they care about the long run. Leaving one thing out of a proxy is enough for optimization to drive it to its worst value. These are theorems about idealized agents; whether trained systems behave this way is an empirical question."
+   "takeaway": "Without knowing an agent’s goal, you can predict where most optimal agents will go: toward states that keep more outcomes reachable, and away from shutdown, when they care about the long run. When the things a person cares about compete for limited resources, leaving one of them out of a proxy is enough for optimization to drive it to its worst value. These are theorems about idealized agents; whether trained systems behave this way is an empirical question."
   },
   {
    "id": "8.5",

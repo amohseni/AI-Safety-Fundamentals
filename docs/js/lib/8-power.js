@@ -21,7 +21,7 @@ export function defaultGraph() {
   for (let i = 0; i < 5; i++) {
     const a = (-75 + i * 37.5) * (Math.PI / 180);
     const id = `a${i + 1}`;
-    nodes.push({ id, name: '', x: 0.5 + 0.4 * Math.cos(a), y: 0.6 + 0.42 * Math.sin(a) });
+    nodes.push({ id, name: '', x: 0.5 + 0.4 * Math.cos(a), y: 0.6 + 0.42 * Math.sin(a), pa: a });
     edges.push(['hub', id], [id, 'hub']);
   }
   return { nodes, edges };
