@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2.6 Gradient descent</title>
+<meta name="description" content="Gradient descent as repeated steps downhill on the loss, and what the learning rate, noise, momentum, and Adam change.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  #surface-chart svg { cursor: crosshair; }
+  #loss-chart { margin-top: 0.4rem; }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="2.6">
+<article>
+<h1>Gradient descent</h1>
+
+<section>
+<p>Training searches for parameters with a low loss (Section 2.1). The loss \(L(\theta)\) is a function of all the parameters, and its <em>gradient</em> \(\nabla L(\theta)\) is the vector of its partial derivatives, one for each parameter. The gradient points in the direction in which the loss increases fastest. <em>Gradient descent</em> starts somewhere and repeatedly takes a step in the opposite direction:</p>
+$$\theta \leftarrow \theta - \eta\, \nabla L(\theta).$$
+<p>The step size \(\eta\) is called the <em>learning rate</em>. On this page the parameters are two numbers, \(x\) and \(y\), so the loss is a surface over the plane and you can watch the path the parameters take.</p>
+<p>Computing the exact gradient of a training loss requires going through the whole dataset. In practice each step uses a small random batch of examples, so the gradient is a noisy estimate, and the method is called <em>stochastic gradient descent</em> (SGD). The playground imitates this by adding random noise to each gradient.</p>
+<p>Two refinements are used in practice. <em>Momentum</em> keeps a running sum of recent gradients, \(v \leftarrow 0.9\, v + \nabla L(\theta)\), and steps along it, \(\theta \leftarrow \theta - \eta v\), so steps build up in directions where the gradient keeps pointing the same way. <em>Adam</em> keeps running averages of each parameter&rsquo;s gradient and of its square, and divides the first by the square root of the second, so each parameter&rsquo;s step is scaled by the typical size of that parameter&rsquo;s gradients.<label for="sn-adam" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-adam" class="margin-toggle"><span class="sidenote">Kingma and Ba (2015), &ldquo;Adam: a method for stochastic optimization,&rdquo; <em>International Conference on Learning Representations</em> (arXiv:1412.6980, 2014).</span></p>
+</section>
+
+<section>
+<h2>Roll downhill</h2>
+<p>The left chart is a map of the loss: each curve joins points of equal loss, and lower ground is darker. Press anywhere on the map to start there, or select the map and use the arrow keys to move the start. The <span class="c-accent">path</span> shows the parameters after each step; the previous run stays in gray for comparison. The lower chart shows how far the loss is above its lowest value, on a log scale.</p>
+
+<div class="tool" id="tool">
+  <div class="row">
+    <div class="controls" id="controls"></div>
+    <div class="stage"><div id="surface-chart"></div><div id="loss-chart"></div></div>
+  </div>
+  <p class="readout" id="readout" aria-live="polite"></p>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="2.6-t1">
+    <p class="prompt">On the narrow valley, with plain gradient descent, what is the largest learning rate that still reaches the bottom?</p>
+    <div class="choices" data-options="About 0.002|About 0.02|About 0.2"></div>
+    <div class="after"><p>Choose the narrow valley and plain gradient descent, then try learning rates and press Run each time.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Just under 0.02. At 0.0195 the path reaches the bottom in 263 steps. At exactly 0.02 it bounces between the two walls of the valley forever without getting lower, and at 0.0204 it bounces further out each time and diverges.</p></div></div>
+  </li>
+  <li class="task" data-id="2.6-t2">
+    <p class="prompt">Set the learning rate to 0.01. Plain gradient descent then takes 515 steps to get within 0.0001 of the bottom. How many steps will momentum take with the same learning rate?</p>
+    <div class="choices" data-options="About 500|About 100|More than 1,000"></div>
+    <div class="after"><p>Run plain gradient descent, then switch to momentum and run again. Try Adam too, at learning rates 0.01 and 0.1.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>103 steps. Across the valley, momentum swings back and forth and the swings cancel out; along the valley floor the gradient keeps the same sign, so the steps add up. Adam takes 631 steps at learning rate 0.01 and 96 at 0.1.</p></div></div>
+  </li>
+  <li class="task" data-id="2.6-t3">
+    <p class="prompt">On the two-minimum surface, plain gradient descent at learning rate 0.1 with no noise always ends in the narrow, deeper minimum on the left. Set the noise to 2 and press Ten runs. Where do most runs end?</p>
+    <div class="choices" data-options="In the narrow minimum|In the wide minimum|About half in each"></div>
+    <div class="after"><p>Press Ten runs a few times; each press uses new noise.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p><span class="claim">Empirical finding</span> Most end in the wide minimum, even though its loss is higher (\(-0.74\) against \(-0.98\)). In 100 runs we measured, 15 ended in the narrow minimum. The noise kicks the parameters out of the narrow minimum more easily than out of the wide one. With noise 1, 89 of 100 runs stayed in the narrow minimum.</p></div></div>
+  </li>
+</ol>
+
+<figure class="multiples" id="fig-paths" aria-describedby="fig-paths-desc"></figure>
+<p id="fig-paths-desc" class="caption">Plain gradient descent on the narrow valley \(L = (x^2 + 100\,y^2)/2\), from the same start, for 30 steps at three learning rates. At 0.002 the path drops to the valley floor and then creeps along it. At 0.019 it zig-zags across the valley while moving along it. At 0.021 each zig-zag is wider than the one before, and after 12 steps the path leaves the chart.</p>
+</section>
+
+<section>
+<h2>Why the learning rate has a limit</h2>
+<p><span class="claim">Theorem</span> Across the narrow valley the loss is \(50\,y^2\), so the gradient in \(y\) is \(100\,y\), and one step sends \(y\) to \((1 - 100\,\eta)\,y\). The distance from the valley floor shrinks only if \(|1 - 100\,\eta| &lt; 1\), that is, if \(\eta &lt; 0.02\). In general, on a quadratic loss gradient descent converges exactly when \(\eta\) is less than 2 divided by the largest curvature. The steep direction limits the learning rate, and the flat direction, along the valley floor, then takes many steps. The more the curvatures differ, the slower gradient descent is, and that is where momentum and Adam help.</p>
+<p><span class="claim">Hypothesis</span> The noise in SGD may steer training toward wide, flat minima, as in the third task, and flat minima are thought by some to generalize better to new data. Keskar and colleagues found that training with large batches, which gives less noisy gradients, led to sharper minima and worse performance on test data.<label for="sn-kes" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-kes" class="margin-toggle"><span class="sidenote">Keskar et al. (2017), &ldquo;On large-batch training for deep learning: generalization gap and sharp minima,&rdquo; <em>International Conference on Learning Representations</em>.</span> The claim is debated. Dinh and colleagues showed that for common networks the sharpness of a minimum can be changed by rescaling the parameters without changing the function the network computes, so sharpness alone cannot be what decides generalization.<label for="sn-dinh" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-dinh" class="margin-toggle"><span class="sidenote">Dinh et al. (2017), &ldquo;Sharp minima can generalize for deep nets,&rdquo; <em>International Conference on Machine Learning</em>.</span></p>
+<p>Most large language models are trained with Adam or a close variant, such as AdamW, which handles weight decay separately from the gradient step.<label for="sn-adamw" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-adamw" class="margin-toggle"><span class="sidenote">Loshchilov and Hutter (2019), &ldquo;Decoupled weight decay regularization,&rdquo; <em>International Conference on Learning Representations</em>.</span> Section 2.7 explains how the gradient is computed for millions or billions of parameters.</p>
+</section>
+
+<div class="check" data-id="2.6-c1" data-correct="1">
+  <p class="label">Check</p>
+  <p class="q">A loss surface is a valley with curvature 400 across it and 1 along it. With plain gradient descent, which learning rate is the largest of these that converges?</p>
+  <div class="options seg"><button>0.02</button><button>0.004</button><button>1.5</button></div>
+  <div class="feedback"><p>Convergence needs \(\eta\) below 2 divided by the largest curvature, here \(2/400 = 0.005\). Of the three, only 0.004 qualifies. At that rate the direction along the valley, with curvature 1, shrinks by a factor of only 0.996 per step, so it takes many steps.</p></div>
+</div>
+
+<div class="check" data-id="2.6-c2" data-correct="2">
+  <p class="q">A dataset has 10 million examples, and each minibatch has 1,000. One exact gradient costs about as much computation as how many minibatch gradient steps?</p>
+  <div class="options seg"><button>1</button><button>1,000</button><button>10,000</button></div>
+  <div class="feedback"><p>The exact gradient needs all 10 million examples; a minibatch needs 1,000, so one exact step costs as much as 10,000 minibatch steps. The minibatch estimate is noisy but far cheaper, which is why training uses it.</p></div>
+</div>
+
+<div class="explain" data-id="2.6-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: why does a narrow valley force a small learning rate, and how does momentum help there?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>Gradient descent repeatedly steps against the gradient of the loss. The learning rate must be small enough for the steepest direction, which makes progress slow along flat directions; momentum and Adam speed up that progress. Training uses noisy minibatch gradients because they are far cheaper, and the noise changes which minimum training ends in.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/2-6.js"></script>
+</body>
+</html>

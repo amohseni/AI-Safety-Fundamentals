@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2.8 Overfitting and generalization</title>
+<meta name="description" content="Training error and test error, the classical U-shaped relation between model size and test error, and what happens past the point where the model fits every training point.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  #tool .controls { flex: 1 1 100%; max-width: none; flex-direction: row; flex-wrap: wrap; align-items: flex-start; gap: 0.9rem 1.6rem; }
+  #tool .controls .ctl { flex: 1 1 13rem; max-width: 18rem; }
+  #tool .stage { flex: 0 1 auto; }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="2.8">
+<article>
+<h1>Overfitting and generalization</h1>
+
+<section>
+<p>The goal of training is low error on new examples. The error on the training examples is the <em>training error</em>. The error on held-out examples, drawn from the same source but not used in training, is the <em>test error</em>, and it is the estimate of how well the model will do on new data.</p>
+<p>A model with too few parameters cannot fit the pattern in the data; this is <em>underfitting</em>. In the classical picture, a model with too many parameters fits the noise in the training set as well as the pattern; this is <em>overfitting</em>, and test error rises. Classical statistics therefore recommends a model size in between.</p>
+<p>The playground fits polynomials to noisy points from a smooth curve. A polynomial of degree \(d\) has \(d + 1\) coefficients, which play the role of parameters. With 12 points, degree 11 is the lowest degree that can pass through every point exactly. Past degree 11 many polynomials pass through every point, and the fit uses the one whose coefficients have the smallest sum of squares (the minimum-norm solution).<label for="sn-leg" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-leg" class="margin-toggle"><span class="sidenote">The polynomials are written in the Legendre basis, \(f(x) = \sum_{k=0}^{d} c_k P_k(x)\) on \([-1, 1]\), so &ldquo;smallest sum of squares&rdquo; refers to these coefficients \(c_k\). Below the threshold the fit is ordinary least squares, the same in any basis.</span></p>
+</section>
+
+<figure class="multiples" id="fig-fits" aria-describedby="fig-fits-desc"></figure>
+<p id="fig-fits-desc" class="caption">Fits of degree 1, 3, and 15 to the same 12 noisy points; the dashed curve is the true curve. Degree 1 misses the pattern. Degree 3 follows it (test error 0.12). Degree 15 passes through every point but swings far off the chart between them, as high as 48 (test error 88).</p>
+
+<section>
+<h2>Degree slider</h2>
+<p>The left chart shows the points, the dashed true curve, and the <span class="c-accent">fitted polynomial</span>. The right chart shows the <span class="c-accent">training error</span> and the <span class="c-second">test error</span> (mean squared error on 2,000 new points from the same source) for every degree from 0 to 30, on a log scale. Errors below 0.0001, such as a training error of zero, are drawn at the bottom edge, and errors above a million at the top edge.</p>
+
+<div class="tool" id="tool">
+  <div class="row">
+    <div class="controls" id="controls"></div>
+    <div class="stage" id="fit-chart"></div>
+    <div class="stage" id="err-chart"></div>
+  </div>
+  <p class="readout" id="readout" aria-live="polite"></p>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="2.8-t1">
+    <p class="prompt">With 12 points, which degree gives the lowest test error?</p>
+    <div class="choices" data-options="0 or 1|About 3|About 11|30"></div>
+    <div class="after"><p>Move the degree slider and read the errors; then press New points a few times.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>About 3. For the first set of points the best is degree 3, with test error 0.12, while the training error keeps falling as the degree rises. Over 200 sets of 12 points we drew, the best degree was 3 in 133 and between 3 and 5 in 178.</p></div></div>
+  </li>
+  <li class="task" data-id="2.8-t2">
+    <p class="prompt">Double the number of points to 24. At which degree will the test error be highest?</p>
+    <div class="choices" data-options="Still near degree 11|Near degree 23|There will be no peak"></div>
+    <div class="after"><p>Set the number of points to 24 and look at the test error curve.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Near degree 23. The peak follows the number of points: it sits at the degree where the polynomial has exactly as many coefficients as there are points, so that it can just barely pass through all of them. With 12 points that is degree 11.</p></div></div>
+  </li>
+  <li class="task" data-id="2.8-t3">
+    <p class="prompt">Back at 12 points: what happens to the test error as the degree goes past 11, up to 30?</p>
+    <div class="choices" data-options="It keeps rising|It falls again|It stays at its peak"></div>
+    <div class="after"><p>Move the degree from 11 to 30 and watch the fitted curve and the test error.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p><span class="claim">Empirical finding</span> It falls again. Over 200 sets of 12 points, the median test error peaks at degree 11 (about 20 million), falls at every degree after that, and reaches 0.71 at degree 30. That is still well above the 0.13 at degree 3: in this example the second descent does not beat the best small model. The training error is zero all the way from degree 11.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>Past the threshold</h2>
+<p>The classical picture predicts that test error only rises once a model can fit every training point. The playground shows a peak at that point and a fall after it. <span class="claim">Argument</span> Just at the threshold, only one polynomial passes through every point, and to do so it usually has to swing wildly between them. Past the threshold, the minimum-norm rule picks the smoothest of the many fits that pass through every point, in the sense of the smallest coefficients, and with more coefficients to spread over, that fit can stay smaller between the points.</p>
+<p><span class="claim">Empirical finding</span> Large neural networks have many more parameters than training examples. They can fit randomly relabeled training data perfectly, so they can memorize, and yet on real data they generalize well.<label for="sn-zhang" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-zhang" class="margin-toggle"><span class="sidenote">Zhang, Bengio, Hardt, Recht, and Vinyals (2017), &ldquo;Understanding deep learning requires rethinking generalization,&rdquo; <em>International Conference on Learning Representations</em>.</span> That combination contradicts the classical picture. Section 5.3 shows what happens instead, including the second descent seen here, which is called double descent. Regularization methods, such as weight decay (a penalty on large parameters), dropout, and stopping training early, reduce overfitting in both pictures.</p>
+</section>
+
+<div class="check" data-id="2.8-c1" data-correct="2">
+  <p class="label">Check</p>
+  <p class="q">A model&rsquo;s training error is zero. What do you know about its test error?</p>
+  <div class="options seg"><button>It is also zero</button><button>It must be large, because the model has overfit</button><button>Nothing yet; it has to be measured on held-out data</button></div>
+  <div class="feedback"><p>Zero training error is consistent with any test error. In the playground, degrees 11 and 30 both have zero training error, and their test errors differ by a factor of millions. Only held-out data tells them apart.</p></div>
+</div>
+
+<div class="check" data-id="2.8-c2" data-correct="1">
+  <p class="q">With 40 points, where would you expect the test error of these polynomial fits to peak?</p>
+  <div class="options seg"><button>Near degree 11, as before</button><button>Near degree 39</button><button>At degree 3</button></div>
+  <div class="feedback"><p>The peak sits where the number of coefficients, the degree plus one, equals the number of points: degree 39 for 40 points.</p></div>
+</div>
+
+<div class="explain" data-id="2.8-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: why can a model with zero training error still have a large test error?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>Test error, measured on held-out data, is what counts. In the classical picture it falls and then rises as the model grows. In the playground it peaks where the model can just fit every training point and falls again after; large neural networks also break the classical picture, which Section 5.3 takes up.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/2-8.js"></script>
+</body>
+</html>

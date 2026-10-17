@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2.2 The neuron</title>
+<meta name="description" content="What one artificial neuron computes, and why a single neuron divides its input space with a line or hyperplane.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  .tool .plane { width: 100%; aspect-ratio: 1 / 1; max-width: 460px; outline-offset: 4px; }
+  #fig-neuron svg { max-width: 100%; height: auto; }
+  table.sums { border-collapse: collapse; margin-top: 0.6rem; }
+  table.sums td, table.sums th { padding: 0.1rem 0.9rem 0.1rem 0; text-align: right; font-weight: normal; }
+  table.sums th { color: var(--quiet); }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="2.2">
+<article>
+<h1>The neuron</h1>
+
+<section>
+<p>An artificial neuron computes a weighted sum of its inputs, \(w \cdot x = w_1 x_1 + \dots + w_n x_n\), adds a constant called the bias, and passes the result through a fixed function called the activation function:</p>
+$$\text{output} = f(w \cdot x + b).$$
+<p>The weights \(w\) say how much each input counts, and the bias \(b\) shifts the result. The weights and the bias are the neuron&rsquo;s parameters. Three activation functions appear on this page. The <em>step</em> function outputs 1 for a positive sum and 0 otherwise, which makes the neuron a perceptron (Section 1.2). The <em>sigmoid</em>, \(1/(1+e^{-z})\), rises smoothly from 0 to 1. <em>ReLU</em> outputs \(\max(0, z)\).</p>
+<p>For example, with inputs \(x = (1, 0)\), weights \(w = (2, -1)\), and bias \(-0.5\), the sum is \(2 \cdot 1 - 1 \cdot 0 - 0.5 = 1.5\); the step function gives 1, the sigmoid gives 0.82, and ReLU gives 1.5.</p>
+<p>The inputs where the sum is exactly zero, \(w \cdot x + b = 0\), form a line in two dimensions and a hyperplane in more.</p>
+
+<figure id="fig-neuron" aria-describedby="fig-neuron-desc"></figure>
+<p id="fig-neuron-desc" class="caption">A neuron with three inputs. Each input is multiplied by the weight on its arrow; the products and the bias are added; the sum \(z\) passes through the activation function \(f\) to give the output.</p>
+</section>
+
+<section>
+<h2>Perceptron playground, neuron mode</h2>
+<p>The <span class="c-accent">arrow</span> is the weight vector \(w\), drawn from the origin at one quarter of its length. Drag its tip, or select the picture and use the arrow keys (left and right turn it; up and down lengthen and shorten it). The <span class="c-accent">shading</span> shows the neuron&rsquo;s output: the darker, the larger. The black line is where \(w \cdot x + b = 0\). Filled points have label 1, open points label 0, and a ring marks each point on the wrong side of the line.</p>
+
+<div class="tool" id="tool">
+  <div class="row">
+    <div class="controls" id="controls"></div>
+    <div class="stage"><canvas class="plane" id="plane" tabindex="0" aria-label="The four input points, the weight arrow, the neuron's line, and its output as shading"></canvas></div>
+  </div>
+  <div class="readout" id="readout" aria-live="polite"></div>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="2.2-t1">
+    <p class="prompt">Choose the sigmoid. Keep the bias at \(-1.5\) and make the arrow longer without turning it. What happens?</p>
+    <div class="choices" data-options="The edge of the shading sharpens; the line stays put|The edge sharpens; the line moves toward the origin|Nothing changes"></div>
+    <div class="after"><p>Use the up arrow key on the picture, or drag the tip straight outward.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The edge sharpens, and the line moves toward the origin. Doubling \(w\) from (1, 1) to (2, 2) moves the line from \(x_1 + x_2 = 1.5\) to \(x_1 + x_2 = 0.75\).</p></div></div>
+  </li>
+  <li class="task" data-id="2.2-t2">
+    <p class="prompt">Turn the arrow. How does the line move?</p>
+    <div class="choices" data-options="It turns with the arrow and stays at right angles to it|It stays where it is|It turns the opposite way"></div>
+    <div class="after"><p>Use the left and right arrow keys on the picture.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The line turns with the arrow and stays at right angles to it, and the shaded side is always the side the arrow points to.</p></div></div>
+  </li>
+  <li class="task" data-id="2.2-t3">
+    <p class="prompt">Choose OR and set \(w = (1, 1)\). Work out the sum at each of the four points. Which bias makes the neuron get all four right?</p>
+    <div class="choices" data-options="−0.5|−1.5|−2.5"></div>
+    <div class="after"><p>Set the bias with its slider and read the table under the picture.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Bias \(-0.5\). The sums \(w \cdot x\) at the four points are 0, 1, 1, and 2, so any bias between \(-1\) and 0 makes the sum negative only at (0, 0). Bias \(-1.5\) computes AND instead.</p></div></div>
+  </li>
+  <li class="task" data-id="2.2-t4">
+    <p class="prompt">Choose XOR and switch to the sigmoid or ReLU. Can some weights and bias get all four points right?</p>
+    <div class="choices" data-options="Yes, with a smooth activation function|No, at best one point is wrong"></div>
+    <div class="after"><p>Try for a while with each activation function.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>No. The best any setting does is one point wrong, for all three activation functions. The sigmoid is above 0.5 exactly where the sum is positive, and ReLU is above 0 exactly there too, so changing the activation function does not move the line.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>What the arrow and the bias do</h2>
+<p><span class="claim">Theorem</span> The line \(w \cdot x + b = 0\) is perpendicular to \(w\), and its distance from the origin is \(|b| / \lVert w \rVert\). So the direction of \(w\) sets the line&rsquo;s orientation, and the bias, measured against the length of \(w\), sets its position. The length of \(w\) also sets how fast the sum changes as an input crosses the line, which is how sharp the transition in the output is. Multiplying \(w\) and \(b\) by the same positive number leaves the line where it is and sharpens the transition.</p>
+<p>A neuron&rsquo;s output depends on the input only through the sum \(w \cdot x + b\), which is the signed distance from the line, multiplied by \(\lVert w \rVert\). So a single neuron, whatever its activation function, can separate two classes only with a line, or in more dimensions a hyperplane. This is the perceptron&rsquo;s limit from Section 1.2, and it is why networks stack neurons in layers (Sections 2.3 and 2.4).</p>
+</section>
+
+<div class="check" data-id="2.2-c1" data-correct="1">
+  <p class="label">Check</p>
+  <p class="q">A sigmoid neuron has \(w = (1, 2)\) and \(b = -1\). You change it to \(w = (2, 4)\) and \(b = -2\). What happens?</p>
+  <div class="options seg"><button>The line moves halfway toward the origin</button><button>The line stays where it is, and the output changes faster across it</button><button>The line turns</button></div>
+  <div class="feedback"><p>The new sum is twice the old one, so it is zero at the same inputs: the line stays put. Away from the line the sum is twice as large, so the sigmoid goes from near 0 to near 1 over half the distance.</p></div>
+</div>
+
+<div class="explain" data-id="2.2-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: what do the direction of \(w\), the length of \(w\), and the bias each do to a neuron&rsquo;s output over the plane?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>A neuron computes \(f(w \cdot x + b)\). The direction of \(w\) sets the orientation of the line or hyperplane \(w \cdot x + b = 0\), the bias and the length of \(w\) together set its position, and the length of \(w\) sets how sharp the output&rsquo;s transition is. Whatever the activation function, one neuron divides its input space with one hyperplane.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/2-2.js"></script>
+</body>
+</html>
