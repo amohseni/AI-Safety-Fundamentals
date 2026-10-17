@@ -6,8 +6,8 @@ const d3 = window.d3;
 
 // ---- Static figure: a neuron with three inputs ----
 (function figure() {
-  // Drawn at its true size (300 by 230 pixels) so its labels stay at the text size.
-  const W = 300, H = 230;
+  // Drawn at its true width (at most 300 pixels) so its labels stay at the text size.
+  const W = Math.max(260, Math.min(300, document.getElementById('fig-neuron').clientWidth || 300)), H = 230;
   const svg = d3.select('#fig-neuron').append('svg').attr('class', 'chart').attr('viewBox', `0 0 ${W} ${H}`).attr('width', W).attr('height', H)
     .attr('role', 'img').attr('aria-label', 'Diagram of a neuron with three inputs, weights, a bias, a sum, an activation function, and an output');
   const ink = 'var(--ink)', quiet = 'var(--quiet)';
@@ -32,7 +32,7 @@ const d3 = window.d3;
   svg.append('path').attr('d', d3.line()(curve)).attr('fill', 'none').attr('stroke', ink).attr('stroke-width', 1.6);
   svg.append('text').attr('x', ax + aw / 2).attr('y', sy + 46).attr('text-anchor', 'middle').text('f');
   svg.append('line').attr('x1', ax + aw + 4).attr('y1', sy).attr('x2', W - 4).attr('y2', sy).attr('stroke', quiet).attr('marker-end', 'url(#arr)');
-  svg.append('text').attr('x', W - 2).attr('y', sy - 12).attr('text-anchor', 'end').attr('class', 'label-ink').text('output');
+  svg.append('text').attr('x', W - 2).attr('y', sy + 28).attr('text-anchor', 'end').attr('class', 'label-ink').text('output');
 })();
 
 // ---- The tool ----

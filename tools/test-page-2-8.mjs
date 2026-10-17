@@ -42,3 +42,12 @@ for (const [n, noise] of [[12, 0.3], [24, 0.3]]) {
   console.log('default dataset: test MSE by degree', errs.map((v, i) => `${i}:${fmt(v)}`).join(' '));
   for (const deg of [1, 3, 15]) { const f = fit(d, deg); let mx = 0; for (let x = -1; x <= 1; x += 0.001) mx = Math.max(mx, Math.abs(f.f(x))); console.log(`  figure degree ${deg}: train ${fmt(mse(f.f, d))}, test ${fmt(mse(f.f, test))}, largest |f| on [-1,1] ${mx.toFixed(2)}`); }
 }
+// Where each single set of points has its highest test error (task 2 notice): 100 sets each of 12 and 24 points.
+for (const n of [12, 24]) {
+  const test = sample(2000, 0.3, 999), hist = {};
+  for (let s = 1; s <= 100; s++) {
+    const d = sample(n, 0.3, s), e = Array.from({ length: 31 }, (_, deg) => mse(fit(d, deg).f, test));
+    const pk = e.indexOf(Math.max(...e)); hist[pk] = (hist[pk] || 0) + 1;
+  }
+  console.log(`n=${n}: degree of highest test error per set (degree: count of 100):`, JSON.stringify(hist));
+}

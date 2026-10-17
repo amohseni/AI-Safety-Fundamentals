@@ -8,7 +8,8 @@ const d3 = window.d3;
 
 // ---- Static figure: the box with knobs ----
 (function figure() {
-  const W = 300, H = 170;
+  // Drawn at its true width (at most 300 pixels) so its labels stay at the text size.
+  const W = Math.max(260, Math.min(300, document.getElementById('fig-box').clientWidth || 300)), H = 170;
   const svg = d3.select('#fig-box').append('svg').attr('class', 'chart').attr('viewBox', `0 0 ${W} ${H}`).attr('width', W).attr('height', H)
     .attr('role', 'img').attr('aria-label', 'A box labeled f of x and theta, with an input arrow x, an output arrow y, and four knobs on top labeled theta');
   const quiet = 'var(--quiet)', ink = 'var(--ink)';
@@ -54,14 +55,16 @@ function build() {
       onInput: (v) => { p[q.k] = v; draw(); } });
   }
   for (const id of ['data-chart', 'map-chart']) document.getElementById(id).innerHTML = '';
-  dataC = chart(document.getElementById('data-chart'), { width: 420, height: 300, margin: { top: 34, right: 20, bottom: 50, left: 46 },
+  // The stages start empty, so their width is read from the tool; charts are drawn at their true width.
+  const avail = document.getElementById('tool').clientWidth || 420;
+  dataC = chart(document.getElementById('data-chart'), { width: Math.min(420, avail), height: 300, margin: { top: 34, right: 20, bottom: 50, left: 46 },
     x: { domain: m.xDomain, label: 'x' }, y: { domain: m.yDomain, label: 'y' }, title: 'The data and the model' });
   dataC.res = dataC.g.insert('g', ':first-child');
   dataC.pts = dataC.g.append('g');
   dataC.pts.selectAll('circle').data(m.data.X).join('circle').attr('cx', (x) => dataC.x(x)).attr('cy', (x, i) => dataC.y(m.data.Y[i])).attr('r', 3.5).attr('fill', 'var(--ink)');
   const [kx, ky] = m.map;
   const qx = m.params.find((q) => q.k === kx), qy = m.params.find((q) => q.k === ky);
-  mapC = chart(document.getElementById('map-chart'), { width: 340, height: 300, margin: { top: 34, right: 20, bottom: 50, left: 46 },
+  mapC = chart(document.getElementById('map-chart'), { width: Math.min(340, avail), height: 300, margin: { top: 34, right: 20, bottom: 50, left: 46 },
     x: { domain: [qx.min, qx.max], label: qx.name }, y: { domain: [qy.min, qy.max], label: qy.name }, title: 'Map of the loss over two parameters' });
   mapC.bands = mapC.g.insert('g', ':first-child');
   const setFromPointer = (ev) => {
@@ -89,7 +92,9 @@ function drawMap(m, p) {
   bands(mapC.bands, {
     f: (x, y) => { q[kx] = x; q[ky] = y; return -Math.log(loss(m, q)); },
     xd: [qx.min, qx.max], yd: [qy.min, qy.max], iw: mapC.iw, ih: mapC.ih, n: 120,
-    thresholds: d3.range(-Math.log(2.5), -Math.log(0.06), Math.log(1.15)), opacity: 0.045,
+    // The line's loss rises steadily away from its bowl, so its bands reach up to 30; the wave's bands stop at 2.5 so its
+    // separate low points stand out against the higher ground.
+    thresholds: d3.range(-Math.log(state.model === 'line' ? 30 : 2.5), -Math.log(0.06), Math.log(1.15)), opacity: state.model === 'line' ? 0.03 : 0.045,
   });
 }
 

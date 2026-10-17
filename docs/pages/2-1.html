@@ -35,7 +35,7 @@ $$L(\theta) = \frac{1}{n}\sum_{i=1}^{n} \big(f(x_i; \theta) - y_i\big)^2 .$$
 
 <section>
 <h2>Fit by hand</h2>
-<p>Choose a model and move its sliders. The left chart shows the 20 points and the <span class="c-accent">model&rsquo;s curve</span>; the gray segments are the errors. The right chart is a map of the loss over two parameters: darker means lower loss, and the <span class="c-accent">dot</span> is your current setting. Press or drag on the map to move the dot. Each model has its own 20 points, made from one member of its family plus random noise.</p>
+<p>Choose a model and move its sliders. The left chart shows the 20 points and the <span class="c-accent">model&rsquo;s curve</span>; the gray segments are the errors. The right chart is a map of the loss over two parameters: the shading is heaviest where the loss is lowest, and the <span class="c-accent">dot</span> is your current setting. Press or drag on the map to move the dot. Each model has its own 20 points, made from one member of its family plus random noise.</p>
 
 <div class="tool" id="tool">
   <div class="row">
@@ -64,7 +64,7 @@ $$L(\theta) = \frac{1}{n}\sum_{i=1}^{n} \big(f(x_i; \theta) - y_i\big)^2 .$$
   <li class="task" data-id="2.1-t3">
     <p class="prompt">With the wave and \(c = 0.5\), does the map have a low point, lower than everything around it, other than the best one?</p>
     <div class="choices" data-options="Yes|No"></div>
-    <div class="after"><p>Look for dark patches away from the darkest one, and drag the dot into them.</p>
+    <div class="after"><p>Look for shaded patches away from the most heavily shaded one, and drag the dot into them.</p>
       <button class="show" type="button">Show what to notice</button>
       <div class="notice"><p>Yes, several. For example, near \(a = -0.55\), \(b = 0.70\) the loss is 1.32, lower than at any nearby setting, while the best setting has loss 0.10. A search that only ever moves downhill and starts near such a point stops there. Section 2.6 returns to this.</p></div></div>
   </li>
@@ -74,7 +74,7 @@ $$L(\theta) = \frac{1}{n}\sum_{i=1}^{n} \big(f(x_i; \theta) - y_i\big)^2 .$$
 <div class="check" data-id="2.1-c1" data-correct="1">
   <p class="label">Check</p>
   <p class="q">Two copies of the same network, with the same architecture, are trained on different data. In the terms of this page, what differs between the two trained models?</p>
-  <div class="options seg"><button>Their architecture</button><button>Only their parameter values, which pick out two functions from the same family</button><button>Nothing, since the architecture is the same</button></div>
+  <div class="options seg"><button>Their architecture</button><button>Only their parameter values</button><button>Nothing, since the architecture is the same</button></div>
   <div class="feedback"><p>The architecture fixes the family of functions \(f(x; \theta)\). Training picks one member of the family by choosing \(\theta\), so a trained model is one function, picked out by one setting of the parameters.</p></div>
 </div>
 

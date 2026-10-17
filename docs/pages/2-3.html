@@ -10,6 +10,9 @@
 <link rel="stylesheet" href="../css/site.css">
 <style>
   .tool .plane { width: 100%; aspect-ratio: 1 / 1; max-width: 460px; }
+  /* The shared chart kit draws charts at least 280 pixels wide, so the four panels sit two to a row. */
+  #fig-acts { max-width: 640px; }
+  #fig-acts > div { flex: 1 1 280px; min-width: 280px; }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>
@@ -29,7 +32,7 @@
 
 <section>
 <h2>Collapse</h2>
-<p>The network has two inputs, three hidden layers of the chosen width, and one output neuron, and it is trained on the spirals from Section 2.4. Each hidden layer&rsquo;s activation function can be switched off, which leaves only \(Wx + b\). The shading shows the class the network assigns to each part of the plane, and the black curve is the boundary. With ReLU, the network can also draw its <em>linear pieces</em>. Inputs that switch on the same set of ReLU units form one convex region, on which the network computes one linear function. The count is the number of distinct on and off patterns found on a 300 by 300 grid over the square shown, so it counts the pieces that contain a grid point; very small pieces can be missed.</p>
+<p>The network has two inputs, three hidden layers of the chosen width, and one output neuron, and it is trained on the spirals from Section 2.4. Each hidden layer&rsquo;s activation function can be switched off, which leaves only \(Wx + b\). The shading shows the class the network assigns to each part of the plane, and the solid curve is the boundary. With ReLU, the network can also draw its <em>linear pieces</em>. Inputs that switch on the same set of ReLU units form one convex region, on which the network computes one linear function. The count is the number of distinct on and off patterns found on a 300 by 300 grid over the square shown, so it counts the pieces that contain a grid point; very small pieces can be missed. New start moves to the next of five fixed sets of starting parameters.</p>
 
 <div class="tool" id="tool">
   <div class="row">
@@ -45,28 +48,28 @@
     <div class="choices" data-options="A straight line|A bent line|A spiral"></div>
     <div class="after"><p>Set layers 1, 2, and 3 to off, then press Train.</p>
       <button class="show" type="button">Show what to notice</button>
-      <div class="notice"><p>A straight line, and the accuracy stays at 60% in every start we tested. The readout shows the single linear function that the three layers and the output neuron reduce to.</p></div></div>
+      <div class="notice"><p>A straight line, and the accuracy ends at 60% in each of the five starts the tool offers. The readout shows the single linear function that the three layers and the output neuron reduce to.</p></div></div>
   </li>
   <li class="task" data-id="2.3-t2">
     <p class="prompt">Switch on ReLU in layer 1 only, keep layers 2 and 3 off, keep the width at 8, and train. Can this network classify the spirals well?</p>
     <div class="choices" data-options="No, the boundary stays straight|Yes, it can get most points right"></div>
     <div class="after"><p>Train, then press New start and train again a few times.</p>
       <button class="show" type="button">Show what to notice</button>
-      <div class="notice"><p>Yes. In our five starts the accuracy ended between 84% and 100% (100% in three). One layer with an activation function is enough to bend the boundary. Layers 2 and 3, without activation functions, reduce to a single linear map, so this network is a network with one hidden layer of width 8. Its boundary is made of straight segments.</p></div></div>
+      <div class="notice"><p>Yes. In the five starts the tool offers, the accuracy ended between about 85% and 100% (100% in three). One layer with an activation function is enough to bend the boundary. Layers 2 and 3, without activation functions, reduce to a single linear map, so this network is a network with one hidden layer of width 8. Its boundary is made of straight segments.</p></div></div>
   </li>
   <li class="task" data-id="2.3-t3">
     <p class="prompt">Switch all three layers to ReLU. As you change the width from 4 to 8 to 16, how does the number of linear pieces change?</p>
     <div class="choices" data-options="It stays about the same|It about doubles each time|It grows several times over each time"></div>
     <div class="after"><p>Change the width and read the count before training, then train and read it again.</p>
       <button class="show" type="button">Show what to notice</button>
-      <div class="notice"><p><span class="claim">Empirical finding</span> In our five starts, before training: 39 to 79 pieces at width 4, 185 to 253 at width 8, and 690 to 952 at width 16. After training: 46 to 78, 247 to 357, and 1,001 to 1,404. The count grows several times over each time the width doubles, much faster than the width itself. More pieces let the boundary bend in more places.</p></div></div>
+      <div class="notice"><p><span class="claim">Empirical finding</span> In the five starts the tool offers, before training: about 40 to 80 pieces at width 4, 185 to 255 at width 8, and 690 to 950 at width 16. After training: about 45 to 80, 245 to 360, and 1,000 to 1,400. The count grows several times over each time the width doubles, much faster than the width itself. More pieces let the boundary bend in more places.</p></div></div>
   </li>
 </ol>
 </section>
 
 <section>
 <h2>Why the layers collapse</h2>
-<p><span class="claim">Theorem</span> Without activation functions, two layers compute \(W_2(W_1x + b_1) + b_2 = (W_2W_1)\,x + (W_2b_1 + b_2)\), which is one layer with matrix \(W_2W_1\). By the same step, any stack of linear layers collapses into a single linear layer, however many layers it has, and a single linear layer followed by one output neuron can separate classes only with one hyperplane. The activation functions are what give depth its power. A network whose activation functions are all ReLU computes a piecewise linear function: linear on each piece, with the pieces fitting together into a bent surface.</p>
+<p><span class="claim">Theorem</span> Without activation functions, two layers compute \(W_2(W_1x + b_1) + b_2 = (W_2W_1)\,x + (W_2b_1 + b_2)\), which is one layer with matrix \(W_2W_1\). (Strictly, a map \(x \mapsto Wx + b\) is affine: a linear map plus a constant. Machine learning calls such a layer linear, and so does this site.) By the same step, any stack of linear layers collapses into a single linear layer, however many layers it has, and a single linear layer followed by one output neuron can separate classes only with one hyperplane. The activation functions are what give depth its power. A network whose activation functions are all ReLU computes a piecewise linear function: linear on each piece, with the pieces fitting together into a bent surface.</p>
 <p>The nonlinear parts of current language models are few and simple. GPT-2 uses GELU in its feed-forward layers, and many recent models, such as Llama, use a gated variant called SwiGLU.<label for="sn-acts" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-acts" class="margin-toggle"><span class="sidenote">Hendrycks and Gimpel (2016), &ldquo;Gaussian error linear units (GELUs),&rdquo; arXiv:1606.08415; Shazeer (2020), &ldquo;GLU variants improve transformer,&rdquo; arXiv:2002.05202; Touvron et al. (2023), &ldquo;LLaMA: open and efficient foundation language models,&rdquo; arXiv:2302.13971.</span> Transformers have a few other nonlinear operations: softmax, which turns a list of scores into probabilities (in attention and at the output); normalization layers (LayerNorm or RMSNorm), which rescale each vector to a standard size; and the step in attention that multiplies two quantities that both depend on the input (Section 3.4).<label for="sn-norm" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-norm" class="margin-toggle"><span class="sidenote">Ba, Kiros, and Hinton (2016), &ldquo;Layer normalization,&rdquo; arXiv:1607.06450; Zhang and Sennrich (2019), &ldquo;Root mean square layer normalization,&rdquo; <em>Advances in Neural Information Processing Systems</em> 32.</span> Everything else is matrix multiplication and addition. This matters for interpretability (Section 6): much of the computation is linear, and linear computation is comparatively easy to analyze.</p>
 </section>
 
@@ -79,7 +82,7 @@
 
 <div class="check" data-id="2.3-c2" data-correct="1">
   <p class="q">In the playground, a network with ReLU in layer 1 and no activation function in layers 2 and 3 classified the spirals well. Which network computes the same family of functions?</p>
-  <div class="options seg"><button>One linear layer</button><button>One hidden ReLU layer followed by the output neuron</button><button>Three hidden ReLU layers</button></div>
+  <div class="options seg"><button>One linear layer</button><button>One hidden ReLU layer of width 8 followed by the output neuron</button><button>Three hidden ReLU layers</button></div>
   <div class="feedback"><p>Layers 2 and 3 and the output neuron multiply out to one linear map, so what remains is one ReLU layer followed by one linear output: a network with one hidden layer.</p></div>
 </div>
 
