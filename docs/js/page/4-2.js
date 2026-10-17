@@ -66,7 +66,7 @@ const refit = () => { w = labels().length ? fitBT(labels()) : [0, 0, 0, 0]; list
   const svg = d3.select(el).append('svg').attr('class', 'chart').attr('viewBox', `0 0 ${W} ${H}`).attr('width', W).attr('height', H)
     .attr('role', 'img').attr('aria-label', 'Fitted weight on each feature');
   const x = d3.scaleLinear().domain([-3, 3]).range([left, W - right]);
-  svg.append('g').attr('class', 'axis').attr('transform', `translate(0,${top + rowH * FEATURES.length})`).call(d3.axisBottom(x).ticks(6).tickSizeOuter(0));
+  svg.append('g').attr('class', 'axis').attr('transform', `translate(0,${top + rowH * FEATURES.length})`).call(d3.axisBottom(x).ticks(W < 400 ? 3 : 6).tickSizeOuter(0));
   svg.append('line').attr('x1', x(0)).attr('x2', x(0)).attr('y1', top).attr('y2', top + rowH * FEATURES.length).attr('stroke', 'var(--rule)');
   const g = svg.selectAll('g.f').data(FEATURES).join('g').attr('class', 'f').attr('transform', (d, i) => `translate(0,${top + i * rowH + rowH / 2})`);
   g.append('text').attr('x', 0).attr('y', 6).text((d) => d.name);

@@ -15,6 +15,9 @@ for (let s = 1; s <= 20; s++) {
   const w2 = fitBT(careful.concat(biasedLabels(20, 1001), biasedLabels(20, 1002)));
   rows.push({ w0, w1, w2, d0: score(w0, lcw) - score(w0, shc), d1: score(w1, lcw) - score(w1, shc), d2: score(w2, lcw) - score(w2, shc) });
 }
+let fails = 0;
+const check = (label, ok) => { console.log(`${ok ? 'ok  ' : 'FAIL'} ${label}`); if (!ok) fails++; };
+const within = (a, lo, hi) => Math.min(...a) >= lo && Math.max(...a) <= hi;
 const rng2 = (a) => `${Math.min(...a).toFixed(2)} to ${Math.max(...a).toFixed(2)}`;
 console.log(`reader only: correctness weight ${rng2(rows.map((r) => r.w0[1]))}; largest |other weight| ${Math.max(...rows.map((r) => Math.max(Math.abs(r.w0[0]), Math.abs(r.w0[2]), Math.abs(r.w0[3])))).toFixed(2)}`);
 console.log(`+20 biased: length ${rng2(rows.map((r) => r.w1[0]))}; correctness ${rng2(rows.map((r) => r.w1[1]))}`);
@@ -27,3 +30,12 @@ console.log(`biased labeler picks the longer answer in ${(b.filter((l) => (l.aWi
 // Shifting all scores leaves predictions unchanged (Bradley-Terry depends only on differences).
 console.log(`sigma(1) = ${(1 / (1 + Math.exp(-1))).toFixed(3)}, sigma(3) = ${(1 / (1 + Math.exp(-3))).toFixed(3)}`);
 console.log('example:', compose(0, lcw), '|', compose(0, shc));
+// The numbers quoted in the task notices.
+check('task 1: correctness weight between 2.0 and 2.5', within(rows.map((r) => r.w0[1]), 2.0, 2.5));
+check('task 1: ignored features reach about 1.7 in size', Math.abs(Math.max(...rows.map((r) => Math.max(Math.abs(r.w0[0]), Math.abs(r.w0[2]), Math.abs(r.w0[3])))) - 1.7) < 0.05);
+check('task 2: length weight between 0.4 and 1.35 after 20 simulated labels', within(rows.map((r) => r.w1[0]), 0.4, 1.35));
+check('task 2: correctness weight between 0.65 and 0.9 after 20 simulated labels', within(rows.map((r) => r.w1[1]), 0.65, 0.9));
+check('task 3: long confident wrong scores higher in all 20, by 0.23 to 0.92', rows.every((r) => r.d2 > 0) && within(rows.map((r) => r.d2), 0.22, 0.93));
+check('biased labeler picks longer about 70%', Math.abs(b.filter((l) => (l.aWins ? l.a.long : l.b.long) === 1).length / 2000 - 0.7) < 0.03);
+check('figure: sigma(1) = 0.73, sigma(3) = 0.95', (1 / (1 + Math.exp(-1))).toFixed(2) === '0.73' && (1 / (1 + Math.exp(-3))).toFixed(2) === '0.95');
+process.exit(fails ? 1 : 0);

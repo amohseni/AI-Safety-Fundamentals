@@ -72,6 +72,24 @@ console.log('     starting weights (mask on, scaled):\n' + W0.map((w, i) => `   
   }
   check('check: identical keys give the plain average of the allowed values', maxErr < 1e-12, `max error ${maxErr.toExponential(1)}`);
 }
+// Task 1 notice: lengthening k2 alone (q4 along k2 at its starting length) stays below 0.9 inside the plane.
+{
+  const k2 = START.k[1], u = Math.hypot(...k2), L0 = Math.hypot(...START.q[3]);
+  const q = START.q.map((v) => v.slice()); q[3] = [k2[0] / u * L0, k2[1] / u * L0];
+  let best = 0;
+  for (let x = -LIMIT; x <= LIMIT + 1e-9; x += 0.02) for (let y = -LIMIT; y <= LIMIT + 1e-9; y += 0.02) {
+    const k = START.k.map((v) => v.slice()); k[1] = [x, y]; best = Math.max(best, attention(q, k).weights[3][1]);
+  }
+  check('task 1: moving k2 anywhere in the plane, q4 at starting length, stays below 0.9 (about 0.89)', best < 0.9 && best > 0.885, best.toFixed(3));
+}
+// Check 3 (by hand, d_k = 4): output (1, 3) with e^1.1 taken as 3.
+{
+  const dot = (a, b) => a.reduce((s, v, i) => s + v * b[i], 0);
+  const q = [1.1, 1.1, 0, 0], k = [[0, 0, 1, 1], [1, 1, 0, 0]], V = [[4, 0], [0, 4]];
+  const sc = k.map((kk) => dot(q, kk) / 2), e = sc.map(Math.exp), z = e[0] + e[1], w = e.map((x) => x / z);
+  const o = [0, 1].map((c) => w[0] * V[0][c] + w[1] * V[1][c]);
+  check('check 3: output is about (1, 3)', Math.abs(o[0] - 1) < 0.01 && Math.abs(o[1] - 3) < 0.01, `scores ${sc.join(', ')}, weights ${w.map((x) => x.toFixed(4)).join(', ')}, output (${o.map((x) => x.toFixed(3)).join(', ')})`);
+}
 // Static figure numbers.
 {
   const { weights, scores } = attention([FIGURE.q, FIGURE.q, FIGURE.q], FIGURE.k);
