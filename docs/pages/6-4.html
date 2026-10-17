@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>6.4 Superposition and polysemanticity</title>
+<meta name="description" content="A toy model, trained live, that stores more features than it has dimensions when the features are sparse.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  #arrows { outline-offset: 4px; }
+  .tool .readout + .row { margin-top: 1.4rem; }
+  .tool .half { flex: 1 1 18rem; min-width: 0; }
+  .tool .half .panel-note { width: 100%; margin-top: 0; }
+  #fig-sparsity canvas { display: block; }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="6.4">
+<article>
+<h1>Superposition and polysemanticity</h1>
+
+<section>
+<p>If each neuron in a network responded to one property of the input, interpretability would be easy: we could read the neurons one at a time. Many neurons are not like that. A neuron is <em>polysemantic</em> if it responds to several unrelated properties. In the image model InceptionV1, one neuron responds to cat faces, the fronts of cars, and cat legs.<label for="sn-zoom" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-zoom" class="margin-toggle"><span class="sidenote">Olah et al. (2020), &ldquo;Zoom In: An Introduction to Circuits,&rdquo; <em>Distill</em>. The neuron is 4e:55.</span> A neuron that responds to one property is <em>monosemantic</em>.</p>
+
+<p>Elhage et al. (2022) proposed an explanation and tested it on toy models small enough to train in a browser.<label for="sn-toy" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-toy" class="margin-toggle"><span class="sidenote">Elhage et al. (2022), &ldquo;Toy Models of Superposition,&rdquo; Transformer Circuits Thread. The model on this page is their model with a ReLU on the output.</span> A toy model receives \(n\) features, the numbers \(x_1, \dots, x_n\). Each feature is 0 with probability \(S\), called the <em>sparsity</em>, and otherwise takes a value drawn uniformly between 0 and 1. The model has to pass the features through a hidden layer with only \(m\) dimensions, fewer than \(n\), and then rebuild them:</p>
+$$h = W x, \qquad x' = \mathrm{ReLU}\big(W^{\top} h + b\big).$$
+<p>\(W\) is a weight matrix with \(m\) rows and \(n\) columns, so each feature gets a direction in the hidden space: column \(i\) of \(W\), written \(W_i\). The loss is the squared rebuilding error, with feature \(i\)&rsquo;s error multiplied by its importance \(r^{\,i-1}\). When the importance falloff \(r\) is 1, all features matter equally; when \(r\) is 0.8, each feature matters 0.8 times as much as the one before it. We say a feature is <em>stored</em> when its direction is longer than 0.5. In practice a stored feature&rsquo;s direction has length near 1, and a feature that is left out has length near 0.</p>
+<p>The question is how many features fit into \(m\) dimensions, and what decides it.</p>
+</section>
+
+<section>
+<h2>Toy model of superposition</h2>
+<p>Each change to a control trains the model again from a new random start. Four starting points train at once, and the views show the one with the lowest loss (Elhage et al. also trained several models per setting and kept the better ones), because a single start in a model this small often settles in a poor arrangement. <em>New start</em> tries four other starting points.</p>
+
+<div class="tool" id="tool">
+  <div class="panel">
+    <p class="panel-note">Each arrow is one feature&rsquo;s direction \(W_i\) in the hidden space, labeled with the feature&rsquo;s number. Thicker arrows belong to more important features.</p>
+    <div class="row">
+      <div class="controls" id="controls"></div>
+      <div class="stage"><canvas id="arrows" tabindex="0" aria-label="Feature directions in the hidden space"></canvas></div>
+    </div>
+    <p class="readout" id="readout" aria-live="polite"></p>
+    <div class="row">
+      <div class="half">
+        <div class="controls" id="bar-controls"></div>
+        <p class="panel-note" id="bars-note"></p>
+        <div id="bars"></div>
+      </div>
+      <div class="half">
+        <p class="panel-note">The matrix \(W^{\top} W\). The square in row \(i\) and column \(j\) shows the dot product of directions \(i\) and \(j\): <span class="c-accent">positive</span> or <span class="c-second">negative</span>, darker when larger in size. Squares off the diagonal show interference between features.</p>
+        <div id="heat"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="6.4-t1">
+    <p class="prompt">Start with dense features: \(S = 0\), five features, two dimensions, importance falloff 0.8. How many features are stored?</p>
+    <div class="choices" data-options="2|3|5"></div>
+    <div class="after"><p>These are the starting settings. Let training finish, then press New start a few times.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p><span class="claim">Empirical finding</span> Two: features 1 and 2, the two most important, at right angles to each other. In all eight groups of starting points we tested, the other three directions end with length near zero. For a left-out feature the model outputs a constant, ReLU(\(b_i\)), and training sets \(b_i\) near 0.5, the average value of a feature. With dense features the model behaves like a linear compression: it keeps the \(m\) most important features and drops the rest.</p></div></div>
+  </li>
+  <li class="task" data-id="6.4-t2">
+    <p class="prompt">Set the importance falloff to 1, so all five features matter equally, and raise \(S\) step by step to 0.9. At \(S = 0.9\), how many features are stored, and how are their directions arranged?</p>
+    <div class="choices" data-options="2, at right angles|4, in two opposite pairs|5, evenly spaced"></div>
+    <div class="after"><p>Stop at each value of \(S\) and let training finish. Watch the arrows and the matrix.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p><span class="claim">Empirical finding</span> Five, evenly spaced: a regular pentagon, with 72 degrees between neighbors, in all eight groups we tested at \(S = 0.9\) and at 0.95. On the way there, at \(S = 0.5\) and 0.7, the model stores four features as two opposite pairs, with 90 degrees between neighbors (eight of eight groups). At \(S = 0.8\) we found the pentagon in three groups and the two pairs in five. In the matrix, an opposite pair shows as a dark <span class="c-second">negative</span> square. With two dimensions and five features, the directions cannot all be perpendicular, so the matrix has squares off its diagonal: the features interfere.</p></div></div>
+  </li>
+  <li class="task" data-id="6.4-t3">
+    <p class="prompt">Set the importance falloff back to 0.8 and raise \(S\) from 0 to 0.9. Which features are the last to be stored?</p>
+    <div class="choices" data-options="The most important|The least important|No pattern"></div>
+    <div class="after"><p>Use the bars, which show each feature&rsquo;s length, at \(S\) = 0, 0.5, 0.7, and 0.9.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p><span class="claim">Empirical finding</span> The least important. In our tests (eight groups of starting points at each value), the model stores features 1 and 2 at \(S = 0\) (8 of 8), features 1 to 3 at \(S = 0.5\) (7 of 8), features 1 to 4 at \(S = 0.7\) (7 of 8), and all five at \(S = 0.9\) (7 of 8). As sparsity rises, the model lets features in from the most important down. Elhage et al. saw the same order in a model with 20 features in 5 dimensions.</p></div></div>
+  </li>
+  <li class="task" data-id="6.4-t4">
+    <p class="prompt">Make the pentagon again (falloff 1, \(S = 0.9\)) and set the bars to show coordinate 1. A feature&rsquo;s weight on coordinate 1 is the value of that coordinate when the feature alone is 1. How many of the five features have a weight of size at least 0.3?</p>
+    <div class="choices" data-options="1|2 or 3|4 or 5"></div>
+    <div class="after"><p>Check coordinate 2 as well, and press New start to see other orientations of the pentagon.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Four or five. In all eight groups we tested, each coordinate had four features with weights of size at least 0.35 (one coordinate had five). So each hidden coordinate responds to at least four different features. <span class="claim">Theorem</span> For any direction in the plane and any regular pentagon of directions of length \(\ell\), at least four of the five have a component along that direction of size at least \(\ell \cos 72^\circ \approx 0.31\,\ell\). Turning the pentagon cannot give each coordinate a single feature, because there are more features than coordinates.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>Why sparsity makes room</h2>
+<p>When two features share a hidden space and their directions are not perpendicular, activating one moves the other&rsquo;s output: if feature \(j\) alone is active with value \(x_j\), the model&rsquo;s output for feature \(i\) is \(\mathrm{ReLU}(W_i \cdot W_j \, x_j + b_i)\). <span class="claim">Argument</span> In the pentagon we trained, neighboring directions have dot product 0.37, the others have dot product \(-0.98\), and every bias is \(-0.21\). The ReLU removes the negative interference completely, and the negative bias removes the positive interference whenever \(x_j\) is below 0.57. What remains is interference when two features are active at once. At \(S = 0.9\), two given features are both active only 1% of the time, so storing all five features costs little. With dense features, every feature is active on every input and the interference never stops, so the model stores only as many features as it has dimensions.</p>
+<p><span class="claim">Empirical finding</span> This is <em>superposition</em>: a network represents more features than it has dimensions by giving them directions that are not perpendicular, which pays when the features are rarely active together. Elhage et al. found the pentagon in this model with equal importance and \(S = 0.95\), and found that larger models arrange their directions in other regular shapes as sparsity rises.</p>
+
+<figure class="multiples" id="fig-sparsity" aria-describedby="fig-sparsity-desc"></figure>
+<p id="fig-sparsity-desc" class="caption">Five features in two dimensions, with importance falling by 0.8 per feature (thicker arrows for more important features), trained at four sparsities. At \(S = 0\) the model stores features 1 and 2 at right angles. At \(S = 0.5\) it adds feature 3, opposite feature 2. At \(S = 0.8\) it stores features 1 to 4 as two opposite pairs. At \(S = 0.9\) it stores all five, spaced unevenly because they differ in importance.</p>
+
+<h2>From features to neurons</h2>
+<p>In this toy model the hidden coordinates have no activation function of their own, so nothing makes them special: any rotation of the hidden space works equally well. Task 4 shows that this does not matter for the count. Whatever direction we pick, at least four of the five features project onto it. In a real network, each neuron applies its own activation function, which makes the neuron directions special, and under superposition each of those neurons still has to take part in several features. <span class="claim">Empirical finding</span> Elhage et al. trained a variant with a ReLU on the hidden layer, so that each hidden coordinate is a neuron, and found that its neurons shift from monosemantic to polysemantic as sparsity rises.</p>
+<p>Superposition means that a network&rsquo;s neurons are not its units of meaning. A feature&rsquo;s direction is spread across many neurons, and each neuron takes part in many features. Page 6.5 is about recovering the feature directions from the activations.</p>
+</section>
+
+<div class="check" data-id="6.4-c1" data-correct="1">
+  <p class="label">Check</p>
+  <p class="q">A toy model stores five features in two dimensions when \(S = 0.9\), but only two when \(S = 0\). Why does sparsity make the difference?</p>
+  <div class="options seg"><button>Sparse features have smaller values, so they take up less room</button><button>Overlapping directions interfere only when several features are active at once, which sparse features rarely are</button><button>With sparse features the hidden layer gains extra dimensions</button></div>
+  <div class="feedback"><p>The directions overlap at every sparsity once more features than dimensions are stored. The cost of the overlap is paid only on inputs where two or more features are active together. With sparse features such inputs are rare, so the gain from storing more features outweighs the interference.</p></div>
+</div>
+
+<div class="check" data-id="6.4-c2" data-correct="2">
+  <p class="q">In a trained model with six features stored in two dimensions, could some rotation of the hidden space make each coordinate respond to exactly one feature?</p>
+  <div class="options seg"><button>Yes, if the right rotation is found</button><button>Yes, but only for the two most important features</button><button>No: six directions in a plane cannot each line up with one of only two coordinates</button></div>
+  <div class="feedback"><p>A coordinate responds to every feature whose direction has a component along it. Two coordinates can line up with at most two directions; the other four stored features project onto at least one coordinate. Polysemanticity follows from storing more features than dimensions.</p></div>
+</div>
+
+<div class="explain" data-id="6.4-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: why can a network store more features than it has dimensions, and why does that make single neurons polysemantic?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>Networks can represent more features than they have dimensions by giving the features directions that are not perpendicular. This superposition causes interference, which costs little when features are sparse, that is, rarely active at the same time. Because each feature&rsquo;s direction is spread across many neurons and each neuron takes part in many features, single neurons respond to several unrelated things.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/6-4.js"></script>
+</body>
+</html>
