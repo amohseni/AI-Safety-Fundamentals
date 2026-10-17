@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>5.5 Grown, not programmed</title>
+<meta name="description" content="Nobody writes the algorithm a trained network uses: training selects parameters, and the mechanisms have to be found afterward and can differ between runs.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  .overlay { width: 100%; max-width: 26rem; aspect-ratio: 1 / 1; }
+  .unit-rows { margin-top: 1.2rem; max-width: 34rem; font-size: var(--text); }
+  .unit-row { display: grid; grid-template-columns: 4rem repeat(4, minmax(0, 1fr)); gap: 0.5rem; align-items: center; margin-bottom: 0.5rem; }
+  .unit-row.head span { color: var(--quiet); line-height: 1.2; }
+  .unit-row .run-name { color: var(--quiet); }
+  .unit-row canvas.mini { width: 100%; aspect-ratio: 1 / 1; background: var(--paper); outline: 1px solid var(--faint); }
+  #freq-multiples > div { flex: 1 1 15rem; }
+  .split { display: flex; flex-wrap: wrap; gap: 2rem; align-items: flex-start; max-width: 90%; }
+  .split > div { flex: 1 1 16rem; min-width: 0; }
+  .code { font-size: var(--text); font-family: Consolas, "Liberation Mono", Menlo, monospace; line-height: 1.5; margin: 0; white-space: pre; overflow-x: auto; }
+  .code .hl { color: var(--accent); }
+  #fig-weights { width: 100%; display: block; }
+  @media (max-width: 760px) { .unit-row { grid-template-columns: 1.2rem repeat(4, minmax(0, 1fr)); gap: 0.3rem; } .unit-row .wide { display: none; } .split { max-width: 100%; } }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="5.5">
+<article>
+<h1>Grown, not programmed</h1>
+
+<section>
+<p>Engineers write the training setup of a network: the architecture, the data, the loss, and the optimizer. They do not write the algorithm the trained network ends up using. That algorithm is whatever setting of the parameters training arrived at, stored in thousands or billions of numbers. Chris Olah&rsquo;s description, as quoted by Dario Amodei, is that generative AI systems are grown more than they are built.<label for="sn-amodei" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-amodei" class="margin-toggle"><span class="sidenote">Amodei (2025), &ldquo;The Urgency of Interpretability,&rdquo; essay, April 2025, darioamodei.com.</span></p>
+
+<p>One consequence is that there is no line of code to inspect for a given behavior of a trained network. In an ordinary program you can find the line that produces a behavior. In a trained network the behavior is spread over its parameters, and finding out how the network produces it is an empirical research problem, the subject of Section 6.</p>
+
+<p>This page trains the same network several times from different random starting points, called <em>seeds</em>, and compares the results. Each run uses the same architecture, data, loss, and optimizer; only the random initial parameters differ.</p>
+</section>
+
+<section>
+<h2>Five seeds</h2>
+
+<div class="tool" id="tool">
+  <div class="panel" id="panel-spirals">
+    <h3>The spirals network, trained five times</h3>
+    <p class="panel-note">The plane classifier from Section 2 with two hidden layers of 3 units and tanh, trained on the spirals from five seeds for 4,000 steps each. Of 40 seeds we tried, these five reached 100% on the training points within 4,000 steps in every test we ran. The large plot shows the training points and, in black, the decision boundary of each selected run. Below, for each run, its output class over the plane as shading (output) and the response of each hidden unit over the plane, from light (\(-1\)) to dark (\(+1\)).</p>
+    <div class="row">
+      <div class="controls" id="spiral-controls"></div>
+      <div class="stage"><canvas class="overlay" id="overlay" role="img" aria-label="Training points of the two spirals and the decision boundaries of the selected runs"></canvas></div>
+    </div>
+    <div class="unit-rows" id="rows"></div>
+    <p class="readout" id="spiral-readout" aria-live="polite"></p>
+  </div>
+
+  <div class="panel" id="panel-mod">
+    <h3>The modular-addition transformer, trained five times</h3>
+    <p class="panel-note">The transformer from Section 5.4, computing \((a + b) \bmod 59\) and trained on 30% of the pairs with weight decay 1 from five seeds, for 20,000 steps each. Each chart shows the size of each frequency in the run&rsquo;s embedding at the end of training. The <span class="c-accent">key frequencies</span>, which together hold at least 90% of the embedding, are in blue and numbered.</p>
+    <figure class="multiples" id="freq-multiples" aria-describedby="mod-readout"></figure>
+    <p class="readout" id="mod-readout" aria-live="polite"></p>
+  </div>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="5.5-t1">
+    <p class="prompt">Train the five spirals networks. Will their decision boundaries be nearly the same?</p>
+    <div class="choices" data-options="Nearly the same everywhere|Nearly the same near the spirals, different elsewhere|Very different everywhere"></div>
+    <div class="after"><p>Press Train all five and look at the large plot.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Nearly the same near the spirals, different elsewhere. <span class="claim">Empirical finding</span> On 2,000 new points drawn from the same spirals, any two of the five runs give the same class to between 92% and 99.8% of the points (97% on average over the ten pairs). Over the whole square, most of which holds no training points, two runs agree on as little as 77% of it (90% on average). Training constrains the boundary only near the training points.</p></div></div>
+  </li>
+  <li class="task" data-id="5.5-t2">
+    <p class="prompt">All five runs classify every training point correctly. Will the hidden units of layer 2 respond in the same way across runs?</p>
+    <div class="choices" data-options="Yes, each unit has a near copy in every run|Some units do, most do not|No unit has a near copy"></div>
+    <div class="after"><p>Compare the rows of unit pictures, then switch to layer 1.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Some units do, most do not. <span class="claim">Empirical finding</span> For each layer-2 unit of one run, find the unit of another run whose responses on the 2,000 new points are most correlated with it, ignoring sign, since a unit and its negative carry the same information. Over all 60 such comparisons the median correlation is 0.78, and 42 of the 60 units have no match at 0.9 or above. The units of layer 1 are more alike: median 0.94, with 36 of the 60 matched at 0.9 or above.</p></div></div>
+  </li>
+  <li class="task" data-id="5.5-t3">
+    <p class="prompt">All five modular-addition runs answer the test pairs correctly. Will they use the same key frequencies?</p>
+    <div class="choices" data-options="The same frequencies|Different frequencies"></div>
+    <div class="after"><p>Compare the five frequency charts.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Different frequencies. <span class="claim">Empirical finding</span> The five runs use frequencies 1, 12, 27; 4, 5, 15; 2, 5, 21; 15, 20, 21; and 2, 21, 22, 27. No two runs use the same set, though some frequencies recur: 21 in three runs, and 2, 5, 15, and 27 in two each. In every run, keeping only the key frequencies in the embedding leaves test accuracy at 99.9% or more, and removing them drops it to about 2%, the rate of guessing one answer in 59.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>Same behavior, different internals</h2>
+<p>Both panels show the same pattern: runs that differ only in their seed reach the same behavior on the task through different internal mechanisms. <span class="claim">Empirical finding</span> Nanda et al. report the same for the modular-addition transformer at \(p = 113\): the key frequencies differ by seed.<label for="sn-nanda" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-nanda" class="margin-toggle"><span class="sidenote">Nanda, Chan, Lieberum, Smith, and Steinhardt (2023), &ldquo;Progress measures for grokking via mechanistic interpretability,&rdquo; ICLR 2023, appendix C.2.1. The runs on this page are described in Section 5.4.</span> Some structure does recur. Every modular-addition run here uses a few frequencies, and in image models Olah et al. found analogous features and circuits forming across different models, a claim they call universality.<label for="sn-zoom" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-zoom" class="margin-toggle"><span class="sidenote">Olah, Cammarata, Schubert, Goh, Petrov, and Carter (2020), &ldquo;Zoom In: An Introduction to Circuits,&rdquo; <em>Distill</em>.</span> Which mechanism a particular network uses still has to be found by examining that network.</p>
+<p><span class="claim">Argument</span> A further consequence follows. Training selects any setting of the parameters that achieves low loss, or high reward in reinforcement learning. It does not check whether the mechanism behind that setting is the one the designers had in mind, so it can select mechanisms they did not intend and would not approve of. Section 8 returns to this.</p>
+
+<figure class="split" aria-describedby="fig-desc">
+  <div><pre class="code" aria-label="A short program for addition modulo p">def add_mod(a, b, p):
+    total = a + b
+    if total &gt;= p:
+<span class="hl">        total = total - p</span>
+    return total</pre></div>
+  <div><canvas id="fig-weights" aria-hidden="true"></canvas></div>
+</figure>
+<p id="fig-desc" class="caption">Left: a program for addition modulo \(p\). The <span class="c-accent">highlighted line</span> is the cause of one behavior, that 30 + 40 comes out as 11 when \(p = 59\). Right: the embedding matrix of the trained transformer of run 1, which computes the same function: one row for each number from 0 to 58, with 128 learned numbers in each row, <span class="c-accent">positive in blue</span> and <span class="c-second">negative in orange</span>. The same behavior is encoded in these numbers and the model&rsquo;s other parameters, and no single entry is responsible for it.</p>
+</section>
+
+<div class="check" data-id="5.5-c1" data-correct="1">
+  <p class="label">Check</p>
+  <p class="q">Two teams train the same modular-addition transformer on the same data from different seeds, and both reach 100% test accuracy. Team A finds the key frequencies of its model. Can Team B take those to be the key frequencies of its own model?</p>
+  <div class="options seg"><button>Yes: same architecture, data, and accuracy mean the same algorithm</button><button>No: Team B has to examine its own model&rsquo;s parameters</button><button>Yes: the frequencies are fixed by the modulus</button></div>
+  <div class="feedback"><p>The five runs in the panel above have the same architecture, data, and test accuracy, and no two use the same set of key frequencies. The modulus does not fix them either: all five compute addition modulo 59. Team B has to examine its own model.</p></div>
+</div>
+
+<div class="check" data-id="5.5-c2" data-correct="2">
+  <p class="q">Where would you look to find the rule a trained network uses for a task?</p>
+  <div class="options seg"><button>In the training code</button><button>In the loss function</button><button>In its trained parameters and activations, by experiment</button></div>
+  <div class="feedback"><p>The training code and the loss say what training rewards, not which mechanism it found. The rule exists only in the trained parameters, and finding it takes investigation of the kind Section 6 describes.</p></div>
+</div>
+
+<div class="explain" data-id="5.5-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: why can two networks with the same training setup and the same accuracy compute their answers in different ways?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>Nobody writes the algorithm a trained network uses. Training selects parameters that achieve low loss, and the mechanism those parameters implement has to be discovered afterward. Runs that differ only in their seed can share the same behavior and differ in their internals, and training can select mechanisms nobody intended.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/5-5.js"></script>
+</body>
+</html>

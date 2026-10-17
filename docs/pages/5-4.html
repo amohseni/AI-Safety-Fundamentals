@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>5.4 Grokking</title>
+<meta name="description" content="A network that first memorizes its training data and much later generalizes, and what weight decay and the network's frequencies have to do with it.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  .pairs-row { display: flex; flex-wrap: wrap; gap: 1.6rem; align-items: flex-start; margin-top: 1.2rem; }
+  .pairs-box { flex: 0 1 19rem; min-width: 15rem; }
+  .pairs-box canvas { width: 100%; aspect-ratio: 1 / 1; }
+  .pairs-box .axis-note { color: var(--quiet); margin: 0.3rem 0 0; }
+  .freq-box { flex: 1 1 22rem; min-width: 0; }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="5.4">
+<article>
+<h1>Grokking</h1>
+
+<section>
+<p>Power et al. (2022) trained small transformers on tables of binary operations, such as division modulo 97, using a fraction of all pairs of numbers as training data.<label for="sn-power" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-power" class="margin-toggle"><span class="sidenote">Power, Burda, Edwards, Babuschkin, and Misra (2022), &ldquo;Grokking: Generalization beyond overfitting on small algorithmic datasets,&rdquo; arXiv:2201.02177. The run described is modular division with half of the pairs used for training.</span> In one run, accuracy on the training pairs was close to 100% after fewer than 1,000 steps, while accuracy on the held-out pairs began to rise above chance only after about 1,000 times as many steps, and then reached nearly 100%. They called this delayed generalization <em>grokking</em>.</p>
+
+<p>This page uses the task studied by Nanda et al. (2023): computing \((a + b) \bmod p\) for whole numbers \(a\) and \(b\) from 0 to \(p - 1\), with a transformer of one layer.<label for="sn-nanda" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-nanda" class="margin-toggle"><span class="sidenote">Nanda, Chan, Lieberum, Smith, and Steinhardt (2023), &ldquo;Progress measures for grokking via mechanistic interpretability,&rdquo; ICLR 2023, arXiv:2301.05217. They used \(p = 113\). The runs on this page use \(p = 59\) with the same model (embeddings of 128 numbers, 4 attention heads, an MLP of 512 units with ReLU, no layer normalization) and the same training (AdamW, learning rate 0.001), so that all nine settings could be trained on an ordinary computer. How the runs were made is recorded in <code>tools/modadd</code> in the site&rsquo;s repository.</span> The model reads \(a\) and \(b\) and outputs a probability for each of the \(p\) possible answers; its answer is the one with the highest probability. A random fraction of the \(p^2\) pairs is the training set, and the other pairs are the test set. Every training step uses all the training pairs.</p>
+
+<p>Training uses <em>weight decay</em>, which penalizes large parameters: at every step, besides the usual update, each parameter is multiplied by \(1 - 0.001\,\lambda\), where \(\lambda\) is the weight decay. With \(\lambda = 0\) there is no penalty.</p>
+
+<p>Each number \(a\) enters the model as a list of 128 numbers, its <em>embedding</em>. Going through \(a = 0, 1, \dots, p - 1\), each of the 128 coordinates traces out a sequence of \(p\) values. Any such sequence can be written as a constant plus waves \(\cos(2\pi k a / p)\) and \(\sin(2\pi k a / p)\) at frequencies \(k = 1, \dots, (p - 1)/2\); this is the discrete Fourier transform. The frequency chart in the tool shows how large the frequency-\(k\) part of the embedding is, for each \(k\), combined over all 128 coordinates.</p>
+</section>
+
+<section>
+<h2>Grok it yourself</h2>
+<p>Each setting of the controls loads a training run done in advance. Move through training with the slider, by dragging on the accuracy chart, or with Play.</p>
+
+<div class="tool" id="tool">
+  <p class="panel-note">Top: accuracy on the <span class="c-second">training pairs</span> and on the <span class="c-accent">test pairs</span>, and, dashed, the share of the embedding that lies in its five largest frequencies. Bottom left: every pair \((a, b)\), with \(a\) running down and \(b\) across; a square is filled when the model answers that pair correctly at the chosen step, in <span class="c-second">orange for a training pair</span> and <span class="c-accent">blue for a test pair</span>. Bottom right: the size of each frequency in the embedding at that step, with the three largest numbered.</p>
+  <div class="row">
+    <div class="controls" id="controls"></div>
+    <div class="stage" id="acc-chart"></div>
+  </div>
+  <div class="pairs-row">
+    <div class="pairs-box"><canvas id="pairs" role="img" aria-label="Grid of all pairs, filled where the model answers correctly"></canvas><p class="axis-note">\(a\) down, \(b\) across</p></div>
+    <div class="freq-box" id="freq-chart"></div>
+  </div>
+  <p class="readout" id="readout" aria-live="polite"></p>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="5.4-t1">
+    <p class="prompt">Set the weight decay to 0, with 30% of pairs used for training. By the end of training, will the model answer most test pairs correctly?</p>
+    <div class="choices" data-options="Yes|No"></div>
+    <div class="after"><p>Choose weight decay 0 and 30%, then move to the last step. Compare with weight decay 1.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>No. With weight decay 0 the model answers every training pair correctly from step 100 on, but at step 20,000 it answers only 4% of the test pairs. <span class="claim">Empirical finding</span> Those it does answer are pairs whose reverse, \((b, a)\), is a training pair: it gets 15% of those right and none of the others. In the grid, each such blue square is the mirror image of an orange square across the diagonal. The same holds with 50% and 70% of the pairs: without weight decay, final test accuracy is 42% and 70%, and more than 98% of the correctly answered test pairs are reversed training pairs. With weight decay 1, test accuracy passes 99% by step 5,800.</p></div></div>
+  </li>
+  <li class="task" data-id="5.4-t2">
+    <p class="prompt">With weight decay 1, compare training on 30% and on 70% of the pairs. With 70%, does test accuracy rise earlier or later?</p>
+    <div class="choices" data-options="Earlier|At about the same step|Later"></div>
+    <div class="after"><p>Switch between 30% and 70% and look at where the blue line rises.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Earlier. With weight decay 1, test accuracy passes 99% at step 1,200 with 70% of the pairs, at step 1,850 with 50%, and at step 5,800 with 30%. With 70%, test accuracy also jumps to 69% within the first 120 steps; nearly all of those correct test pairs are reversed training pairs, as in task 1. With weight decay 0.3 the rise comes later in every case, and with 30% of the pairs test accuracy has reached only 88% by step 20,000.</p></div></div>
+  </li>
+  <li class="task" data-id="5.4-t3">
+    <p class="prompt">With weight decay 1 and 30%, move to step 3,600, where test accuracy is still below 20%. Is the embedding still spread over all frequencies, or do a few frequencies already stand out?</p>
+    <div class="choices" data-options="Still spread over all frequencies|A few already stand out"></div>
+    <div class="after"><p>Move slowly through the steps before the jump and watch the frequency chart and the dashed line.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>A few already stand out. At step 3,600 test accuracy is 19%, but the five largest frequencies hold 47% of the embedding, against 20% at step 0, and four frequencies, 12, 27, 2, and 1, stand above the rest. By step 20,000 the five largest hold 99%, nearly all of it in three frequencies, 1, 12, and 27; frequency 2 has faded. The dashed line rises steadily through thousands of steps before the jump in test accuracy.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>What the network was doing</h2>
+<p><span class="claim">Empirical finding</span> Nanda et al. reverse-engineered the trained network. It represents each number \(a\) by \(\cos(w a)\) and \(\sin(w a)\) for a few frequencies, with \(w = 2\pi k / p\), and combines \(a\) and \(b\) using trigonometric identities such as \(\cos(w(a + b)) = \cos(wa)\cos(wb) - \sin(wa)\sin(wb)\). They divide training into three phases: the network memorizes the training pairs; the algorithm then forms gradually while memorized answers still decide the output; finally the memorized solution is removed, and test accuracy jumps. <span class="claim">Argument</span> They attribute the removal to weight decay: the algorithm can produce the answers with smaller parameters than a table of memorized answers needs, so a penalty on large parameters favors it. The runs above fit this account: without weight decay the model never went beyond memorized pairs and their reverses.</p>
+<p><span class="claim">Empirical finding</span> Nanda et al.&rsquo;s way of detecting the algorithm before the jump also works on the run here. Keep only the part of the model&rsquo;s output that depends on \(a + b\) through the final key frequencies 1, 12, and 27, and score that part on the test pairs; they call its loss the restricted loss. At step 3,600, when the full model answers 19% of the test pairs correctly, this part alone would answer 78% of them correctly. At step 1,000 it already answers 27%, against the full model&rsquo;s 7%.</p>
+
+<figure id="fig-grok" class="fig-grok" aria-describedby="fig-grok-desc"></figure>
+<p id="fig-grok-desc" class="caption">The main run (weight decay 1, 30% of pairs) against training step, on a log scale. Accuracy on the <span class="c-second">training pairs</span> reaches 100% at step 100. Accuracy on the <span class="c-accent">test pairs</span> passes 50% at step 4,650 and 99% at step 5,800. The dashed line is the test accuracy of the key-frequency part of the output alone, which rises thousands of steps earlier.</p>
+
+<p><span class="claim">Argument</span> Grokking shows that a network&rsquo;s behavior on its training data does not reveal which algorithm it uses. Early and late in this run the model gets every training pair right, but early on it is running a lookup of memorized answers and late in training it is running an algorithm that works for every pair. Section 6.7 opens this network and reads its algorithm.</p>
+</section>
+
+<div class="check" data-id="5.4-c1" data-correct="1">
+  <p class="label">Check</p>
+  <p class="q">Just before test accuracy jumps, is the network only memorizing its training pairs?</p>
+  <div class="options seg"><button>Yes: the generalizing algorithm appears all at once at the jump</button><button>No: the generalizing algorithm is already partly built, but the memorized answers still decide the output</button><button>No: by then it has stopped fitting the training pairs</button></div>
+  <div class="feedback"><p>In the run on this page, at step 3,600 the full model answers 19% of the test pairs, but its embedding already concentrates on a few frequencies, and the key-frequency part of its output alone would answer 78% of them. The algorithm is partly built; the memorized answers still dominate what the model outputs.</p></div>
+</div>
+
+<div class="check" data-id="5.4-c2" data-correct="1">
+  <p class="q">Two copies of this model each answer every training pair correctly. Does that fact alone tell you whether either has learned to add modulo \(p\)?</p>
+  <div class="options seg"><button>Yes: answering every training pair correctly requires the rule</button><button>No: a table of memorized answers and the addition algorithm both get every training pair right</button><button>Yes, if both were trained with weight decay</button></div>
+  <div class="feedback"><p>Accuracy on the training pairs cannot tell the two solutions apart. Accuracy on pairs the model has not seen, or a look inside the model, can.</p></div>
+</div>
+
+<div class="explain" data-id="5.4-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: why does this network generalize long after it has fit its training pairs, and what does weight decay have to do with it?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>A network can fit its training data by memorizing it and only much later switch to an algorithm that generalizes. On modular addition, the generalizing algorithm uses a few frequencies and forms gradually while memorized answers still decide the output; in these runs, without weight decay the switch never happened. Identical training accuracy can hide different computations.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/5-4.js"></script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+{
+ "p": 59,
+ "runs": [
+  {
+   "file": "run-wd0.0-f0.3.json",
+   "wd": 0.0,
+   "frac": 0.3,
+   "steps_total": 20000
+  },
+  {
+   "file": "run-wd0.3-f0.3.json",
+   "wd": 0.3,
+   "frac": 0.3,
+   "steps_total": 20000
+  },
+  {
+   "file": "run-wd1.0-f0.3.json",
+   "wd": 1.0,
+   "frac": 0.3,
+   "steps_total": 20000
+  },
+  {
+   "file": "run-wd0.0-f0.5.json",
+   "wd": 0.0,
+   "frac": 0.5,
+   "steps_total": 20000
+  },
+  {
+   "file": "run-wd0.3-f0.5.json",
+   "wd": 0.3,
+   "frac": 0.5,
+   "steps_total": 20000
+  },
+  {
+   "file": "run-wd1.0-f0.5.json",
+   "wd": 1.0,
+   "frac": 0.5,
+   "steps_total": 20000
+  },
+  {
+   "file": "run-wd0.0-f0.7.json",
+   "wd": 0.0,
+   "frac": 0.7,
+   "steps_total": 20000
+  },
+  {
+   "file": "run-wd0.3-f0.7.json",
+   "wd": 0.3,
+   "frac": 0.7,
+   "steps_total": 20000
+  },
+  {
+   "file": "run-wd1.0-f0.7.json",
+   "wd": 1.0,
+   "frac": 0.7,
+   "steps_total": 20000
+  }
+ ]
+}
