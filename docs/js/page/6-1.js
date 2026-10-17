@@ -1,12 +1,12 @@
 // Page 6.1: the methods map, with a quiz mode.
-import { segmented, button } from '../lib/ui.js';
+import { segmented, button, reducedMotion } from '../lib/ui.js';
 import { sections } from '../pages.js';
 
 const d3 = window.d3;
 const built = new Set(sections.flatMap((s) => s.pages.filter((p) => p.href).map((p) => p.id)));
 const pageRef = (id) => (built.has(id) ? `<a href="${id.replace('.', '-')}.html">page ${id}</a>` : `page ${id}`);
 
-const COLS = [['behavior', 'Behavior only'], ['acts', 'Activations'], ['weights', 'Weights']];
+const COLS = [['behavior', 'Behavior only'], ['acts', 'Activations'], ['weights', 'Parameters']];
 const ROWS = [['observe', 'Observe without changing anything'], ['intervene', 'Change one thing and measure the effect']];
 
 const METHODS = [
@@ -25,7 +25,7 @@ const METHODS = [
     shows: 'Correlational evidence: whether a property of the input can be read off the activations by a simple classifier.',
     example: 'A probe that predicts from layer 10 whether the statement in the prompt is true.',
     limit: 'Information that can be read off need not be used by the model, and a flexible probe can learn part of the task by itself.' },
-  { id: 'sae', name: 'Sparse autoencoder', col: 'acts', row: 'observe', page: '6.5',
+  { id: 'sae', name: 'Sparse autoencoder (SAE)', col: 'acts', row: 'observe', page: '6.5',
     access: 'The activations at one layer, recorded on many inputs.',
     shows: 'Correlational evidence: a set of directions that rebuild the activations sparsely, each described by the inputs on which it is active.',
     example: 'A unit that is active on text about the Golden Gate Bridge.',
@@ -40,12 +40,12 @@ const METHODS = [
     shows: 'Causal evidence: copying one component’s activation from the clean run into the corrupted run shows whether that component carries the information that decides the answer.',
     example: 'Finding which attention heads carry the name a sentence should end with.',
     limit: 'The result depends on the choice of corrupted input, and a component can matter on these inputs without being the whole story.' },
-  { id: 'readw', name: 'Reading the weights', col: 'weights', row: 'observe', page: '6.7',
+  { id: 'readw', name: 'Reading the parameters', col: 'weights', row: 'observe', page: '6.7',
     access: 'The parameters themselves, with no inputs needed.',
-    shows: 'What computation the parameters could perform: for example, that an attention head’s weights copy the token it attends to.',
+    shows: 'What computation the parameters could perform: for example, that an attention head’s parameters make it copy the token it attends to. This is evidence about structure, which is neither correlational nor causal: no inputs are observed and nothing is changed.',
     example: 'Nanda et al. (2023) found that the modular-addition transformer’s embedding uses sines and cosines of a few frequencies.',
     limit: 'It shows what a part can compute, not whether the model relies on it for a behavior; that needs an intervention.' },
-  { id: 'editw', name: 'Editing or removing weights', col: 'weights', row: 'intervene', page: null,
+  { id: 'editw', name: 'Editing or removing parameters', col: 'weights', row: 'intervene', page: null,
     access: 'The parameters, which it changes.',
     shows: 'Causal evidence: changing some parameters changes a behavior.',
     example: 'Meng et al. (2022) changed one MLP weight matrix in GPT-J so that it said the Eiffel Tower is in Rome.',
@@ -55,22 +55,22 @@ const byId = Object.fromEntries(METHODS.map((m) => [m.id, m]));
 
 // Claims for quiz mode. ok: methods that could support the claim; need: groups of which each must be picked; kind: evidence needed.
 const CLAIMS = [
-  { text: 'The activations at layer 10 carry whether the statement in the prompt is true.', ok: ['probe', 'sae'], need: [['probe', 'sae']], kind: 'observe',
-    why: 'The claim is that the information is present. A probe, or an SAE unit that tracks truth, can show that it can be read off the activations. That is correlational evidence, and it is enough for this claim.' },
+  { text: 'The activations at layer 10 carry whether the statement in the prompt is true.', ok: ['probe', 'sae', 'patch'], need: [['probe', 'sae']], kind: 'observe',
+    why: 'The claim is that the information is present. A probe, or an SAE unit that tracks truth, can show that it can be read off the activations. That is correlational evidence, and it is enough for this claim. (An intervention that changed the answer would also show the information is there, but it is more than the claim needs.)' },
   { text: 'The model uses its representation of truth when it answers.', ok: ['steer', 'patch'], need: [['steer', 'patch']], kind: 'intervene',
     why: 'The claim is that the information makes a difference to the output. Only an intervention on the activations, such as steering along the truth direction or patching it, can show that. A probe cannot: information can be present without being used.' },
   { text: 'The model gets 90% of two-digit additions right.', ok: ['eval'], need: [['eval']], kind: 'observe',
     why: 'This is a claim about behavior, and a behavioral evaluation settles it. It says nothing about how the model adds.' },
   { text: 'Changing only the name in a prompt changes the model’s recommendation.', ok: ['counter'], need: [['counter']], kind: 'intervene',
     why: 'The claim is causal, about the input: hold everything else fixed, change the name, and compare. Counterfactual inputs do exactly that, without looking inside the model.' },
-  { text: 'This attention head’s weights copy the token it attends to.', ok: ['readw'], need: [['readw']], kind: 'observe',
-    why: 'This is a claim about what the head’s parameters compute, which reading the weights can check. Whether the model relies on the head for some behavior is a further, causal claim.' },
+  { text: 'This attention head’s parameters make it copy the token it attends to.', ok: ['readw'], need: [['readw']], kind: 'observe',
+    why: 'This is a claim about what the head’s parameters compute, which reading the parameters can check. Whether the model relies on the head for some behavior is a further, causal claim.' },
   { text: 'The model’s answer to “The Eiffel Tower is in…” depends on one MLP layer.', ok: ['editw', 'patch'], need: [['editw', 'patch']], kind: 'intervene',
-    why: 'The claim is that a part makes a difference, so it needs an intervention: patch that layer’s activations, or edit its weights, and see whether the answer changes.' },
+    why: 'The claim is that a part makes a difference, so it needs an intervention: patch that layer’s activations, or edit its parameters, and see whether the answer changes.' },
   { text: 'The model has a unit for the Golden Gate Bridge, and turning that unit up makes it talk about the bridge.', ok: ['sae', 'steer'], need: [['sae'], ['steer']], kind: 'both',
     why: 'The claim has two parts. Finding the unit is the work of an SAE (correlational); showing that turning it up changes behavior is steering (causal). Templeton et al. (2024) did both.' },
 ];
-const KIND = [['observe', 'Correlational'], ['intervene', 'Causal'], ['both', 'Both kinds needed']];
+const KIND = [['observe', 'Observation is enough'], ['intervene', 'An intervention is needed'], ['both', 'Both are needed']];
 
 // ---- The map ----
 const mapEl = document.getElementById('map');
@@ -107,7 +107,13 @@ function buildMap() {
 }
 
 function onMethod(id) {
-  if (state.mode === 'explore') { state.open = state.open === id ? null : id; }
+  if (state.mode === 'explore') {
+    state.open = state.open === id ? null : id;
+    // On a phone the card sits below the whole map, so bring it into view.
+    if (state.open && window.matchMedia('(max-width: 760px)').matches) {
+      requestAnimationFrame(() => card.scrollIntoView({ block: 'nearest', behavior: reducedMotion() ? 'auto' : 'smooth' }));
+    }
+  }
   else if (!state.checked) { state.picked.has(id) ? state.picked.delete(id) : state.picked.add(id); }
   render();
 }
@@ -142,9 +148,9 @@ function renderQuiz() {
   const right = [...state.results.values()].filter(Boolean).length;
   quizEl.innerHTML = `<p class="quiet">Claim ${state.q + 1} of ${CLAIMS.length}. Answered: ${done}; both parts right: ${right}.</p>
     <p class="claim-text">&ldquo;${c.text}&rdquo;</p>
-    <p class="quiet">1. Select in the map every method that could support this claim. 2. Choose the kind of evidence it needs.</p>
+    <p class="quiet">1. Select in the map every method that could support this claim. 2. Choose whether observation is enough or an intervention is needed.</p>
     <div id="kind"></div><div class="seg" id="qbtns"></div><div id="qfb" aria-live="polite"></div>`;
-  segmented(quizEl.querySelector('#kind'), { name: 'Evidence the claim needs', options: KIND, value: state.kind,
+  segmented(quizEl.querySelector('#kind'), { name: 'What the claim needs', options: KIND, value: state.kind,
     onChange: (k) => { if (!state.checked) state.kind = k; renderQuiz(); } });
   const btns = quizEl.querySelector('#qbtns');
   const check = button(btns, 'Check', () => {
@@ -158,11 +164,11 @@ function renderQuiz() {
   button(btns, 'Next claim', () => go(1)).disabled = state.q === CLAIMS.length - 1;
   if (state.checked) {
     const g = grade(c);
-    const names = (ids) => ids.map((id) => byId[id].name.toLowerCase()).join(' or ');
+    const names = (ids) => ids.map((id) => byId[id].name[0].toLowerCase() + byId[id].name.slice(1)).join(' or ');
     const methods = c.need.length > 1 ? c.need.map((grp) => names(grp)).join(', together with ') : names(c.ok);
     quizEl.querySelector('#qfb').innerHTML =
       `<p class="${g.methodsRight ? 'verdict-right' : 'verdict-wrong'}">Methods: ${g.methodsRight ? 'right' : 'not quite'}. This claim can be supported by ${methods}.</p>` +
-      `<p class="${g.kindRight ? 'verdict-right' : 'verdict-wrong'}">Evidence: ${g.kindRight ? 'right' : 'not quite'}. It needs ${KIND.find((k) => k[0] === c.kind)[1].toLowerCase()} evidence.</p>` +
+      `<p class="${g.kindRight ? 'verdict-right' : 'verdict-wrong'}">Evidence: ${g.kindRight ? 'right' : 'not quite'}. ${KIND.find((k) => k[0] === c.kind)[1]}.</p>` +
       `<p>${c.why}</p>`;
   }
 }

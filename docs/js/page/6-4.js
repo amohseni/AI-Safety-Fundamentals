@@ -110,9 +110,9 @@ function draw() {
   } else {
     const k = Number(state.bars);
     const w = Array.from({ length: n }, (_, i) => t.W[k * n + i]);
-    barChart.update(w, { domain: [-1.5, 1.5], yLabel: `weight on coordinate ${k + 1}`, xLabel: 'feature', ref: [{ v: 0.3, label: '0.3' }, { v: -0.3, label: '−0.3' }], every });
+    barChart.update(w, { domain: [-1.5, 1.5], yLabel: `component on coordinate ${k + 1}`, xLabel: 'feature', ref: [{ v: 0.3, label: '0.3' }, { v: -0.3, label: '−0.3' }], every });
     const big = w.filter((v) => Math.abs(v) >= 0.3).length;
-    barNote.textContent = `Weight of each feature on coordinate ${k + 1}: the value of coordinate ${k + 1} when that feature alone is 1. ${big} of ${n} weights have size at least 0.3.`;
+    barNote.textContent = `Component of each feature’s direction on coordinate ${k + 1}: the value of coordinate ${k + 1} when that feature alone is 1. ${big} of ${n} components have size at least 0.3.`;
   }
   const G = t.gram();
   heat.update(G, { max: Math.max(1, ...G.map((row, i) => Math.abs(row[i]))), every, top: 'feature', left: 'feature' });
@@ -144,7 +144,7 @@ ctl.append(btnRow);
 const trainBtn = button(btnRow, 'Pause', () => { if (done) return; training ? stop() : start(); }, 'primary');
 button(btnRow, 'New start', () => { state.group++; reset(); });
 
-// Bars mode: lengths, or the weights on one hidden coordinate.
+// Bars mode: lengths, or the components on one hidden coordinate.
 const barCtl = document.getElementById('bar-controls');
 const barSeg = (() => {
   let seg = null;

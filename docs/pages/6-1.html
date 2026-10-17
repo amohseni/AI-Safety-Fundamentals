@@ -46,14 +46,14 @@
 <h1>What interpretability tries to do</h1>
 
 <section>
-<p>Interpretability is the study of what a trained network has learned and how it computes its outputs. Methods differ first in what they access. <em>Black-box</em> methods use only inputs and outputs. <em>White-box</em> methods also look inside: at the network&rsquo;s activations, the numbers computed at each layer for a given input, and at its weights, the parameters that compute those activations. <em>Mechanistic interpretability</em> aims at the most detailed account: the algorithm a network uses, stated in terms of the network&rsquo;s parts.<label for="sn-zoom" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-zoom" class="margin-toggle"><span class="sidenote">Olah et al. (2020), &ldquo;Zoom In: An Introduction to Circuits,&rdquo; <em>Distill</em>, set out this program for image models. Bereska and Gavves (2024), &ldquo;Mechanistic Interpretability for AI Safety: A Review,&rdquo; <em>Transactions on Machine Learning Research</em>, survey the field.</span></p>
+<p>Interpretability is the study of what a trained network has learned and how it computes its outputs. Methods differ first in what they access. <em>Black-box</em> methods use only inputs and outputs. <em>White-box</em> methods also look inside: at the network&rsquo;s activations, the numbers computed at each layer for a given input, and at its parameters, the numbers fixed by training that compute those activations. <em>Mechanistic interpretability</em> aims at the most detailed account: the algorithm a network uses, stated in terms of the network&rsquo;s parts.<label for="sn-zoom" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-zoom" class="margin-toggle"><span class="sidenote">Olah et al. (2020), &ldquo;Zoom In: An Introduction to Circuits,&rdquo; <em>Distill</em>, set out this program for image models. Bereska and Gavves (2024), &ldquo;Mechanistic Interpretability for AI Safety: A Review,&rdquo; <em>Transactions on Machine Learning Research</em>, survey the field.</span></p>
 
 <p>Methods also differ in the kind of evidence they give. <em>Correlational</em> evidence comes from observing what goes with what: a pattern in the activations that is present whenever the input has some property. <em>Causal</em> evidence comes from changing one thing while holding the rest fixed and measuring what else changes. The two kinds of evidence support different claims about a network.</p>
 </section>
 
 <section>
 <h2>Methods map</h2>
-<p>The map sorts eight methods by what they access (columns) and by whether they observe or intervene (rows). In <em>Explore</em> mode, select a method to open its card. In <em>Quiz</em> mode, you are given a claim about a model; select every method in the map that could support it, choose the kind of evidence it needs, and press Check.</p>
+<p>The map sorts eight methods by what they access (columns) and by whether they observe or intervene (rows). In <em>Explore</em> mode, select a method to open its card. In <em>Quiz</em> mode, you are given a claim about a model; select every method in the map that could support it, choose whether observation is enough or an intervention is needed, and press Check.</p>
 
 <div class="tool" id="tool">
   <div class="panel">
@@ -74,17 +74,17 @@
   </li>
   <li class="task" data-id="6.1-t2">
     <p class="prompt">Work through all seven claims. Some of them no method in the observe row could support. What do those claims have in common?</p>
-    <div class="choices" data-options="They are about the model&rsquo;s outputs|They say that something makes a difference to the output|They are about the weights"></div>
+    <div class="choices" data-options="They are about the model&rsquo;s outputs|They say that something makes a difference to the output|They are about the parameters"></div>
     <div class="after"><p>Use Next claim to move through the quiz.</p>
       <button class="show" type="button">Show what to notice</button>
-      <div class="notice"><p>Claims 2, 4, and 6, and the second half of claim 7, say that something makes a difference: a representation, an input detail, a layer, a unit. Each needs an intervention. Claims about outputs alone (claim 3) or about what the parameters compute (claim 5) can be supported without one.</p></div></div>
+      <div class="notice"><p>Claims 2, 4, and 6, and the second half of claim 7, say that something makes a difference: a representation, an input detail, a layer, a unit. Each needs an intervention. Claims that information is present (claim 1), claims about outputs alone (claim 3), and claims about what the parameters compute (claim 5) can be supported without one.</p></div></div>
   </li>
   <li class="task" data-id="6.1-t3">
-    <p class="prompt">Reading an attention head&rsquo;s weights shows that the head copies the token it attends to. Does that show the model relies on this head when it completes a sentence?</p>
+    <p class="prompt">Reading an attention head&rsquo;s parameters shows that the head copies the token it attends to. Does that show the model relies on this head when it completes a sentence?</p>
     <div class="choices" data-options="Yes|No"></div>
-    <div class="after"><p>Open the cards for Reading the weights and for Activation patching in Explore mode.</p>
+    <div class="after"><p>Open the cards for Reading the parameters and for Activation patching in Explore mode.</p>
       <button class="show" type="button">Show what to notice</button>
-      <div class="notice"><p>No. The weights show what the head can compute. Whether the model relies on it for this sentence is a causal claim: patch or remove the head&rsquo;s output and see whether the completion changes. Circuit analyses usually combine both kinds of evidence (page 6.7).</p></div></div>
+      <div class="notice"><p>No. The parameters show what the head can compute. Whether the model relies on it for this sentence is a causal claim: patch or remove the head&rsquo;s output and see whether the completion changes. Circuit analyses usually combine both kinds of evidence (page 6.7).</p></div></div>
   </li>
 </ol>
 
@@ -107,7 +107,7 @@
 
 <div class="check" data-id="6.1-c2" data-correct="2">
   <p class="q">Which result would show that a model uses information about the language of its input?</p>
-  <div class="options seg"><button>A probe on layer 6 predicts the language with 99% accuracy</button><button>An SAE unit at layer 6 is active on French text and silent on English text</button><button>Copying layer 6&rsquo;s activations from a French input into a run on an English input makes the model answer in French</button></div>
+  <div class="options seg"><button>A probe on layer 6 predicts the language with 99% accuracy</button><button>A unit of a sparse autoencoder (page 6.5) trained on layer 6 is active on French text and silent on English text</button><button>Copying layer 6&rsquo;s activations from a French input into a run on an English input makes the model answer in French</button></div>
   <div class="feedback"><p>The first two are observations: they show the information is present. The third changes the activations and finds that the output changes, which is causal evidence that the model uses what layer 6 carries.</p></div>
 </div>
 
@@ -120,7 +120,7 @@
 
 <div class="takeaway">
   <p class="label">Takeaway</p>
-  <p>Interpretability methods differ in what they access (behavior, activations, or weights) and in the evidence they give. Observing activations gives correlational evidence that information is present; changing activations or weights and measuring the effect gives causal evidence that the model uses it. Claims about how a model computes its outputs are causal claims, so the field prizes causal evidence.</p>
+  <p>Interpretability methods differ in what they access (behavior, activations, or parameters) and in the evidence they give. Observing activations gives correlational evidence that information is present; changing activations or parameters and measuring the effect gives causal evidence that the model uses it. Claims about how a model computes its outputs are causal claims, so the field prizes causal evidence.</p>
 </div>
 </article>
 <script type="module" src="../js/site.js"></script>
