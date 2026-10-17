@@ -218,13 +218,13 @@ export const sections = [
         "id": "5.4",
         "title": "Grokking",
         "core": false,
-        "href": null
+        "href": "pages/5-4.html"
       },
       {
         "id": "5.5",
         "title": "Grown, not programmed",
         "core": true,
-        "href": null
+        "href": "pages/5-5.html"
       },
       {
         "id": "5.6",
