@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3.1 Tokens</title>
+<meta name="description" content="What a language model reads: tokens from a fixed vocabulary, chosen by byte-pair encoding.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  .toks { font-size: var(--text); display: flex; flex-wrap: wrap; gap: 0.45rem 0.25rem; margin: 0.2rem 0 0; }
+  .toks[dir="rtl"] { direction: rtl; }
+  .tok { display: inline-flex; flex-direction: column; align-items: center; border: 1px solid var(--rule); border-radius: 2px; padding: 0 0.3rem; line-height: 1.35; }
+  .tok .t { white-space: pre; color: var(--ink); }
+  .tok .id { color: var(--quiet); font-variant-numeric: lining-nums tabular-nums; }
+  .tok .sp, .tok .byte { color: var(--quiet); }
+  .tok .byte { font-style: italic; }
+  .tok.new { border-color: var(--accent); }
+  .tool textarea { width: 100%; min-height: 4.5rem; font: inherit; font-size: var(--text); line-height: 1.5; color: var(--ink); background: transparent; border: 1px solid var(--rule); border-radius: 3px; padding: 0.4rem 0.5rem; }
+  .merges { margin: 0.4rem 0 0; padding-left: 1.6rem; columns: 2 10rem; }
+  .merges li { break-inside: avoid; }
+  .merges .n { color: var(--quiet); }
+  figure.tokfig { max-width: 90%; }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="3.1">
+<article>
+<h1>Tokens</h1>
+
+<section>
+<p>A language model does not read letters or words. It reads <em>tokens</em>: chunks of text from a fixed list called the vocabulary. A token can be a whole common word, a piece of a rarer word, a punctuation mark, or a single byte. Each token in the vocabulary has an integer id, and the model receives only the sequence of ids.</p>
+
+<p>GPT-2&rsquo;s vocabulary has 50,257 tokens: the 256 possible bytes, 50,000 tokens built by merging, and one special token that marks the end of a text.<label for="sn-gpt2" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-gpt2" class="margin-toggle"><span class="sidenote">Radford et al. (2019), &ldquo;Language Models are Unsupervised Multitask Learners,&rdquo; section 2.2. Text is first turned into bytes with the UTF-8 encoding, so every string can be written with the 256 byte tokens.</span> The merged tokens are chosen by <em>byte-pair encoding</em>.<label for="sn-bpe" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-bpe" class="margin-toggle"><span class="sidenote">Gage (1994), &ldquo;A New Algorithm for Data Compression,&rdquo; <em>C Users Journal</em> 12(2), introduced byte-pair encoding for compression. Sennrich, Haddow, and Birch (2016), &ldquo;Neural Machine Translation of Rare Words with Subword Units,&rdquo; ACL, brought it to language models.</span> Start with the single bytes. Count every pair of adjacent tokens in a large body of text, and add the most frequent pair to the vocabulary as a new token. Rewrite the text with the new token, and repeat until the vocabulary reaches its target size. Before counting, GPT-2 splits the text into words, each keeping the space in front of it, so merges never join the end of one word to the start of the next.</p>
+
+<p>The tokenizer is built before the model is trained and does not change during training. A current tokenizer, the one used by GPT-4o (called o200k_base), works the same way with about 200,000 tokens.<label for="sn-o200k" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-o200k" class="margin-toggle"><span class="sidenote">The tool runs OpenAI&rsquo;s published vocabularies for both tokenizers in your browser, through the js-tiktoken library (version 1.0.21, MIT license).</span></p>
+</section>
+
+<section>
+<h2>Tokenizer playground</h2>
+<p>Each task below asks for a prediction first. Make it, then use the tool to check it.</p>
+
+<div class="tool" id="tool">
+  <div class="panel" id="panel-real">
+    <h3>Real tokenizers</h3>
+    <p class="panel-note">Type any text, or choose an example. Each box is one token, with its id underneath. A dot &middot; marks a space. When a token holds only some of the bytes of one character, those bytes are shown in <span class="byte"><em>italic</em></span> hexadecimal.</p>
+    <div class="row"><div class="controls" id="real-controls"></div><div class="stage" id="real-stage"><div class="toks" id="real-toks" aria-live="polite"></div></div></div>
+    <p class="readout" id="real-readout" aria-live="polite"></p>
+  </div>
+
+  <div class="panel" id="panel-build">
+    <h3>Build your own</h3>
+    <p class="panel-note">A tiny corpus, split the way GPT-2 splits text, with characters in place of bytes. Each press of Merge finds the most frequent adjacent pair and makes it a new token; if two pairs are equally frequent, the one that appears first in the text wins. The tokens made by the last merge are outlined in <span class="c-accent">blue</span>. You can edit the corpus.</p>
+    <div class="row"><div class="controls" id="build-controls"></div><div class="stage" id="build-stage"><div class="toks" id="build-toks"></div></div></div>
+    <p class="readout" id="build-readout" aria-live="polite"></p>
+    <ol class="merges" id="merges"></ol>
+  </div>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="3.1-t1">
+    <p class="prompt">How many GPT-2 tokens is the number 12345678?</p>
+    <div class="choices" data-options="1|3|8"></div>
+    <div class="after"><p>Choose the Digits example. Then switch the tokenizer to GPT-4o, and try the example called A sum.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>GPT-2 splits 12345678 into three tokens, 123, 45, and 678. GPT-4o also uses three, but different ones: 123, 456, and 78, because it cuts runs of digits into groups of at most three, from the left. In the sum 1234 + 5678 = 6912, GPT-2 cuts 1234 into 12 and 34 but 5678 into &ldquo;&middot;5&rdquo; and 678. Digits in the same place value land in different tokens from one number to the next.</p></div></div>
+  </li>
+  <li class="task" data-id="3.1-t2">
+    <p class="prompt">The English and Persian examples say the same thing, &ldquo;I like reading books.&rdquo; With GPT-2, how many times as many tokens does the Persian sentence need?</p>
+    <div class="choices" data-options="About the same|About twice|More than five times"></div>
+    <div class="after"><p>Choose English, then Persian. Then switch to GPT-4o.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>GPT-2 needs 5 tokens for the English sentence and 29 for the Persian one, almost one token per character. Each Persian letter takes two bytes in UTF-8, and GPT-2 learned few merges for them, so many letters are split into two single-byte tokens (the italic boxes). GPT-4o&rsquo;s tokenizer, with four times the vocabulary, needs 5 and 9.</p></div></div>
+  </li>
+  <li class="task" data-id="3.1-t3">
+    <p class="prompt">Type <em>strawberry</em> with a space in front of it, then without the space. Will GPT-2 give the two the same tokens?</p>
+    <div class="choices" data-options="Yes, the space is ignored|No, they become different tokens"></div>
+    <div class="after"><p>Try both in the text box, with the GPT-2 tokenizer.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>With the space, &ldquo;&middot;strawberry&rdquo; is one token, id 41236. Without it, the word becomes three tokens: st, raw, berry. The space belongs to the token, so the same word has different ids depending on where it stands in a sentence. Capitalization changes the tokens too: try Strawberry.</p></div></div>
+  </li>
+  <li class="task" data-id="3.1-t4">
+    <p class="prompt">In <em>Build your own</em>, press Merge until &ldquo;&middot;the&rdquo; (the word with its space) is a single token. How many merges will it take?</p>
+    <div class="choices" data-options="1|3|10 or more"></div>
+    <div class="after"><p>Press Merge one at a time and watch which pair is merged.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Three merges: t with h (13 times in the corpus), then th with e (12 times), then the space with the (10 times). The most frequent word, the, is the first word to become a single token, while rarer words such as &ldquo;other&rdquo; stay in pieces for many more merges. The tokens are the chunks that were most frequent in the training text; many are whole words, and many are pieces of words.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>Why tokens matter</h2>
+<figure class="tokfig" id="fig-tokens" aria-describedby="fig-tokens-desc"></figure>
+<p id="fig-tokens-desc" class="caption">GPT-2 splits the sentence &ldquo;Unbelievably, the model tokenizes strawberry.&rdquo; into 11 tokens, shown with their ids. &ldquo;Unbelievably&rdquo; becomes four pieces. &ldquo;&middot;strawberry,&rdquo; with its leading space, is a single token, id 41236.</p>
+
+<p>Three kinds of odd behavior trace back to tokens.</p>
+<p><em>Spelling.</em> <span class="claim">Argument</span> A model asked how many r&rsquo;s are in &ldquo;strawberry&rdquo; receives one id, or three, never ten letters. Whatever it knows about the letters inside a token it had to learn from the training text, for example from passages that spell words out.</p>
+<p><em>Arithmetic.</em> Numbers are cut into tokens according to which digit strings were frequent in the tokenizer&rsquo;s training text, without regard to place value, so the same digit lands in differently sized tokens from one number to the next. <span class="claim">Empirical finding</span> Making GPT-3.5 and GPT-4 tokenize numbers in groups of three from the right, by writing the numbers with commas, made them much more accurate at adding numbers of seven to nine digits; in one setting GPT-3.5 went from about 76% to about 98% correct.<label for="sn-arith" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-arith" class="margin-toggle"><span class="sidenote">Singh and Strouse (2024), &ldquo;Tokenization counts: the impact of tokenization on arithmetic in frontier LLMs,&rdquo; arXiv:2402.14903.</span></p>
+<p><em>Languages.</em> A model reads at most a fixed number of tokens at once (1,024 for GPT-2), and its cost grows with the number of tokens. <span class="claim">Empirical finding</span> Text in languages that were rare in a tokenizer&rsquo;s training data takes more tokens, in some cases up to 15 times as many for the same content, so it costs more and less of it fits.<label for="sn-petrov" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-petrov" class="margin-toggle"><span class="sidenote">Petrov, La Malfa, Torr, and Bibi (2023), &ldquo;Language Model Tokenizers Introduce Unfairness Between Languages,&rdquo; NeurIPS.</span></p>
+</section>
+
+<div class="check" data-id="3.1-c1" data-correct="1">
+  <p class="label">Check</p>
+  <p class="q">GPT-2 receives &ldquo;&middot;strawberry&rdquo; as the single token 41236. What does its input tell it directly about the letters in that word?</p>
+  <div class="options seg"><button>The letters and their order</button><button>Nothing: it gets only the id, and anything it knows about the letters was learned from training text</button><button>Only how many letters there are</button></div>
+  <div class="feedback"><p>The input is the id 41236 and nothing else. This is why a model can find it hard to reverse or count the letters of a word: those letters are not in what it reads.</p></div>
+</div>
+
+<div class="check" data-id="3.1-c2" data-correct="1">
+  <p class="q">GPT-2 reads at most 1,024 tokens at once. Judging from the English and Persian examples, how much Persian text fits in that window, compared with English text of the same meaning?</p>
+  <div class="options seg"><button>About the same amount</button><button>About one sixth as much</button><button>About six times as much</button></div>
+  <div class="feedback"><p>The same sentence took 5 tokens in English and 29 in Persian, so the window holds about 5/29, roughly one sixth, as much Persian content.</p></div>
+</div>
+
+<div class="explain" data-id="3.1-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: how does byte-pair encoding decide which chunks of text become tokens?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>A language model reads and writes tokens, chunks of text from a fixed vocabulary. Byte-pair encoding builds the vocabulary by repeatedly merging the most frequent adjacent pair, so tokens are the chunks of text that were frequent in its training data, often whole words and often pieces of words. This explains trouble with spelling and arithmetic, and the higher cost of languages that are rare in the tokenizer&rsquo;s training data.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/3-1.js"></script>
+</body>
+</html>
