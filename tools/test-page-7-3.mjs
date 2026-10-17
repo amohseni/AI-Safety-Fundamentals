@@ -158,6 +158,11 @@ console.log(`subspaces: goal ${net.kGoal} directions, doors ${net.kDoor} directi
     const reads = a.path.map((c, t) => P.argmax(P.readGoal(net, P.compute(net, E.env, { pos: c, hasKey: a.keys[t] }, M.GOAL, cfg).h)) === g2);
     console.log(`  goal probe reads the substitute at ${reads.filter(Boolean).length} of ${reads.length} steps of that run`);
     expect(reads.every(Boolean), 'probe reads substitute');
+    // The door probes at the last step of that run (the notice quotes the upper door's reading).
+    const hl = P.compute(net, E.env, { pos: a.path.at(-1), hasKey: a.keys.at(-1) }, M.GOAL, cfg).h;
+    const up = P.readDoors(net, hl)[0];
+    console.log(`  door probes at the last step: upper door read as ${M.DOOR_STATES[P.argmax(up)]} with probability ${up[P.argmax(up)].toFixed(2)}`);
+    expect(P.argmax(up) === 2 && Math.abs(up[2] - 0.65) < 0.005, 'door probe after swap');
     const U = M.ENVIRONMENTS.find((x) => x.id === 'upper-locked');
     const right = M.freeCells(U.env).filter((c) => M.xy(c)[0] > M.WALL_X && c !== M.GOAL);
     let viaKey = 0, reached = 0;
@@ -215,6 +220,22 @@ console.log(`subspaces: goal ${net.kGoal} directions, doors ${net.kDoor} directi
     const res = M.run(E.env, M.START, M.GOAL, P.policy(net, E.env, M.GOAL, { doorBelief: belief }));
     console.log(`  "${E.name}", belief upper ${M.DOOR_STATES[belief[0]]}, lower ${M.DOOR_STATES[belief[1]]}: ${res.reached ? `reached in ${res.steps}` : `not reached; last cells ${res.path.slice(-4).map((c) => M.xy(c).join(',')).join(' ')}`}, via ${res.path.includes(M.cell(4, 1)) ? 'upper' : res.path.includes(M.cell(4, 5)) ? 'lower' : 'no'} door`);
   }
+}
+// 9 (run here). Share of the change in the first layer, caused by moving only the goal, that lies in the goal subspace.
+{
+  const r = M.rng(7);
+  let inn = 0, tot = 0;
+  for (let i = 0; i < 3000; i++) {
+    const env = M.randomEnv(r), free = M.freeCells(env), g = free[Math.floor(r() * free.length)];
+    let gb; do { gb = free[Math.floor(r() * free.length)]; } while (gb === g);
+    const st = { pos: free[Math.floor(r() * free.length)], hasKey: false };
+    const h = P.hidden1(net, M.encode(env, st, g)), h2 = P.hidden1(net, M.encode(env, st, gb));
+    const d = h2.map((v, j) => v - h[j]);
+    for (const v of d) tot += v * v;
+    for (const u of net.goalBasis.slice(0, net.kGoal)) { let c = 0; for (let j = 0; j < d.length; j++) c += u[j] * d[j]; inn += c * c; }
+  }
+  console.log(`moving only the goal: ${(100 * inn / tot).toFixed(1)}% of the squared change in the first layer lies in the ${net.kGoal}-dim goal subspace (3000 random states)`);
+  expect(Math.abs(inn / tot - 0.82) < 0.01, 'goal subspace share');
 }
 // 8. Controls: the same interventions along five random subspaces of the same sizes.
 {

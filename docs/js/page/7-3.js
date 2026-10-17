@@ -21,12 +21,18 @@ function drawMaze(canvas, o) {
   const B = M.blocked(o.env);
   const door = (x, y) => M.isDoor(M.cell(x, y));
   drawGrid(ctx, L, G, { wall: (x, y) => B[M.cell(x, y)] && door(x, y) < 0, colors: col });
-  // Doors: closed and locked doors are light gray; a locked door has a keyhole.
+  // Doors: closed and locked doors are shaded in --rule; a closed door has a bar across it,
+  // so that it stays distinct from an open door in the dark theme; a locked door has a keyhole.
   M.DOORS.forEach(([x, y], i) => {
     const s = o.env.doors[i];
     if (s === 0) return;
     const [rx, ry] = L.rect(x, y);
     ctx.fillStyle = col.rule; ctx.fillRect(rx, ry, c, c);
+    if (s === 1) {
+      const [cx, cy] = L.center(x, y);
+      ctx.fillStyle = col.ink;
+      ctx.fillRect(cx - c * 0.3, cy - Math.max(1, c * 0.05), c * 0.6, Math.max(2, c * 0.1));
+    }
     if (s === 2) {
       const [cx, cy] = L.center(x, y);
       ctx.fillStyle = col.ink;
@@ -257,8 +263,10 @@ function meansSVG(title, meansList, endLines, note) {
   meansList.forEach((m, i) => {
     const y = top + (n === 1 ? (rowH / 2) : i * rowH);
     el('text', { x: 0, y: y + 5, class: 'quiet' }, m);
-    el('line', { x1: 160, y1: y, x2: 212, y2: n === 1 ? y : endY, 'marker-end': `url(#${id})` });
+    // Several means converge on one point, then one arrowhead points to the end.
+    el('line', n === 1 ? { x1: 160, y1: y, x2: 212, y2: y, 'marker-end': `url(#${id})` } : { x1: 160, y1: y, x2: 200, y2: endY });
   });
+  if (n > 1) el('line', { x1: 200, y1: endY, x2: 212, y2: endY, 'marker-end': `url(#${id})` });
   endLines.forEach((s, i) => el('text', { x: 220, y: (n === 1 ? top + rowH / 2 : endY) + 5 + (i - (endLines.length - 1) / 2) * 22 }, s));
   if (note) el('text', { x: 0, y: H - 8, class: 'quiet' }, note);
   return svg;
