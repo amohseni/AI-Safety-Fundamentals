@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>5.1 Universal approximation</title>
+<meta name="description" content="What functions a network with one hidden layer can represent, why, and what depth adds.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="5.1">
+<article>
+<h1>Universal approximation</h1>
+
+<section>
+<p><span class="claim">Theorem</span> The universal approximation theorem says: a network with one hidden layer, using any continuous activation function that is not a polynomial, can approximate any continuous function on a closed and bounded region as closely as desired, given enough hidden units.<label for="sn-uat" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-uat" class="margin-toggle"><span class="sidenote">Cybenko (1989), &ldquo;Approximation by superpositions of a sigmoidal function,&rdquo; <em>Mathematics of Control, Signals and Systems</em> 2: 303&ndash;314, for sigmoid activation functions. Hornik (1991), &ldquo;Approximation capabilities of multilayer feedforward networks,&rdquo; <em>Neural Networks</em> 4: 251&ndash;257. Leshno, Lin, Pinkus, and Schocken (1993), &ldquo;Multilayer feedforward networks with a nonpolynomial activation function can approximate any function,&rdquo; <em>Neural Networks</em> 6: 861&ndash;867, for the condition that the activation function is not a polynomial.</span></p>
+
+<p>For ReLU the reason can be seen with one input \(x\). A hidden unit computes \(a\,\mathrm{ReLU}(x - c)\): zero to the left of its <em>kink</em> at \(c\), and a straight line of slope \(a\) to the right of it. The network&rsquo;s output adds up its units and a constant \(b\),</p>
+$$f(x) = b + \sum_{k=1}^{m} a_k\,\mathrm{ReLU}(x - c_k),$$
+<p>so the output is a continuous curve made of straight pieces, with a bend wherever a unit has its kink. The tool asks how many units a given curve needs. On this page every function lives on the interval from 0 to 1, and the error is the root mean square distance between the network&rsquo;s output and the target, over 401 evenly spaced points.</p>
+</section>
+
+<section>
+<h2>Build any function</h2>
+<p>Each task below asks for a prediction first. Make it, then use the tool to check it.</p>
+
+<div class="tool" id="tool">
+  <div class="panel">
+    <h3>By hand</h3>
+    <p class="panel-note">Add units and set each one&rsquo;s kink and slope. The target is in ink, the network&rsquo;s output in <span class="c-accent">blue</span>, and each unit&rsquo;s own contribution in gray. Drag a unit&rsquo;s kink, the dot on the axis, along the axis. With <em>Draw your own</em> chosen, drag across the chart to draw a target.</p>
+    <div class="row"><div class="controls" id="h-controls"></div><div class="stage" id="h-chart"></div></div>
+    <p class="readout" id="h-readout" aria-live="polite"></p>
+  </div>
+
+  <div class="panel">
+    <h3>Fit</h3>
+    <p class="panel-note">The network uses \(m\) units with kinks evenly spaced at \(0, 1/m, \dots, (m-1)/m\), and its slopes and constant are fitted by least squares. The right chart shows the error for every \(m\) from 1 to 128, on logarithmic axes.</p>
+    <div class="row"><div class="controls" id="f-controls"></div><div class="stage" id="f-chart"></div></div>
+    <div class="row"><div class="controls" aria-hidden="true"></div><div class="stage" id="f-err"></div></div>
+    <p class="readout" id="f-readout" aria-live="polite"></p>
+  </div>
+
+  <div class="panel">
+    <h3>Depth</h3>
+    <p class="panel-note">The target is a sawtooth. The <span class="c-accent">deep network</span> has \(k\) hidden layers of 2 ReLU units each. The <span class="c-second">shallow network</span> has one hidden layer with the same total number of units, \(2k\), with evenly spaced kinks and slopes fitted by least squares.</p>
+    <div class="row"><div class="controls" id="d-controls"></div><div class="stage" id="d-chart"></div></div>
+    <p class="readout" id="d-readout" aria-live="polite"></p>
+  </div>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="5.1-t1">
+    <p class="prompt">The bump target is 0 up to \(x = 0.2\), rises in a straight line to 0.5 at \(x = 0.4\), falls back to 0 at \(x = 0.6\), and stays at 0. What is the smallest number of units that builds it exactly?</p>
+    <div class="choices" data-options="2|3|4"></div>
+    <div class="after"><p>In <em>By hand</em>, choose Bump, add units, and adjust them until the error is 0.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Three: slopes 2.5, \(-5\), and 2.5, with kinks at 0.2, 0.4, and 0.6. The second unit turns the rise into a fall, and the third cancels the fall, so the bump is two ramps, one subtracted from the other. Each unit adds exactly one bend, and the bump has three, so two units cannot build it: the best two-unit fit has error 0.076. Bumps like this one, placed side by side at the right heights, can trace any continuous curve, which is the idea of the theorem.</p></div></div>
+  </li>
+  <li class="task" data-id="5.1-t2">
+    <p class="prompt">Choose the jagged target in <em>Fit</em>. About how many units bring the error below 0.01?</p>
+    <div class="choices" data-options="About 10|About 40|About 200"></div>
+    <div class="after"><p>Move the number of units and watch the error chart.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>About 40: the error first falls below 0.01 at 42 units and stays below for every larger number tried, up to 128. With 4 units it is 0.159, with 16 it is 0.059, and with 64 it is 0.004. The smooth target needs only 7 units. Any continuous target can be reached, but the number of units grows with how much the curve wiggles. Try drawing your own target too.</p></div></div>
+  </li>
+  <li class="task" data-id="5.1-t3">
+    <p class="prompt">In <em>Depth</em>, set 4 layers, so both networks have 8 units. Which fits the sawtooth better?</p>
+    <div class="choices" data-options="One hidden layer of 8 units|Four hidden layers of 2 units|About the same"></div>
+    <div class="after"><p>Set the number of layers to 4, then try 6.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The deep network matches the sawtooth exactly. Each layer folds the interval onto itself, doubling the number of teeth, so 4 layers make 16 straight pieces. A shallow network with 8 units has at most 9 pieces, one more than its number of kinks. Its error is 0.29 with evenly spaced kinks, and 0.25 with the best of 2,000 random placements of the kinks that we tried. To match the sawtooth exactly, one hidden layer needs 15 units; at 6 layers the deep network uses 12 units and the shallow one would need 63.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>What the theorem does not say</h2>
+<p>The theorem is an existence result. It does not say how many units are needed; for general targets the number can grow exponentially with the dimension of the input. It does not say whether gradient descent will find the right parameters, or whether a network that fits finite data will generalize to new inputs (Section 2.8). Its lesson is that the ability to represent a function is rarely what limits a network.</p>
+<p><span class="claim">Theorem</span> Depth can make the number of units needed much smaller. Telgarsky built the sawtooth of the tool and proved that networks with few layers need exponentially many more units to approximate it.<label for="sn-depth" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-depth" class="margin-toggle"><span class="sidenote">Telgarsky (2016), &ldquo;Benefits of depth in neural networks,&rdquo; <em>COLT</em>. Eldan and Shamir (2016), &ldquo;The power of depth for feedforward neural networks,&rdquo; <em>COLT</em>.</span> Eldan and Shamir found a function of many inputs that a network with two hidden layers computes with a number of units growing only polynomially in the input dimension, while a network with one hidden layer needs a number growing exponentially.</p>
+
+<figure class="multiples" id="fig-approx" aria-describedby="fig-approx-desc"></figure>
+<p id="fig-approx-desc" class="caption">The smooth target (ink) and fits with 4, 8, and 32 units (<span class="c-accent">blue</span>), with each unit&rsquo;s contribution, a ReLU ramp, drawn faintly beneath. With 32 units the fit cannot be told apart from the target at this size.</p>
+</section>
+
+<div class="check" data-id="5.1-c1" data-correct="1">
+  <p class="label">Check</p>
+  <p class="q">A one-hidden-layer ReLU network with 20 units has one input. At most how many straight pieces can its output have?</p>
+  <div class="options seg"><button>20</button><button>21</button><button>40</button><button>Any number, if the parameters are chosen well</button></div>
+  <div class="feedback"><p>Each unit bends the output at one point, its kink, so 20 units give at most 20 bends and 21 pieces. A deeper network with 20 units can have many more.</p></div>
+</div>
+
+<div class="check" data-id="5.1-c2" data-correct="1">
+  <p class="q">A network with a million hidden units is trained on a dataset and still fits it badly. Does this contradict the universal approximation theorem?</p>
+  <div class="options seg"><button>Yes: with that many units it should fit any data</button><button>No: the theorem says good parameters exist, not that training finds them</button><button>No: the theorem applies only to polynomial activation functions</button></div>
+  <div class="feedback"><p>The theorem guarantees that a good setting of the parameters exists. It says nothing about whether gradient descent reaches it, how long that takes, or how well the result generalizes.</p></div>
+</div>
+
+<div class="explain" data-id="5.1-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: why can enough ReLU units approximate any continuous curve on an interval, and what does depth add?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>A network with one hidden layer and a non-polynomial activation function can approximate any continuous function on a bounded region, given enough units; with ReLU, the units are bends that build any curve from straight pieces. The theorem guarantees existence only, not efficient size, success of training, or generalization, and depth can make the needed size exponentially smaller.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/5-1.js"></script>
+</body>
+</html>

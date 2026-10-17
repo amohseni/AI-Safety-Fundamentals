@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>5.2 Learning as selection</title>
+<meta name="description" content="Simple reinforcement learning rules follow the replicator equation of evolutionary game theory: learning from reward is a selection process.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="5.2">
+<article>
+<h1>Learning as selection</h1>
+
+<section>
+<p>An agent chooses among three actions with probabilities \(x_1, x_2, x_3\). Each choice earns a payoff between 0 and 1. In <em>Cross&rsquo;s rule</em>, after choosing action \(i\) and receiving payoff \(u\), the agent moves its probabilities a fraction \(\alpha u\) of the way toward always choosing \(i\): \(x \leftarrow x + \alpha u\,(e_i - x)\), where \(e_i\) puts probability 1 on action \(i\) and \(\alpha\) is the step size.<label for="sn-cross" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-cross" class="margin-toggle"><span class="sidenote">Cross (1973), &ldquo;A stochastic learning model of economic behavior,&rdquo; <em>Quarterly Journal of Economics</em> 87: 239&ndash;266.</span> An action that pays well gets chosen, then gets more probability, then gets chosen more.</p>
+
+<p>Evolutionary biology describes the same pattern in a population: types that do better than average become more common. The <em>replicator equation</em> says that the share \(x_i\) of type \(i\) grows at a rate proportional to how far its payoff \(\pi_i\) exceeds the average payoff \(\bar\pi\):</p>
+$$\dot{x}_i = x_i\,(\pi_i - \bar{\pi}), \qquad \bar{\pi} = \sum_j x_j \pi_j.$$
+<p>The tool compares learning runs with the solution of this equation. Besides Cross&rsquo;s rule it has two other rules. <em>Exponential weights</em> keeps a score for each action, adds to every score the payoff that action would have earned in the round, and chooses with probabilities proportional to \(e^{\text{score}}\). <em>Softmax policy gradient</em> also chooses with probabilities proportional to \(e^{\theta_i}\), but after choosing \(i\) and receiving \(u\) it changes the parameters by \(\alpha u\,(e_i - x)\), the step of the REINFORCE algorithm. For these two rules, \(\alpha\) is the step size that multiplies each change of the scores or parameters.</p>
+</section>
+
+<section>
+<h2>Learning and selection on a simplex</h2>
+<p>Each point of the triangle is a choice of the three probabilities; a corner is certainty about one action. The gray strokes show the direction and speed of the replicator equation. Click the triangle, or select it and use the arrow keys, to move the start point. Each task below asks for a prediction first.</p>
+
+<div class="tool" id="tool">
+  <div class="row"><div class="controls" id="controls"></div><div class="stage" id="stage"></div></div>
+  <p class="readout" id="readout" aria-live="polite"></p>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="5.2-t1">
+    <p class="prompt">Use Cross&rsquo;s rule with step size 0.1, then 0.001. At which step size do the learning paths stay closer to the ink replicator curve?</p>
+    <div class="choices" data-options="0.1|0.001|Equally close"></div>
+    <div class="after"><p>Run 10 runs at each step size. Then try exponential weights.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>At 0.001. Averaged over 10 runs, the largest distance of a path from the curve is 0.45 at step size 0.1, 0.13 at 0.01, and 0.04 at 0.001. Each step of Cross&rsquo;s rule moves, on average, exactly \(\alpha\) times the replicator equation&rsquo;s direction; with small steps the random deviations average out. Exponential weights stays exactly on the curve at every step size when the payoffs are fixed, because it sees every action&rsquo;s payoff and so involves no chance.</p></div></div>
+  </li>
+  <li class="task" data-id="5.2-t2">
+    <p class="prompt">With the same start, set the payoffs to 0.80, 0.78, and 0.30. Which action has the highest probability at the end of the replicator curve, after 60 units of time?</p>
+    <div class="choices" data-options="Action 1, by a wide margin|Action 1, by a small margin|Action 2"></div>
+    <div class="after"><p>Set the three payoff sliders and look at where the ink curve ends.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Action 1, by a small margin: 0.525 against 0.475. Action 3 is gone within about 30 units of time, but by the equation, the ratio \(x_1/x_2\) grows only by the factor \(e^{(0.80-0.78)\,t}\), which is 3.3 after 60 units. Selection is fast when payoffs differ a lot and slow when they differ a little, and until then the action that started more common stays ahead.</p></div></div>
+  </li>
+  <li class="task" data-id="5.2-t3">
+    <p class="prompt">Set the payoffs back to 0.90, 0.60, and 0.30 and switch to softmax policy gradient with step size 0.001. Do the learning paths follow the replicator curve?</p>
+    <div class="choices" data-options="Yes|No, they follow a different curve to the same corner|No, they end at a different corner"></div>
+    <div class="after"><p>Run it and compare the paths with the ink curve and the dashed curve.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>They follow a different curve, the dashed one, toward the same corner. The paths stay on average 0.028 from the dashed curve and 0.33 from the replicator curve. Along the dashed curve action 2 first rises to a probability of 0.53, against 0.27 on the replicator curve, and action 1 takes much longer to win. The section below derives the difference.</p></div></div>
+  </li>
+  <li class="task" data-id="5.2-t4">
+    <p class="prompt">Switch to rock-paper-scissors, where the learner plays against opponents who choose as it does (win 1, tie 0.5, loss 0). What does the replicator curve do?</p>
+    <div class="choices" data-options="Spirals into the center|Circles the center forever|Goes to a corner"></div>
+    <div class="after"><p>Look at the ink curve, then run Cross&rsquo;s rule at step sizes 0.01 and 0.001.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>It circles the center on a closed loop: along the curve, the product \(x_1 x_2 x_3\) stays at its starting value, 0.030. The learning runs drift outward instead. With step size 0.01, after 120 units of time the product is below 0.003 in all 10 runs, so the paths are near the edges; with step size 0.001 it is between 0.006 and 0.037. The replicator equation describes the learner over a bounded stretch of time, and the noise of learning can add up over a long one.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>Why learning follows selection</h2>
+<p><span class="claim">Theorem</span> In one step of Cross&rsquo;s rule, the expected change of \(x_i\) is exactly \(\alpha\, x_i(\pi_i - \bar\pi)\): the chosen action gains in proportion to its payoff, every action loses in proportion to its probability, and the two effects net to the replicator equation. Börgers and Sarin proved more: with payoffs between 0 and 1, as the step size shrinks while the number of steps per unit of time grows, the path of the learning process over any bounded stretch of time comes as close as desired to the solution of the replicator equation, with probability approaching 1.<label for="sn-bs" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-bs" class="margin-toggle"><span class="sidenote">Börgers and Sarin (1997), &ldquo;Learning through reinforcement and replicator dynamics,&rdquo; <em>Journal of Economic Theory</em> 77: 1&ndash;14. They also note that over unbounded time the learning process can behave differently, as in task 4.</span></p>
+
+<p><span class="claim">Theorem</span> Exponential weights gives exactly the replicator equation in continuous time. If each score grows at the rate \(\pi_i\) and \(x_i = e^{s_i}/\sum_j e^{s_j}\), then \(\dot x_i = x_i(\dot s_i - \sum_j x_j \dot s_j) = x_i(\pi_i - \bar\pi)\). Softmax policy gradient gives a related flow that is not the same. Its expected parameter change is \(\dot\theta_i = x_i(\pi_i - \bar\pi)\), the replicator term itself, and the probabilities then move by \(\dot x_i = x_i(\dot\theta_i - \sum_j x_j \dot\theta_j)\). So policy gradient is the replicator equation with each action&rsquo;s advantage \(\pi_i - \bar\pi\) multiplied once more by its own probability \(x_i\). A rare action with a high payoff is therefore selected more slowly than under the replicator equation, which is why action 2 got ahead in task 3. The two flows have the same rest points.</p>
+
+<p><span class="claim">Argument</span> These results concern simple learning rules, not the training of language models. Their value here is as a way of seeing: learning from reward is a selection process. Behaviors that earn more reward than average become more common, whether or not anyone intended them. Sections 8.2 and 8.4 apply this way of seeing to reward hacking and instrumental convergence.<label for="sn-hs" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-hs" class="margin-toggle"><span class="sidenote">Hofbauer and Sigmund (1998), <em>Evolutionary Games and Population Dynamics</em>, Cambridge University Press, treats the replicator equation in full.</span></p>
+
+<figure class="multiples" id="fig-simplex" aria-describedby="fig-simplex-desc"></figure>
+<p id="fig-simplex-desc" class="caption">The replicator flow for payoffs 0.9, 0.6, and 0.3 (gray strokes), the solution from the start point (ink), and one run of Cross&rsquo;s rule with step size 0.01 (<span class="c-accent">blue</span>). The run wanders around the curve and ends at the same corner, certainty about action 1.</p>
+</section>
+
+<div class="check" data-id="5.2-c1" data-correct="1">
+  <p class="label">Check</p>
+  <p class="q">Under the replicator equation, an action&rsquo;s payoff equals the current average payoff. What happens to its probability at that moment?</p>
+  <div class="options seg"><button>It grows</button><button>It is momentarily unchanged</button><button>It shrinks</button></div>
+  <div class="feedback"><p>Its rate of change is \(x_i(\pi_i - \bar\pi) = 0\). It may grow or shrink later, as the other probabilities change the average.</p></div>
+</div>
+
+<div class="check" data-id="5.2-c2" data-correct="2">
+  <p class="q">A learner trained by reward finds a behavior that exploits a flaw in how reward is computed, and the behavior earns more reward than average. Nobody designed it. What does the selection view predict?</p>
+  <div class="options seg"><button>It dies out, because nobody intended it</button><button>It stays at the same frequency</button><button>It becomes more common</button></div>
+  <div class="feedback"><p>Selection responds only to reward. A behavior that earns more than average grows, whether or not anyone intended it.</p></div>
+</div>
+
+<div class="explain" data-id="5.2-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: why does a learner using Cross&rsquo;s rule with a small step size follow the replicator equation?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>With small steps, Cross&rsquo;s reinforcement rule follows the replicator equation over bounded stretches of time, exponential weights gives exactly the replicator equation in continuous time, and softmax policy gradient gives a related flow that selects rare actions more slowly. Learning from reward is selection: whatever earns more than average spreads, whether or not anyone designed it.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/5-2.js"></script>
+</body>
+</html>

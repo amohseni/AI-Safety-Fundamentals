@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>5.6 Emergence</title>
+<meta name="description" content="Do abilities appear suddenly as models grow, or does an all-or-nothing metric make smooth improvement look sudden?">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="5.6">
+<article>
+<h1>Emergence</h1>
+
+<section>
+<p><span class="claim">Empirical finding</span> Wei et al. reported &ldquo;emergent abilities&rdquo;: tasks on which performance stayed near chance as language models grew, and then rose well above chance beyond some size.<label for="sn-wei" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-wei" class="margin-toggle"><span class="sidenote">Wei, Tay, Bommasani, Raffel, Zoph, Borgeaud, Yogatama, Bosma, Zhou, Metzler, Chi, Hashimoto, Vinyals, Liang, Dean, and Fedus (2022), &ldquo;Emergent abilities of large language models,&rdquo; <em>Transactions on Machine Learning Research</em>.</span> If abilities appear suddenly, the smooth scaling laws for the loss (Section 3.8) would not warn of them, which matters for safety: a new model could have an ability that its smaller predecessors gave no sign of.</p>
+
+<p>Many of these tasks are scored by <em>exact match</em>: an answer counts only if every part of it is right. Take an answer of \(k\) digits, and suppose a model gets each digit right with probability \(p\), independently. Then three measures of the same model are</p>
+$$\begin{aligned} \text{exact match} &= p^{k}, \\ \text{per-digit accuracy} &= p, \\ \text{log-likelihood} &= k \log p. \end{aligned}$$
+<p>The log-likelihood is the log of the probability the model gives to the whole correct answer; it is never above 0, and closer to 0 is better. In the tool, per-digit accuracy improves smoothly with model size \(N\) by a made-up but standard form, \(p = \exp\!\big(-(N/c)^{-\alpha}\big)\), which comes from a per-digit loss that falls as a power law in \(N\). The <em>steepness</em> \(\alpha\) sets how fast it improves. Eleven models from \(10^7\) to \(10^{12}\) parameters are shown as dots.</p>
+</section>
+
+<section>
+<h2>Make emergence appear</h2>
+<p>Each task below asks for a prediction first. Make it, then use the tool to check it.</p>
+
+<div class="tool" id="tool">
+  <div class="row"><div class="controls" id="controls"></div><div class="stage" id="digit-chart"></div></div>
+  <div class="row"><div class="controls" aria-hidden="true"></div><div class="stage" id="metric-chart"></div></div>
+  <p class="readout" id="readout" aria-live="polite"></p>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="5.6-t1">
+    <p class="prompt">With exact match and steepness 0.5, change the answer length from \(k = 1\) to \(k = 10\). What does the exact-match curve look like at \(k = 10\)?</p>
+    <div class="choices" data-options="Like the per-digit curve, rising steadily from the smallest model|Near zero for the smallest models, then a steep rise|Falling with size"></div>
+    <div class="after"><p>Compare the two charts at \(k = 1\) and \(k = 10\).</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>At \(k = 10\) the three smallest models score 0.000, 0.004, and 0.042, and then the score climbs: 0.17, 0.37, 0.57. Over the same six models, per-digit accuracy climbs steadily from 0.37 to 0.95. Plotted alone, the exact-match curve looks like an ability that appears between \(10^8\) and \(10^9\) parameters, though nothing sudden happens to the per-digit accuracy underneath it.</p></div></div>
+  </li>
+  <li class="task" data-id="5.6-t2">
+    <p class="prompt">Keep exact match and raise \(k\) from 10 to 20 and then 100. On the logarithmic axis, does the rise from 10% to 90% exact match get narrower?</p>
+    <div class="choices" data-options="Much narrower|The same width, at larger sizes|Wider"></div>
+    <div class="after"><p>Watch the readout, which gives the sizes at which exact match passes 10% and 90%.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The same width: at steepness 0.5 the rise spans 2.68 powers of ten for every \(k\). <span class="claim">Theorem</span> In this model \(p^k = \exp\!\big(-k (N/c)^{-\alpha}\big)\), and multiplying by \(k\) only shifts the curve along the logarithmic axis by \(\log_{10}(k)/\alpha\). What a longer answer changes is where the rise happens and how long the flat stretch before it is. The steepness \(\alpha\) does change the width.</p></div></div>
+  </li>
+  <li class="task" data-id="5.6-t3">
+    <p class="prompt">Set \(k = 10\) and switch the metric to log-likelihood. Does the curve show a jump?</p>
+    <div class="choices" data-options="Yes, in the same place as exact match|No, it improves steadily|It gets worse with size"></div>
+    <div class="after"><p>Switch metrics and compare.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>No: the log-likelihood rises steadily over the whole range, from \(-10\) toward 0. In this model minus the log-likelihood is \(k (N/c)^{-\alpha}\), a power law in \(N\), the same kind of smooth trend as a scaling law. The jump belongs to the exact-match metric, not to the model.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>Is emergence a property of the metric?</h2>
+<p><span class="claim">Argument</span> Schaeffer, Miranda, and Koyejo argued that much of the reported suddenness comes from the way performance is measured, in the way the tool shows.<label for="sn-sch" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-sch" class="margin-toggle"><span class="sidenote">Schaeffer, Miranda, and Koyejo (2023), &ldquo;Are emergent abilities of large language models a mirage?&rdquo; <em>NeurIPS</em>. The tool uses their form for per-token accuracy.</span> Exact-match accuracy gives no credit until every part of an answer is right, so a smooth improvement in each part shows up as a long flat stretch followed by a rise. They found that, measured with continuous metrics such as the number of tokens that would have to be changed to make the answer right, the same models often improve smoothly, and they concluded that many claimed emergent abilities disappear under other metrics or with better statistics.</p>
+<p>The debate is not settled. The argument shows that a metric can produce a jump; it does not show that every reported jump is produced this way, and whether some abilities change sharply under any reasonable metric is still argued over. And in practice what matters is often whether a task gets done, which is an all-or-nothing outcome. The practical lesson for forecasting is to track the continuous measures that underlie the outcomes we care about.</p>
+
+<figure class="multiples" id="fig-em" aria-describedby="fig-em-desc"></figure>
+<p id="fig-em-desc" class="caption">The same eleven models measured two ways, with steepness 0.5 and 10-digit answers. Left: per-digit accuracy rises steadily. Right: exact-match accuracy stays near zero for the smallest models and then rises.</p>
+</section>
+
+<div class="check" data-id="5.6-c1" data-correct="1">
+  <p class="label">Check</p>
+  <p class="q">A model gets each digit right with probability 0.9, independently. What is its exact-match accuracy on 10-digit answers?</p>
+  <div class="options seg"><button>0.90</button><button>About 0.35</button><button>About 0.09</button></div>
+  <div class="feedback"><p>\(0.9^{10} \approx 0.35\). A model that is right on 90% of digits is right on only about a third of whole answers.</p></div>
+</div>
+
+<div class="check" data-id="5.6-c2" data-correct="1">
+  <p class="q">A benchmark&rsquo;s exact-match accuracy jumps from 4% to 37% between two model sizes. What would best show whether the underlying ability improved suddenly?</p>
+  <div class="options seg"><button>A larger benchmark scored the same way</button><button>Per-digit accuracy or log-likelihood of the answers for the same models</button><button>Testing an even larger model</button></div>
+  <div class="feedback"><p>A continuous measure of the same models shows whether the improvement underneath the jump is smooth or sudden.</p></div>
+</div>
+
+<div class="explain" data-id="5.6-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: how can a smooth improvement look like a sudden new ability?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>Some abilities were reported to appear suddenly with scale. An all-or-nothing metric such as exact match turns a smooth improvement in each part of an answer into a flat stretch and a steep rise, and continuous metrics often show smooth improvement in the same models. Whether any abilities are sudden under every reasonable metric is not settled; forecasts should track the continuous measures underneath.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/5-6.js"></script>
+</body>
+</html>

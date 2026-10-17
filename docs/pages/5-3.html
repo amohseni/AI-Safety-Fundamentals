@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>5.3 Double descent</title>
+<meta name="description" content="Test error can fall, peak where the model can just fit every training point, and fall again as the model grows.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  .quick { margin-top: -0.4rem; }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="5.3">
+<article>
+<h1>Double descent</h1>
+
+<section>
+<p>Section 2.8 showed the classical U-shaped curve: as a model gets more parameters, test error first falls and then rises, as the model starts fitting the noise in its training data. The classical advice is to stop near the bottom of the U. But models can be made larger still, past the size at which they can fit every training example exactly, called the <em>interpolation threshold</em>. Past it, test error often falls again. This is <em>double descent</em>.<label for="sn-dd" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-dd" class="margin-toggle"><span class="sidenote">Belkin, Hsu, Ma, and Mandal (2019), &ldquo;Reconciling modern machine-learning practice and the classical bias-variance trade-off,&rdquo; <em>PNAS</em> 116: 15849&ndash;15854. Nakkiran, Kaplun, Bansal, Yang, Barak, and Sutskever (2019), &ldquo;Deep double descent: where bigger models and more data hurt,&rdquo; arXiv:1912.02292; <em>ICLR</em> 2020.</span></p>
+
+<p>The tool uses a model simple enough to fit exactly in the browser. There are 40 training points: the curve \(\sin(\pi x)\) plus random noise. The model is a weighted sum of \(p\) <em>random features</em>. Each feature is a ReLU unit whose parameters are drawn at random and then frozen, and only the parameters that multiply the features are fitted, by least squares. When there are more features than points, many settings of these parameters fit the points exactly, and the tool picks the one with the smallest sum of squared parameters, the <em>minimum-norm</em> solution.<label for="sn-feat" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-feat" class="margin-toggle"><span class="sidenote">Each feature is \(\mathrm{ReLU}(w \cdot e(x) + b)\), where \(e(x) = (\cos 0.75\pi x, \sin 0.75\pi x)\) places \(x\) on an arc of a circle and \(w\) and \(b\) are random. With \(x\) alone, one-input ReLU features bend only between data points and many of them duplicate each other; the arc avoids that. Features with no bend among the 40 inputs are redrawn.</span> Test error is the mean squared distance between the fitted curve and \(\sin(\pi x)\), at 200 new points.</p>
+</section>
+
+<section>
+<h2>Through the threshold</h2>
+<p>Each task below asks for a prediction first. Make it, then use the tool to check it.</p>
+
+<div class="tool" id="tool">
+  <div class="row"><div class="controls" id="controls"></div><div class="stage" id="fit-chart"></div></div>
+  <div class="row"><div class="controls" aria-hidden="true"></div><div class="stage" id="err-chart"></div></div>
+  <p class="readout" id="readout" aria-live="polite"></p>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="5.3-t1">
+    <p class="prompt">Set \(p = 40\), as many features as training points. What does the fitted curve look like?</p>
+    <div class="choices" data-options="Smooth and close to the true curve|Through or near every point, with large swings between them|Close to a straight line"></div>
+    <div class="after"><p>Press <em>p = 40</em> and look at the fitted curve. Press <em>New features</em> a few times.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The curve passes through or very near every noisy point and swings far from the true curve between them. With the default noise, over 20 feature draws the test error at \(p = 40\) was between 0.2 and 62, while the best model with fewer than 30 features scored about 0.03. The peak of the error curve is near \(p = 40\): in 16 of the 20 draws it fell between 36 and 44.</p></div></div>
+  </li>
+  <li class="task" data-id="5.3-t2">
+    <p class="prompt">Now set \(p = 400\), ten times more features than points. How does the test error compare with \(p = 40\)?</p>
+    <div class="choices" data-options="Higher|Lower|About the same"></div>
+    <div class="after"><p>Press <em>p = 400</em>; look at the fitted curve and the error chart.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Much lower: between 0.08 and 0.10 in all 20 draws. The model still fits every training point exactly, but the curve between the points is far smoother. In this example the second descent does not go below the best small model (about 0.03); in some larger problems it does.</p></div></div>
+  </li>
+  <li class="task" data-id="5.3-t3">
+    <p class="prompt">Set the ridge strength to 0.001. What happens to the peak?</p>
+    <div class="choices" data-options="It moves to larger p|It disappears|It gets taller"></div>
+    <div class="after"><p>Change the ridge strength and watch the error chart. Then set it back to 0 and lower the noise.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>It disappears. With ridge 0.001 the largest test error for any \(p\) of 20 or more was at most 0.040 over the 20 draws. With no noise, the peak also goes away: in the first draw the largest test error is then at \(p = 1\).</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>Why the peak sits at the threshold</h2>
+<p><span class="claim">Argument</span> With fewer features than points, the model cannot pass through every point, so least squares averages over the noise. At the threshold the model has just enough features to pass through every point, and essentially one way to do it. That one fit must pass through the noise too, and to do that it uses large parameters, which make the curve swing between the points. With many more features than points, there are many exact fits, and the minimum-norm one spreads the work over many features with small parameters, which gives a smoother curve. Ridge regularization, which adds a penalty on the squared parameters, stops the fit from forcing its way through every noisy point at the threshold, and so removes the peak.</p>
+<p><span class="claim">Theorem</span> For a linear model trained by gradient descent on the squared error from all-zero parameters, the parameters converge to the minimum-norm solution, because every gradient step lies in the span of the training inputs. This is one reason large models trained from small parameters can find smooth fits. <span class="claim">Empirical finding</span> In deep networks double descent also appears as training time and dataset size grow, and it is strongest when the labels are noisy (Nakkiran et al.). It is one reason the classical advice to keep models small does not carry over to large networks.<label for="sn-dd2" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-dd2" class="margin-toggle"><span class="sidenote">Schaeffer et al. (2023), &ldquo;Double descent demystified: identifying, interpreting and ablating the sources of a deep learning puzzle,&rdquo; arXiv:2303.14151, explains the peak in linear regression.</span></p>
+
+<figure class="multiples" id="fig-dd" aria-describedby="fig-dd-desc"></figure>
+<p id="fig-dd-desc" class="caption">Test error against the number of features \(p\), on logarithmic axes, averaged (geometrically) over 8 feature draws, with noise 0.3 and no ridge. Left of the threshold \(p = 40\) is the classical U; the peak is near the threshold; to its right the error falls again.</p>
+</section>
+
+<div class="check" data-id="5.3-c1" data-correct="1">
+  <p class="label">Check</p>
+  <p class="q">The same random-feature model is fitted to 1,000 noisy training points. Near what number of features would you expect the test error to peak?</p>
+  <div class="options seg"><button>About 40</button><button>About 1,000</button><button>About 10,000</button></div>
+  <div class="feedback"><p>The peak sits at the interpolation threshold, where the number of features first matches the number of points the model must fit exactly: about 1,000.</p></div>
+</div>
+
+<div class="check" data-id="5.3-c2" data-correct="2">
+  <p class="q">Why does ridge regularization remove the peak?</p>
+  <div class="options seg"><button>It adds features</button><button>It removes the noise from the labels</button><button>It stops the fit from passing exactly through every noisy point at the threshold</button></div>
+  <div class="feedback"><p>The peak comes from a model forced through noisy points with large parameters. The penalty on the parameters lets the fit miss the points a little instead.</p></div>
+</div>
+
+<div class="explain" data-id="5.3-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: why is test error worst when the number of features equals the number of training points?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>As a model grows, test error can fall, rise to a peak at the interpolation threshold, and fall again. At the threshold the model has essentially one exact fit, which must bend through the noise; far past it, the minimum-norm fit among many is smooth. Regularization or noise-free labels remove the peak.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/5-3.js"></script>
+</body>
+</html>
