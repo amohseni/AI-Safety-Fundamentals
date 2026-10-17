@@ -48,7 +48,7 @@ An interactive explainer site that teaches a new graduate student how modern AI 
 
 ## Status
 
-Built and independently reviewed (2026-10-17): 37 pages: 0.1, 1.1 to 1.5, 2.1 to 2.8, 3.1, 3.4, 3.8, 4.2, 4.3, 5.1 to 5.6, 6.1, 6.4, 6.5, 7.1, 7.3, 8.1 to 8.6, 9.1. Each spec ends with the builder's changes and the reviewer's changes. Page 7.3 is not yet reviewed by a second agent. `node tools/build-registry.mjs` lists what is built.
+Built and independently reviewed (2026-10-17): 37 pages: 0.1, 1.1 to 1.5, 2.1 to 2.8, 3.1, 3.4, 3.8, 4.2, 4.3, 5.1 to 5.6, 6.1, 6.4, 6.5, 7.1, 7.3, 8.1 to 8.6, 9.1. Each spec ends with the builder's changes and the reviewer's changes. `node tools/build-registry.mjs` lists what is built.
 
 Waiting on pretrained model data (huggingface.co is unreachable from the build workspace): 1.6, 3.2, 3.3, 3.5 to 3.7, 4.1, 4.4, 6.2, 6.3, 6.6, 6.7 (tab 1), 7.2. Buildable now: 6.7 tab 2 (uses `docs/data/modadd/`).
 
