@@ -176,13 +176,13 @@ export const sections = [
         "id": "4.2",
         "title": "Learning from human preferences",
         "core": false,
-        "href": null
+        "href": "pages/4-2.html"
       },
       {
         "id": "4.3",
         "title": "Optimizing a learned reward",
         "core": true,
-        "href": null
+        "href": "pages/4-3.html"
       },
       {
         "id": "4.4",
@@ -200,19 +200,19 @@ export const sections = [
         "id": "5.1",
         "title": "Universal approximation",
         "core": false,
-        "href": null
+        "href": "pages/5-1.html"
       },
       {
         "id": "5.2",
         "title": "Learning as selection",
         "core": true,
-        "href": null
+        "href": "pages/5-2.html"
       },
       {
         "id": "5.3",
         "title": "Double descent",
         "core": false,
-        "href": null
+        "href": "pages/5-3.html"
       },
       {
         "id": "5.4",
@@ -230,7 +230,7 @@ export const sections = [
         "id": "5.6",
         "title": "Emergence",
         "core": false,
-        "href": null
+        "href": "pages/5-6.html"
       }
     ]
   },

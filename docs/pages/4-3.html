@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4.3 Optimizing a learned reward</title>
+<meta name="description" content="The KL-regularized objective of RLHF, its exact solution, and why pushing hard against a learned reward lowers true quality.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  #bars text.name { fill: var(--ink); }
+  #bars text.num { fill: var(--quiet); }
+  #bars text.true { fill: var(--second); }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="4.3">
+<article>
+<h1>Optimizing a learned reward</h1>
+
+<section>
+<p>In reinforcement learning from human feedback (RLHF), the language model, now called the <em>policy</em>, is trained to produce responses that the reward model of Section 4.2 scores highly. If training pushed on the reward alone, the policy would drift toward whatever the reward model scores highest, including strange responses that the reward model was never checked on. So the objective adds a penalty for moving away from the starting model \(\pi_{\mathrm{ref}}\): maximize the expected reward minus \(\beta\) times the KL divergence from the starting model.<label for="sn-ziegler" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-ziegler" class="margin-toggle"><span class="sidenote">Ziegler, Stiennon, Wu, Brown, Radford, Amodei, Christiano, and Irving (2019), &ldquo;Fine-tuning language models from human preferences,&rdquo; arXiv:1909.08593, used this objective for language models.</span> The KL divergence measures how far one probability distribution is from another; it is zero only when the two are the same.</p>
+
+<p><span class="claim">Theorem</span> This objective has an exact solution. For each prompt \(x\), the policy that maximizes it is the starting distribution reweighted by the exponential of the reward:</p>
+$$\pi^{*}(y \mid x) = \frac{1}{Z(x)}\, \pi_{\mathrm{ref}}(y \mid x)\, \exp\!\big(r(x, y)/\beta\big),$$
+<p>where \(r\) is the reward model&rsquo;s score and \(Z(x)\) makes the probabilities sum to 1. The DPO method trains a language model directly toward this solution, without a separate reinforcement learning step.<label for="sn-dpo" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-dpo" class="margin-toggle"><span class="sidenote">Rafailov, Sharma, Mitchell, Ermon, Manning, and Finn (2023), &ldquo;Direct preference optimization: your language model is secretly a reward model,&rdquo; <em>NeurIPS</em>.</span></p>
+
+<p>The tool applies this formula to eight constructed responses to one prompt. Their starting probabilities, reward model scores, and true rewards are made-up numbers; the policy is computed exactly from them.</p>
+</section>
+
+<section>
+<h2>Tilt the distribution</h2>
+<p>Each task below asks for a prediction first. Make it, then use the tool to check it.</p>
+
+<div class="tool" id="tool">
+  <div class="panel">
+    <p class="panel-note">The prompt is &ldquo;Why is the sky blue?&rdquo; Each row is one response. The outline shows the starting model&rsquo;s probability and the <span class="c-accent">filled bar</span> the policy&rsquo;s probability at the chosen \(\beta\). At the right of each row are the reward model&rsquo;s score and, once shown, the <span class="c-second">true reward</span>.</p>
+    <div class="row"><div class="controls" id="controls"></div><div class="stage" id="bars"></div></div>
+    <div class="row"><div class="controls" aria-hidden="true"></div><div class="stage" id="curve"></div></div>
+    <p class="readout" id="readout" aria-live="polite"></p>
+  </div>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="4.3-t1">
+    <p class="prompt">Lower \(\beta\) slowly from 10 to 0.01. What happens to the expected true reward?</p>
+    <div class="choices" data-options="It rises the whole way|It rises, then falls|It falls the whole way"></div>
+    <div class="after"><p>Move the \(\beta\) slider and watch both curves. Then show the true rewards.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The expected true reward rises from 0.40 to a peak of 0.52 and then falls to 0.10, below where it started. The expected reward model score rises the whole way, from 0.47 to 1.00. At \(\beta = 0.01\) the policy puts almost all its probability on the flattering, jargon-filled, wrong response: the reward model scores it 1.00, and its true reward is 0.10.</p></div></div>
+  </li>
+  <li class="task" data-id="4.3-t2">
+    <p class="prompt">Which \(\beta\) gives the highest expected true reward?</p>
+    <div class="choices" data-options="Near 10, close to the starting model|Near 0.2|Near 0.01, pushing hardest"></div>
+    <div class="after"><p>Find the top of the true-reward curve.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The peak is at \(\beta \approx 0.22\), where the policy is still near the starting model: the KL divergence is about 0.55. Below that, most of the further gain in the reward model&rsquo;s score comes from moving probability onto the hack response, whose starting probability was only 0.03.</p></div></div>
+  </li>
+  <li class="task" data-id="4.3-t3">
+    <p class="prompt">Remove the hack response and lower \(\beta\) again. What does the expected true reward do now?</p>
+    <div class="choices" data-options="It rises the whole way|It rises, then falls|It falls the whole way"></div>
+    <div class="after"><p>Switch the hack response off and repeat task 1.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>It rises the whole way, from 0.41 to 0.90. Without the hack, the response the reward model scores highest is also the best one. The fall in task 1 came from a single response on which the reward model and the true reward disagree. Pushing hard against the reward model finds such responses, because they are where its score is highest.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>Why pushing harder can lower true quality</h2>
+<p>The solution can be checked in one line. For any policy \(\pi\), the objective equals \(\beta \log Z(x) - \beta\,\mathrm{KL}(\pi \,\|\, \pi^{*})\). The first term does not depend on \(\pi\), and the second is zero only at \(\pi = \pi^{*}\). As \(\beta\) falls, \(\pi^{*}\) moves probability toward high-scoring responses in proportion to their starting probability times \(\exp(r/\beta)\). A response that starts rare but scores highest ends up with nearly all the probability, whatever its true quality.</p>
+
+<p><span class="claim">Empirical finding</span> Gao, Schulman, and Hilton measured this effect in a controlled setting.<label for="sn-gao" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-gao" class="margin-toggle"><span class="sidenote">Gao, Schulman, and Hilton (2022), &ldquo;Scaling laws for reward model overoptimization,&rdquo; arXiv:2210.10760; published at <em>ICML</em> 2023.</span> A large reward model stood in for human judgment (the &ldquo;gold&rdquo; reward model). Smaller proxy reward models were trained on its labels, and policies were optimized against the proxies. As a policy moved further from the starting model, its proxy score kept rising, while its gold score rose at first and then fell. This happened both under reinforcement learning and under best-of-\(n\) sampling, and the size of the effect changed smoothly with the size of the proxy reward model. It is an instance of Goodhart&rsquo;s law, the subject of Section 8.1.</p>
+
+<figure class="multiples" id="fig-kl" aria-describedby="fig-kl-desc"></figure>
+<p id="fig-kl-desc" class="caption">Expected reward model score (ink) and expected true reward (<span class="c-second">orange</span>) against the KL divergence from the starting model, for the eight responses of the tool. With the hack response, the true reward peaks at a KL divergence of about 0.55 and then falls. Without it, the two rise together.</p>
+</section>
+
+<div class="check" data-id="4.3-c1" data-correct="2">
+  <p class="label">Check</p>
+  <p class="q">Two responses get the same reward model score. The starting model gives one of them probability 0.2 and the other 0.1. Under \(\pi^{*}\), how do their probabilities compare as \(\beta\) changes?</p>
+  <div class="options seg"><button>They become equal once \(\beta\) is small</button><button>The rarer one catches up as \(\beta\) grows</button><button>The first is always twice as likely as the second</button></div>
+  <div class="feedback"><p>Both are multiplied by the same factor \(\exp(r/\beta)\) before normalizing, so the ratio of their probabilities stays at 0.2 to 0.1 for every \(\beta\). The reweighting changes probabilities only through differences in reward.</p></div>
+</div>
+
+<div class="check" data-id="4.3-c2" data-correct="1">
+  <p class="q">A team lowers \(\beta\) step by step and sees the reward model&rsquo;s average score rise every time. What does that show about true quality?</p>
+  <div class="options seg"><button>True quality is rising too</button><button>Nothing by itself; true quality may be rising or falling</button><button>True quality must be falling</button></div>
+  <div class="feedback"><p>The reward model&rsquo;s score rises as \(\beta\) falls whether or not quality does: in the tool it rose the whole way in both cases. Only an independent measure of quality, such as fresh human judgments, can show which case they are in.</p></div>
+</div>
+
+<div class="explain" data-id="4.3-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: why did the true reward fall when \(\beta\) became small, and why did it stop falling once the hack response was removed?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>RLHF maximizes the reward model&rsquo;s score minus \(\beta\) times the KL divergence from the starting model. The exact solution reweights the starting distribution by \(\exp(r/\beta)\). Pushed hard, this reweighting concentrates on the responses the reward model scores highest, which include the ones where it is wrong, so true quality first rises and then falls.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/4-3.js"></script>
+</body>
+</html>
