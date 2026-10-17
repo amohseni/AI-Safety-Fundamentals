@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.5 Transformers and scale</title>
+<meta name="description" content="The transformer replaced recurrence with attention, and from 2018 to 2022 progress came mainly from training larger transformers on more text, guided by scaling laws.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  h1 { hyphens: auto; overflow-wrap: break-word; }
+  .exp { vertical-align: 0.45em; line-height: 0; }
+  .pt { cursor: pointer; }
+  .pt:focus { outline: none; }
+  .pt:focus-visible { stroke: var(--focus); stroke-width: 2; }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="1.5">
+<article>
+<h1>Transformers and scale</h1>
+
+<section>
+<p>Before 2017, language models read text one word at a time using recurrent networks such as the LSTM. Attention, introduced for translation in 2014, let a model look directly at any earlier word. The 2017 paper &ldquo;Attention Is All You Need&rdquo; dropped the recurrence and built the whole model from attention and simple feed-forward layers.<label for="sn-vas" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-vas" class="margin-toggle"><span class="sidenote">Vaswani, Shazeer, Parmar, Uszkoreit, Jones, Gomez, Kaiser, and Polosukhin (2017), &ldquo;Attention is all you need,&rdquo; <em>Advances in Neural Information Processing Systems</em> 30. Page 3.4 explains attention.</span> The resulting architecture, the transformer, processes all positions of a text in parallel during training, which suits GPUs.</p>
+
+<p>OpenAI&rsquo;s GPT models are transformers trained to predict the next token of internet text. GPT-1 (2018) had about 117 million parameters,<label for="sn-gpt" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-gpt" class="margin-toggle"><span class="sidenote">The GPT-2 paper (Radford et al. 2019, &ldquo;Language models are unsupervised multitask learners&rdquo;) lists its smallest model, the same size as GPT-1, at 117 million parameters. The released GPT-2 small model has 124 million, the count used elsewhere on this site.</span> GPT-2 (2019) 1.5 billion, and GPT-3 (2020) 175 billion. GPT-3 could do many tasks from a few examples given in the prompt, without further training.<label for="sn-brown" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-brown" class="margin-toggle"><span class="sidenote">Brown et al. (2020), &ldquo;Language models are few-shot learners,&rdquo; <em>Advances in Neural Information Processing Systems</em> 33.</span></p>
+
+<p>Kaplan et al. (2020) found that a language model&rsquo;s loss falls as a power law in its number of parameters, its amount of training data, and its training compute, over many orders of magnitude.<label for="sn-kap" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-kap" class="margin-toggle"><span class="sidenote">Kaplan, McCandlish, Henighan, Brown, Chess, Child, Gray, Radford, Wu, and Amodei (2020), &ldquo;Scaling laws for neural language models,&rdquo; arXiv:2001.08361.</span> Hoffmann et al. (2022), the Chinchilla paper, revised the recommended balance: for a fixed compute budget, train a smaller model on more data, about 20 tokens per parameter.<label for="sn-hof" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-hof" class="margin-toggle"><span class="sidenote">Hoffmann et al. (2022), &ldquo;Training compute-optimal large language models,&rdquo; arXiv:2203.15556. Page 3.8 works through the trade-off.</span> Richard Sutton&rsquo;s essay &ldquo;The Bitter Lesson&rdquo; (2019) states the view behind this period: over 70 years of AI research, general methods that make use of more computation have beaten methods built on human knowledge.<label for="sn-sut" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-sut" class="margin-toggle"><span class="sidenote">Sutton (2019), &ldquo;The bitter lesson,&rdquo; incompleteideas.net, March 13, 2019.</span></p>
+
+<p>Training compute is counted in floating-point operations (FLOP): the number of additions and multiplications done during training. The tool below plots it for notable models, from the dataset kept by Epoch AI.<label for="sn-epoch" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-epoch" class="margin-toggle"><span class="sidenote">Epoch AI, &ldquo;Notable AI Models&rdquo; dataset (epoch.ai/data/notable-ai-models), read through its republication by Our World in Data on 2026-10-16. Each point&rsquo;s source is given when you select it, and in <code>data/compute.json</code>.</span></p>
+</section>
+
+<section>
+<h2>Compute over time</h2>
+<p>Each point is one of 34 notable models from 2012 to 2024. Select a point, by tapping it or with the Previous and Next buttons, to see its details.</p>
+
+<div class="tool" id="tool">
+  <div class="row">
+    <div class="controls" id="controls"></div>
+    <div class="stage" id="chart"></div>
+  </div>
+  <p class="readout" id="trend" aria-live="polite"></p>
+  <p class="readout" id="readout" aria-live="polite"></p>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="1.5-t1">
+    <p class="prompt">Switch the vertical axis to linear. Where will the models from before 2018 appear?</p>
+    <div class="choices" data-options="Spread over the lower half|Squeezed onto the floor"></div>
+    <div class="after"><p>Switch the axis and look.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>All of them sit on the floor. The largest model before 2018 used about 1/7,500 of the compute of the largest model on the chart. Even GPT-3 is below 1% of the top. A linear axis can show only the last few years; the log axis shows every model at once.</p></div></div>
+  </li>
+  <li class="task" data-id="1.5-t2">
+    <p class="prompt">Back on the log axis, with all domains, turn on the fitted trend. By about what factor does training compute grow each year?</p>
+    <div class="choices" data-options="About 1.5 times|About 5 times|About 100 times"></div>
+    <div class="after"><p>Read it off the chart: count how many powers of ten the line climbs over a decade, then check the readout below the chart.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The line climbs about 6.8 powers of ten over ten years, which is about 4.8 times per year, a doubling about every 5 months. A straight line on a log axis means growth by the same factor every year. Language models alone grow faster than vision models in this selection (about 5.4 against 3.3 times per year).</p></div></div>
+  </li>
+  <li class="task" data-id="1.5-t3">
+    <p class="prompt">GPT-3 has about 117 times the parameters of GPT-2. How many times GPT-2&rsquo;s training compute did GPT-3 use?</p>
+    <div class="choices" data-options="About 10 times|About 160 times|About 10,000 times"></div>
+    <div class="after"><p>Select GPT-2, then GPT-3; the readout compares each model with the one you selected before.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>About 160 times: \(3.14 \times 10^{23}\) FLOP against \(1.92 \times 10^{21}\). Training compute depends on the number of training tokens as well as the parameters (roughly 6 FLOP per parameter per token), so it need not grow in step with the parameter count.</p></div></div>
+  </li>
+</ol>
+
+<figure id="fig-compute" aria-describedby="fig-compute-desc"></figure>
+<p id="fig-compute-desc" class="caption">Training compute of 34 notable models, 2012 to 2024, on a log scale, with the least-squares trend line: about 4.8 times more each year. Data from Epoch AI. <span class="claim">Empirical finding</span> Over a longer span, Epoch AI&rsquo;s researchers found that training compute doubled about every 20 months before 2010 and about every 6 months after.<label for="sn-sev" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-sev" class="margin-toggle"><span class="sidenote">Sevilla, Heim, Ho, Besiroglu, Hobbhahn, and Villalobos (2022), &ldquo;Compute trends across three eras of machine learning,&rdquo; arXiv:2202.05924.</span></p>
+</section>
+
+<div class="check" data-id="1.5-c1" data-correct="1">
+  <p class="label">Check</p>
+  <p class="q">Training compute is roughly proportional to parameters times training tokens, and Chinchilla says both should grow in equal proportion. With 4 times the compute, how should each change?</p>
+  <div class="options seg"><button>4 times the parameters, same tokens</button><button>About 2 times each</button><button>Same parameters, 4 times the tokens</button></div>
+  <div class="feedback"><p>If parameters and tokens each grow by a factor \(k\), compute grows by \(k^2\). For \(k^2 = 4\), \(k = 2\).</p></div>
+</div>
+
+<div class="check" data-id="1.5-c2" data-correct="0">
+  <p class="q">Kaplan et al. found that loss falls as a power law in compute: \(L = (C_0 / C)^{\alpha}\) for constants \(C_0\) and \(\alpha\). Plotted with log loss against log compute, what does this look like?</p>
+  <div class="options seg"><button>A straight line sloping down</button><button>A curve that flattens to a floor</button><button>A sudden drop at one compute level</button></div>
+  <div class="feedback"><p>Taking logs gives \(\log L = \alpha \log C_0 - \alpha \log C\), a straight line with slope \(-\alpha\). The same reasoning explains the straight trend line in the compute chart: exponential growth is a straight line on a log axis.</p></div>
+</div>
+
+<div class="explain" data-id="1.5-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: what changed between 2018 and 2022, if the architecture stayed the transformer?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>The transformer replaced recurrence with attention and trains in parallel on GPUs. From 2018 to 2022, progress came mainly from training larger transformers on more text with more compute, which grew about fivefold each year, guided by empirical scaling laws that made the results of larger runs predictable.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/1-5.js"></script>
+</body>
+</html>

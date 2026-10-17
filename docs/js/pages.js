@@ -20,7 +20,7 @@ export const sections = [
         "id": "1.1",
         "title": "The timeline",
         "core": true,
-        "href": null
+        "href": "pages/1-1.html"
       },
       {
         "id": "1.2",
@@ -32,19 +32,19 @@ export const sections = [
         "id": "1.3",
         "title": "Backpropagation and the second winter (1980 to 2005)",
         "core": false,
-        "href": null
+        "href": "pages/1-3.html"
       },
       {
         "id": "1.4",
         "title": "Deep learning (2006 to 2016)",
         "core": false,
-        "href": null
+        "href": "pages/1-4.html"
       },
       {
         "id": "1.5",
         "title": "Transformers and scale (2017 to 2022)",
         "core": false,
-        "href": null
+        "href": "pages/1-5.html"
       },
       {
         "id": "1.6",

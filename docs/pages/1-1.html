@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.1 The timeline</title>
+<meta name="description" content="About 60 milestones of AI on one time axis, in three lanes: ideas, computing power and data, and the funding climate. Most core ideas are decades older than their success, which waited on computing power and data.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  h1 { hyphens: auto; overflow-wrap: break-word; }
+  #timeline svg { display: block; max-width: 100%; touch-action: none; cursor: grab; }
+  #timeline svg:active { cursor: grabbing; }
+  #timeline .ev { cursor: pointer; }
+  #timeline .ev:focus { outline: none; }
+  #timeline .ev:focus-visible circle { stroke: var(--focus); stroke-width: 3; }
+  #timeline .winter { cursor: pointer; }
+  .tl-bar { display: flex; flex-wrap: wrap; gap: 0.8rem 1.6rem; align-items: flex-end; margin-bottom: 0.8rem; }
+  #card { width: 61%; border-top: 1px solid var(--rule); padding-top: 0.6rem; margin-top: 0.8rem; }
+  #card h3 { margin: 0.2rem 0 0.4rem; font-size: var(--text); font-weight: 600; }
+  #card p { margin: 0.35rem 0; }
+  #card .meta { color: var(--quiet); }
+  #card .lr { margin: 0.6rem 0 0.2rem; }
+  #fig-static svg { display: block; max-width: 100%; }
+  @media (max-width: 760px) { #card { width: 100%; } }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="1.1">
+<article>
+<h1>The timeline</h1>
+
+<section>
+<p>Most of the ideas behind today&rsquo;s AI are old. The perceptron, a single artificial neuron that learns, dates from 1958. Backpropagation, the method used to train networks with many layers, was worked out by 1970 and became widely known in 1986. Convolutional networks read handwritten digits in 1989. None of these dominated AI until after 2012, when graphics processors (GPUs) and large labeled datasets made it practical to train large networks.</p>
+
+<p>Before then, funding and attention rose and fell twice. The two collapses are called the AI winters, roughly 1974 to 1980 and 1987 to 1993. Each followed a period in which public claims ran well ahead of what the systems could do.<label for="sn-nil" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-nil" class="margin-toggle"><span class="sidenote">Nilsson (2009), <em>The Quest for Artificial Intelligence: A History of Ideas and Achievements</em>, Cambridge University Press. The dates of the winters vary by source; some accounts extend the second to 2000.</span></p>
+
+<p>The timeline below has three lanes: ideas, computing power and data, and the funding climate. Many events come with a well-known story. Where the story differs from what the documents show, the event&rsquo;s card shows both: the lore and the record. Every event links to its source.</p>
+</section>
+
+<section>
+<h2>Timeline</h2>
+<p>Drag the timeline to move along it, and pinch or scroll to zoom, or use the buttons. Select an event, by tapping it or with the Previous and Next buttons, to open its card below the timeline. Open circles mark events whose card has both a lore and a record. With the timeline selected, the arrow keys move it and the plus and minus keys zoom.</p>
+
+<div class="tool" id="tool">
+  <div class="tl-bar" id="bar"></div>
+  <div id="timeline"></div>
+  <div id="card" aria-live="polite"></div>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="1.1-t1">
+    <p class="prompt">How many years passed between the first derivation of backpropagation (Linnainmaa) and the paper that made it widely known (Rumelhart, Hinton, and Williams)?</p>
+    <div class="choices" data-options="About 5|About 15|About 30"></div>
+    <div class="after"><p>Open the Linnainmaa card, then the card for backpropagation popularized. Each card says how many years it comes after the card you opened before.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>16 years, from 1970 to 1986, and another 26 years passed before deep networks trained this way won ImageNet in 2012. Backpropagation, convolutional networks, and the LSTM are all in the ideas lane long before 2012.</p></div></div>
+  </li>
+  <li class="task" data-id="1.1-t2">
+    <p class="prompt">Turn on training compute, which plots the compute used to train AI models in the computing lane on a log scale. Compared with before 2010, how fast do the points climb after 2010?</p>
+    <div class="choices" data-options="About as fast|Faster|Slower"></div>
+    <div class="after"><p>Turn it on, look at the slope of the points, then read the fitted rates below the timeline.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p><span class="claim">Empirical finding</span> Much faster. Fitted to the points shown, compute grew about 1.5 times per year from 1950 to 2009 (a doubling about every 20 months) and about 4.8 times per year from 2012 (a doubling about every 5 months). The points after 2010 are 34 notable models chosen for page 1.5, so their rate is a rough guide; Epoch AI&rsquo;s analysis of its full dataset gives about 20 and 6 months.<label for="sn-sev" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-sev" class="margin-toggle"><span class="sidenote">Sevilla et al. (2022), &ldquo;Compute trends across three eras of machine learning,&rdquo; arXiv:2202.05924.</span> The ideas were in place; the computing lane is what changed.</p></div></div>
+  </li>
+  <li class="task" data-id="1.1-t3">
+    <p class="prompt">A common story says that Minsky and Papert&rsquo;s 1969 book <em>Perceptrons</em> killed neural network research. Does the record support it?</p>
+    <div class="choices" data-options="Yes|Partly: the book was one cause among several"></div>
+    <div class="after"><p>Open the Minsky and Papert card and switch between lore and record. Look also at the funding lane around the first winter.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The book proved real limits of single-layer perceptrons, but perceptron research was already in trouble, nobody knew how to train networks with hidden layers, and AI funding as a whole fell after the Mansfield Amendment (1969) and the Lighthill report (1973). Page 1.2 looks at the book&rsquo;s results.</p></div></div>
+  </li>
+</ol>
+
+<figure id="fig-static" aria-describedby="fig-static-desc"></figure>
+<p id="fig-static-desc" class="caption">Twelve milestones from 1940 to 2025, with the two AI winters shaded. The perceptron, backpropagation, convolutional networks, and the LSTM all date from before 2000; their success came after 2012.</p>
+</section>
+
+<div class="check" data-id="1.1-c1" data-correct="1">
+  <p class="label">Check</p>
+  <p class="q">LeCun&rsquo;s 1989 zip-code reader and AlexNet (2012) were both convolutional networks trained with backpropagation. What did AlexNet have that the 1989 network did not?</p>
+  <div class="options seg"><button>A method for training the hidden layers</button><button>Far more training compute and over a million labeled images</button><button>The idea of applying one filter at every position</button></div>
+  <div class="feedback"><p>Backpropagation and convolution were both in the 1989 network. What changed between 1989 and 2012 was computing power (GPUs) and data (ImageNet).</p></div>
+</div>
+
+<div class="check" data-id="1.1-c2" data-correct="2">
+  <p class="q">Which statement fits the timeline best?</p>
+  <div class="options seg"><button>Deep learning took off when backpropagation was invented</button><button>Each AI winter ended when a new architecture was found</button><button>Most core methods were decades old when they started to work at scale</button></div>
+  <div class="feedback"><p>Backpropagation (1970, 1986), convolutional networks (1989), and the LSTM (1997) waited until the 2010s, when compute and data caught up.</p></div>
+</div>
+
+<div class="explain" data-id="1.1-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: why did neural networks succeed after 2012 and not in 1990?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>Most core ideas of modern AI are decades older than their success. Backpropagation, convolutional networks, and the LSTM were in place by 1997; what changed after 2010 was computing power and data, and the training compute of AI models began to grow much faster than before.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/1-1.js"></script>
+</body>
+</html>
