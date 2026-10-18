@@ -1,6 +1,6 @@
 # Modular-addition runs
 
-This folder makes the data in `docs/data/modadd/`, used by pages 5.4, 5.5, and 6.7.
+This folder makes the data in `docs/data/modadd/` and `docs/data/6-7/`, used by pages 5.4, 5.5, and 6.7.
 
 ## The model and training
 
@@ -47,6 +47,12 @@ Other details:
 - `seeds.json`: the five seeds at weight decay 1 and 30%: final accuracies, key frequencies, spectra, and the ablation results.
 - `seeds-embed.json`: the five final number embeddings (float32 little-endian, row-major, base64), for page 6.7.
 - `index.json`: the list of runs.
+
+`export_params.py` writes `docs/data/6-7/model.json`: the final parameters of the main run (weight decay 1, 30%, seed 0) as float16, checked to give the same prediction as float32 on all p² pairs, plus the training-set mask and each MLP neuron's dominant frequency. Page 6.7 runs the model in the browser from this file (`docs/js/lib/s67-modadd.js`); `node tools/test-page-6-7.mjs` checks the numbers it quotes.
+
+```
+python3 export_params.py --pt runs/p59_f0.3_wd1.0_s0.pt --out ../../docs/data/6-7/model.json
+```
 
 ## Reproducing
 

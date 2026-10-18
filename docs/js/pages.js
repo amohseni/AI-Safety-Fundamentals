@@ -278,7 +278,7 @@ export const sections = [
         "id": "6.7",
         "title": "Circuits and activation patching",
         "core": true,
-        "href": null
+        "href": "pages/6-7.html"
       }
     ]
   },

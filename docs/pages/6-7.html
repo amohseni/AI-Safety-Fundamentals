@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>6.7 Circuits and activation patching</title>
+<meta name="description" content="Activation patching as the causal test of circuit analysis, tried on a trained modular-addition transformer that runs in the browser.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  .comp-buttons { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+  #patch-chart svg, #map svg, #spec-chart svg, #circle svg { display: block; }
+  #map { margin-top: 1.2rem; }
+  #map .map-note { width: 61%; color: var(--quiet); margin: 0 0 0.4rem; }
+  #map-cells { outline-offset: 4px; }
+  .tool .stage .readout { width: 100%; }
+  #fig-algo > div { flex: 1 1 15rem; }
+  @media (max-width: 760px) { #map .map-note { width: 100%; } }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="6.7">
+<article>
+<h1>Circuits and activation patching</h1>
+
+<section>
+<p>A <em>circuit</em> is a set of model components, such as particular attention heads and MLP neurons, together with the connections between them, that carries out a specific behavior. Finding one is the most detailed form of mechanistic interpretability (Section 6.1).</p>
+
+<p>The main tool is <em>activation patching</em>. Run the model on a clean input and on a corrupted input that differs from it in one relevant way. For example, the clean input &ldquo;When Mary and John went to the store, John gave a drink to&rdquo; should be completed with &ldquo;Mary&rdquo;; the corrupted input &ldquo;When Mary and John went to the store, Mary gave a drink to&rdquo; should be completed with &ldquo;John&rdquo;. The <em>logit difference</em> is the model&rsquo;s score (logit) for the clean answer minus its score for the corrupted answer. Now run the corrupted input again, but copy in one component&rsquo;s activation from the clean run. If the logit difference moves back toward its clean value, the component carries information that decides the answer.</p>
+
+<p><span class="claim">Empirical finding</span> Wang et al. used patching to map a circuit of 26 attention heads in GPT-2 small, grouped into 7 classes, that performs this task.<label for="sn-ioi" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-ioi" class="margin-toggle"><span class="sidenote">Wang, Variengien, Conmy, Shlegeris, and Steinhardt (2022), &ldquo;Interpretability in the Wild: a Circuit for Indirect Object Identification in GPT-2 small,&rdquo; arXiv:2211.00593. The task is called indirect object identification.</span> In outline: earlier heads detect that &ldquo;John&rdquo; appears twice; heads called S-inhibition heads use that to stop the later heads from attending to &ldquo;John&rdquo;; and the later heads, called name movers, attend to the other name, &ldquo;Mary&rdquo;, and copy it to the output. The circuit also contains backup name movers, which take over when the main name movers are removed, and negative name movers, which push the other way.</p>
+
+<p>Patching GPT-2 needs the model itself, which this site does not run. The tool on this page runs a smaller model in your browser: the modular-addition transformer of Section 5.4, which computes \((a + b) \bmod 59\). It reads the three tokens &ldquo;a b =&rdquo; and gives its answer at the &ldquo;=&rdquo; position. It has one attention layer with four heads, then an MLP with 512 neurons. This is the trained model of the main run in Section 5.4, with its real parameters.</p>
+
+<p>For this model the clean input is a pair such as 12 + 30, with answer 42, and the corrupted input changes one number, as in 20 + 30, with answer 50. The logit difference is the logit for 42 minus the logit for 50. Patching a component gives a new logit difference, and the share of the gap it closes is</p>
+$$\text{restored} = \frac{\text{patched} - \text{corrupted}}{\text{clean} - \text{corrupted}},$$
+<p>where each term is a logit difference. Restored is 0% if the patch changes nothing and 100% if the patched run scores the two answers as the clean run does.</p>
+
+<p><span class="claim">Empirical finding</span> Nanda et al. reverse-engineered this kind of model completely.<label for="sn-nanda" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-nanda" class="margin-toggle"><span class="sidenote">Nanda, Chan, Lieberum, Smith, and Steinhardt (2023), &ldquo;Progress measures for grokking via mechanistic interpretability,&rdquo; ICLR 2023. They used \(p = 113\); this site uses \(p = 59\) so the model trains on a CPU (Section 5.4).</span> The embedding maps each number \(a\) to the cosine and sine of \(wa\) for a few frequencies \(w = 2\pi k / p\). The attention and MLP layers combine \(a\) and \(b\) using the identity \(\cos(w(a + b)) = \cos(wa)\cos(wb) - \sin(wa)\sin(wb)\), and the same for the sine. The output layer gives each candidate answer \(c\) a score that is largest when \(\cos(w(a + b - c))\) is largest, which happens when \(c = (a + b) \bmod p\). The frequencies are the <em>key frequencies</em> of Section 5.5. Patching lets you check which components carry the information.</p>
+</section>
+
+<section>
+<h2>Patch it</h2>
+<p>The model runs live: each patch is a new forward pass. Every task asks for a prediction first.</p>
+
+<div class="tool" id="tool">
+  <div class="panel" id="panel-patch">
+    <h3>Activation patching</h3>
+    <p class="panel-note">Choose a clean pair and the corrupted input, then patch one component at a time from the clean run into the corrupted run. <em>Neurons 1</em> are the MLP neurons whose activation, over all pairs, varies mainly at frequency 1, and likewise for 12 and 27 (every neuron falls in one of these three groups). Each patch adds a <span class="c-accent">bar</span> showing how much of the logit difference it restored.</p>
+    <div class="row">
+      <div class="controls" id="patch-controls"></div>
+      <div class="stage">
+        <div id="patch-chart"></div>
+        <p class="readout" id="patch-readout" aria-live="polite"></p>
+      </div>
+    </div>
+    <div id="map" hidden>
+      <p class="map-note">The full patching map for the clean pair: one row per component, one column per corrupted value. Darker squares mean more of the logit difference restored, from none (blank, which includes values below 0%) to 100% or more (full). The outlined column is the current corrupted input. Tap a column to choose it.</p>
+      <div id="map-cells"></div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-freq">
+    <h3>The frequencies in the embedding</h3>
+    <p class="panel-note">Bars: the size of each frequency \(k\) in the model&rsquo;s number embeddings (as in Section 5.5). Circle: each number&rsquo;s embedding, keeping only its part at the <span class="c-accent">selected frequency</span>, on the same scale for every \(k\). Removing a frequency replaces the embeddings by their parts at the other frequencies; the test accuracy is then computed on all test pairs.</p>
+    <div class="row">
+      <div class="controls" id="freq-controls"></div>
+      <div class="stage"><div id="spec-chart"></div><div id="circle"></div></div>
+    </div>
+    <p class="readout" id="freq-readout" aria-live="polite"></p>
+  </div>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="6.7-t1">
+    <p class="prompt">Clean 12 + 30, corrupted 20 + 30. Patch each of the four heads, then the MLP output. Which restores the most of the logit difference?</p>
+    <div class="choices" data-options="One of the heads|The MLP output|All about the same"></div>
+    <div class="after"><p>Patch them one at a time. Then patch all four heads at once.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The MLP output restores 95%. Of the heads, head 2 restores 61% and head 1 24%; heads 0 and 3 restore almost nothing for this pair. Patching all four heads restores exactly 100%. That is guaranteed by the model&rsquo;s design: the &ldquo;=&rdquo; position starts from the same vector for every input, so the heads are the only route by which \(a\) and \(b\) reach it. The MLP output carries almost all of what decides the answer, but the MLP computes it from what the heads bring.</p></div></div>
+  </li>
+  <li class="task" data-id="6.7-t2">
+    <p class="prompt">Keep 12 + 30 as the clean pair and change the corrupted value of \(a\) from 20 to other numbers. Will patching head 2 keep restoring about 61%?</p>
+    <div class="choices" data-options="Yes, about the same|No, it changes a lot"></div>
+    <div class="after"><p>Move the corrupted value and patch head 2 again. After you have patched three different components, open the full patching map.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>It changes a lot: for this clean pair, head 2 restores between 13% and 107%, depending on the corrupted value. <span class="claim">Empirical finding</span> Over all 3,481 clean pairs and all 58 corrupted values of \(a\), one head alone restores 18% to 31% on average (head 0 least, head 3 most), and which head restores the most varies: head 3 in 34% of cases, head 2 in 28%, head 1 in 22%, head 0 in 16%. The MLP output restores between 86% and 105% in every case. A patching result answers a question about one clean input and one corrupted input.</p></div></div>
+  </li>
+  <li class="task" data-id="6.7-t3">
+    <p class="prompt">Back at clean 12 + 30 and corrupted 20 + 30, patch only <em>Neurons 12</em>, the 149 neurons that vary mainly at frequency 12. How much of the logit difference do they restore?</p>
+    <div class="choices" data-options="Almost none|Between a third and a half|Nearly all"></div>
+    <div class="after"><p>Patch Neurons 12, then Neurons 1 and Neurons 27, and compare their sum with the MLP output.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Neurons 12 restore 49%, Neurons 27 restore 39%, and Neurons 1 restore 8%. The three add up to the MLP output&rsquo;s 95% exactly, because each neuron&rsquo;s effect on the logits is added to the others&rsquo;. <span class="claim">Empirical finding</span> Over all clean pairs and corrupted values, each group restores 28% to 34% on average. Each frequency carries part of the evidence for the answer, and no one group carries all of it.</p></div></div>
+  </li>
+  <li class="task" data-id="6.7-t4">
+    <p class="prompt">In the frequency panel, find the key frequencies, the few that stand out. Remove one of them and keep the other two. What happens to test accuracy?</p>
+    <div class="choices" data-options="It stays near 100%|It falls to about a third|It falls to chance, 1.7%"></div>
+    <div class="after"><p>Select frequencies with the slider or by tapping the bars, and look at the circle for each. Use <em>Keep only the three largest</em>, then put back all and remove one key frequency.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The key frequencies are 1, 12, and 27, and only at those three do the numbers form a circle. Keeping only these three leaves test accuracy at 100%, and removing any one of the other 26 also leaves 100%. Removing one key frequency drops accuracy to 31% to 37%, and removing all three drops it to 1.8%, about the rate of guessing one answer in 59. Each key frequency is needed; the others are not.</p></div></div>
+  </li>
+</ol>
+
+<figure class="multiples" id="fig-algo" aria-describedby="fig-algo-desc"></figure>
+<p id="fig-algo-desc" class="caption">How the model adds 12 and 30. Left: at frequency 12, \(\cos(wa)\) and \(\sin(wa)\), with \(w = 2\pi \cdot 12/59\), place each number \(a\) on a circle at angle \(wa\), so the angle of <span class="c-accent">12</span> plus the angle of <span class="c-second">30</span> is the angle of 42; the identity above is what computes the cosine and sine of that sum. Middle: the score \(\cos(w(42 - c))\) for each candidate \(c\), at the three key frequencies 1, 12, and 27. Each peaks at \(c = 42\), and the three disagree elsewhere, so their sum (ink) has one clear peak. Right: the trained model&rsquo;s actual logits for 12 + 30, highest at 42. A constant plus the three cosines, weighted 14.3, 16.0, and 16.4, accounts for 99.7% of their variance over \(c\).</p>
+</section>
+
+<section>
+<h2>What the patching shows</h2>
+<p><span class="claim">Empirical finding</span> In this model the pieces of the circuit can be named. Each head carries information about \(a\) and \(b\) mostly at one frequency: of what head 0 writes about \(a\), 90% is at frequency 1; head 1 is 79% at frequency 27; head 2 is 71% at frequency 12; head 3 is mixed. That is why, for 12 + 30 against 20 + 30, head 2 and the frequency-12 neurons restore the most. The MLP neurons each respond mainly to one key frequency (444 of the 512 have more than 85% of their variance at it) and combine \(a\) and \(b\), and the output layer adds up their votes for each candidate answer. Section 5.4 showed this model grokking; this is the algorithm it grokked.</p>
+
+<p>Patching turns &ldquo;this component is active during the behavior&rdquo; into &ldquo;this component is needed for the behavior&rdquo;. The answer it gives depends on the choices made: which component, which clean and corrupted inputs, and which measure.<label for="sn-hn" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-hn" class="margin-toggle"><span class="sidenote">Heimersheim and Nanda (2024), &ldquo;How to use and interpret activation patching,&rdquo; arXiv:2404.15255, discuss these choices and how to read the results.</span> A large restored share shows that a component carries much of the information that decides the answer for those inputs. It does not show that the component computes the answer by itself: the MLP output restores 95% here, and the MLP still depends entirely on the heads.</p>
+
+<p>Circuit analysis of large models is slow and incomplete. <em>Attribution graphs</em> automate part of it: they trace the computation through a simplified replacement model, in which the MLP neurons are replaced by more interpretable features (Section 6.5). <span class="claim">Empirical finding</span> With them, Lindsey et al. found that Claude 3.5 Haiku, writing the second line of a rhyming couplet, often activates features for candidate rhyme words on the line break after the first line, before it writes the second line, and that changing those features changes the word the line ends with.<label for="sn-bio" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-bio" class="margin-toggle"><span class="sidenote">Lindsey et al. (2025), &ldquo;On the Biology of a Large Language Model,&rdquo; Transformer Circuits Thread, section &ldquo;Planning in Poems&rdquo;. They found such planned-word features in about half of the poems they examined.</span></p>
+</section>
+
+<div class="check" data-id="6.7-c1" data-correct="1">
+  <p class="label">Check</p>
+  <p class="q">Patching one head from the clean run into the corrupted run restores 60% of the logit difference. What does that show?</p>
+  <div class="options seg"><button>That the head computes the answer by itself</button><button>That the head carries much of the information that decides the answer, for these inputs</button><button>That the other heads play no part</button></div>
+  <div class="feedback"><p>Patching measures what a component carries, not what it computes. In the tool, head 2 restores 61% for 12 + 30 against 20 + 30, yet the MLP does the combining, and for other corrupted values head 2 restores as little as 13%.</p></div>
+</div>
+
+<div class="check" data-id="6.7-c2" data-correct="1">
+  <p class="q">For one clean input and one corrupted input, patching head 3 restores 80% of the logit difference. What should you do before calling head 3 the head that matters?</p>
+  <div class="options seg"><button>Nothing: 80% settles it</button><button>Repeat with many clean and corrupted inputs, and patch the other components too</button><button>Patch the MLP instead, since patching heads gives unreliable numbers</button></div>
+  <div class="feedback"><p>One pair of inputs can make any head look important. In this model, which head restores the most changes from one pair of inputs to the next, and every head restores 80% or more for some pairs. The numbers are reliable; they answer a question about the inputs chosen.</p></div>
+</div>
+
+<div class="explain" data-id="6.7-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: what does activation patching add to observing which components are active, and what can it not show?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>A circuit is a set of components and connections that carries out a behavior. Activation patching is its causal test: copy one component&rsquo;s activation from a clean run into a corrupted run and measure how much of the clean behavior returns. A large effect shows the component carries information that decides the answer for those inputs, not that it computes the answer alone. In the modular-addition transformer the whole circuit is known: the heads carry \(a\) and \(b\) at a few key frequencies, the MLP combines them, and the output picks the \(c\) where the cosines of \(w(a + b - c)\) agree.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/6-7.js"></script>
+</body>
+</html>
