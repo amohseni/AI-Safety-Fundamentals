@@ -37,7 +37,7 @@ $$L(N, D) = E + \frac{A}{N^{\alpha}} + \frac{B}{D^{\beta}},$$
     <div class="controls" id="controls"></div>
     <div class="stage" id="chart"></div>
   </div>
-  <p class="panel-note">The curve shows the loss the formula predicts for every model size, if the whole budget is spent on training it: \(D = C/6N\). <span class="c-accent">Your choice</span> is the dot; drag along the curve, or use the sliders. The grey dot marks the lowest point. With serving switched on, the budget must also pay for answering users after training, at about \(2N\) FLOPs per token served, and the <span class="c-second">curve with serving</span> is drawn as well.</p>
+  <p class="panel-note">The curve shows the loss the formula predicts for every model size, if the whole budget is spent on training it: \(D = C/6N\). <span class="c-accent">Your choice</span> is the dot; drag along the curve, or use the sliders. The grey dot marks the lowest point. With serving switched on, the budget must also pay for answering users after training, at about \(2N\) FLOPs per token served, and the <span class="c-second">curve with serving</span> is drawn as well. The serving option is a toy model: it puts training and serving in one fixed budget, which is simpler than the setup of Sardana et al. (2024).</p>
   <p class="readout" id="readout" aria-live="polite"></p>
 </div>
 

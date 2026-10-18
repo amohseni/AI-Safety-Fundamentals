@@ -82,10 +82,10 @@ $$\theta \leftarrow \theta - \eta\, \nabla L(\theta).$$
   <div class="feedback"><p>Convergence needs \(\eta\) below 2 divided by the largest curvature, here \(2/400 = 0.005\). Of the three, only 0.004 qualifies. At that rate the direction along the valley, with curvature 1, shrinks by a factor of only 0.996 per step, so it takes many steps.</p></div>
 </div>
 
-<div class="check" data-id="2.6-c2" data-correct="2">
-  <p class="q">A dataset has 10 million examples, and each minibatch has 1,000. One exact gradient costs about as much computation as how many minibatch gradient steps?</p>
-  <div class="options seg"><button>1</button><button>1,000</button><button>10,000</button></div>
-  <div class="feedback"><p>The exact gradient needs all 10 million examples; a minibatch needs 1,000, so one exact step costs as much as 10,000 minibatch steps. The minibatch estimate is noisy but far cheaper, which is why training uses it.</p></div>
+<div class="check" data-id="2.6-c2" data-correct="1">
+  <p class="q">On the two-minimum surface, the same start and the same learning rate end in different minima depending on the noise. What does this show about training?</p>
+  <div class="options seg"><button>Training always finds the lowest loss</button><button>The data and loss do not fix which parameters training finds</button><button>Noise only changes how fast training ends</button></div>
+  <div class="feedback"><p>The loss surface was the same in every run; only the noise differed, and the runs ended in different minima. In large networks the same holds: runs that differ only in such details as the random seed or the order of the examples can do equally well on held-out test data and still behave differently on new kinds of inputs.<label for="sn-under" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-under" class="margin-toggle"><span class="sidenote">D&rsquo;Amour et al. (2022), &ldquo;Underspecification Presents Challenges for Credibility in Modern Machine Learning,&rdquo; <em>Journal of Machine Learning Research</em> 23.</span> So what a trained network does is not chosen by anyone directly; it has to be found out afterward, which is the work of sections 6 and 8 (page 5.5 returns to this).</p></div>
 </div>
 
 <div class="explain" data-id="2.6-e1">
