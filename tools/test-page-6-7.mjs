@@ -91,6 +91,7 @@ check(`dominant frequency of each neuron agrees with the exported list (${match}
 console.log('neurons by dominant frequency:', JSON.stringify(counts), `; more than 85% of the variance at that frequency: ${strong} of ${m}`);
 check('every neuron has a key frequency as its dominant frequency', Object.keys(counts).every((k) => keys.includes(Number(k))));
 
+const headShare = [];
 for (let h = 0; h < H; h++) {
   // What head h writes from position 0, as a function of a: its frequency content.
   const out = Array.from({ length: p }, (_, a) => M.pos[0][a].vo[h]);
@@ -98,6 +99,31 @@ for (let h = 0; h < H; h++) {
   const per = Array.from({ length: 29 }, (_, i) => sq[2 * i + 1] + sq[2 * i + 2]);
   const t = per.reduce((s, v) => s + v, 0);
   console.log(`head ${h} output from a: share by frequency 1, 12, 27: ${[1, 12, 27].map((k) => pct(per[k - 1] / t)).join(', ')}`);
+  headShare.push([1, 12, 27].map((k) => per[k - 1] / t));
+}
+{ // Page: head 0 90% at 1; head 1 79% at 27; head 2 71% at 12; head 3 46% at 12, 32% at 27, 22% at 1.
+  const r = (v) => Math.round(v * 100);
+  check('head frequency shares as quoted (90/1, 79/27, 71/12; head 3 46/12, 32/27, 22/1)',
+    r(headShare[0][0]) === 90 && r(headShare[1][2]) === 79 && r(headShare[2][1]) === 71 &&
+    r(headShare[3][1]) === 46 && r(headShare[3][2]) === 32 && r(headShare[3][0]) === 22);
+}
+// Mean ablation of each head (its output replaced by its average over all pairs): test accuracy.
+{
+  const meanHo = new Float64Array(H * d);
+  for (let a = 0; a < p; a++) for (let b = 0; b < p; b++) { const o = M.run(a, b).ho; for (let j = 0; j < H * d; j++) meanHo[j] += o[j] / (p * p); }
+  const ab = [0, 1, 2, 3].map((h) => {
+    let right = 0, n = 0;
+    for (let a = 0; a < p; a++) for (let b = 0; b < p; b++) {
+      if (M.trainMask[a * p + b]) continue;
+      const L = M.run(a, b, { heads: [h] }, { ho: meanHo }).logits;
+      let best = 0; for (let c = 1; c < p; c++) if (L[c] > L[best]) best = c;
+      n++; if (best === (a + b) % p) right++;
+    }
+    return right / n;
+  });
+  console.log('mean-ablating one head, test accuracy:', ab.map((v, h) => `head ${h} ${pct(v)}`).join(', '));
+  check('mean-ablating one head gives 49% to 69% test accuracy, lowest for head 3 (page text and check 1)',
+    Math.round(Math.min(...ab) * 100) === 49 && Math.round(Math.max(...ab) * 100) === 69 && ab.indexOf(Math.min(...ab)) === 3);
 }
 {
   const att = []; for (let i = 0; i < p * p; i++) att.push(M.run(Math.floor(i / p), i % p).att);
@@ -190,6 +216,7 @@ console.log('Corrupting b instead: means', COMPS.map((c, j) => `${c} ${pct(mean(
   // Head 2 over the 58 corrupted values of a, for this clean pair.
   const h2 = []; for (let off = 1; off < p; off++) h2.push(restoredAll(i, ((12 + off) % p) * p + 30)[2]);
   console.log(`  head 2 over the 58 corrupted values of a: ${pct(Math.min(...h2))} to ${pct(Math.max(...h2))}`);
+  check(`default pair: head 3 restores about 0% (${pct(r[3])}) (check 1)`, Math.abs(r[3]) < 0.01);
   const h3 = []; for (let off = 1; off < p; off++) h3.push(restoredAll(i, ((12 + off) % p) * p + 30)[3]);
   console.log(`  head 3 over the 58 corrupted values of a: ${pct(Math.min(...h3))} to ${pct(Math.max(...h3))}`);
 }
@@ -207,6 +234,14 @@ console.log('Corrupting b instead: means', COMPS.map((c, j) => `${c} ${pct(mean(
   const coef = cols.map((col) => col.reduce((s, v, c) => s + v * L[c], 0) / col.reduce((s, v) => s + v * v, 0));
   const fit = L.map((_, c) => cols.reduce((s, col, j) => s + coef[j] * col[c], 0));
   const mu = mean(L), ssT = L.reduce((s, v) => s + (v - mu) ** 2, 0), ssR = L.reduce((s, v, c) => s + (v - fit[c]) ** 2, 0);
+  { // The caption's fit: a constant plus the three cosines only (no sines).
+    const cc = [cols[0], cols[1], cols[3], cols[5]];
+    const k0 = cc.map((col) => col.reduce((s2, v, c) => s2 + v * L[c], 0) / col.reduce((s2, v) => s2 + v * v, 0));
+    const f2 = L.map((_, c) => cc.reduce((s2, col, j) => s2 + k0[j] * col[c], 0));
+    const r2 = 1 - L.reduce((s2, v, c) => s2 + (v - f2[c]) ** 2, 0) / L.reduce((s2, v) => s2 + (v - mean(L)) ** 2, 0);
+    check(`caption: constant plus three cosines, weights ${k0.slice(1).map((v) => v.toFixed(1)).join(', ')}, explains ${pct(r2)} (page: 14.3, 16.0, 16.4; 98.9%)`,
+      k0.slice(1).map((v) => v.toFixed(1)).join() === '14.3,16.0,16.4' && pct(r2) === '98.9%');
+  }
   console.log(`figure: cos coefficients ${[1, 12, 27].map((k, i) => `k=${k}: ${coef[1 + 2 * i].toFixed(1)}`).join(', ')}; sin coefficients ${[1, 12, 27].map((k, i) => coef[2 + 2 * i].toFixed(2)).join(', ')}; share of variance explained ${pct(1 - ssR / ssT)}`);
   check('the logits for 12 + 30 are fit by the three cosines with R^2 above 95%', 1 - ssR / ssT > 0.95);
 }

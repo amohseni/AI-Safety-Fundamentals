@@ -199,7 +199,7 @@
   {
    "id": "6.7",
    "question": "How do we find the parts that do a task?",
-   "takeaway": "A circuit is a set of components and connections that carries out a behavior. Activation patching is its causal test: copy one component’s activation from a clean run into a corrupted run and measure how much of the clean behavior returns. A large effect shows the component carries information that decides the answer for those inputs, not that it computes the answer alone. In the modular-addition transformer the whole circuit is known: the heads carry \\(a\\) and \\(b\\) at a few key frequencies, the MLP combines them, and the output picks the \\(c\\) where the cosines of \\(w(a + b - c)\\) agree."
+   "takeaway": "A circuit is a set of components and connections that carries out a behavior. Activation patching is its causal test: copy one component’s activation from a clean run into a corrupted run and measure how much of the clean behavior returns. A large effect shows that the component carries information that decides the answer for those inputs, and so is enough to restore it; whether the component is needed, and whether it computes the answer alone, take further tests. In the modular-addition transformer the whole circuit is known: the heads carry \\(a\\) and \\(b\\) at a few key frequencies, the MLP combines them, and the output picks the \\(c\\) where the cosines of \\(w(a + b - c)\\) agree."
   },
   {
    "id": "7.1",
