@@ -1,4 +1,4 @@
-# AI Safety Fundamentals
+# A Primer on AI
 
 An interactive introduction to how modern AI systems work, from a single neuron to the alignment problem, for a new graduate student teaching themselves. Each page answers one question with one interactive tool.
 

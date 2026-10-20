@@ -1,4 +1,4 @@
-# AI Safety Fundamentals: working rules
+# A Primer on AI: working rules
 
 Read this first in every session that works on the site.
 

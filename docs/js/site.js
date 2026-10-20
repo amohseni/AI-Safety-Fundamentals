@@ -32,7 +32,7 @@ function shell() {
   const top = document.createElement('nav');
   top.className = 'topline';
   top.setAttribute('aria-label', 'Site');
-  top.innerHTML = `<a href="${base}index.html">AI Safety Fundamentals</a>
+  top.innerHTML = `<a href="${base}index.html">A Primer on AI</a>
     <span>Section ${page.section.n}, ${page.section.title}${page.core ? ' <span class="core-dot" title="Core path"></span>' : ''}</span>`;
   article.before(top);
 
