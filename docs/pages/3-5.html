@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3.5 Multiple heads | A Primer on AI</title>
+<meta name="description" content="Each attention layer runs several heads in parallel; in GPT-2 small some of them are previous-token heads and induction heads, found here by looking at their attention patterns.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  #controls { flex-direction: row; flex-wrap: wrap; gap: 0.9rem 1.6rem; max-width: none; margin-bottom: 1.2rem; align-items: flex-end; }
+  .views { display: flex; flex-wrap: wrap; gap: 1.2rem 2rem; align-items: flex-start; }
+  .views > div { flex: 1 1 20rem; min-width: 0; max-width: 34rem; }
+  .small-title { margin: 0 0 0.3rem; }
+  #grid, #big { display: block; touch-action: manipulation; cursor: pointer; }
+  #grid:focus-visible, #big:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+  .strip { font-size: var(--text); line-height: 1.9; margin: 0.6rem 0 0.8rem; overflow-wrap: anywhere; }
+  .strip .tk { white-space: pre-wrap; cursor: pointer; border-radius: 2px; padding: 0.05rem 1px; margin-right: 2px; }
+  .strip .tk.q { outline: 2px solid var(--accent); outline-offset: 0; }
+  .strip .tk:focus-visible { outline: 2px solid var(--focus); }
+  #types { margin: 0.6rem 0 0; }
+  #types p { margin: 0.2rem 0; }
+  #loss svg { display: block; }
+  #fig-heads > div { flex: 1 1 13rem; }
+  #fig-heads canvas { display: block; }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="3.5">
+<article>
+<h1>Multiple heads</h1>
+
+<section>
+<p>Each attention layer contains several attention mechanisms that run side by side, called <em>heads</em>. GPT-2 small has 12 heads in each of its 12 layers, 144 in all. Each head has its own query, key, and value matrices, so each head computes its own attention weights (Section 3.4) and can look for something different. In GPT-2 small each head&rsquo;s queries, keys, and values have 64 entries, and 12 heads of 64 make 768, the size of the residual stream. Each head&rsquo;s output is multiplied by its own part of an output matrix, and the results of the 12 heads are added together and added to the residual stream (Section 3.6). Following the research literature, layers and heads are numbered from 0, so head 5.1 is head 1 of layer 5.</p>
+
+<p>Some heads do recognizable jobs. A <em>previous-token head</em> attends from each position to the position just before it. An <em>induction head</em> carries out a copying rule: if the current token is A, and earlier in the text A was followed by B, attend to that B, which makes the model more likely to predict B next. An induction head needs to know, at each earlier position, which token came before it; a previous-token head in an earlier layer writes that into the residual stream.<label for="sn-elhage" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-elhage" class="margin-toggle"><span class="sidenote">Elhage, Nanda, Olsson, Henighan, Joseph, Mann, and others (2021), &ldquo;A Mathematical Framework for Transformer Circuits,&rdquo; Transformer Circuits Thread. They found induction heads, and the previous-token heads they depend on, in small transformers made of attention layers only.</span> <span class="claim">Empirical finding</span> Olsson et al. found that induction heads form suddenly during training, at the same point at which the models become much better at using earlier parts of their input, and that this shows as a bump in the training loss.<label for="sn-olsson" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-olsson" class="margin-toggle"><span class="sidenote">Olsson, Elhage, Nanda, Joseph, DasSarma, Henighan, and others (2022), &ldquo;In-context Learning and Induction Heads,&rdquo; Transformer Circuits Thread, arXiv:2209.11895. Their evidence is causal for small attention-only models and correlational for larger models with MLP layers.</span></p>
+
+<p>A good input for finding these heads is a sequence of random tokens repeated twice. Ordinary text gives a model many cues; a random sequence gives none, except that its second half repeats its first.</p>
+</section>
+
+<section>
+<h2>Head gallery</h2>
+<p>All 144 heads of GPT-2 small, on one input at a time. The attention patterns and losses were computed in advance from the real model. Each task asks for a prediction first.</p>
+
+<div class="tool" id="tool">
+  <div class="controls" id="controls"></div>
+  <div class="views">
+    <div>
+      <p class="small-title">Every head&rsquo;s attention pattern</p>
+      <canvas id="grid" tabindex="0" role="grid" aria-label="Attention patterns of all 144 heads, one row per layer, one column per head. Use the arrow keys to choose a head."></canvas>
+      <div id="types" hidden></div>
+    </div>
+    <div>
+      <p class="small-title" id="big-title">The chosen head</p>
+      <canvas id="big" tabindex="0" aria-label="Attention pattern of the chosen head. Use the up and down arrow keys to choose the position that attends."></canvas>
+      <div class="strip" id="strip" aria-label="The input, shaded by the chosen head's attention weights from the outlined position"></div>
+    </div>
+  </div>
+  <p class="panel-note">Each small square is one head&rsquo;s pattern on the current input: row \(i\), column \(j\) is the weight position \(i\) puts on position \(j\), darker for larger weights, with the first position at the top left. Tap a square, or move with the arrow keys, to enlarge it. In the enlarged pattern, tap a row, or use the up and down keys, to choose the position that attends; below it, each token of the input is shaded by the weight that position puts on it, and the <span class="c-accent">outlined token</span> is the position that attends.</p>
+  <p class="small-title">The model&rsquo;s loss on each token</p>
+  <div id="loss"></div>
+  <p class="readout" id="readout" aria-live="polite"></p>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="3.5-t1">
+    <p class="prompt">On the repeated random tokens, an induction head&rsquo;s pattern is a diagonal line offset from the main diagonal: each position in the second copy attends to the token after its earlier copy. In which layers will you find heads with that pattern?</p>
+    <div class="choices" data-options="Layers 0 and 1|The middle layers, 5 to 7|Only the last layer, 11|About equally in every layer"></div>
+    <div class="after"><p>Scan the grid for squares with a second diagonal line in their lower half, and enlarge a few.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The clearest offset diagonals are in layers 5 to 7: heads 5.1, 5.5, 6.9, 7.2, and 7.10. <span class="claim">Empirical finding</span> Over 100 random sequences of 20 tokens repeated twice, each of these five heads puts between 0.76 and 0.93 of its weight, on average, on the token after the earlier copy; the next highest is 0.60. Six other heads show fainter offset diagonals, with 0.45 to 0.60: five of them in layers 9 to 11, and head 5.0. Heads 0.1, 0.5, and 3.0 show a diagonal offset by one more position: they attend to the earlier copy of the <em>same</em> token, and are called duplicate-token heads.</p></div></div>
+  </li>
+  <li class="task" data-id="3.5-t2">
+    <p class="prompt">Compare the model&rsquo;s loss on the first copy of the random tokens with its loss on the second copy. What will you see?</p>
+    <div class="choices" data-options="About the same on both copies|Much lower on the second copy|Higher on the second copy"></div>
+    <div class="after"><p>Read the loss chart and the averages under it.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The loss is much lower on the second copy. On this sequence the average loss is 13.8 on the first copy and 0.40 on the second, not counting the first token of each copy. <span class="claim">Empirical finding</span> Over 100 random sequences the averages are 13.9 and 0.53. The first is more than \(\ln 50{,}257 \approx 10.8\), the loss of a uniform guess over the vocabulary: on random tokens the model is confidently wrong, because it expects ordinary text. On the second copy it predicts almost every token correctly, using nothing but the first copy.</p></div></div>
+  </li>
+  <li class="task" data-id="3.5-t3">
+    <p class="prompt">Switch on the labels. An induction head needs a previous-token head in an earlier layer. Where will the strongest previous-token head be, compared with the induction heads?</p>
+    <div class="choices" data-options="In an earlier layer|In the same layers|In a later layer"></div>
+    <div class="after"><p>Switch the labels on, and enlarge the previous-token heads.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The strongest previous-token head is 4.11, one layer before the first induction heads: <span class="claim">Empirical finding</span> over the 100 random sequences it puts 0.99 of its weight on the previous token. Three others put more than 0.45 there: 3.7 (0.53), 6.8 (0.50), and 2.2 (0.49). Three of the four sit in layers 2 to 4, before the induction heads in layers 5 to 7, as the rule needs. Their order alone does not show that the induction heads use them; the test is to remove them, below the tasks.</p></div></div>
+  </li>
+  <li class="task" data-id="3.5-t4">
+    <p class="prompt">Choose the input about the Dursleys, in which &ldquo;Harry Potter&rdquo; appears twice. Choose head 5.5 and the second &ldquo;Harry&rdquo;. Where will head 5.5 put its largest weight?</p>
+    <div class="choices" data-options="On the first &ldquo;Harry&rdquo;|On the first &ldquo;Potter&rdquo;|On the first token of the text"></div>
+    <div class="after"><p>Tap the second &ldquo;Harry&rdquo; in the text under the enlarged pattern. Then look at the loss on both &ldquo;Potter&rdquo;s.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Head 5.5 puts 0.58 of its weight on the first &ldquo;Potter&rdquo;, the token that followed the earlier &ldquo;Harry&rdquo;, and most of the rest on the first token of the text. At the first &ldquo;Harry&rdquo;, with no earlier &ldquo;Harry&rdquo; to match, it puts 0.94 on the first token. Many heads park their weight on the first token when they have nothing to do. The loss on the second &ldquo;Potter&rdquo; is 2.42, barely below the 2.59 on the first, which the model could already guess from &ldquo;Harry&rdquo;: in ordinary text an induction head is one source of evidence among many.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>How the two heads work together</h2>
+<p>At the second copy of a token A, an induction head&rsquo;s query asks for positions whose previous token was A. The previous-token head has already written, into the residual stream at each position, information about the token before it, and the induction head&rsquo;s keys read that information. The position right after the first A matches, so the induction head attends to it, and its value carries that position&rsquo;s token, B, toward the output. Elhage et al. call this use of one head&rsquo;s output in another head&rsquo;s keys <em>K-composition</em>.</p>
+<p><span class="claim">Empirical finding</span> Removing a head (setting its output to zero) tests whether other heads depend on it. Over the same 100 random sequences, removing previous-token head 4.11 lowers induction head 5.5&rsquo;s weight on the token after the earlier copy from 0.93 to 0.83, and head 5.1&rsquo;s from 0.88 to 0.77. Removing all four previous-token heads lowers them to 0.65 and 0.62, and raises the average loss on the second copy from 0.53 to 0.69. So the induction heads depend partly on these heads, and the model can still find much of the same information without them; this page did not measure which other routes carry it. Head 6.9 barely changes (0.88 to 0.85).</p>
+<p><span class="claim">Empirical finding</span> These measurements agree with Wang et al., who in their study of GPT-2 small name 2.2 and 4.11 as previous-token heads, 5.5 and 6.9 as induction heads, and 0.1 and 3.0 as duplicate-token heads.<label for="sn-wang" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-wang" class="margin-toggle"><span class="sidenote">Wang, Variengien, Conmy, Shlegeris, and Steinhardt (2022), &ldquo;Interpretability in the Wild: a Circuit for Indirect Object Identification in GPT-2 small,&rdquo; arXiv:2211.00593, Figure 2 and Appendices H and I. Their previous-token score ranks 4.11 and 2.2 highest; the measurement on this page ranks 2.2 fourth, after 4.11, 3.7, and 6.8. Section 6.7 describes their circuit.</span> The labels in the tool come from the measurements on this page, not from the papers: a head is labeled a previous-token head if it puts more than 0.45 of its weight on the previous token, an induction head if it puts more than 0.7 on the token after the earlier copy, and a duplicate-token head if it puts more than 0.4 on the earlier copy, each averaged over the 100 random sequences.</p>
+
+<figure class="multiples" id="fig-heads" aria-describedby="fig-heads-desc"></figure>
+<p id="fig-heads-desc" class="caption">Three heads of GPT-2 small on the same random sequence of 20 tokens repeated twice. Left, previous-token head 4.11: one line just below the main diagonal. Middle, induction head 5.5: in the second copy, a line offset by 19 positions, from each token to the token after its earlier copy; the dark first column is weight parked on the first token. Right, head 1.10: weight spread over many earlier positions.</p>
+</section>
+
+<div class="check" data-id="3.5-c1" data-correct="1">
+  <p class="label">Check</p>
+  <p class="q">A text contains &ldquo;Hermione Granger&rdquo; once. Much later it reaches &ldquo;Hermione&rdquo; again. At that position, what does an induction head attend to, and which next token does it make more likely?</p>
+  <div class="options seg"><button>The first &ldquo;Hermione&rdquo;; it makes &ldquo;Hermione&rdquo; more likely</button><button>The first &ldquo;Granger&rdquo;; it makes &ldquo;Granger&rdquo; more likely</button><button>The token just before the current one; it makes that token more likely</button></div>
+  <div class="feedback"><p>The current token is A = &ldquo;Hermione&rdquo;. Earlier, A was followed by B = &ldquo;Granger&rdquo;, so the induction head attends to that &ldquo;Granger&rdquo; and copies it toward the prediction.</p></div>
+</div>
+
+<div class="check" data-id="3.5-c2" data-correct="0">
+  <p class="q">On random tokens repeated twice, which token of the second copy does the model still predict badly?</p>
+  <div class="options seg"><button>The first token of the second copy</button><button>The last token of the second copy</button><button>None of them</button></div>
+  <div class="feedback"><p>The first token of the second copy is predicted at the last token of the first copy, which has appeared only once, so there is no earlier copy to match and nothing to copy. From the second token on, the current token has appeared before, and the induction heads can copy what came after it. Over 100 random sequences the loss on the first token of the second copy averages 11.1, against 0.53 for the rest of the second copy.</p></div>
+</div>
+
+<div class="explain" data-id="3.5-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: how do a previous-token head and an induction head together let the model continue a sequence it has seen earlier in its input?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>Each attention layer runs several heads in parallel, each with its own query, key, and value matrices, and their outputs are added to the residual stream. Some heads in GPT-2 small do recognizable jobs that can be found by looking at their attention patterns: previous-token heads attend to the position just before, and induction heads, in later layers, use what previous-token heads wrote to find the token that followed an earlier copy of the current token and copy it.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/3-5.js"></script>
+</body>
+</html>

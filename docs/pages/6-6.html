@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>6.6 Steering vectors | A Primer on AI</title>
+<meta name="description" content="Adding a direction to a model's residual stream changes what it writes: activation addition on GPT-2 small, as a causal test of a representation and as a way to control a model.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  #controls { flex-direction: row; flex-wrap: wrap; gap: 0.9rem 1.6rem; max-width: none; margin-bottom: 1.2rem; align-items: flex-end; }
+  #controls label.ctl { flex: 1 1 14rem; max-width: 22rem; }
+  .gen, #text { font-size: var(--text); line-height: 1.5; white-space: pre-line; overflow-wrap: anywhere; }
+  #text { width: 61%; min-height: 6.5rem; margin: 0.2rem 0 1rem; }
+  .prompt-text { color: var(--quiet); }
+  .charts { display: flex; flex-wrap: wrap; gap: 1rem 2rem; }
+  .charts > div { flex: 1 1 18rem; min-width: 0; max-width: 27rem; }
+  .charts svg { display: block; }
+  .small-title { margin: 0 0 0.2rem; }
+  #fig-steer > div { flex: 1 1 14rem; }
+  #fig-steer .gen { margin-top: 0.2rem; }
+  @media (max-width: 760px) { #text { width: 100%; } }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="6.6">
+<article>
+<h1>Steering vectors</h1>
+
+<section>
+<p>If a feature is represented as a direction (Section 6.2), then adding that direction to the residual stream should make the model behave as if the feature were more present. A <em>steering vector</em> is a direction added to a model&rsquo;s activations while it runs.</p>
+
+<p>Turner et al. built steering vectors from two contrasting prompts.<label for="sn-turner" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-turner" class="margin-toggle"><span class="sidenote">Turner, Thiergart, Leech, Udell, Vazquez, Mini, and MacDiarmid (2023), &ldquo;Activation Addition: Steering Language Models Without Optimization,&rdquo; arXiv:2308.10248, and their post &ldquo;Steering GPT-2-XL by adding an activation vector&rdquo; (Alignment Forum, 2023), which gives the settings of the Love&nbsp;&minus;&nbsp;Hate example. The examples they show were chosen from several samples.</span> They ran the model on &ldquo;Love&rdquo; and on &ldquo;Hate&rdquo;, recorded the residual stream entering one layer at each position of the two prompts, took the difference, and multiplied it by a number, the <em>coefficient</em>. Then they ran a new prompt, added the scaled difference at its first positions as it entered the same layer, and let the model write. In GPT-2-XL (48 layers), with the vector added before layer 6 at coefficient 5, &ldquo;I hate you because&rdquo; was continued with &ldquo;you&rsquo;re a wonderful person&rdquo; instead of &ldquo;you&rsquo;re a coward&rdquo;. Nothing is trained: the vector comes from two forward passes. Contrastive activation addition averages such differences over many pairs of prompts that differ in one behavior, such as sycophantic and non-sycophantic answers, and adds the average at every position after the prompt.<label for="sn-caa" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-caa" class="margin-toggle"><span class="sidenote">Rimsky, Gabrieli, Schulz, Tong, Hubinger, and Turner (2024), &ldquo;Steering Llama 2 via Contrastive Activation Addition,&rdquo; ACL 2024. Zou et al. (2023), &ldquo;Representation Engineering: A Top-Down Approach to AI Transparency,&rdquo; arXiv:2310.01405, read and steer such directions for honesty, emotion, and other concepts.</span></p>
+
+<p>The tool below applies Turner et al.&rsquo;s method to GPT-2 small (12 layers) with two vectors: Love&nbsp;&minus;&nbsp;Hate, and &ldquo;&nbsp;weddings&rdquo; minus a single space, which Turner et al. used to make text mention weddings.</p>
+</section>
+
+<section>
+<h2>Steer the model</h2>
+<p>For every vector, prompt, layer, and coefficient from &minus;10 to +10, GPT-2 small wrote 8 continuations of 32 tokens, computed in advance; the tool shows 3 of them. The settings differ only in the steering: each sample uses the same random numbers in every setting. Each task asks for a prediction first.</p>
+
+<div class="tool" id="tool">
+  <div class="controls" id="controls"></div>
+  <p id="text" aria-live="polite"></p>
+  <div class="charts">
+    <div><p class="small-title" id="score-title">The behavior</p><div id="score-chart"></div></div>
+    <div><p class="small-title">Fluency: log probability per token</p><div id="flu-chart"></div></div>
+  </div>
+  <p class="panel-note">The prompt is gray and the model&rsquo;s continuation black. Left: for Love&nbsp;&minus;&nbsp;Hate, the average probability that a sentiment classifier gives to &ldquo;positive&rdquo;, over the 8 continuations; for weddings, the share of the 8 that mention a wedding word. Right: fluency, measured as the average log probability of each continuation&rsquo;s tokens under the unsteered model; higher is more fluent. The <span class="c-accent">dot</span> is the current coefficient.</p>
+  <p class="readout" id="readout" aria-live="polite"></p>
+</div>
+
+<ol class="tasks">
+  <li class="task" id="tasks-start" data-id="6.6-t1">
+    <p class="prompt">Love&nbsp;&minus;&nbsp;Hate, &ldquo;I went to the park and&rdquo;, layer 0. Raise the coefficient from 0. Where does the text stop being fluent?</p>
+    <div class="choices" data-options="Around +2|Around +5|It stays fluent up to +10"></div>
+    <div class="after"><p>Raise the coefficient one step at a time, and read the text and the fluency chart.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Around +5. Unsteered, the continuations average &minus;1.8 in log probability per token, and the sentiment classifier gives them 0.75. At +2 all 8 score as positive (1.00), at a fluency of &minus;2.3. From +5 the text repeats fragments (&ldquo;to the the and the and the it&rdquo;), fluency falls to &minus;3.2, and to &minus;4.1 at +10, and the sentiment score falls too, to 0.19 at +10. At this layer the range where the behavior changes and the text holds is about +2 to +3. At layer 6 the same vector leaves fluency near &minus;2 all the way to +10.</p></div></div>
+  </li>
+  <li class="task" data-id="6.6-t2">
+    <p class="prompt">Choose &ldquo;I hate you because&rdquo; and coefficient +4. Unsteered, its continuations score 0.05 for positive sentiment. Add the vector at layer 0, then 6, then 11. Where will it raise the score?</p>
+    <div class="choices" data-options="Only at layer 6, in the middle|At all three layers|Only at layer 0"></div>
+    <div class="after"><p>Then move the layer slider through all 12 layers at +4.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>At all three: the score at +4 is 0.87 at layer 0, 1.00 at layer 6, and 0.94 at layer 11. It is not the same everywhere: at layers 7 to 10 it is only 0.23 to 0.49. The effect of a steering vector depends on the layer, and not in a simple order. With 8 continuations per setting the scores are noisy: at layer 5, +2 and +3 give 0.01 while +4 gives 0.61.</p></div></div>
+  </li>
+  <li class="task" data-id="6.6-t3">
+    <p class="prompt">Stay on &ldquo;I hate you because&rdquo;, at layer 6. What will a negative coefficient do to the sentiment score?</p>
+    <div class="choices" data-options="Lower it further|Leave it about the same|Raise it"></div>
+    <div class="after"><p>Compare coefficient 0 with &minus;3 and &minus;8, then with +3.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>It raises it, at every coefficient from &minus;2 to &minus;10: from 0.05 unsteered to between 0.16 and 0.75 (0.51 at &minus;3, 0.24 at &minus;8); only &minus;1 gives a lower 0.02. The unsteered continuations are already at the floor of the score, so the vector cannot push them lower; instead the steered text drifts away from the insult, and the classifier finds the drifted text less negative. A change in a behavior score need not be the change the vector was meant to make; read the text.</p></div></div>
+  </li>
+  <li class="task" data-id="6.6-t4">
+    <p class="prompt">Switch to the weddings vector, &ldquo;I went to the park and&rdquo;. At its best layer and coefficient, what share of continuations will mention weddings?</p>
+    <div class="choices" data-options="Under a quarter|About half|Nearly all"></div>
+    <div class="after"><p>Try several layers and positive coefficients, and read the text.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Nearly all: at layers 1, 2, and 11, all 8 continuations mention a wedding word at some coefficients between +4 and +10 (at layer 2, at +4 and +5). At layer 2 the share falls again above +6 (12% at +9 and +10), as fluency drops to &minus;4.8. At layers 3 to 10 the vector does almost nothing: at most 3 of 8 mention weddings at any coefficient. Mentioning weddings is not the same as writing well about them; the text at large coefficients is often broken.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>What steering shows</h2>
+<p>The tasks show three things about steering GPT-2 small. There is a range of coefficients in which the behavior changes and the text stays fluent, and past it the text falls apart; Turner et al. also report that large enough coefficients break the model&rsquo;s capabilities, and that where &ldquo;too large&rdquo; begins varies. The layer matters, and the best layers differ between vectors and between models: for both vectors here, layers 7 to 10 do little, while Turner et al. found middle layers most effective in GPT-2-XL. And the measures are proxies: a classifier score and a word count can move for reasons other than the intended one. <span class="claim">Hypothesis</span> One reason for the weak layers is that this method adds the vector only at the first positions of the prompt, so it acts only through what later positions read from them in the remaining layers; this page did not test that.</p>
+
+<figure class="multiples" id="fig-steer" aria-describedby="fig-steer-desc"></figure>
+<p id="fig-steer-desc" class="caption">Sample 1 of &ldquo;I went to the park and&rdquo; with Love&nbsp;&minus;&nbsp;Hate added before layer 6 of GPT-2 small at coefficients &minus;5, 0, and +5. These are the first samples, not chosen.</p>
+
+<p>Steering serves two purposes. It tests a representation causally: a probe (Section 6.3) shows that information can be read from a direction, and steering shows whether the model&rsquo;s behavior responds when the direction is changed. It also controls behavior without retraining. <span class="claim">Empirical finding</span> In May 2024 Anthropic released Golden Gate Claude, a version of Claude 3 Sonnet with one sparse-autoencoder feature (Section 6.5), for the Golden Gate Bridge, turned up. It brought the bridge into nearly every answer, and asked what it looked like, it would say it imagined it looked like the bridge.<label for="sn-gg" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-gg" class="margin-toggle"><span class="sidenote">Anthropic (2024), &ldquo;Golden Gate Claude,&rdquo; May 23, 2024. The feature came from Templeton et al. (2024), &ldquo;Scaling Monosemanticity,&rdquo; Transformer Circuits Thread.</span> <span class="claim">Empirical finding</span> Arditi et al. found, in 13 open chat models of up to 72 billion parameters, a single direction whose removal from the residual stream stops the model from refusing harmful requests, and whose addition makes it refuse harmless ones.<label for="sn-arditi" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-arditi" class="margin-toggle"><span class="sidenote">Arditi, Obeso, Syed, Paleka, Panickssery, Gurnee, and Nanda (2024), &ldquo;Refusal in Language Models Is Mediated by a Single Direction,&rdquo; NeurIPS 2024, arXiv:2406.11717.</span> That finding shows both the power of the method and how fragile safety training can be when its effect runs through one direction: anyone with the model&rsquo;s parameters can remove it.</p>
+</section>
+
+<div class="check" data-id="6.6-c1" data-correct="2">
+  <p class="label">Check</p>
+  <p class="q">A probe finds a &ldquo;truth&rdquo; direction at layer 10 with high accuracy. Adding that direction at layer 10, at several coefficients, does not change the model&rsquo;s outputs. What can you conclude?</p>
+  <div class="options seg"><button>The probe was wrong: the model does not represent truth</button><button>The model represents truth and uses it; steering just failed</button><button>Some evidence that the model does not use that direction at that layer for its outputs, unless the intervention was wrong in size or place</button></div>
+  <div class="feedback"><p>A probe shows that the information can be read from the direction, never that the model uses it. Steering is the test of use, and a null result counts against use at that layer, with the usual caveat: the coefficient may have been too small, or the model may use the information at another layer or in another form. The tool shows both effects: the same vector does little at some layers and much at others.</p></div>
+</div>
+
+<div class="check" data-id="6.6-c2" data-correct="1">
+  <p class="q">Adding a vector at coefficient +10 makes 9 of 10 continuations score as positive, but the text is broken. Has the vector made the model more positive?</p>
+  <div class="options seg"><button>Yes: the score is what counts</button><button>Not clearly: the score must be read together with fluency, since broken text can fool the classifier</button><button>No: a steering vector cannot change sentiment</button></div>
+  <div class="feedback"><p>A behavior score measured by another model is a proxy. Once the text falls apart, the classifier is scoring fragments, and its output stops tracking what it tracks on fluent text. A steering result is convincing in the range where behavior changes and fluency holds.</p></div>
+</div>
+
+<div class="explain" data-id="6.6-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: how is a steering vector made, and what does it show when adding it changes the model&rsquo;s behavior?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>A steering vector is a direction added to the residual stream while the model runs, for example the difference between the activations for two contrasting prompts, scaled by a coefficient. If adding it changes behavior in the expected way, the model uses that direction, which a probe alone cannot show. The effect depends on the layer and the coefficient: there is a range where behavior changes and fluency holds, and past it the text falls apart.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/6-6.js"></script>
+</body>
+</html>
