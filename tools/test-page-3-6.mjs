@@ -29,6 +29,11 @@ for (const p of D.prompts) {
   const t11 = last(p, 11), t12 = last(p, 12);
   check(`t4: last layer lowers the top token, which stays on top: ${p.prompt}`, t11.t[0] === t12.t[0] && t12.p[0] < t11.p[0], `${t11.t[0]} ${t11.p[0]} -> ${t12.p[0]}`);
 }
+const E = P('The Eiffel');
+check('text: Eiffel output London 0.0691, just ahead of Paris 0.0688', last(E, 12).t[0] === ' London' && last(E, 12).t[1] === ' Paris' && last(E, 12).p[0].toFixed(4) === '0.0691' && last(E, 12).p[1].toFixed(4) === '0.0688', `${last(E, 12).t.slice(0, 2)} ${last(E, 12).p.slice(0, 2)}`);
+check('t1: "the" with 0.63 to 0.84 after layers 0 to 3, 0.27 after layer 4', [1, 2, 3, 4].every((s) => last(C, s).p[0] >= 0.63 && last(C, s).p[0] <= 0.845) && r2(last(C, 5).p[0]) === '0.27', [1, 2, 3, 4, 5].map((s) => last(C, s).p[0]).join(' '));
+check('t1: fragments after layers 5 to 7 under 0.2', [6, 7, 8].every((s) => last(C, s).p[0] < 0.2), [6, 7, 8].map((s) => last(C, s).p[0]).join(' '));
+check('t4: at the output Rome 0.019 just ahead of " P" 0.018', last(C, 12).t[1] === ' P' && last(C, 12).p[1].toFixed(3) === '0.018', `${last(C, 12).t[1]} ${last(C, 12).p[1]}`);
 check('six prompts', D.prompts.length === 6, D.prompts.length);
 console.log(fails ? `${fails} FAILED` : 'all ok');
 process.exit(fails ? 1 : 0);

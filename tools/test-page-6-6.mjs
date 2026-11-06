@@ -17,6 +17,9 @@ check('t1: +3 sentiment above unsteered', c.sent[at(3)] > 0.8, c.sent[at(3)]);
 check('t1: +5 fluency -3.2, +10 -4.1, sentiment +10 0.19', r1(c.flu[at(5)]) === '-3.2' && r1(c.flu[at(10)]) === '-4.1' && r2(c.sent[at(10)]) === '0.19', `${c.flu[at(5)]} ${c.flu[at(10)]} ${c.sent[at(10)]}`);
 check('t1: +5 sample 1 repeats fragments', c.texts[at(5)][0].startsWith(' to the the and the and the it'), JSON.stringify(c.texts[at(5)][0].slice(0, 40)));
 check('t1: fluency falls monotonically from +5 on only roughly; every value from +5 to +10 is at or below -3.1', C.slice(at(5)).every((k) => c.flu[at(k)] <= -3.15), C.slice(at(5)).map((k) => c.flu[at(k)]).join(' '));
+check('t1: at +4 one of the three shown samples breaks into single letters', c.texts[at(4)].filter((t) => /( \w){8}/.test(t)).length === 1, JSON.stringify(c.texts[at(4)].map((t) => t.slice(0, 30))));
+const h6 = cell(1, 'love', 6);
+check('t3: the three samples at -3 mix insults and praise (one insult word, one praise word)', /whore|bad person/.test(h6.texts[at(-3)].join(' ')) && /best at your job|I love you/.test(h6.texts[at(-3)].join(' ')), JSON.stringify(h6.texts[at(-3)].map((t) => t.slice(0, 40))));
 const c6 = cell(0, 'love', 6);
 check('t1: at layer 6 fluency stays near -2 (between -2.25 and -1.75) up to +10', C.slice(at(0)).every((k) => c6.flu[at(k)] >= -2.25 && c6.flu[at(k)] <= -1.75), C.slice(at(0)).map((k) => c6.flu[at(k)]).join(' '));
 
