@@ -8,7 +8,7 @@ const EXAMPLES = [
   ['king', 'man', 'woman'],
   ['Tokyo', 'Japan', 'France'],
   ['Paris', 'France', 'Italy'],
-  ['Oslo', 'Norway', 'Austria'],
+  ['Madrid', 'Spain', 'Greece'],
   ['bigger', 'big', 'small'],
 ];
 const FIG_PAIRS = [['France', 'Paris'], ['Germany', 'Berlin'], ['Poland', 'Warsaw'], ['Russia', 'Moscow'], ['Egypt', 'Cairo'], ['Japan', 'Tokyo']];

@@ -15,7 +15,6 @@
     border: 1px solid var(--rule); border-radius: 3px; padding: 0.1rem 0.4rem; width: 100%; box-sizing: border-box;
   }
   .abc { display: grid; grid-template-columns: auto 1fr; gap: 0.3rem 0.6rem; align-items: center; }
-  .abc span { text-align: left; }
   .abc span { color: var(--quiet); text-align: center; }
   table.nn { border-collapse: collapse; margin: 0.3rem 0 0; font-variant-numeric: lining-nums tabular-nums; }
   table.nn td, table.nn th { padding: 0.05rem 0.6rem 0.05rem 0; text-align: left; font-weight: normal; white-space: nowrap; }
@@ -76,18 +75,18 @@
       <div class="notice"><p>With the exclusion off, the closest word is king itself, with cosine similarity 0.799; queen is second, at 0.712. Subtracting man and adding woman moves the vector only part of the way, and it stays closest to where it started. With the exclusion on, king cannot be an answer, and queen comes first.</p></div></div>
   </li>
   <li class="task" data-id="3.2-t3">
-    <p class="prompt">With the exclusion on, try three country-to-capital analogies: Tokyo &minus; Japan + France, Paris &minus; France + Italy, and Oslo &minus; Norway + Austria. How many give the right capital as the first answer?</p>
+    <p class="prompt">With the exclusion on, try three country-to-capital analogies: Tokyo &minus; Japan + France, Paris &minus; France + Italy, and Madrid &minus; Spain + Greece. How many give the right capital as the first answer?</p>
     <div class="choices" data-options="All three|Two|One|None"></div>
     <div class="after"><p>The three examples are in the menu. Then switch the exclusion off and run them again.</p>
       <button class="show" type="button">Show what to notice</button>
-      <div class="notice"><p>Two of the three. Tokyo &minus; Japan + France gives Paris, and Oslo &minus; Norway + Austria gives Vienna. Paris &minus; France + Italy gives Milan first, with Rome a close second (0.721 against 0.704). With the exclusion off, only Paris survives: the Oslo analogy returns Austria, one of its own inputs.</p></div></div>
+      <div class="notice"><p>Two of the three. Tokyo &minus; Japan + France gives Paris, and Madrid &minus; Spain + Greece gives Athens. Paris &minus; France + Italy gives Milan first, with Rome a close second (0.721 against 0.704). With the exclusion off, only Paris survives: the Madrid analogy returns Greece, one of its own inputs.</p></div></div>
   </li>
   <li class="task" data-id="3.2-t4">
     <p class="prompt">Search for <em>king</em> and switch the projection between PCA and UMAP. Which picture keeps more of king&rsquo;s ten nearest neighbors among the ten dots nearest to it?</p>
     <div class="choices" data-options="PCA|UMAP|Both keep all ten"></div>
     <div class="after"><p>Watch the readout under the map, which counts them. Try a few other words too.</p>
       <button class="show" type="button">Show what to notice</button>
-      <div class="notice"><p>UMAP keeps 4 of king&rsquo;s ten nearest neighbors among the ten dots nearest to it; PCA keeps none. Over a sample of 577 of the stored words, UMAP keeps 3.3 of the ten on average and PCA 0.3. Neither map keeps all ten: a picture in the plane loses most of what 300 numbers can hold.</p></div></div>
+      <div class="notice"><p>UMAP keeps 4 of king&rsquo;s ten nearest neighbors among the ten dots nearest to it; PCA keeps none. Over a sample of 577 of the stored words, UMAP keeps 3.3 of the ten on average and PCA 0.3. Neither map keeps all ten, because two numbers per word cannot preserve all the distances between vectors of 300 numbers.</p></div></div>
   </li>
 </ol>
 </section>

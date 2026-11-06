@@ -22,3 +22,7 @@ For each of the five prompts the file holds:
    and the greedy continuation.
 
 The browser never runs the model. The claims on the page are tested in `tools/test-page-3-3.mjs`.
+
+A set of four continuations containing profanity or sexual-violence words (the `BLOCK` pattern in `build_data.py`)
+is sampled again with seed + 100000 per attempt; 3 of the 120 sets were. The page's panel note says so. The
+distributions in the tree are never filtered.

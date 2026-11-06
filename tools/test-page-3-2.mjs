@@ -37,13 +37,13 @@ check('4,039 words, 300 numbers each', E.n === 4039 && E.d === 300, `${E.n} x ${
 
 // Task 3: two of three capitals with the exclusion on; one with it off.
 {
-  const qs = [['Tokyo', 'Japan', 'France', 'Paris'], ['Paris', 'France', 'Italy', 'Rome'], ['Oslo', 'Norway', 'Austria', 'Vienna']];
+  const qs = [['Tokyo', 'Japan', 'France', 'Paris'], ['Paris', 'France', 'Italy', 'Rome'], ['Madrid', 'Spain', 'Greece', 'Athens']];
   const on = qs.map(([a, b, c]) => analogy(E, a, b, c, { exclude: true, k: 2 }));
   const off = qs.map(([a, b, c]) => analogy(E, a, b, c, { exclude: false, k: 2 }));
   const okOn = on.filter((r, k) => r[0].word === qs[k][3]).length, okOff = off.filter((r, k) => r[0].word === qs[k][3]).length;
   check('exclusion on: two of three right', okOn === 2, on.map((r) => words(r).join('/')).join('; '));
   check('Paris - France + Italy: Milan 0.721 then Rome 0.704', on[1][0].word === 'Milan' && on[1][1].word === 'Rome' && on[1][0].sim.toFixed(3) === '0.721' && on[1][1].sim.toFixed(3) === '0.704', on[1].map((x) => x.sim.toFixed(3)).join(' '));
-  check('exclusion off: only Tokyo - Japan + France right; Oslo analogy returns Austria', okOff === 1 && off[0][0].word === 'Paris' && off[2][0].word === 'Austria', off.map((r) => words(r).join('/')).join('; '));
+  check('exclusion off: only Tokyo - Japan + France right; Madrid analogy returns Greece', okOff === 1 && off[0][0].word === 'Paris' && off[2][0].word === 'Greece', off.map((r) => words(r).join('/')).join('; '));
 }
 
 // Task 4: neighbors kept on the maps.
