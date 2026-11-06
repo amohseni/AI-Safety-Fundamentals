@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>6.3 Linear probes | A Primer on AI</title>
+<meta name="description" content="Training a linear probe on a model's activations, and the two checks, control tasks and ablation, that separate information a model carries from information it uses.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  #ablation:empty { display: none; }
+  figure#fig-layers > div { flex: 1 1 14rem; }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="6.3">
+<article>
+<h1>Linear probes</h1>
+
+<section>
+<p>A <em>probe</em> is a classifier trained to predict some property of the input, such as a word&rsquo;s part of speech or the truth of a statement, from a model&rsquo;s activations at one layer.<label for="sn-ab" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-ab" class="margin-toggle"><span class="sidenote">Alain and Bengio (2016), &ldquo;Understanding intermediate layers using linear classifier probes,&rdquo; arXiv:1610.01644.</span> A <em>linear probe</em> is a logistic regression: it computes a dot product of the activation vector \(h\) with a direction \(w\), adds a constant \(b\), and turns the result into a probability,</p>
+$$P(\text{property} \mid h) = \sigma(w \cdot h + b), \qquad \sigma(z) = \frac{1}{1 + e^{-z}}.$$
+<p>The parameters \(w\) and \(b\) are trained on labeled examples to minimize the log loss of page 2.5, plus a penalty on the size of \(w\) (regularization). If the probe is accurate on examples it was not trained on, the property can be read out linearly at that layer. A <em>two-layer probe</em> puts a hidden layer of 64 ReLU units before the output, so it can draw curved boundaries.</p>
+
+<p>A probe&rsquo;s accuracy has to be compared with something. Hewitt and Liang proposed <em>control tasks</em>: give each word type a random label, the same label every time the word occurs, and train the same kind of probe to predict those labels.<label for="sn-hl" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-hl" class="margin-toggle"><span class="sidenote">Hewitt and Liang (2019), &ldquo;Designing and Interpreting Probes with Control Tasks,&rdquo; EMNLP 2019, arXiv:1909.03368.</span> The random labels mean nothing, so a probe can learn them only by memorizing which word it is looking at. The <em>selectivity</em> of a probe is its test accuracy on the real property minus its test accuracy on the control task.</p>
+
+<p>The tool uses the model of page 6.2, Qwen2.5-0.5B, at every second layer from 0 (the embedding) to 24, and three properties. <em>Truth</em>: the 440 city statements of page 6.2, read at the final period, half for training; the control task gives each city a random label. <em>Noun</em> and <em>inside quotation marks</em>: word tokens from 34 passages of <em>Pride and Prejudice</em>, training on half the passages and testing on the others, with as many examples of each label as of the other.<label for="sn-pp" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-pp" class="margin-toggle"><span class="sidenote">Austen (1813), Project Gutenberg eBook 1342, public domain. Nouns were tagged automatically by spaCy&rsquo;s small English model (en_core_web_sm 3.8.0), so a few labels are wrong. A token counts as inside quotation marks if it lies between an opening and a closing curly quotation mark. Only tokens that begin a word are used.</span> As on page 6.2, each activation is reduced to its coordinates along the 32 principal directions of the activations at that layer, and probes are trained in your browser on those coordinates.</p>
+</section>
+
+<section>
+<h2>Train a probe</h2>
+<p>Each task below asks for a prediction first. Make it, then use the tool to check it.</p>
+
+<div class="tool" id="tool">
+  <div class="row">
+    <div class="controls" id="controls"></div>
+    <div class="stage"><div id="by-layer"></div></div>
+  </div>
+  <p class="readout" id="readout" aria-live="polite"></p>
+  <p class="readout" id="ablation" aria-live="polite"></p>
+  <p class="panel-note">Each change of setting trains a probe on the property and a probe of the same kind on the control task. &ldquo;Train at every layer&rdquo; fills in the chart: <span class="c-accent">the property</span> as a solid line, <span class="c-second">the control task</span> dashed. Removing the probe&rsquo;s direction uses results computed in advance with the model, for the linear probe at the default regularization (0.01).</p>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="6.3-t1">
+    <p class="prompt">Property: truth, linear probe. At which layer does the probe first sort at least 90% of the held-out city statements correctly?</p>
+    <div class="choices" data-options="Layer 2|Layer 8|Layer 16|Layer 24"></div>
+    <div class="after"><p>Press &ldquo;Train at every layer&rdquo;, or move the layer slider.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Layer 8: test accuracy jumps from 59% at layer 6 to 95% at layer 8, and stays between 95% and 97% to the last layer. At layer 0 every statement has the same activation, the embedding of the period, so no probe can do better than chance. The control task stays between 49% and 62% at every layer. Somewhere in layers 7 and 8 the model computes something about the statement that a line can separate.</p></div></div>
+  </li>
+  <li class="task" data-id="6.3-t2">
+    <p class="prompt">Property: noun, layer 8. Switch from the linear probe to the two-layer probe. What happens to the accuracy on the control task?</p>
+    <div class="choices" data-options="It rises|It stays about the same|It falls"></div>
+    <div class="after"><p>Read the readout for both probes. Then train both at every layer.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>It rises, from 54% to 71%, while test accuracy on nouns stays at 94 to 95%; selectivity falls from 40 points to 23. The two-layer probe fits all of its training labels, real and random, and partly carries its memorized random labels over to the same words in new passages. Its high accuracy on nouns is therefore weaker evidence about the model: part of what it shows is what the probe can learn by itself. At every layer from 2 to 24 the two-layer probe&rsquo;s control accuracy is 63% to 73%, against 53% to 62% for the linear probe.</p></div></div>
+  </li>
+  <li class="task" data-id="6.3-t3">
+    <p class="prompt">PLACEHOLDER</p>
+    <div class="choices" data-options="A|B"></div>
+    <div class="after"><p>PLACEHOLDER</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>PLACEHOLDER</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>What accuracy shows</h2>
+<p><span class="claim">Argument</span> High probe accuracy shows that the property can be read out at that layer. It does not show that the model uses it. A probe can succeed by picking up information that the model carries as a by-product of other computations, and a flexible probe can learn part of the task itself, as the two-layer probe&rsquo;s control accuracy shows. Selectivity guards against the second problem. The first needs a causal test: remove or change the direction the probe found and see whether the model&rsquo;s behavior changes, as in the ablation above and in activation patching (page 6.7).<label for="sn-bel" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-bel" class="margin-toggle"><span class="sidenote">Belinkov (2022), &ldquo;Probing Classifiers: Promises, Shortcomings, and Advances,&rdquo; <em>Computational Linguistics</em> 48: 207&ndash;219, reviews these problems.</span></p>
+<p>Probes are also used to monitor models. A probe trained to detect a dangerous property, such as a model writing an answer it represents as false, can run on every output at little cost. For such uses the key question is whether the probe still works on cases unlike its training data. Page 7.2 tests a truth probe on negations, paraphrases, and other topics.</p>
+
+<figure class="multiples" id="fig-layers" aria-describedby="fig-layers-desc"></figure>
+<p id="fig-layers-desc" class="caption">Test accuracy of linear probes at every second layer of Qwen2.5-0.5B (solid), and of the same probes on the control task (dashed), at the default regularization. Truth becomes readable between layers 6 and 8; nouns are readable from the embedding on; whether a token is inside quotation marks becomes more readable with depth. These curves are computed in your browser when the page loads.</p>
+</section>
+
+<div class="check" data-id="6.3-c1" data-correct="1">
+  <p class="label">Check</p>
+  <p class="q">A probe scores 95% on the real task and 93% on its control task. What does that suggest?</p>
+  <div class="options seg"><button>The model represents the property clearly</button><button>The probe is mostly learning the task by itself, so its 95% says little about the model</button><button>The model uses the property to produce its outputs</button></div>
+  <div class="feedback"><p>The probe nearly fits random labels that carry no information about the property, so its accuracy reflects what it can memorize. Selectivity is 2 points: weak evidence that the representation encodes the property in a readable form.</p></div>
+</div>
+
+<div class="check" data-id="6.3-c2" data-correct="2">
+  <p class="q">A linear probe reads a property at 97% with high selectivity. What further test would show that the model uses the property?</p>
+  <div class="options seg"><button>Train a two-layer probe and compare</button><button>Test the probe on more examples of the same kind</button><button>Remove or change the probe&rsquo;s direction in the activations and watch the model&rsquo;s outputs</button></div>
+  <div class="feedback"><p>Accuracy and selectivity are both facts about what can be read out. Use is a causal claim, so it needs an intervention on the activations and a change in behavior.</p></div>
+</div>
+
+<div class="explain" data-id="6.3-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: what does a probe&rsquo;s accuracy show, and what do the control task and the ablation add?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>A linear probe is a logistic regression on a model&rsquo;s activations at one layer; its test accuracy shows that a property can be read out there. Accuracy alone overstates what a probe shows. A control task measures how much the probe can learn by itself, and selectivity is the difference. Whether the model uses the property is a separate, causal question, tested by removing or changing the probe&rsquo;s direction and watching the model&rsquo;s behavior.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/6-3.js"></script>
+</body>
+</html>

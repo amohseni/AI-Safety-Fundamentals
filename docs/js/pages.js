@@ -248,13 +248,13 @@ export const sections = [
         "id": "6.2",
         "title": "The linear representation hypothesis",
         "core": true,
-        "href": null
+        "href": "pages/6-2.html"
       },
       {
         "id": "6.3",
         "title": "Linear probes",
         "core": false,
-        "href": null
+        "href": "pages/6-3.html"
       },
       {
         "id": "6.4",
@@ -296,7 +296,7 @@ export const sections = [
         "id": "7.2",
         "title": "Belief",
         "core": false,
-        "href": null
+        "href": "pages/7-2.html"
       },
       {
         "id": "7.3",

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>6.2 The linear representation hypothesis | A Primer on AI</title>
+<meta name="description" content="The hypothesis that a model represents many features as directions in its activation space, tested on true and false statements and on the days of the week.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  .tool .stage .sub { margin: 0.4rem 0 0; color: var(--quiet); }
+  figure#fig-dir > div { flex: 1 1 15rem; }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="6.2">
+<article>
+<h1>The linear representation hypothesis</h1>
+
+<section>
+<p>The <em>linear representation hypothesis</em> says that a model represents many features as directions in its activation space. A feature is a property of the input that the model represents, such as whether a statement is true. If a feature has the direction \(w\), how strongly the feature is present in an input is measured by the dot product of the input&rsquo;s activation vector \(h\) with \(w\):</p>
+$$s = w \cdot h = w_1 h_1 + w_2 h_2 + \dots + w_d h_d.$$
+<p>A large positive \(s\) means the feature is strongly present; a threshold on \(s\) turns it into a yes-or-no reading. Page 6.3 trains classifiers, called probes, that search for such directions. On this page you look for one by hand.</p>
+
+<p>The activations come from Qwen2.5-0.5B, an open language model with 24 layers and a residual stream of 896 numbers at each position.<label for="sn-model" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-model" class="margin-toggle"><span class="sidenote">Qwen Team (2024), Qwen2.5-0.5B, released under the Apache 2.0 license. The site&rsquo;s usual model, GPT-2 small, gave much weaker results on the same statements: a logistic probe trained on city statements sorted at most 77% of new city statements, and about half of the Spanish-word and element statements at every layer (<code>tools/truth/compare_models.py</code>).</span> We gave it 686 short statements on three topics, half of them true, written from templates in the style of Marks and Tegmark:<label for="sn-data" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-data" class="margin-toggle"><span class="sidenote">Marks and Tegmark (2023), &ldquo;The Geometry of Truth: Emergent Linear Structure in Large Language Model Representations of True/False Datasets,&rdquo; arXiv:2310.06824 (COLM 2024). The 220 cities are the largest cities in GeoNames (CC BY 4.0), at most four per country. Each city, word, and element appears once with the right answer and once with a wrong one drawn at random. How the data were made: <code>tools/truth/README.md</code>.</span> 440 about cities (&ldquo;The city of Shanghai is in China.&rdquo;, &ldquo;The city of Shanghai is in Kenya.&rdquo;), 150 about Spanish words (&ldquo;The Spanish word &lsquo;perro&rsquo; means &lsquo;dog&rsquo;.&rdquo;), and 96 about chemical elements (&ldquo;The chemical symbol for gold is Au.&rdquo;). For each statement we kept the residual stream after layer 13 at its last token, the period. To make the tool fast, each of these vectors is reduced to its coordinates along the 32 directions in which the statements&rsquo; activations vary most (their principal directions), which carry 91% of the variance.</p>
+</section>
+
+<section>
+<h2>Find the direction</h2>
+<p>Each task below asks for a prediction first. Make it, then use the tool to check it.</p>
+
+<div class="tool" id="tool">
+  <div class="panel" id="panel-st">
+    <h3>True and false statements</h3>
+    <p class="panel-note">Each dot is one statement, placed by its coordinates along two directions of the 32-dimensional space: <span class="c-accent">true statements</span> are filled dots, <span class="c-second">false statements</span> open circles. Drag the arrow, or select its end and use the arrow keys, to choose a direction \(w\) in the plane. The histogram under the plot counts the dot products \(w \cdot h\), true statements above the line and false ones below; the dashed line is the threshold that sorts the most statements correctly.</p>
+    <div class="row"><div class="controls" id="st-controls"></div><div class="stage"><div id="st-plot"></div><div id="st-hist"></div></div></div>
+    <p class="readout" id="st-readout" aria-live="polite"></p>
+  </div>
+
+  <div class="panel" id="panel-wd">
+    <h3>Days of the week</h3>
+    <p class="panel-note">Each dot is the activation after layer 13 at the name of a day, in one of 24 short sentences such as &ldquo;The meeting is on Monday&rdquo;, placed by its coordinates along the two principal directions of the seven days&rsquo; average activations. Drag the arrow, or select its end and use the arrow keys; the strip under the plot shows where each day&rsquo;s average falls along the arrow.</p>
+    <div class="row"><div class="controls"></div><div class="stage"><div id="wd-plot"></div><div id="wd-strip"></div></div></div>
+    <p class="readout" id="wd-readout" aria-live="polite"></p>
+  </div>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="6.2-t1">
+    <p class="prompt">The plane is set to the two principal directions of all the statements, and the city statements are shown. What is the largest share of them that one direction in this plane can sort correctly?</p>
+    <div class="choices" data-options="About half|About four in five|Nearly all"></div>
+    <div class="after"><p>Drag the arrow around until the true and false statements fall on opposite sides of the threshold in the histogram as far as possible.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The best direction in this plane sorts about 80% of the city statements (79.5% in our sweep of every half degree). The two directions in which the activations vary most do not line up with truth: the true and false statements overlap. Choose Random a few times: some random planes do better than this one (between 78% and 95% in the first five) and some worse.</p></div></div>
+  </li>
+  <li class="task" data-id="6.2-t2">
+    <p class="prompt">Set the plane to Difference of means. Its horizontal direction is the average activation of the true training statements about cities minus the average of the false ones. Will that direction sort the city statements better or worse than the best arrow you found in the first plane?</p>
+    <div class="choices" data-options="Better|About the same|Worse"></div>
+    <div class="after"><p>Press &ldquo;Point the arrow along the difference of means&rdquo; and read the share sorted correctly.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Better: the difference of means sorts 97.5% of the 440 city statements. On the 220 statements that were not used to compute it, with the threshold set halfway between the two averages, it sorts 95.5%. A direction computed by subtracting two averages, with no search at all, does much better than the best direction in the plane of largest variance. The directions in which the activations vary most are not the direction that separates true from false.</p></div></div>
+  </li>
+  <li class="task" data-id="6.2-t3">
+    <p class="prompt">Keep the arrow along the difference of means from cities, and show the statements about Spanish words instead. What share of them will the same direction sort correctly?</p>
+    <div class="choices" data-options="About half|About three in four|Nearly all"></div>
+    <div class="after"><p>Switch the statements shown to Spanish words, then to chemical elements, without moving the arrow. Then take the difference of means from Spanish words and show the cities.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Nearly all: the direction found on cities sorts 99% of the Spanish-word statements and 99% of the element statements (with the threshold chosen for each topic; with the threshold set halfway between the two city averages, 98.7% and 92.7%). The transfer does not run as well the other way: the difference of means from Spanish words sorts only 62% of the city statements, and the direction from the elements 63%.</p></div></div>
+  </li>
+  <li class="task" data-id="6.2-t4">
+    <p class="prompt">In <em>Days of the week</em>, can you find one direction along which the seven days fall in their weekly order, with Sunday and Monday next to each other at one end and the rest in order?</p>
+    <div class="choices" data-options="Yes|No"></div>
+    <div class="after"><p>Turn the arrow all the way around and watch the strip and the readout.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>No. The days&rsquo; averages lie on a circle in weekly order: Monday, Tuesday, and so on around to Sunday, which sits next to Monday. Projecting a circle onto a line always folds it, so for every direction two days that are far apart in the week land close together along the arrow. Day of the week is represented in a two-dimensional subspace, and the day is given by the angle around the circle.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>The evidence and an exception</h2>
+<p><span class="claim">Empirical finding</span> Marks and Tegmark found the same pattern in larger models: in LLaMA-2-13B, true and false statements separate along one direction, probes trained on one dataset of statements work on others, and adding the direction to the activations of a false statement makes the model treat it as true. They also found that simple differences of means generalize as well as other probes, and that the structure becomes clearer as models get larger. The model on this page shows the first two of these; page 7.2 runs the causal test on it.</p>
+<p>Other evidence comes from several places. Word embeddings, in which differences between words&rsquo; vectors encode relations such as the one between &ldquo;king&rdquo; and &ldquo;queen&rdquo;, are an early case. In a transformer trained to play the board game Othello, the board state can be read off linearly once a square is described as holding &ldquo;my piece&rdquo; or &ldquo;the opponent&rsquo;s piece&rdquo; rather than &ldquo;black&rdquo; or &ldquo;white&rdquo;.<label for="sn-othello" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-othello" class="margin-toggle"><span class="sidenote">Nanda, Lee, and Wattenberg (2023), &ldquo;Emergent Linear Representations in World Models of Self-Supervised Sequence Models,&rdquo; BlackboxNLP Workshop, arXiv:2309.00941.</span> In 13 open chat models, refusing a harmful request is controlled largely by a single direction: removing it stops refusals, and adding it makes a model refuse harmless requests.<label for="sn-arditi" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-arditi" class="margin-toggle"><span class="sidenote">Arditi, Obeso, Syed, Paleka, Panickssery, Gurnee, and Nanda (2024), &ldquo;Refusal in Language Models Is Mediated by a Single Direction,&rdquo; NeurIPS 2024, arXiv:2406.11717.</span> Park, Choe, and Veitch give a formal statement of the hypothesis and connect it to probing and to steering.<label for="sn-park" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-park" class="margin-toggle"><span class="sidenote">Park, Choe, and Veitch (2024), &ldquo;The Linear Representation Hypothesis and the Geometry of Large Language Models,&rdquo; ICML 2024, arXiv:2311.03658 (first posted 2023).</span></p>
+<p><span class="claim">Empirical finding</span> The hypothesis does not hold for every feature. Engels and colleagues found days of the week and months of the year arranged on circles in GPT-2 small and in Mistral 7B, and showed that Mistral 7B and Llama 3 8B use such circles to do arithmetic with days and months, as in &ldquo;Two days from Monday is&rdquo;.<label for="sn-engels" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-engels" class="margin-toggle"><span class="sidenote">Engels, Michaud, Liao, Gurnee, and Tegmark (2024), &ldquo;Not All Language Model Features Are One-Dimensionally Linear,&rdquo; ICLR 2025, arXiv:2405.14860; the first version was titled &ldquo;Not All Language Model Features Are Linear.&rdquo;</span> The circle in the second panel is the same structure in Qwen2.5-0.5B.</p>
+<p><span class="claim">Argument</span> The hypothesis matters because most interpretability tools assume it: probes (page 6.3), sparse dictionaries (page 6.5), and steering vectors all look for directions. Where it holds, a model&rsquo;s features can be found and changed with linear algebra. Where a feature lives on a circle or another curved shape, a method that looks for one direction will miss it or find only part of it.</p>
+
+<figure class="multiples" id="fig-dir" aria-describedby="fig-dir-desc"></figure>
+<p id="fig-dir-desc" class="caption">Left: the 440 city statements in the plane of the difference of class means (horizontal, drawn as the arrow) and the principal direction orthogonal to it. True statements (filled) lie to the right, false ones (open) to the left. Right: the activations at the seven weekday names, in the plane of the two principal directions of the days&rsquo; averages. The days go around a circle in weekly order.</p>
+</section>
+
+<div class="check" data-id="6.2-c1" data-correct="1">
+  <p class="label">Check</p>
+  <p class="q">A direction computed from city statements sorts 99% of the Spanish-word statements correctly. What does this support?</p>
+  <div class="options seg"><button>That the model has one direction for the truth of every statement</button><button>That some single direction separates true from false in both topics</button><button>That the model uses this direction when it answers questions</button></div>
+  <div class="feedback"><p>The result shows that one direction separates the statements of both topics. It does not show that the same direction works for every topic (the direction from Spanish words sorts only 62% of the cities), and sorting statements says nothing about whether the model uses the direction. Testing use requires changing the activations and watching the output.</p></div>
+</div>
+
+<div class="check" data-id="6.2-c2" data-correct="2">
+  <p class="q">A researcher reads a model&rsquo;s representation of the day of the week with one dot product and a threshold. Which mistake must this reading make?</p>
+  <div class="options seg"><button>It confuses true and false statements about days</button><button>It cannot tell any two days apart</button><button>It puts some days that are far apart in the week close together</button></div>
+  <div class="feedback"><p>The days lie on a circle. A dot product projects the circle onto a line, which folds it, so pairs of days on opposite sides of the arrow get nearly the same value. Reading the day needs both coordinates in the circle&rsquo;s plane, which together give the angle.</p></div>
+</div>
+
+<div class="explain" data-id="6.2-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: what does it mean for a model to represent a feature linearly, and what operation reads it out?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>The linear representation hypothesis says that a model represents many features as directions in its activation space, read out by a dot product with the feature&rsquo;s direction. Truth in simple statements is one example: in Qwen2.5-0.5B the difference of class means from city statements sorts true from false for cities, Spanish words, and chemical elements. The days of the week are an exception: they lie on a circle in a two-dimensional subspace, which no single direction can read.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/6-2.js"></script>
+</body>
+</html>
