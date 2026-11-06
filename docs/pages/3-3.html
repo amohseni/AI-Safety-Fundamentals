@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3.3 Next-token prediction and sampling | A Primer on AI</title>
+<meta name="description" content="A language model outputs a probability distribution over the next token; text is produced by sampling one token at a time, shaped by temperature and top-p.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  .tool select { font: inherit; font-size: var(--text); color: var(--ink); background: transparent; }
+  #s-text { font-size: var(--text); display: flex; flex-wrap: wrap; align-items: flex-start; gap: 0.3rem 0.2rem; margin: 0 0 0.8rem; line-height: 1.35; }
+  #s-text .ptext { color: var(--quiet); margin-right: 0.2rem; }
+  .gtok { display: inline-flex; flex-direction: column; align-items: center; border: 1px solid var(--rule); border-radius: 2px; padding: 0 0.3rem; }
+  .gtok .t { white-space: pre; color: var(--ink); }
+  .gtok .pr { color: var(--quiet); font-variant-numeric: lining-nums tabular-nums; }
+  #s-draws { margin-top: 1.2rem; width: 61%; }
+  #s-draws .draw { margin: 0.2rem 0 0.5rem; }
+  #s-draws .ptext { color: var(--quiet); }
+  .small-title { margin: 0 0 0.2rem; }
+  @media (max-width: 760px) { #s-draws { width: 100%; } }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="3.3">
+<article>
+<h1>Next-token prediction and sampling</h1>
+
+<section>
+<p>At each position, the last step of a transformer produces a score, called a <em>logit</em>, for every token in the vocabulary: 50,257 scores in GPT-2. Softmax turns the scores into probabilities that are positive and add up to 1. The result is the model&rsquo;s probability distribution over the next token. During training, this distribution is scored with the log loss against the token that actually came next (Section 2.5).</p>
+
+<p>To generate text, the model computes the distribution for the next token, one token is drawn from it, the token is appended to the input, and the process repeats. Everything a chat model writes is produced this way, one token at a time.</p>
+
+<p>Two settings change how the token is drawn. The <em>temperature</em> \(T\) divides every logit before softmax:</p>
+$$p_i = \frac{\exp(z_i / T)}{\sum_j \exp(z_j / T)},$$
+<p>where \(z_i\) is the logit of token \(i\). At \(T = 1\) these are the model&rsquo;s own probabilities. A temperature below 1 makes the gaps between logits larger, which concentrates probability on the most likely tokens; a temperature above 1 makes them smaller, which spreads probability out. <em>Top-p</em> sampling then keeps only the most likely tokens, the fewest whose probabilities add up to at least \(p\), and draws among those in proportion to their probabilities.<label for="sn-holtzman" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-holtzman" class="margin-toggle"><span class="sidenote">Holtzman, Buys, Du, Forbes, and Choi (2020), &ldquo;The Curious Case of Neural Text Degeneration,&rdquo; ICLR. They introduced top-p sampling, which they call nucleus sampling.</span></p>
+</section>
+
+<section>
+<h2>Sample the next token</h2>
+<p>Each task below asks for a prediction first. Make it, then use the tool to check it.</p>
+
+<div class="tool" id="tool">
+  <div class="panel" id="panel-sample">
+    <p class="panel-note">GPT-2 small does not run in your browser. For each prompt, its next-token distribution was computed in advance after about 2,400 different beginnings of a continuation, chosen so that a reader sampling at \(T = 1\) is likely to stay among them. The bars show GPT-2&rsquo;s exact probabilities, at your temperature, for its 20 most likely next tokens. <span class="c-accent">Filled bars</span> are the tokens after which the next step was also computed; Sample draws among those, in proportion to their probabilities. Outlined bars are tokens the tool cannot continue after, and gray bars are tokens cut by top-p. Where no stored step follows, the tool stops; at \(T = 1\) that usually happens after 3 to 9 tokens, and at \(T = 0\) after 24. The number under each generated token is its probability when it was chosen. Under the tool are whole continuations that GPT-2 itself sampled in advance at your settings.</p>
+    <div class="row"><div class="controls" id="s-controls"></div>
+      <div class="stage"><div id="s-text" aria-live="polite"></div><div id="s-chart"></div></div></div>
+    <p class="readout" id="s-readout" aria-live="polite"></p>
+    <div id="s-draws"></div>
+  </div>
+</div>
+
+<ol class="tasks" id="s-tasks">
+  <li class="task" data-id="3.3-t1">
+    <p class="prompt">Set the temperature to 0 and press Sample until the text stops. Then press Reset and do it again. Will the two texts be the same?</p>
+    <div class="choices" data-options="The same|Different|The same at first, then different"></div>
+    <div class="after"><p>Try it with two or three prompts.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The same, every time. At \(T = 0\) the draw is always the most likely token, so the whole text is fixed by the prompt. After &ldquo;My favorite food is&rdquo; GPT-2&rsquo;s greedy text is &ldquo;the chicken. I love the chicken. I love the chicken.&rdquo; and so on: always taking the most likely token often falls into a loop. The text under the tool, GPT-2&rsquo;s greedy continuation for 30 tokens, shows the same loop.</p></div></div>
+  </li>
+  <li class="task" data-id="3.3-t2">
+    <p class="prompt">Choose &ldquo;Once upon a time&rdquo; and set top-p to 1. Under the tool are four continuations GPT-2 sampled in advance at your temperature. At \(T = 1.5\), how will they read compared with \(T = 1\)?</p>
+    <div class="choices" data-options="About the same|More like ordinary English|Less coherent, with odd words"></div>
+    <div class="after"><p>Move the temperature between 0.5, 1, 1.5, and 2. Then, at \(T = 1.5\), set top-p to 0.9.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Less coherent. At \(T = 1\) the continuations of &ldquo;Once upon a time&rdquo; are strange but mostly grammatical. At \(T = 1.5\) they break down within a few words into unrelated words and pieces of words, for example &ldquo;Marty stood consulting here where Tam today had conductedphotograph orb&rdquo;. A higher temperature moves probability from the few likely tokens to the tens of thousands of unlikely ones: after &ldquo;Once upon a time&rdquo;, the 20 most likely tokens hold 79% of the probability at \(T = 1\) and 22% at \(T = 1.5\). Top-p 0.9 cuts off only a little of that tail at \(T = 1.5\); top-p 0.5 cuts off much more, and the text becomes readable again.</p></div></div>
+  </li>
+  <li class="task" data-id="3.3-t3">
+    <p class="prompt">At \(T = 1\), after which prompt is GPT-2 most sure of the next token?</p>
+    <div class="choices" data-options="The capital of France is|Thank you very|My favorite food is"></div>
+    <div class="after"><p>Switch between the prompts and look at the first bar.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>&ldquo;Thank you very&rdquo;: GPT-2 gives &ldquo;much&rdquo; probability 0.992. After &ldquo;The capital of France is&rdquo;, the most likely token is &ldquo;the&rdquo; at 0.085, and &ldquo;Paris&rdquo; gets only 0.032, about the same as &ldquo;France&rdquo;: GPT-2 small expects the sentence to go on in many ways, most of them not naming the city yet. After &ldquo;My favorite food is&rdquo; the 20 most likely tokens together hold only 29% of the probability.</p></div></div>
+  </li>
+  <li class="task" data-id="3.3-t4">
+    <p class="prompt">After &ldquo;Once upon a time&rdquo;, at \(T = 1\) with top-p 0.5, how many tokens can be drawn?</p>
+    <div class="choices" data-options="1|3|More than 10"></div>
+    <div class="after"><p>Set top-p to 0.5 and count the bars that are not gray. Then raise the temperature to 2.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Three: the comma (0.427), &ldquo;the&rdquo; (0.065), and &ldquo;I&rdquo; (0.041). The first two hold 0.491, just short of 0.5, so the third is needed to reach it. At \(T = 2\) the same top-p keeps all 20 bars and more beyond them, because temperature is applied first and spreads the probability over many tokens.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>One answer is one draw</h2>
+<figure class="multiples" id="fig-temps" aria-describedby="fig-temps-desc"></figure>
+<p id="fig-temps-desc" class="caption">GPT-2 small&rsquo;s ten most likely tokens after &ldquo;The capital of France is&rdquo;, at three temperatures, on the same scale. The order never changes, because dividing by \(T\) keeps the order of the logits. At \(T = 0.5\) the first token, &ldquo;the&rdquo;, has probability 0.397; at \(T = 1\), 0.085; at \(T = 2\), 0.005, with the rest spread over tens of thousands of other tokens.</p>
+
+<p>Temperature and top-p do not change the model. They change only how a token is drawn from the same distribution. <span class="claim">Empirical finding</span> Holtzman et al. found that always taking the most likely token, or searching for the most likely whole continuation, gives dull and repetitive text, while drawing from the model&rsquo;s full distribution often wanders into the long tail of unlikely tokens; cutting off the tail with top-p gave text closer to human writing by their measures. The greedy loop and the \(T = 1.5\) continuations in the tool are small examples of both failures.</p>
+
+<p><span class="claim">Argument</span> Because generation is sampling, any one answer from a model is a single draw from its distribution. A second draw from the same model with the same prompt can say something else. To learn what a model tends to say, one has to look at many draws, or at the probabilities themselves.</p>
+</section>
+
+<div class="check" data-id="3.3-c1" data-correct="0">
+  <p class="label">Check</p>
+  <p class="q">As the temperature approaches 0, what does sampling become?</p>
+  <div class="options seg"><button>Always taking the most likely token</button><button>Drawing every token with equal probability</button><button>Drawing from the model&rsquo;s own probabilities</button></div>
+  <div class="feedback"><p>Dividing by a small \(T\) makes the gap between the largest logit and every other logit huge, so softmax puts almost all the probability on the most likely token. In the limit this is greedy decoding. As \(T\) grows large, the distribution approaches equal probabilities instead.</p></div>
+</div>
+
+<div class="check" data-id="3.3-c2" data-correct="1">
+  <p class="q">Two tokens have logits 2 and 1, and no other token is possible. At \(T = 0.5\), about what probability does the first token get?</p>
+  <div class="options seg"><button>0.73</button><button>0.88</button><button>0.99</button></div>
+  <div class="feedback"><p>Dividing by 0.5 gives 4 and 2, so the probability is \(e^4 / (e^4 + e^2) = 1 / (1 + e^{-2}) \approx 0.88\). At \(T = 1\) it would be \(1 / (1 + e^{-1}) \approx 0.73\).</p></div>
+</div>
+
+<div class="check" data-id="3.3-c3" data-correct="1">
+  <p class="q">You give a chat model sampling at \(T = 1\) the same question twice and get two different answers. What does this show?</p>
+  <div class="options seg"><button>The model changed between the two questions</button><button>Each answer is one draw from the same distribution</button><button>At least one of the answers is an error</button></div>
+  <div class="feedback"><p>The model and its distribution are the same both times; sampling drew different tokens. To learn what the model tends to say, look at many draws or at the probabilities themselves.</p></div>
+</div>
+
+<div class="explain" data-id="3.3-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: how does a model that outputs only next-token probabilities produce a whole paragraph, and what does the temperature change?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>A language model outputs a probability distribution over the next token. Text is generated by drawing one token, appending it, and repeating. Temperature divides the logits before softmax: below 1 it concentrates probability on the likely tokens, and at 0 it becomes greedy decoding; above 1 it spreads probability toward unlikely tokens. Top-p keeps only the most likely tokens that together hold probability \(p\). Any one answer from a model is a single draw from its distribution.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/3-3.js"></script>
+</body>
+</html>

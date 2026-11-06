@@ -122,13 +122,13 @@ export const sections = [
         "id": "3.2",
         "title": "Embeddings",
         "core": false,
-        "href": null
+        "href": "pages/3-2.html"
       },
       {
         "id": "3.3",
         "title": "Next-token prediction and sampling",
         "core": false,
-        "href": null
+        "href": "pages/3-3.html"
       },
       {
         "id": "3.4",
@@ -152,7 +152,7 @@ export const sections = [
         "id": "3.7",
         "title": "A full forward pass",
         "core": false,
-        "href": null
+        "href": "pages/3-7.html"
       },
       {
         "id": "3.8",
