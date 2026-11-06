@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3.2 Embeddings | A Primer on AI</title>
+<meta name="description" content="Each token becomes a learned vector, its embedding; nearby vectors belong to words used in similar contexts, and some relations between words are directions.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  #map-stage canvas { display: block; width: 100%; max-width: 40rem; touch-action: manipulation; }
+  .tool input[type="text"] {
+    font: inherit; font-size: var(--text); color: var(--ink); background: transparent;
+    border: 1px solid var(--rule); border-radius: 3px; padding: 0.1rem 0.4rem; width: 100%; box-sizing: border-box;
+  }
+  .abc { display: grid; grid-template-columns: auto 1fr; gap: 0.3rem 0.6rem; align-items: center; }
+  .abc span { color: var(--quiet); text-align: center; }
+  table.nn { border-collapse: collapse; margin: 0.3rem 0 0; font-variant-numeric: lining-nums tabular-nums; }
+  table.nn td, table.nn th { padding: 0.05rem 0.6rem 0.05rem 0; text-align: left; font-weight: normal; white-space: nowrap; }
+  table.nn th { color: var(--quiet); }
+  table.nn td.num { text-align: right; }
+  table.nn tr.input td { color: var(--quiet); font-style: italic; }
+  .lists { display: flex; flex-wrap: wrap; gap: 0.6rem 2.4rem; }
+  .lists > div { min-width: 12rem; }
+  .small-title { margin: 0 0 0.2rem; }
+  .err { color: var(--bad); }
+  figure.embfig { max-width: 90%; }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="3.2">
+<article>
+<h1>Embeddings</h1>
+
+<section>
+<p>A language model receives a sequence of token ids (Section 3.1). Its first step is a lookup table. The model has a matrix with one row for each token in the vocabulary, the <em>token embedding matrix</em>, and each token id selects one row. That row, a list of numbers, is the token&rsquo;s <em>embedding</em>. In GPT-2 small each embedding has 768 numbers, so the matrix has 50,257 rows and 768 columns.</p>
+
+<p>The numbers in the matrix are parameters. They start as small random numbers and are adjusted by gradient descent along with every other parameter of the model (Section 2.6), so that the model&rsquo;s predictions of the next token improve. Nothing tells the model which words are related. Whatever structure the embeddings have comes from training.</p>
+
+<p>One way to see that structure is to measure how close two embeddings are. This page uses the <em>cosine similarity</em>: the dot product of two vectors divided by the product of their lengths. It is 1 for vectors that point the same way, 0 for perpendicular vectors, and negative for vectors that point in roughly opposite directions.</p>
+
+<p>The tool uses word vectors from word2vec, a small model trained only to produce such vectors: the vectors are adjusted so that the vector of a word helps predict which words appear near it in text.<label for="sn-w2v" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-w2v" class="margin-toggle"><span class="sidenote">Mikolov, Sutskever, Chen, Corrado, and Dean (2013), &ldquo;Distributed Representations of Words and Phrases and their Compositionality,&rdquo; NeurIPS. The tool uses the vectors released with the word2vec software, trained on about 100 billion words of Google News text, 300 numbers per word. The page keeps 4,039 of them: the 4,000 most frequent words written in plain letters, and 39 more that the tasks and the figure use.</span> A transformer&rsquo;s embeddings are trained as part of the whole model, not on their own, but they show the same kind of structure (see the end of the page). In word2vec&rsquo;s best-known example, the vector for &ldquo;king&rdquo; minus the vector for &ldquo;man&rdquo; plus the vector for &ldquo;woman&rdquo; lands near the vector for &ldquo;queen&rdquo;.<label for="sn-mik" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-mik" class="margin-toggle"><span class="sidenote">Mikolov, Yih, and Zweig (2013), &ldquo;Linguistic Regularities in Continuous Space Word Representations,&rdquo; NAACL.</span> The tool lets you check this.</p>
+</section>
+
+<section>
+<h2>Embedding space</h2>
+<p>Each task below asks for a prediction first. Make it, then use the tool to check it.</p>
+
+<div class="tool" id="tool">
+  <div class="panel" id="panel-map">
+    <h3>Neighbors and analogies</h3>
+    <p class="panel-note">Each dot is one of the 4,039 words, placed by a projection of its 300 numbers onto the plane. Search for a word to see its ten nearest neighbors by cosine similarity, computed from all 300 numbers. The analogy box computes \(a - b + c\) from the unit-length vectors and lists the five words closest to the result. The searched word and the analogy&rsquo;s answers are in <span class="c-accent">blue</span>; the analogy&rsquo;s three input words are in <span class="c-second">orange</span>.</p>
+    <div class="row"><div class="controls" id="map-controls"></div><div class="stage" id="map-stage"></div></div>
+    <p class="readout" id="map-readout" aria-live="polite"></p>
+    <div class="lists" id="lists"></div>
+  </div>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="3.2-t1">
+    <p class="prompt">Search for <em>bank</em>. Will its ten nearest neighbors include words about rivers?</p>
+    <div class="choices" data-options="Yes, both senses appear|No, only words about money|Only words about rivers"></div>
+    <div class="after"><p>Search for bank. Then search for river.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>All ten neighbors are about money: banks, banking, Bank, branch, lending, deposit, mortgage, loans, accounts, loan. Word2vec gives each word one vector, learned from all the places the word occurs, and the vector for bank sits among the financial words. The neighbors of river (River, water, sea, bridge, boat, Lake) do not include bank. A transformer starts the same way, with one embedding per token, and uses its later layers to make the vector at each position depend on the surrounding words (Sections 3.4 to 3.6).</p></div></div>
+  </li>
+  <li class="task" data-id="3.2-t2">
+    <p class="prompt">Switch the exclusion off and compute king &minus; man + woman. Which word will be closest to the result?</p>
+    <div class="choices" data-options="queen|king|woman"></div>
+    <div class="after"><p>Choose the king example, set <em>Leave out a, b, c</em> to Off, and compute. Then switch it on.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>With the exclusion off, the closest word is king itself, with cosine similarity 0.799; queen is second, at 0.712. Subtracting man and adding woman moves the vector only part of the way, and it stays closest to where it started. With the exclusion on, king cannot be an answer, and queen comes first.</p></div></div>
+  </li>
+  <li class="task" data-id="3.2-t3">
+    <p class="prompt">With the exclusion on, try three country-to-capital analogies: Tokyo &minus; Japan + France, Paris &minus; France + Italy, and Madrid &minus; Spain + Greece. How many give the right capital as the first answer?</p>
+    <div class="choices" data-options="All three|Two|One|None"></div>
+    <div class="after"><p>The three examples are in the menu. Then switch the exclusion off and run them again.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Two of the three. Tokyo &minus; Japan + France gives Paris, and Madrid &minus; Spain + Greece gives Athens. Paris &minus; France + Italy gives Milan first, with Rome a close second (0.721 against 0.704). With the exclusion off, only Paris survives: the Madrid analogy returns Greece, one of its own inputs.</p></div></div>
+  </li>
+  <li class="task" data-id="3.2-t4">
+    <p class="prompt">Search for <em>king</em> and switch the projection between PCA and UMAP. Which picture keeps more of king&rsquo;s ten nearest neighbors among the ten dots nearest to it?</p>
+    <div class="choices" data-options="PCA|UMAP|Both keep all ten"></div>
+    <div class="after"><p>Watch the readout under the map, which counts them. Try a few other words too.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>UMAP keeps 4 of king&rsquo;s ten nearest neighbors among the ten dots nearest to it; PCA keeps none. Over a sample of 577 of the stored words, UMAP keeps 3.3 of the ten on average and PCA 0.3. Neither map keeps all ten, because two numbers per word cannot preserve all the distances between vectors of 300 numbers.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>What the analogies show</h2>
+<figure class="embfig" id="fig-capitals" aria-describedby="fig-capitals-desc"></figure>
+<p id="fig-capitals-desc" class="caption">Six countries and their capitals, projected onto the two directions along which these twelve word2vec vectors vary most (their first two principal components). Each arrow goes from a country to its capital. The directions of the six arrows differ by at most 13 degrees, so in this picture &ldquo;capital of&rdquo; behaves like a direction. The projection is computed in your browser from the same vectors the tool uses.</p>
+
+<p><span class="claim">Empirical finding</span> Word vectors place words used in similar contexts close together, and some relations between words, such as country to capital or male to female, appear as roughly parallel differences between vectors. This is an early example of the <em>linear representation hypothesis</em>: the hypothesis that the features a model represents correspond to directions in its vector space (Section 6.2).</p>
+
+<p>The analogy results are weaker than they are often presented. The standard analogy test leaves the three input words out of the possible answers. <span class="claim">Empirical finding</span> Nissim, van Noord, and van der Goot measured the same vectors on the standard test set of 19,544 analogies: with the inputs left out, the first answer was right for 74% of them; with the inputs allowed, for 21%. In most failures the answer was one of the inputs.<label for="sn-nissim" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-nissim" class="margin-toggle"><span class="sidenote">Nissim, van Noord, and van der Goot (2020), &ldquo;Fair is Better than Sensational: Man is to Doctor as Woman is to Doctor,&rdquo; <em>Computational Linguistics</em> 46(2): 487&ndash;497. The 74% and 21% are for the rule this page uses, the one Mikolov et al. used.</span> The analogies show a real tendency of the vectors, with a lot of noise around it.</p>
+
+<p>A map in the plane cannot keep all the distances between vectors with 300 numbers. PCA keeps the two directions of largest spread and drops the rest. UMAP moves the dots so that each word&rsquo;s nearest neighbors stay near it, at the cost of distances between distant words, which on a UMAP map mean little.<label for="sn-umap" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-umap" class="margin-toggle"><span class="sidenote">McInnes, Healy, and Melville (2018), &ldquo;UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction,&rdquo; arXiv:1802.03426. The map was computed in advance with the umap-learn library (cosine distance, 15 neighbors, seed 0).</span> The list of neighbors, computed from all 300 numbers, is what to trust; the map is only a picture.</p>
+
+<p><span class="claim">Empirical finding</span> GPT-2 small&rsquo;s own token embeddings show the same pattern. The tokens nearest to &ldquo;&middot;bank&rdquo; are &ldquo;&middot;banks&rdquo;, &ldquo;&middot;Bank&rdquo;, and &ldquo;&middot;banking&rdquo;. For &ldquo;&middot;king&rdquo; &minus; &ldquo;&middot;man&rdquo; + &ldquo;&middot;woman&rdquo;, the nearest token is &ldquo;&middot;king&rdquo; and the second is &ldquo;&middot;queen&rdquo;, as with word2vec.<label for="sn-gpt2emb" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-gpt2emb" class="margin-toggle"><span class="sidenote">Computed for this page from GPT-2 small&rsquo;s token embedding matrix over all 50,257 tokens (the script is <code>tools/3-2/gpt2_check.py</code> in the site&rsquo;s repository). A dot &middot; marks the space at the start of a token, as on page 3.1.</span></p>
+</section>
+
+<div class="check" data-id="3.2-c1" data-correct="1">
+  <p class="label">Check</p>
+  <p class="q">Take GPT-2 small before training, with its parameters at their random starting values. What would the nearest neighbors of the token &ldquo;&middot;bank&rdquo; be?</p>
+  <div class="options seg"><button>Words about money, as after training</button><button>Unrelated tokens, close by chance</button><button>The tokens with ids next to its id</button></div>
+  <div class="feedback"><p>The embeddings are parameters, set to random numbers before training. Only training on text moves the vectors of tokens that occur in similar contexts close together, so before training the nearest neighbors are whatever tokens happen to be close at random.</p></div>
+</div>
+
+<div class="check" data-id="3.2-c2" data-correct="0">
+  <p class="q">Word2vec reads the sentence &ldquo;we sat on the bank of the river.&rdquo; Which vector does it use for bank?</p>
+  <div class="options seg"><button>The same vector as in &ldquo;the bank raised its rates&rdquo;</button><button>A vector close to river and water</button><button>A new vector, computed from the sentence</button></div>
+  <div class="feedback"><p>Word2vec has one vector per word, whatever the sentence. The first layer of a transformer works the same way: the embedding of a token is one row of a matrix. Only the later layers make the vector at each position depend on the context.</p></div>
+</div>
+
+<div class="explain" data-id="3.2-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: why do the embeddings of words used in similar contexts end up close together?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>Each token becomes a vector, its embedding, by a lookup in a matrix of parameters learned in training. Words used in similar contexts get similar vectors, and some relations between words show up as directions, an early example of the linear representation hypothesis. The famous analogies are a noisy tendency: king &minus; man + woman is closest to king itself unless the input words are left out of the answers.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/3-2.js"></script>
+</body>
+</html>

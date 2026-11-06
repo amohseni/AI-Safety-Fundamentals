@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3.7 A full forward pass | A Primer on AI</title>
+<meta name="description" content="Every operation GPT-2 small applies to a prompt to produce its next-token probabilities, in order, with the shape of each result and where the parameters are.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  #fp-top { display: flex; flex-wrap: wrap; gap: 0.9rem 1.6rem; align-items: flex-end; margin-bottom: 1.2rem; }
+  #fp-top select { font: inherit; font-size: var(--text); color: var(--ink); background: transparent; }
+  #fp-top .ctl input[type="range"] { min-width: 10rem; }
+  .fp-body { display: flex; flex-wrap: wrap; gap: 1.2rem 2rem; align-items: flex-start; }
+  ol.steps { list-style: none; padding: 0; margin: 0; flex: 0 1 19rem; min-width: 15rem; }
+  ol.steps li { margin: 0; }
+  ol.steps button { display: flex; justify-content: space-between; gap: 0.8rem; width: 100%; text-align: left; border: 0; border-left: 2px solid transparent; border-radius: 0; padding: 0.05rem 0.4rem; }
+  ol.steps button .shape { color: var(--quiet); white-space: nowrap; font-variant-numeric: lining-nums tabular-nums; }
+  ol.steps button[aria-current="step"] { border-left-color: var(--accent); color: var(--accent); }
+  ol.steps li.layer-head { color: var(--quiet); font-style: italic; padding: 0.5rem 0 0.1rem 0.4rem; }
+  ol.steps li.in-layer button { padding-left: 1.4rem; }
+  .fp-stage { flex: 1 1 24rem; min-width: 0; }
+  .fp-stage .small-title { margin: 0 0 0.2rem; }
+  .fp-stage .what { color: var(--quiet); margin: 0.2rem 0 0.6rem; }
+  .fp-stage canvas { display: block; max-width: 100%; }
+  .toks { font-size: var(--text); display: flex; flex-wrap: wrap; gap: 0.45rem 0.25rem; margin: 0.4rem 0; }
+  .tok { display: inline-flex; flex-direction: column; align-items: center; border: 1px solid var(--rule); border-radius: 2px; padding: 0 0.3rem; line-height: 1.35; }
+  .tok .t { white-space: pre; }
+  .tok .sp { color: var(--quiet); }
+  .tok .id { color: var(--quiet); font-variant-numeric: lining-nums tabular-nums; }
+  table.preds { border-collapse: collapse; margin: 0.5rem 0 0; font-variant-numeric: lining-nums tabular-nums; }
+  table.preds td, table.preds th { padding: 0.05rem 0.8rem 0.05rem 0; text-align: left; font-weight: normal; white-space: pre; }
+  table.preds th { color: var(--quiet); }
+  #fp-strip { margin-top: 1.4rem; }
+  .pipe { font-size: var(--text); line-height: 1.6; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.2rem 0.5rem; max-width: 90%; margin: 1rem 0 0.4rem; }
+  .pipe .op { color: var(--ink); }
+  .pipe .arr { color: var(--quiet); font-style: italic; white-space: nowrap; }
+  .pipe .rep { border: 1px solid var(--rule); border-radius: 3px; padding: 0 0.4rem; }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="3.7">
+<article>
+<h1>A full forward pass</h1>
+
+<section>
+<p>Pages 3.1 to 3.6 described the parts of a transformer one at a time. This page puts them together. Here is everything GPT-2 small does to a prompt of \(n\) tokens to produce its probabilities for the next token.<label for="sn-gpt2" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-gpt2" class="margin-toggle"><span class="sidenote">Radford, Wu, Child, Luan, Amodei, and Sutskever (2019), &ldquo;Language Models are Unsupervised Multitask Learners,&rdquo; OpenAI. For code that builds the same model in about 300 lines, see Karpathy&rsquo;s nanoGPT (github.com/karpathy/nanoGPT) and his video &ldquo;Let&rsquo;s build GPT: from scratch, in code, spelled out&rdquo; (2023).</span></p>
+<ol>
+<li>Split the text into tokens (Section 3.1).</li>
+<li>Look up each token&rsquo;s embedding, and add a position embedding that depends only on where the token stands (Section 3.2). The result, one vector of 768 numbers per position, is the residual stream.</li>
+<li>Repeat 12 times, once in each <em>layer</em>: normalize each position&rsquo;s vector, apply attention with 12 heads, and add the result to the residual stream; then normalize again, apply the MLP to each position, and add its result to the residual stream (Sections 3.4 to 3.6).</li>
+<li>Normalize, multiply by the <em>unembedding</em> matrix to get one score for each of the 50,257 tokens in the vocabulary, and apply softmax to turn the scores into probabilities (Section 3.3).</li>
+</ol>
+<p>To <em>normalize</em> a vector here means to subtract the mean of its entries, divide by their standard deviation, and then multiply and shift each entry by learned numbers. This is called layer normalization.</p>
+</section>
+
+<section>
+<h2>Step through GPT-2</h2>
+<p>The tool shows every intermediate result of one forward pass of GPT-2 small, recorded in advance for five prompts. Each task below asks for a prediction first. Make it, then use the tool to check it.</p>
+
+<div class="tool" id="tool">
+  <div id="fp-top"></div>
+  <div class="fp-body">
+    <ol class="steps" id="fp-steps" aria-label="Steps of the forward pass"></ol>
+    <div class="fp-stage" id="fp-stage" aria-live="polite"></div>
+  </div>
+  <div id="fp-strip"></div>
+  <p class="panel-note">Each heat map row is one position; each column is one number. <span class="c-accent">Blue</span> is positive and <span class="c-second">orange</span> negative. Colors are cut off at the 99th percentile of the absolute values in that step, because a few entries of GPT-2&rsquo;s residual stream are hundreds of times larger than the rest; the values were rounded to 15 levels for display. The strip under the map shows all 124,439,808 parameters: the parameters used so far are <span class="c-accent">blue</span>, and those of the current step are outlined.</p>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="3.7-t1">
+    <p class="prompt">Step forward from the tokens. At which step does each position first hold more than 768 numbers?</p>
+    <div class="choices" data-options="Queries, keys, and values|The MLP's first matrix|The unembedding"></div>
+    <div class="after"><p>Press Next and watch the shape of each step&rsquo;s result.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>At the queries, keys, and values in layer 1: 2,304 numbers per position, which are 64 numbers for each of query, key, and value in each of the 12 heads. The MLP widens each position to 3,072 numbers a few steps later, and the unembedding to 50,257 at the end. After each of these, the shape returns to \(n \times 768\) before anything is added to the residual stream.</p></div></div>
+  </li>
+  <li class="task" data-id="3.7-t2">
+    <p class="prompt">Which single matrix in GPT-2 small holds the most parameters?</p>
+    <div class="choices" data-options="An MLP matrix|The query, key, and value matrix|The token embedding matrix"></div>
+    <div class="after"><p>Step through and watch the parameter count of each step, and the strip at the bottom.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The token embedding matrix, with 50,257 &times; 768 = 38,597,376 parameters, almost a third of the model. Each MLP matrix has about 2.4 million. At the unembedding step the same matrix is used again, transposed, so the strip outlines it a second time without adding parameters.</p></div></div>
+  </li>
+  <li class="task" data-id="3.7-t3">
+    <p class="prompt">Within one layer, what share of the parameters belong to the MLP?</p>
+    <div class="choices" data-options="About a third|About half|About two thirds"></div>
+    <div class="after"><p>Step through one layer and add up the parameter counts, or watch how far the blue part of the strip moves.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>About two thirds: the MLP&rsquo;s two matrices and their biases hold 4,722,432 parameters, the attention&rsquo;s two matrices and their biases hold 2,362,368, and the two normalizations 3,072, out of 7,087,872 per layer. The MLP widens each vector by a factor of four, which is where its share comes from.</p></div></div>
+  </li>
+  <li class="task" data-id="3.7-t4">
+    <p class="prompt">Go to the last step. For how many positions does the model output a probability distribution over the next token?</p>
+    <div class="choices" data-options="Only the last position|Every position"></div>
+    <div class="after"><p>Look at the shape of the last step and the table under the map.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Every position: the output has shape \(n \times 50{,}257\), and row \(i\) is a prediction of the token after position \(i\), made from positions 1 to \(i\) only. Text generation uses only the last row. In training, every row is scored against the token that actually came next, so one pass over a text gives \(n\) predictions to learn from (Section 2.5).</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>Where the parameters are</h2>
+<div class="pipe" id="fig-pipe" role="img" aria-describedby="fig-pipe-desc"></div>
+<p id="fig-pipe-desc" class="caption">The whole forward pass of GPT-2 small for a prompt of \(n\) tokens, with the shape of the result after each operation. The 12 layers, in the box, leave the shape at \(n \times 768\).</p>
+
+<p>GPT-2 small has 124,439,808 parameters. The token embedding matrix holds 38,597,376 of them and the position embedding matrix 786,432. Each layer holds 7,087,872: 2,362,368 in attention, 4,722,432 in the MLP, and 3,072 in the two normalizations. The final normalization adds 1,536. The unembedding matrix is the token embedding matrix, transposed, so it adds none; many later models use a separate matrix there.</p>
+
+<p>Apart from the tokenizer and the two lookups, almost every step is a matrix multiplication followed by adding a constant vector (the bias), or an addition to the residual stream. The exceptions are the steps that make the model more than one big linear map: the normalizations, which divide by a standard deviation computed from the vector itself; the MLP&rsquo;s activation function; the softmax, in attention and at the output; and two multiplications inside attention, queries by keys and attention weights by values, in which both factors are computed from the input.</p>
+
+<p>Current models change the details and keep the plan. Many use rotary position encodings, which rotate the queries and keys according to position instead of adding a position embedding; RMSNorm, a simpler normalization that skips subtracting the mean; and the SwiGLU activation function in the MLP. They have more layers and wider vectors, and some use mixture-of-experts MLPs, in which each token passes through only a few of many MLPs.<label for="sn-modern" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-modern" class="margin-toggle"><span class="sidenote">Su et al. (2021), &ldquo;RoFormer: Enhanced Transformer with Rotary Position Embedding&rdquo;; Zhang and Sennrich (2019), &ldquo;Root Mean Square Layer Normalization,&rdquo; NeurIPS; Shazeer (2020), &ldquo;GLU Variants Improve Transformer&rdquo;; Shazeer et al. (2017), &ldquo;Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer,&rdquo; ICLR. Touvron et al. (2023), &ldquo;LLaMA: Open and Efficient Foundation Language Models,&rdquo; combine the first three.</span></p>
+</section>
+
+<div class="check" data-id="3.7-c1" data-correct="2">
+  <p class="label">Check</p>
+  <p class="q">Which of these steps can make one position&rsquo;s vector depend on the tokens at other positions?</p>
+  <div class="options seg"><button>Normalize</button><button>The MLP</button><button>Attention</button></div>
+  <div class="feedback"><p>Normalization and the MLP act on each position&rsquo;s vector by itself; in the heat maps, each row of their output is computed from the same row of their input. Attention is the only step that combines positions, through the weighted average of values.</p></div>
+</div>
+
+<div class="check" data-id="3.7-c2" data-correct="1">
+  <p class="q">Every entry of the residual stream entering a normalization step is doubled. What happens to the output of that step?</p>
+  <div class="options seg"><button>It doubles</button><button>It stays the same</button><button>It is multiplied by four</button></div>
+  <div class="feedback"><p>Doubling a vector doubles its mean and its standard deviation, so subtracting the mean and dividing by the standard deviation gives the same result. A linear map would double its output, so normalization is not linear. (A tiny constant added to the variance before dividing makes the output change very slightly.)</p></div>
+</div>
+
+<div class="check" data-id="3.7-c3" data-correct="1">
+  <p class="q">Which steps of the forward pass are not linear functions of their input?</p>
+  <div class="options seg"><button>Only the softmax at the end</button><button>Normalization, attention, the activation function, and the final softmax</button><button>Every step that has parameters</button></div>
+  <div class="feedback"><p>Normalization divides by a quantity computed from its input; attention applies softmax and multiplies two quantities that both depend on the input; the activation function and the final softmax are nonlinear functions. The matrix multiplications with parameters, the bias additions, and the additions to the residual stream are linear or affine.</p></div>
+</div>
+
+<div class="explain" data-id="3.7-e1">
+  <p class="label">In your own words</p>
+  <p>In two or three sentences, without looking: list in order what GPT-2 does to a prompt to produce its next-token probabilities, and say where most of the parameters are.</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>A forward pass of GPT-2 small is a short list of operations: look up token and position embeddings; then, 12 times, normalize, attend, add, normalize, apply the MLP, add; then normalize, multiply by the unembedding matrix, and apply softmax. The residual stream keeps the shape \(n \times 768\) throughout. Of the 124 million parameters, about 39 million are in the token embedding matrix, which GPT-2 also uses as its unembedding matrix, and about two thirds of each layer&rsquo;s parameters are in its MLP.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/3-7.js"></script>
+</body>
+</html>
