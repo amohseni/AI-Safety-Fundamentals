@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4.4 Chain of thought and reasoning models | A Primer on AI</title>
+<meta name="description" content="Why writing out intermediate steps lets a model of fixed depth do more computation, how reinforcement learning on checkable problems produced long reasoning, and why the faithfulness of written reasoning matters for safety.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  table.ex { border-collapse: collapse; margin: 0.6rem 0 0; font-variant-numeric: lining-nums tabular-nums; }
+  table.ex th, table.ex td { padding: 0.15rem 0.6rem 0.15rem 0; text-align: right; font-weight: normal; white-space: nowrap; }
+  table.ex th { color: var(--quiet); }
+  table.ex th.d { color: var(--second); }
+  table.ex th.c { color: var(--accent); }
+  table.ex .q { color: var(--quiet); font-style: italic; }
+  .ex-wrap { overflow-x: auto; max-width: 100%; }
+  #cot-question { margin: 0.4rem 0 0.6rem; width: auto; }
+  #cot-text { white-space: pre-wrap; max-height: 20rem; overflow-y: auto; border-left: 2px solid var(--rule); padding-left: 0.7rem; line-height: 1.45; font-size: var(--text); overflow-wrap: anywhere; }
+  #cot-text .dropped { color: var(--quiet); text-decoration: line-through; text-decoration-color: var(--rule); }
+  #cot-text .mark { display: inline-block; width: 2px; height: 1.1em; background: var(--accent); vertical-align: -0.15em; margin: 0 2px; }
+  #fig-mult .small-title { width: 55%; }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="4.4">
+<article>
+<h1>Chain of thought and reasoning models</h1>
+
+<section>
+<p>A transformer does a fixed amount of computation for each token it writes: one pass through its layers (Section 3.7). Some problems need more steps, one after another, than a fixed number of layers can carry out in one pass. Writing out intermediate steps gets around this limit. Each written token is fed back in as input, so the text the model has written serves as working memory, and the total computation grows with the number of tokens written. <span class="claim">Theorem</span> Theoretical work makes this precise for some problems. Under standard assumptions of complexity theory, transformers of bounded depth and reasonable size that answer immediately cannot evaluate arithmetic expressions or track the state of a finite automaton over long inputs, while the same transformers can do so by writing enough intermediate steps.<label for="sn-theory" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-theory" class="margin-toggle"><span class="sidenote">Feng, Zhang, Gu, Ye, He, and Wang (2023), &ldquo;Towards revealing the mystery behind chain of thought: a theoretical perspective,&rdquo; <em>NeurIPS</em>. Merrill and Sabharwal (2024), &ldquo;The expressive power of transformers with chain of thought,&rdquo; <em>ICLR</em>. Both results assume complexity classes that are widely believed to differ really do differ.</span></p>
+
+<p>Chain-of-thought prompting drew out this behavior with worked examples in the prompt.<label for="sn-wei" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-wei" class="margin-toggle"><span class="sidenote">Wei, Wang, Schuurmans, Bosma, Ichter, Xia, Chi, Le, and Zhou (2022), &ldquo;Chain-of-thought prompting elicits reasoning in large language models,&rdquo; <em>NeurIPS</em>. Earlier, Nye et al. (2021), &ldquo;Show your work: scratchpads for intermediate computation with language models,&rdquo; arXiv:2112.00114, trained models to write intermediate steps for addition and for running programs.</span> Reasoning models are trained for it. They write a long chain of thought and then an answer, and reinforcement learning rewards correct final answers on problems that can be checked automatically. <span class="claim">Empirical finding</span> The DeepSeek-R1 report found that behaviors such as rechecking and backtracking arose from this training, in a model trained by reinforcement learning from the base model without any examples of reasoning to imitate, and that its chains of thought grew longer as training went on.<label for="sn-r1" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-r1" class="margin-toggle"><span class="sidenote">DeepSeek-AI (2025), &ldquo;DeepSeek-R1: Incentivizing reasoning capability in LLMs via reinforcement learning,&rdquo; arXiv:2501.12948. The model trained this way is called DeepSeek-R1-Zero.</span></p>
+
+<p>The tool has two parts. The first compares two toy transformers trained on addition; the second cuts real chains of thought short.</p>
+</section>
+
+<section>
+<h2>Tokens are computation</h2>
+<p>Each task below asks for a prediction first. Make it, then use the tool to check it.</p>
+
+<div class="tool" id="tool">
+  <div class="panel" id="panel-add">
+    <h3>Addition, with and without written carries</h3>
+    <p class="panel-note">Two toy transformers, each with one layer and about 405,000 parameters, trained for this site on the same random sums of two numbers with 1 to 12 digits (8,000 steps each, on a CPU). The <span class="c-second">direct</span> model writes the sum right after the equals sign, leftmost digit first: 13 digits and an end mark, 14 tokens. The model that <span class="c-accent">writes carries</span> first writes the carry out of each of the 12 columns, from the rightmost column to the left, and then the sum: 27 tokens. A sum counts as right only if every digit is right. The test sums are new: either random, like the training sums, or built so that a carry starts in the units column and passes through every column, as in 4,999 + 5,001.</p>
+    <div class="row"><div class="controls" id="add-controls"></div><div class="stage" id="add-chart"></div></div>
+    <p class="readout" id="add-readout" aria-live="polite"></p>
+    <div class="ex-wrap" id="add-examples"></div>
+  </div>
+
+  <div class="panel" id="panel-cot">
+    <h3>Cut a chain of thought short</h3>
+    <p class="panel-note">Qwen3-0.6B, a small open reasoning model, wrote one chain of thought for each of five multiple-choice problems. The chain of thought was then cut after each sentence, and the model was made to answer at that point: the text was closed off and followed by &ldquo;The answer is (&rdquo;, and the model&rsquo;s probabilities for the four letters were recorded. Text after the <span class="c-accent">cut</span> is struck through.</p>
+    <div class="row"><div class="controls" id="cot-controls"></div><div class="stage" id="cot-chart"></div></div>
+    <p id="cot-question"></p>
+    <div id="cot-text" tabindex="0" aria-label="The chain of thought, with the part after the cut struck through"></div>
+    <p class="readout" id="cot-readout" aria-live="polite"></p>
+  </div>
+</div>
+
+<ol class="tasks">
+TASKS
+</ol>
+</section>
+
+AFTER
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/4-4.js"></script>
+</body>
+</html>

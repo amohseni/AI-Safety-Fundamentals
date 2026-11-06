@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4.1 From pretrained model to assistant | A Primer on AI</title>
+<meta name="description" content="The four training stages of a current assistant model, what data and training signal each uses, and which of them are reinforcement learning, shown with four real checkpoints of one open model.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  .four { display: flex; flex-wrap: wrap; gap: 1.2rem; margin-top: 0.6rem; }
+  .four > div { flex: 1 1 13rem; min-width: 0; border-top: 1px solid var(--rule); padding-top: 0.4rem; }
+  .four .who { font-style: italic; color: var(--quiet); margin: 0 0 0.4rem; width: auto; }
+  .out { font-size: var(--text); line-height: 1.45; overflow-wrap: anywhere; max-height: 26rem; overflow-y: auto; }
+  .out p, .out li { width: auto; font-size: var(--text); margin: 0 0 0.5rem; }
+  .out ul, .out ol { width: auto; padding-left: 1.2rem; margin: 0 0 0.5rem; }
+  .out hr { border: 0; border-top: 1px solid var(--rule); margin: 0.5rem 0; width: auto; }
+  .out .katex-display { width: auto; margin: 0.3rem 0; }
+  .out pre.raw { white-space: pre-wrap; font-family: inherit; font-size: var(--text); margin: 0; width: auto; }
+  .out code { font-size: var(--text); }
+  .meta { color: var(--quiet); margin: 0.3rem 0 0; width: auto; }
+  .prompt-text { margin: 0.6rem 0 0; width: auto; }
+  .prompt-text b { font-weight: normal; color: var(--accent); }
+  .pipe { display: flex; flex-wrap: wrap; gap: 0.4rem 0; align-items: stretch; width: 90%; }
+  .pipe .st { flex: 1 1 10rem; min-width: 0; border-top: 2px solid var(--ink); padding: 0.4rem 0.8rem 0.4rem 0; }
+  .pipe .st.rl { border-top-color: var(--second); }
+  .pipe .st p { margin: 0 0 0.3rem; width: auto; }
+  .pipe .st .sig { color: var(--quiet); font-style: italic; }
+  .pipe .st.rl .sig { color: var(--second); }
+  .pipe .arrow { flex: 0 0 1.4rem; align-self: center; color: var(--quiet); }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="4.1">
+<article>
+<h1>From pretrained model to assistant</h1>
+
+<section>
+<p>A current assistant model is produced in stages.</p>
+<ol>
+<li><b>Pretraining.</b> The model learns to predict the next token on trillions of tokens of text and code, using the cross-entropy loss (Section 2.5). This stage uses most of the compute. The result is a <em>base model</em>, which continues documents.</li>
+<li><b>Supervised fine-tuning.</b> The model is trained with the same loss on example conversations written or selected to show the desired behavior. It learns the format and role of an assistant.</li>
+<li><b>Reinforcement learning from human or AI feedback.</b> The model writes responses, a learned reward model scores them, and the model is updated to produce higher-scoring responses (Sections 4.2 and 4.3).</li>
+<li><b>Reinforcement learning on checkable tasks.</b> The model attempts math, coding, and other problems whose answers can be checked automatically, and is rewarded for correct answers (Section 4.4).</li>
+</ol>
+<p>Stages 1 and 2 are supervised learning on fixed text. Stages 3 and 4 are reinforcement learning: the model&rsquo;s own outputs are scored, and it is trained to raise the score.</p>
+
+<p>The tool shows four real checkpoints of one open model, OLMo 2 1B, released by the Allen Institute for AI with every training stage published.<label for="sn-olmo" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-olmo" class="margin-toggle"><span class="sidenote">Team OLMo, Walsh, Soldaini, Groeneveld, Lo, and others (2024), &ldquo;2 OLMo 2 furious,&rdquo; arXiv:2501.00656. The checkpoints are the April 2025 release of the 1-billion-parameter model: <code>allenai/OLMo-2-0425-1B</code> and its <code>-SFT</code>, <code>-DPO</code>, and <code>-Instruct</code> versions. Outputs were generated once on a CPU with fixed random seeds; settings and revisions are in <code>data/4-1/outputs.json</code>, and the script is <code>tools/4-1/generate.py</code>.</span> Its post-training follows the Tülu 3 recipe.<label for="sn-tulu" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-tulu" class="margin-toggle"><span class="sidenote">Lambert, Morrison, Pyatkin, Huang, Ivison, Brahman, and others (2024), &ldquo;Tülu 3: Pushing frontiers in open language model post-training,&rdquo; arXiv:2411.15124.</span> The base model was pretrained on about 4 trillion tokens. The SFT checkpoint was then fine-tuned on the Tülu 3 collection of example conversations. The DPO checkpoint was trained on pairs of responses in which GPT-4o had rated one response better than the other, so the feedback in this stage came from an AI. It used direct preference optimization (DPO), which trains the model straight from the preference pairs, with no separate reward model and no reinforcement learning loop, aiming at the same policy that reinforcement learning against a reward model fitted to those pairs would aim at (Section 4.3). The Instruct checkpoint had two more rounds of reinforcement learning with verifiable rewards, on math problems and on instructions with checkable constraints.</p>
+</section>
+
+<section>
+<h2>Same prompt, four checkpoints</h2>
+<p>Each task below asks for a prediction first. Make it, then use the tool to check it.</p>
+
+<div class="tool" id="tool">
+  <div class="panel">
+    <h3>Responses</h3>
+    <p class="panel-note">Each checkpoint wrote one response to each prompt, with the same sampling settings. The base model was given the prompt as plain text; the other three were given it in their chat format. The chart below the responses shows how likely each checkpoint was, before writing anything, to begin its response with the token the final model began with.</p>
+    <div class="ctl" id="prompt-menu"></div>
+    <p class="prompt-text" id="prompt-text" aria-live="polite"></p>
+    <div class="four" id="outputs"></div>
+    <div class="row" style="margin-top:1rem"><div class="controls" id="view-controls"></div><div class="stage" id="first-chart"></div></div>
+    <p class="readout" id="readout" aria-live="polite"></p>
+  </div>
+
+  <div class="panel">
+    <h3>What each checkpoint knows</h3>
+    <p class="panel-note">Twenty-four facts, each a sentence with four possible endings, scored the same way for every checkpoint: plain text, no chat format, and the probability of each ending, rescaled so the four sum to 1. Each gray line is one fact; the <span class="c-accent">selected fact</span> is in color, and the black line is the average.</p>
+    <div class="row"><div class="controls" id="facts-controls"></div><div class="stage" id="facts-chart"></div></div>
+    <p class="readout" id="facts-readout" aria-live="polite"></p>
+  </div>
+</div>
+
+<ol class="tasks">
+TASKS
+</ol>
+</section>
+
+AFTER
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/4-1.js"></script>
+</body>
+</html>

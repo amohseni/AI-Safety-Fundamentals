@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.6 Assistants and reasoning models | A Primer on AI</title>
+<meta name="description" content="How a model that continues documents became an assistant through fine-tuning with human feedback, and how reinforcement learning on checkable problems produced models that reason at length before answering.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  .three { display: flex; flex-wrap: wrap; gap: 1.4rem; margin-top: 0.6rem; }
+  .three > div { flex: 1 1 15rem; min-width: 0; border-top: 1px solid var(--rule); padding-top: 0.4rem; }
+  .three .who { font-style: italic; color: var(--quiet); margin: 0 0 0.4rem; width: auto; }
+  .out { font-size: var(--text); line-height: 1.45; overflow-wrap: anywhere; }
+  .out p, .out li { width: auto; font-size: var(--text); margin: 0 0 0.5rem; }
+  .out ul, .out ol { width: auto; padding-left: 1.2rem; margin: 0 0 0.5rem; }
+  .out hr { border: 0; border-top: 1px solid var(--rule); margin: 0.5rem 0; width: auto; }
+  .out .katex-display { width: auto; margin: 0.3rem 0; }
+  .out pre.raw { white-space: pre-wrap; font-family: inherit; font-size: var(--text); margin: 0; width: auto; overflow-x: visible; }
+  .out code { font-size: var(--text); }
+  .thought { color: var(--quiet); font-style: italic; max-height: 26rem; overflow-y: auto; border-left: 2px solid var(--rule); padding-left: 0.7rem; margin: 0.4rem 0 0.7rem; }
+  .thought p { margin-bottom: 0.4rem; }
+  .meta { color: var(--quiet); margin: 0.3rem 0 0; width: auto; }
+  .prompt-text { margin: 0.6rem 0 0; width: auto; }
+  .prompt-text b { font-weight: normal; color: var(--accent); }
+  #prompt-menu .seg { display: flex; flex-wrap: wrap; }
+  figure#fig-three .three > div { flex-basis: 12rem; }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="1.6">
+<article>
+<h1>Assistants and reasoning models</h1>
+
+<section>
+<p>A model trained only to predict internet text continues documents. Given a question, it may answer it, or it may write more questions, because both happen in its training data. InstructGPT (2022) fine-tuned GPT-3 on example answers written by human labelers, and then on the labelers&rsquo; rankings of its own answers, a method called reinforcement learning from human feedback, or RLHF (Sections 4.2 and 4.3). <span class="claim">Empirical finding</span> Labelers preferred the answers of a 1.3-billion-parameter InstructGPT model to those of the 175-billion-parameter GPT-3.<label for="sn-ouyang" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-ouyang" class="margin-toggle"><span class="sidenote">Ouyang, Wu, Jiang, Almeida, Wainwright, Mishkin, Zhang, Agarwal, and others (2022), &ldquo;Training language models to follow instructions with human feedback,&rdquo; <em>NeurIPS</em>; arXiv:2203.02155.</span> ChatGPT, released in November 2022, was trained with the same method and put in a chat interface.<label for="sn-chatgpt" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-chatgpt" class="margin-toggle"><span class="sidenote">OpenAI (2022), &ldquo;Introducing ChatGPT,&rdquo; November 30, 2022. The post says the model was trained with RLHF &ldquo;using the same methods as InstructGPT, but with slight differences in the data collection setup.&rdquo;</span></p>
+
+<p>In the same year, Wei et al. showed that prompting a model with worked examples that write out intermediate steps, called chain-of-thought prompting, improved its accuracy on arithmetic and logic problems.<label for="sn-wei" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-wei" class="margin-toggle"><span class="sidenote">Wei, Wang, Schuurmans, Bosma, Ichter, Xia, Chi, Le, and Zhou (2022), &ldquo;Chain-of-thought prompting elicits reasoning in large language models,&rdquo; <em>NeurIPS</em>; arXiv:2201.11903.</span> Each written token is one more pass through the network, so writing out steps gives the model more computation per answer (Section 4.4).</p>
+
+<p>Starting with OpenAI&rsquo;s o1 (September 2024) and DeepSeek-R1 (January 2025), labs trained models with reinforcement learning on problems whose answers can be checked automatically, such as math and coding problems.<label for="sn-o1" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-o1" class="margin-toggle"><span class="sidenote">OpenAI (2024), &ldquo;Learning to reason with LLMs,&rdquo; September 12, 2024. DeepSeek-AI (2025), &ldquo;DeepSeek-R1: Incentivizing reasoning capability in LLMs via reinforcement learning,&rdquo; arXiv:2501.12948.</span> These <em>reasoning models</em> learned to write long chains of thought before answering, to check their work, and to backtrack. In 2025, attention moved to agents: models that carry out tasks over many steps using tools.</p>
+
+<p>The tool below shows real outputs from one model family, Qwen3, released by Alibaba in 2025.<label for="sn-qwen" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-qwen" class="margin-toggle"><span class="sidenote">Yang, Li, Yang, Zhang, Hui, Zheng, Yu, Gao, and others (2025), &ldquo;Qwen3 technical report,&rdquo; arXiv:2505.09388. The outputs were generated once on a CPU with fixed random seeds; the models, revisions, and sampling settings are stored with them in <code>data/1-6/outputs.json</code>, and the script is <code>tools/1-6/generate.py</code>.</span> The <em>base model</em>, Qwen3-0.6B-Base, was pretrained on about 36 trillion tokens and nothing else. The post-trained model, Qwen3-0.6B, started from the base model&rsquo;s parameters and can run in two modes: with thinking off it answers at once, as a chat model does; with thinking on it first writes a chain of thought, marked off from its answer, as a reasoning model does. Both modes use the same parameters. One honest caveat: Qwen trained its largest models with reinforcement learning, and then trained this small model to match their outputs, so this model learned to reason from a larger reasoning model rather than through its own reinforcement learning.</p>
+</section>
+
+<section>
+<h2>Same prompt, three models</h2>
+<p>Each task below asks for a prediction first. Make it, then use the tool to check it.</p>
+
+<div class="tool" id="tool">
+  <div class="panel">
+    <div class="ctl" id="prompt-menu"></div>
+    <p class="prompt-text" id="prompt-text" aria-live="polite"></p>
+    <div class="three" id="outputs"></div>
+    <div class="row" style="margin-top:0.8rem"><div class="controls" id="view-controls"></div></div>
+    <p class="readout" id="readout" aria-live="polite"></p>
+  </div>
+</div>
+
+<ol class="tasks" id="tasks"></ol>
+</section>
+
+<section id="after"></section>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/1-6.js"></script>
+</body>
+</html>
