@@ -174,12 +174,12 @@
   {
    "id": "6.2",
    "question": "Are concepts directions?",
-   "takeaway": null
+   "takeaway": "The linear representation hypothesis says that a model represents many features as directions in its activation space, read out by a dot product with the feature’s direction. Truth in simple statements is one example: in Qwen2.5-0.5B the difference of class means from city statements sorts true from false for cities, Spanish words, and chemical elements. The days of the week are an exception: their activations lie on a circle in a plane, and the day is given by the angle around the circle, which no single direction in that plane can read."
   },
   {
    "id": "6.3",
    "question": "What does a probe's accuracy show?",
-   "takeaway": null
+   "takeaway": "A linear probe is a logistic regression on a model’s activations at one layer; its test accuracy shows that a property can be read out there. Accuracy alone overstates what a probe shows. A control task measures how much the probe can learn by itself, and selectivity is the difference. Whether the model uses the property is a separate, causal question, tested by removing or changing the probe’s direction and watching the model’s behavior."
   },
   {
    "id": "6.4",
@@ -209,7 +209,7 @@
   {
    "id": "7.2",
    "question": "When does an internal state count as a belief?",
-   "takeaway": null
+   "takeaway": "Herrmann and Levinstein’s criteria for belief are truth, coherence, and use, with uniformity for representationalists, and no single one is enough. A truth probe shows why: a probe that sorts true from false statements can still reverse on negations, give different verdicts on paraphrases, fail on other topics, or move the model’s answers no more than a push in a random direction does. An unsupervised method can find a consistent feature, such as a character’s opinion, that is not the model’s view of the truth. Current evidence supports belief-like states in language models only partly."
   },
   {
    "id": "7.3",
