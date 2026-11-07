@@ -194,7 +194,7 @@
   {
    "id": "6.6",
    "question": "Can editing activations change behavior?",
-   "takeaway": "A steering vector is a direction added to the residual stream while the model runs, for example the difference between the activations for two contrasting prompts, scaled by a coefficient. If adding it changes behavior in the expected way, the model uses that direction, which a probe alone cannot show. The effect depends on the layer and the coefficient: there is a range where behavior changes and fluency holds, and past it the text falls apart."
+   "takeaway": "A steering vector is a direction added to the residual stream while the model runs, for example the difference between the activations for two contrasting prompts, scaled by a coefficient. If adding it changes behavior in the expected way, the model uses that direction, which a probe alone cannot show. The effect depends on the layer and the coefficient: there is often a range where behavior changes and fluency holds, and past it the text falls apart."
   },
   {
    "id": "6.7",
