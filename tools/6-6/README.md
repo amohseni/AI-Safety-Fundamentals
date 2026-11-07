@@ -16,3 +16,7 @@ python3 -c "import json; d=json.load(open('out.json')); [c.pop('fluAll') for c i
 ```
 
 The 2026-11-06 run was interrupted once (an assertion that the top 256 tokens always hold 0.3 of the probability failed at love, layer 6, second prompt) and resumed after the fallback above was added; the 13 cells finished before the change never hit the fallback, so they are what the final script produces. Checks: `node tools/test-page-6-6.mjs`.
+
+## Masking
+
+After `steer.py`, run `python3 tools/6-6/mask.py docs/data/6-6/steer.json` (needs `pip install better_profanity`). It masks profanity and slurs after the first letter, using the better_profanity word list minus the ordinary words in `KEEP`. Sentiment, wedding share, and fluency were computed on the unmasked text.
