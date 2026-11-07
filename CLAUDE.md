@@ -48,9 +48,9 @@ An interactive explainer site that teaches a new graduate student how modern AI 
 
 ## Status
 
-Built and independently reviewed (2026-10-17): 38 pages: 0.1, 1.1 to 1.5, 2.1 to 2.8, 3.1, 3.4, 3.8, 4.2, 4.3, 5.1 to 5.6, 6.1, 6.4, 6.5, 6.7, 7.1, 7.3, 8.1 to 8.6, 9.1. Each spec ends with the builder's changes and the reviewer's changes. `node tools/build-registry.mjs` lists what is built.
+Built and independently reviewed: all 50 pages (the last 12, 1.6, 3.2, 3.3, 3.5 to 3.7, 4.1, 4.4, 6.2, 6.3, 6.6, 7.2, on 2026-11-06). Each spec ends with the builder's changes and the reviewer's changes. `node tools/build-registry.mjs` lists what is built.
 
-Waiting on pretrained model data (huggingface.co is unreachable from the build workspace): 1.6, 3.2, 3.3, 3.5 to 3.7, 4.1, 4.4, 6.2, 6.3, 6.6, 7.2. Page 6.7 runs live activation patching on the modular-addition model instead of GPT-2.
+Pretrained-model pages use precomputed outputs only (never faked), with scripts, model revisions, and seeds in `tools/<page-id>/`. Models: GPT-2 small (3.2, 3.3, 3.5 to 3.7, 6.6), word2vec GoogleNews subset (3.2), Qwen2.5-0.5B (6.2, 6.3, 7.2, shared data in `docs/data/truth/`), Qwen3-0.6B and its base (1.6, 4.4), OLMo 2 1B checkpoints (4.1). Page 6.7 runs live activation patching on the modular-addition model. Page 6.6 masks profanity and slurs in stored GPT-2 text (`tools/6-6/mask.py`).
 
 Modular addition runs use p = 59, not Nanda et al.'s 113, so training fits on a CPU (`tools/modadd/README.md`).
 

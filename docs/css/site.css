@@ -197,3 +197,4 @@ h1 { hyphens: auto; overflow-wrap: break-word; }
 .topline { flex-wrap: wrap; column-gap: 1.2rem; }
 /* A page's own canvas cap (e.g. .plane) wins over the generic max-width. */
 .tool .plane { max-width: 34rem; }
+.sidenote > code { font-size: var(--text); }
