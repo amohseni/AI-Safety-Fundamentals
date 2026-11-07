@@ -109,15 +109,18 @@ function showAblation() {
     return;
   }
   const f = (v) => v.toFixed(3);
+  // Five random directions from the same 32-dimensional subspace, each removed on its own.
+  const E = (ablJson.randomEach || {})[L] || [r];
+  const span = (g, fmt) => { const v = E.map(g); return `${fmt(Math.min(...v))} to ${fmt(Math.max(...v))}`; };
   if (state.prop === 'truth') {
     ablOut.innerHTML = `Asked whether each of 60 held-out city statements is true, the model answers correctly ${pct(b.judge[0])} of the time. ` +
-      `With the default linear probe&rsquo;s direction removed after layer ${L}: <b>${pct(p.truth[0])}</b>. With a random direction removed instead: ${pct(r.truth[0])}.`;
+      `With the default linear probe&rsquo;s direction removed after layer ${L}: <b>${pct(p.truth[0])}</b>. With one of five random directions removed instead: ${span((e) => e.truth[0], pct)}.`;
   } else {
     const j = state.prop === 'noun' ? 1 : 2;
     const what = state.prop === 'noun' ? 'when the next word is a noun' : 'when the next token is a closing quotation mark';
     ablOut.innerHTML = `The model&rsquo;s average next-token loss on the held-out passages ${what} is ${f(b.loss[j])} (over all tokens, ${f(b.loss[0])}). ` +
       `With the default linear probe&rsquo;s direction removed after layer ${L}: <b>${f(p[state.prop][j])}</b> (all tokens ${f(p[state.prop][0])}). ` +
-      `With a random direction removed instead: ${f(r[state.prop][j])} (all tokens ${f(r[state.prop][0])}).`;
+      `With one of five random directions removed instead: ${span((e) => e[state.prop][j], f)} (all tokens ${span((e) => e[state.prop][0], f)}).`;
   }
 }
 

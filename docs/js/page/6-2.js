@@ -99,7 +99,7 @@ function dayLabels(mp, s2) {
   });
   const pts = X.map((x) => { const c = center(x); return { x: dot(c, e1), y: dot(c, e2), kind: 'q' }; });
   const s2 = Math.max(...pts.map((p) => Math.max(Math.abs(p.x), Math.abs(p.y)))) * 1.05;
-  plot.setPoints(pts, { fixedScale: s2 });
+  plot.setPoints(pts, { fixedScale: s2 * 1.25 }); // room for the day names outside the circle
   const mp = means.map((m) => ({ x: dot(m, e1), y: dot(m, e2) }));
   // Day names sit just outside each day's cluster.
   plot.setLabels(dayLabels(mp, s2));
@@ -154,6 +154,6 @@ function dayLabels(mp, s2) {
   const pts = X.map((x) => { const c = center(x); return { x: dot(c, e1), y: dot(c, e2), kind: 'q' }; });
   const s2 = Math.max(...pts.map((p) => Math.max(Math.abs(p.x), Math.abs(p.y)))) * 1.05;
   const p2 = scatterArrow(box2, { height: 300, maxWidth: 340, arrow: false, interactive: false, label: 'The seven weekday names arranged on a circle in weekly order' });
-  p2.setPoints(pts, { fixedScale: s2 });
+  p2.setPoints(pts, { fixedScale: s2 * 1.25 });
   p2.setLabels(dayLabels(means.map((m) => ({ x: dot(m, e1), y: dot(m, e2) })), s2));
 })();

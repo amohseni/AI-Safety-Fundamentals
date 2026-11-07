@@ -7,7 +7,8 @@
 # random direction per layer. Each is mapped back to the 896 numbers of the residual stream (u, unit
 # length). Ablation replaces the component along u with its average (from the same activations the
 # reduction was fit on): h <- h - ((h - mean) . u) u, at every position, in the residual stream after
-# the given layer only.
+# the given layer only. dir63.json gives several random directions per layer; the output reports their
+# average under 'random' and each one under 'randomEach'.
 #   noun, quote: next-token loss on the held-out passages (odd-numbered), averaged over all positions,
 #     over positions whose next token starts a noun (noun), and over positions whose next token is
 #     a closing quotation mark (quote).
@@ -41,9 +42,12 @@ def hook_for(L):
     return f
 
 
-# Hidden state index L is the output of decoder layer L - 1 (index 0 is the embedding).
-for L in range(1, len(layers) + 1):
+# Hidden state index L is the output of decoder layer L - 1 (index 0 is the embedding), except the last:
+# Hugging Face's hidden_states[24] is taken after the final normalization, so the reduction for layer 24
+# was fit on normalized activations and the ablation for layer 24 is applied to the output of that norm.
+for L in range(1, len(layers)):
     layers[L - 1].register_forward_hook(hook_for(L))
+model.model.norm.register_forward_hook(hook_for(len(layers)))
 
 
 def set_dir(key, L, w):
@@ -96,20 +100,31 @@ if os.path.exists(outp):
     out = json.load(open(outp))
 else:
     out = {'layers': D['layers'], 'base': {'loss': token_losses(), 'judge': judge_acc()}, 'probe': {}, 'random': {}}
+out.setdefault('randomEach', {})
 print('base', out['base'], flush=True)
+
+
+def run(w, prop):
+    key = 'c' if prop == 'truth' else 't'
+    if not set_dir(key, L, w):
+        return None
+    r = judge_acc() if prop == 'truth' else token_losses()
+    state['u'] = None
+    return r
+
+
 for L in D['layers']:
-    if str(L) in out['probe']:
-        continue
-    res = {}
-    for which, dirs in (('probe', D['probes']), ('random', None)):
-        r = {}
-        for prop in ('noun', 'quote', 'truth'):
-            w = D['random'][str(L)] if which == 'random' else dirs[prop][str(L)]
-            key = 'c' if prop == 'truth' else 't'
-            if not set_dir(key, L, w):
-                r[prop] = None; continue
-            r[prop] = judge_acc() if prop == 'truth' else token_losses()
-            state['u'] = None
-        out[which][str(L)] = r
+    if str(L) not in out['probe']:
+        out['probe'][str(L)] = {prop: run(D['probes'][prop][str(L)], prop) for prop in ('noun', 'quote', 'truth')}
+    if str(L) not in out['randomEach']:
+        R = D['random'][str(L)]
+        R = R if isinstance(R[0], list) else [R]
+        each = []
+        for w in R:
+            tl = run(w, 'noun')  # the same random direction serves both token properties
+            each.append({'noun': tl, 'quote': tl, 'truth': run(w, 'truth')})
+        out['randomEach'][str(L)] = each
+        out['random'][str(L)] = {p: (None if each[0][p] is None else [float(np.mean([e[p][j] for e in each])) for j in range(len(each[0][p]))])
+                                 for p in ('noun', 'quote', 'truth')}
     print(L, out['probe'][str(L)], out['random'][str(L)], flush=True)
     json.dump(out, open(outp, 'w'))

@@ -34,17 +34,17 @@ const allPlain = plain.map((s) => s.i);
 const cities = by('cities');
 const pcaB = planeBasis(T.X, allPlain, 'pca', {});
 const bp = bestInPlane(pcaB, cities);
-console.log('best arrow in the principal-directions plane, all cities:', pct(bp.acc), 'at', bp.angle);
+check('task 1: best arrow in the principal-directions plane sorts about 80% of cities', Math.abs(bp.acc - 0.795) < 0.006, `${pct(bp.acc)} at ${bp.angle} degrees`);
 for (const t of ['spanish', 'elements']) console.log('  best in PCA plane for', t, pct(bestInPlane(pcaB, by(t)).acc));
-for (let seed = 1; seed <= 5; seed++) {
-  const rb = planeBasis(T.X, allPlain, 'random', { seed });
-  console.log('best arrow in random plane', seed, pct(bestInPlane(rb, cities).acc));
-}
+const randBest = [1, 2, 3, 4, 5].map((seed) => bestInPlane(planeBasis(T.X, allPlain, 'random', { seed }), cities).acc);
+check('task 1: first five random planes give between 78% and 95%', Math.min(...randBest) >= 0.775 && Math.max(...randBest) < 0.955 && Math.min(...randBest) < bp.acc && Math.max(...randBest) > bp.acc, randBest.map(pct).join(', '));
 const mmB = planeBasis(T.X, allPlain, 'mm', { mm: mmUnit });
-console.log('difference of means (best threshold) on all cities:', pct(splitAlong(cities, mmUnit).acc));
+check('task 2: difference of means sorts 97.5% of cities (best threshold)', Math.abs(splitAlong(cities, mmUnit).acc - 0.975) < 0.003, pct(splitAlong(cities, mmUnit).acc));
+check('task 2: 95.5% of held-out cities at the midpoint threshold', Math.abs(fixedThr(by('cities', (s) => !T.isTrain(s)), mm) - 0.955) < 0.003, pct(fixedThr(by('cities', (s) => !T.isTrain(s)), mm)));
 console.log('difference of means, fixed midpoint threshold: held-out cities', pct(fixedThr(by('cities', (s) => !T.isTrain(s)), mm)),
   'spanish', pct(fixedThr(by('spanish'), mm)), 'elements', pct(fixedThr(by('elements'), mm)));
 console.log('difference of means, best threshold: spanish', pct(splitAlong(by('spanish'), mmUnit).acc), 'elements', pct(splitAlong(by('elements'), mmUnit).acc));
+check('task 3: city direction sorts 99% of Spanish words and of elements (best threshold)', splitAlong(by('spanish'), mmUnit).acc >= 0.985 && splitAlong(by('elements'), mmUnit).acc >= 0.985, '');
 const lr = logistic(train.map((s) => T.X[s.i]), train.map((s) => s.label), { l2: 0.01 });
 console.log('logistic probe on training cities: held-out', pct(fixedThr(by('cities', (s) => !T.isTrain(s)), lr)), 'spanish', pct(fixedThr(by('spanish'), lr)), 'elements', pct(fixedThr(by('elements'), lr)));
 const lrU = Float32Array.from(lr.w, (v) => v / norm(lr.w));
@@ -54,7 +54,10 @@ for (const t of ['spanish', 'elements']) {
   const tr = by(t, T.isTrain);
   const m2 = massMean(tr.map((s) => T.X[s.i]), tr.map((s) => s.label));
   const u2 = Float32Array.from(m2.w, (v) => v / norm(m2.w));
-  console.log(`mean difference from ${t}: angle to cities direction`, (Math.acos(dot(u2, mmUnit)) * 180 / Math.PI).toFixed(1), 'accuracy on cities', pct(fixedThr(cities, m2)));
+  const best = splitAlong(cities, u2).acc, mid = fixedThr(cities, m2);
+  console.log(`mean difference from ${t}: angle to cities direction`, (Math.acos(dot(u2, mmUnit)) * 180 / Math.PI).toFixed(1), 'accuracy on cities: midpoint threshold', pct(mid), 'best threshold', pct(best));
+  // Task 3: the direction transfers back to cities with a threshold chosen for cities; only the threshold fails.
+  check(`task 3: direction from ${t} sorts at least 95% of cities with the best threshold, about 62% at its own midpoint`, best >= 0.95 && mid < 0.64, `${pct(best)} vs ${pct(mid)}`);
 }
 
 // ---- Weekdays ----
@@ -89,4 +92,17 @@ for (let a = 0; a < 180; a += 1) {
   worst = Math.min(worst, minGap);
   if (a % 30 === 0) console.log(`  angle ${a}: closest non-neighbor pair gap ${minGap.toFixed(3)} (radius ~${(radii.reduce((s, v) => s + v, 0) / 7).toFixed(2)})`);
 }
+// Task 4: no direction in the plane puts the days in weekly order, and along every direction some two
+// days that are at least two apart in the week are adjacent in the order along the arrow.
+let ordered = 0, allFold = true;
+for (let a = 0; a < 360; a += 0.25) {
+  const r = (a * Math.PI) / 180;
+  const o = means.map((m, d) => [Math.cos(r) * dot(m, e1) + Math.sin(r) * dot(m, e2), d]).sort((p, q) => p[0] - q[0]).map(([, d]) => d);
+  const weekly = [1, -1].some((dir) => o.every((d, i) => i === 0 || (d - o[i - 1] - dir + 14) % 7 === 0));
+  if (weekly) ordered++;
+  const fold = o.some((d, i) => i > 0 && Math.min((d - o[i - 1] + 7) % 7, (o[i - 1] - d + 7) % 7) >= 2);
+  if (!fold) allFold = false;
+}
+check('task 4: no direction in the plane gives the weekly order', ordered === 0, `${ordered} of 1440 directions`);
+check('task 4: along every direction two days far apart in the week are next to each other', allFold, '');
 process.exit(fails ? 1 : 0);

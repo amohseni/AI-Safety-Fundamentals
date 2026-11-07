@@ -39,7 +39,9 @@ if (process.argv[2] === 'directions') {
       out.probes[prop][L] = Array.from(logistic(s.Xtr, s.ytr, PROBE_DEFAULTS.linear).w);
     }
   }
-  for (const L of D.layers) out.random[L] = Array.from({ length: D.k }, () => r() - 0.5);
+  // Five random directions per layer; the first is the one drawn before 2026-11-06, so earlier results stay comparable.
+  for (const L of D.layers) out.random[L] = [Array.from({ length: D.k }, () => r() - 0.5)];
+  for (let n = 1; n < 5; n++) for (const L of D.layers) out.random[L].push(Array.from({ length: D.k }, () => r() - 0.5));
   fs.writeFileSync(process.argv[3], JSON.stringify(out));
   console.log('wrote', process.argv[3]);
 }
@@ -50,8 +52,10 @@ if (!onlyDirections) {
   if (A.TEMP) { console.log('ablation.json is a placeholder'); process.exit(1); }
   console.log(`\nAblation. Base: loss all ${A.base.loss[0].toFixed(3)}, before nouns ${A.base.loss[1].toFixed(3)}, before closing quotes ${A.base.loss[2].toFixed(3)}; judgment accuracy ${pct(A.base.judge[0])}`);
   for (const L of A.layers) {
-    const p = A.probe[L], r = A.random[L];
+    const p = A.probe[L], E = A.randomEach[L];
     if (!p || p.noun === null) continue;
-    console.log(`  layer ${String(L).padStart(2)}: noun ${p.noun[1].toFixed(2)} (random ${r.noun[1].toFixed(2)}) | quote ${p.quote[2].toFixed(2)} (random ${r.quote[2].toFixed(2)}) | truth ${pct(p.truth[0])} (random ${pct(r.truth[0])})`);
+    const span = (g, f) => { const v = E.map(g); return `${f(Math.min(...v))} to ${f(Math.max(...v))}`; };
+    const t2 = (v) => v.toFixed(2);
+    console.log(`  layer ${String(L).padStart(2)}: noun ${t2(p.noun[1])} (random ${span((e) => e.noun[1], t2)}) | quote ${t2(p.quote[2])} (random ${span((e) => e.quote[2], t2)}) | truth ${pct(p.truth[0])} (random ${span((e) => e.truth[0], pct)})`);
   }
 }

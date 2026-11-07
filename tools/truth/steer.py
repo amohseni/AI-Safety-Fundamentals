@@ -5,8 +5,8 @@
 # coordinates of the shipped data, and which reduction ("statements", "pairs" or "alice") it lives in.
 # Each direction is mapped back into the model's residual stream (896 numbers), made a unit vector u,
 # and scaled as Marks and Tegmark (2023) do: by the distance between the means of the true and the
-# false training statements along u (the random control direction takes the plain supervised
-# probe's scale instead). Steering with strength a adds a * scale * u to the residual
+# false training statements along u (the random control directions, random and random2 to random5,
+# take the plain supervised probe's scale instead). Steering with strength a adds a * scale * u to the residual
 # stream after layer 13 at the statement's last two tokens, in the few-shot prompt of judge.py.
 import json, sys
 import numpy as np
@@ -45,7 +45,7 @@ for name, d in D['directions'].items():
     sep = proj[lab[train] == 1].mean() - proj[lab[train] == 0].mean()
     if sep < 0:
         u, sep = -u, -sep
-    if name == 'random':
+    if name.startswith('random'):
         # The control direction gets the scale of the plain supervised probe, so equal strengths
         # mean vectors of equal length.
         sep = out['probes']['supervised-plain']['sep']

@@ -71,12 +71,15 @@ function renderCard(sc) {
 
 // ---- Use: precomputed steering (tools/truth/steer.py) ----
 const sIx = (s) => use.strengths.indexOf(s);
+// Random directions of the same length as the plain supervised probe's steering vector.
+const RANDOM = Object.keys(use.probes).filter((k) => k.startsWith('random'));
 function useRow() {
   const key = `${state.method}-${state.set}`;
   const P = use.probes[key];
   if (!P) return pct(null);
   if (state.strength === 0) return '<span class="quiet">set a strength</span>';
-  return `${Math.round(moved(P) * 100)}%<br><span class="quiet">random direction ${Math.round(moved(use.probes.random) * 100)}%</span>`;
+  const r = RANDOM.map((k) => Math.round(moved(use.probes[k]) * 100));
+  return `${Math.round(moved(P) * 100)}%<br><span class="quiet">five random directions ${Math.min(...r)}% to ${Math.max(...r)}%</span>`;
 }
 // Of the statements answered on the other side without steering, the share answered on the steered
 // side at this strength. (A few statements have P(TRUE) = P(FALSE) at the model's bfloat16 precision.)
