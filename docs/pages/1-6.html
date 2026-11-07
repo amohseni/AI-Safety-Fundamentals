@@ -25,6 +25,7 @@
   .prompt-text { margin: 0.6rem 0 0; width: auto; }
   .prompt-text b { font-weight: normal; color: var(--accent); }
   #prompt-menu .seg { display: flex; flex-wrap: wrap; }
+  #view-controls { flex-direction: row; flex-wrap: wrap; max-width: none; flex-basis: auto; gap: 0.9rem 2rem; }
   figure#fig-three .three > div { flex-basis: 12rem; }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
@@ -59,10 +60,71 @@
   </div>
 </div>
 
-<ol class="tasks" id="tasks"></ol>
+<ol class="tasks">
+  <li class="task" data-id="1.6-t1">
+    <p class="prompt">A base model is trained only to continue text. On how many of the eight prompts will this base model continue the document instead of answering?</p>
+    <div class="choices" data-options="Most of them|One or two|None"></div>
+    <div class="after"><p>Go through the prompts and read the base model&rsquo;s column.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>One. On the Einstein prompt, the base model first wrote a second question (&ldquo;Also, how did he manage to write his theory in a way that was not immediately understood&hellip;&rdquo;) and then answered both. On the other seven it answered much as the chat model did. The Qwen3 report says its pretraining text included trillions of generated tokens of question-answering and instructions, so this base model has read many documents in which a question is followed by its answer. What a base model does with a question depends on its pretraining text. The base model also differs in when it stops: on three prompts it was still writing at its limit of 200 tokens, while the chat model ended every response by itself.</p></div></div>
+  </li>
+  <li class="task" data-id="1.6-t2">
+    <p class="prompt">On the letter-count prompt, the chat model answers that &ldquo;strawberry&rdquo; has one r. What will the reasoning model, the same parameters with thinking on, answer?</p>
+    <div class="choices" data-options="1|2|3"></div>
+    <div class="after"><p>Choose the letter-count prompt and read the chain of thought.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Three, which is correct. In its chain of thought the model spells the word one letter at a time, stops to ask &ldquo;Wait, is that correct?&rdquo;, numbers the ten letters, and finds r at positions 3, 8, and 9. That took 319 tokens, each one a pass through the network; the chat model&rsquo;s whole answer took 28. The base model answered &ldquo;twice&rdquo;.</p></div></div>
+  </li>
+  <li class="task" data-id="1.6-t3">
+    <p class="prompt">On the bat-and-ball prompt, the chat model writes out an equation and gets the right answer, 5 cents. What will the reasoning model do?</p>
+    <div class="choices" data-options="Give the right answer quickly|Give the right answer after a long check|Give no answer at all"></div>
+    <div class="after"><p>Choose the bat-and-ball prompt and read the chain of thought from the start.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>It gives no answer. In roughly its first 350 tokens it sets up the same equation, finds $0.05, and checks it: $0.05 plus $1.05 is $1.10. Then it tries &ldquo;another way&rdquo;, takes the bat to cost $1.00, gets 10 cents, and spends the rest of its 3,000-token limit going back and forth between the two answers without closing its chain of thought. Checking and backtracking are behaviors the model learned from a larger reasoning model; in a model this small they do not always lead to an answer.</p></div></div>
+  </li>
+  <li class="task" data-id="1.6-t4">
+    <p class="prompt">Einstein&rsquo;s Nobel Prize was not for relativity. Which of the three models says so?</p>
+    <div class="choices" data-options="The base model|The chat model|The reasoning model|None of them"></div>
+    <div class="after"><p>Choose the Einstein prompt, then the Mars prompt.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>None of them. All three explain why he won it for relativity. The 1921 prize was awarded &ldquo;for his services to Theoretical Physics, and especially for his discovery of the law of the photoelectric effect.&rdquo; On the Mars question, which also has a false premise, the base model invents an astronaut (&ldquo;David Scott&rdquo;, 1976), the chat model names Neil Armstrong and then adds that no one has walked on Mars, and the reasoning model names Mariner 2, an uncrewed probe. The small post-trained model has the same gaps and confusions as its base model. Post-training changed the form of its answers; it did not supply the missing facts.</p></div></div>
+  </li>
+</ol>
 </section>
 
-<section id="after"></section>
+<section>
+<h2>What post-training changed</h2>
+<p>The three columns come from two sets of parameters, and the two sets are close. Over all 310 parameter tensors, the difference between the post-trained and the base parameters is 6.3% of the size of the base parameters (measured with the Frobenius norm, the square root of the sum of squared entries); for a typical tensor it is about 10%.<label for="sn-wd" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-wd" class="margin-toggle"><span class="sidenote">Computed by <code>tools/1-6/weight_diff.py</code>; the result is in <code>data/1-6/weight_diff.json</code>. The median relative change of a single tensor is 10.2%, and the largest is 18.6%.</span> The same knowledge, and the same gaps in it, show up in every column. What changed is the behavior: answering in the format of an assistant, stopping when done, and, with thinking on, writing a chain of thought first.</p>
+<p><span class="claim">Empirical finding</span> Zhou et al. fine-tuned a 65-billion-parameter base model on only 1,000 carefully chosen example conversations, with no reinforcement learning. In their human study, its answers were judged as good as or better than GPT-4&rsquo;s in 43% of cases, and than those of OpenAI&rsquo;s text-davinci-003, a model trained with human feedback, in 65%. The authors concluded that almost all of a model&rsquo;s knowledge is learned in pretraining, and that post-training mainly teaches which format and behavior to use.<label for="sn-lima" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-lima" class="margin-toggle"><span class="sidenote">Zhou, Liu, Xu, Iyer, Sun, Mao, Ma, Efrat, and others (2023), &ldquo;LIMA: Less is more for alignment,&rdquo; <em>NeurIPS</em>; arXiv:2305.11206. They called this the superficial alignment hypothesis.</span> Section 4.1 shows the same pattern stage by stage in another open model.</p>
+
+<figure id="fig-three" aria-describedby="fig-three-desc"></figure>
+<p id="fig-three-desc" class="caption">The letter-count prompt, &ldquo;How many times does the letter r appear in the word strawberry?&rdquo;, given to the three models. The base model answers &ldquo;twice&rdquo;, the chat model &ldquo;once&rdquo;, and the reasoning model, after a chain of thought (in gray) in which it spells the word and checks its count, &ldquo;3 times&rdquo;. All outputs are real and unedited.</p>
+</section>
+
+<div class="check" data-id="1.6-c1" data-correct="1">
+  <p class="label">Check</p>
+  <p class="q">Does fine-tuning with human feedback mainly add knowledge to a model?</p>
+  <div class="options seg"><button>Yes, the feedback teaches it new facts</button><button>No, it mainly changes which behaviors the model produces</button><button>No, it leaves the model&rsquo;s behavior unchanged</button></div>
+  <div class="feedback"><p>The evidence points to the second answer. Most knowledge comes from pretraining (Zhou et al. 2023), and the post-trained model in the tool repeats its base model&rsquo;s gaps, such as the Einstein and Mars errors, while answering in a different form.</p></div>
+</div>
+
+<div class="check" data-id="1.6-c2" data-correct="2">
+  <p class="q">The chat and reasoning columns use the same parameters. Why did the reasoning model count the letters correctly when the chat model did not?</p>
+  <div class="options seg"><button>Thinking mode loads a larger network</button><button>The reasoning model was trained on this exact question</button><button>It wrote out the letters first, so it spent more passes through the network and could read its own intermediate results</button></div>
+  <div class="feedback"><p>Each written token is another pass through the same network, and each pass can read everything written so far. Spelling the word one letter at a time turned a hard single step into many easy ones.</p></div>
+</div>
+
+<div class="explain" data-id="1.6-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: what does post-training change about a model, and what does it leave mostly unchanged?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>After 2022, three steps turned text predictors into assistants and reasoning models: fine-tuning on examples and human feedback (InstructGPT, ChatGPT), chain-of-thought prompting, and reinforcement learning on checkable problems (o1, DeepSeek-R1), which trains models to write long chains of thought. Post-training changes what a model does with its knowledge far more than the knowledge itself.</p>
+</div>
 </article>
 <script type="module" src="../js/site.js"></script>
 <script type="module" src="../js/page/1-6.js"></script>

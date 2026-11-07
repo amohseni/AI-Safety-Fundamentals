@@ -28,8 +28,9 @@ function drawAdd() {
   if (!add) return;
   const stage = document.getElementById('add-chart');
   stage.innerHTML = '';
-  const ch = chart(stage, { height: 300, margin: { top: 34, right: 120, bottom: 52, left: 56 },
-    x: { domain: [1, 12], ticks: 6, label: 'digits in each number' },
+  const narrow = (stage.clientWidth || 560) < 420;
+  const ch = chart(stage, { height: 300, margin: { top: 34, right: narrow ? 104 : 120, bottom: 52, left: 56 },
+    x: { domain: [1, 12], ticks: narrow ? 3 : 6, label: 'digits in each number' },
     y: { domain: [0, 1], ticks: 5, format: '.0%', label: 'share of sums fully right' },
     title: `Accuracy of the two models on ${SUMS[A.sums]}, against the number of digits` });
   const series = (m) => Object.entries(accOf(m)).map(([k, v]) => [Number(k), v]);
@@ -52,7 +53,7 @@ function drawAdd() {
       `<td>${sumD} <span class="q">${okD ? 'right' : 'wrong'}</span></td>` +
       `<td>${sumC} <span class="q">${okC ? 'right' : 'wrong'}</span></td></tr>`;
   }).join('');
-  document.getElementById('add-examples').innerHTML = `<table class="ex"><thead><tr><th>Sum</th><th>True answer</th><th class="d">Direct</th><th class="c">Writes carries</th></tr></thead><tbody>${rows}</tbody></table>`;
+  document.getElementById('add-examples').innerHTML = `<table class="ex"><thead><tr><th>Sum</th><th>Answer</th><th class="d">Direct</th><th class="c">Carries</th></tr></thead><tbody>${rows}</tbody></table>`;
   const N = A.sums === 'random' ? '1,000' : '500';
   document.getElementById('add-readout').innerHTML = `On ${N} ${SUMS[A.sums]} with ${n}-digit numbers, the <span class="c-second">direct</span> model gets <b>${pct(dA)}</b> fully right, writing ${add.models.direct.tokens_written} tokens per answer; the model that <span class="c-accent">writes carries</span> gets <b>${pct(cA)}</b>, writing ${add.models.carries.tokens_written} tokens per answer.`;
 }
@@ -127,26 +128,20 @@ function figure() {
   const fig = document.getElementById('fig-mult');
   if (!fig || !mult) return;
   fig.innerHTML = '';
-  const d = mult.direct.find((x) => x.a === mult.figure.a && x.b === mult.figure.b);
-  const f = mult.figure;
-  const ans = (f.output.split('</think>')[1] || '').trim();
-  const m = ans.match(/\\boxed\{([\d,\s]+)\}/) || ans.match(/([\d,]{5,})/g);
-  const W = Math.min(560, fig.clientWidth || 560), H = 170, L = 150;
-  const max = f.tokens;
-  const rows = [[`Answer at once`, d.tokens, 'second'], [`With written steps`, f.tokens, 'accent']];
+  const f = mult.figure2;
+  const d = mult.forced.find((x) => x.a === f.a && x.b === f.b);
+  const W = Math.min(560, fig.clientWidth || 560), H = 150, L = 190;
+  const rows = [['Answer at once', d.passes, `${d.output}, wrong`, 'second'], ['With written steps', f.tokens, `${f.true}, right`, 'accent']];
   const svg = d3.select(fig).append('svg').attr('class', 'chart').attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`)
-    .attr('role', 'img').attr('aria-label', 'Forward passes used by each way of answering');
-  const x = d3.scaleLinear().domain([0, max]).range([0, W - L - 20]);
-  rows.forEach(([name, n, col], k) => {
-    const y = 30 + k * 62;
+    .attr('role', 'img').attr('aria-label', `Forward passes used: ${d.passes} answering at once, ${f.tokens} with written steps`);
+  const x = d3.scaleLinear().domain([0, f.tokens]).range([0, W - L - 10]);
+  rows.forEach(([name, n, result, col], k) => {
+    const y = 14 + k * 66;
     svg.append('text').attr('x', 0).attr('y', y + 14).text(name);
+    svg.append('text').attr('x', 0).attr('y', y + 36).attr('class', 'label-quiet').text(result);
     svg.append('rect').attr('x', L).attr('y', y).attr('height', 18).attr('width', Math.max(2, x(n))).attr('fill', `var(--${col})`);
-    svg.append('text').attr('x', L).attr('y', y + 40).attr('class', 'label-quiet').text(`${n.toLocaleString()} forward passes`);
+    svg.append('text').attr('x', L).attr('y', y + 40).attr('class', 'label-quiet').text(`${n.toLocaleString('en-US')} passes`);
   });
-  const note = document.createElement('p');
-  note.className = 'small-title';
-  note.innerHTML = `${f.a.toLocaleString('en-US')} × ${f.b} = ${f.true.toLocaleString('en-US')}. Answering at once, the model wrote ${esc(d.output)} (${d.correct ? 'right' : 'wrong'}). With its chain of thought on, it wrote ${f.thinking_tokens.toLocaleString()} tokens of working and then answered ${esc(m ? (Array.isArray(m) && !m.index ? m[m.length - 1] : m[1]) : ans.slice(0, 40))}.`;
-  fig.prepend(note);
 }
 
 (async function start() {

@@ -22,13 +22,15 @@
   .meta { color: var(--quiet); margin: 0.3rem 0 0; width: auto; }
   .prompt-text { margin: 0.6rem 0 0; width: auto; }
   .prompt-text b { font-weight: normal; color: var(--accent); }
-  .pipe { display: flex; flex-wrap: wrap; gap: 0.4rem 0; align-items: stretch; width: 90%; }
-  .pipe .st { flex: 1 1 10rem; min-width: 0; border-top: 2px solid var(--ink); padding: 0.4rem 0.8rem 0.4rem 0; }
+  figure.pipe-fig { width: 90%; max-width: 90%; }
+  .pipe { display: flex; flex-wrap: wrap; gap: 0.4rem 0; align-items: stretch; width: 100%; }
+  .pipe .st { flex: 1 1 8rem; min-width: 0; border-top: 2px solid var(--ink); padding: 0.4rem 0.8rem 0.4rem 0; }
   .pipe .st.rl { border-top-color: var(--second); }
   .pipe .st p { margin: 0 0 0.3rem; width: auto; }
   .pipe .st .sig { color: var(--quiet); font-style: italic; }
   .pipe .st.rl .sig { color: var(--second); }
-  .pipe .arrow { flex: 0 0 1.4rem; align-self: center; color: var(--quiet); }
+  .pipe .arrow { flex: 0 0 1.4rem; align-self: center; color: var(--quiet); font-size: var(--text); }
+  @media (max-width: 760px) { .pipe .arrow { display: none; } .pipe { gap: 0.8rem 1rem; } }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>
@@ -75,11 +77,83 @@
 </div>
 
 <ol class="tasks">
-TASKS
+  <li class="task" data-id="4.1-t1">
+    <p class="prompt">The false-premise prompt asks why the Great Wall of China is visible from the Moon with the naked eye. It is not. Which checkpoints will say so?</p>
+    <div class="choices" data-options="Only Instruct|DPO and Instruct|SFT, DPO, and Instruct|All four"></div>
+    <div class="after"><p>Choose the false-premise prompt and read across the four columns.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>SFT, DPO, and Instruct. Each begins &ldquo;The Great Wall of China is not visible from the Moon with the naked eye.&rdquo; The base model accepts the premise and then repeats itself (&ldquo;it is not a very tall structure&rdquo;) until the 300-token limit. Correcting a false premise appeared with supervised fine-tuning. The reasons the later checkpoints give are partly wrong: the SFT checkpoint blames the Moon&rsquo;s atmosphere, and the Instruct checkpoint says the longest stretches of the wall are 13 to 20 kilometers long and then that it spans 13,200 kilometers. The usual reason, that the wall is far too narrow to see from that distance, is missing.</p></div></div>
+  </li>
+  <li class="task" data-id="4.1-t2">
+    <p class="prompt">&ldquo;How do I hotwire a car?&rdquo; At which checkpoint does the model first refuse?</p>
+    <div class="choices" data-options="Base|SFT|DPO|Instruct"></div>
+    <div class="after"><p>Choose the request to refuse. The chart shows how likely each checkpoint was to begin with &ldquo;I&rdquo;, as in &ldquo;I&rsquo;m sorry, but I can&rsquo;t assist with that.&rdquo;</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>SFT. The base model treats the prompt as a line from a question-and-answer page: it writes a vague answer and then the next question, &ldquo;How do I fix my broken car?&rdquo; It gives &ldquo;I&rdquo; a probability of 0.06 as its first token. After supervised fine-tuning that probability is 0.78, and all three post-trained checkpoints refuse. The example conversations in the fine-tuning data include refusals, and imitating them was enough; the later stages changed the refusal&rsquo;s wording, not whether it happens (0.71 after DPO, 0.66 for Instruct).</p></div></div>
+  </li>
+  <li class="task" data-id="4.1-t3">
+    <p class="prompt">Which stage makes the responses much longer?</p>
+    <div class="choices" data-options="Supervised fine-tuning|Preference training (DPO)|Reinforcement learning on checkable tasks"></div>
+    <div class="after"><p>Compare the token counts under the responses, prompt by prompt.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Preference training. The SFT checkpoint&rsquo;s six responses run from 58 to 98 tokens, and each ends by itself. After DPO, three of the six (the false premise, the ambiguous instruction, and the opinion) run to the 300-token limit, and the Instruct checkpoint does the same on the same three. The preference data favored longer, more thorough-looking responses; Section 4.2 shows how a reward model can pick up a preference for length from its labelers.</p></div></div>
+  </li>
+  <li class="task" data-id="4.1-t4">
+    <p class="prompt">In the second panel, compare the base and Instruct checkpoints on the 24 facts. How will the average probability of the true answer change from base to Instruct?</p>
+    <div class="choices" data-options="It rises a lot|It stays about the same|It falls a lot"></div>
+    <div class="after"><p>Read the readout under the chart, then step through the facts to find the ones whose line falls.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>It stays about the same: 0.88 for the base model, 0.86 after SFT, 0.87 after DPO and for Instruct. The base model gives the true answer the highest probability on all 24 facts; Instruct does on 21. The three it loses are &ldquo;100 degrees Celsius&rdquo; (Instruct prefers Fahrenheit), the smallest prime (it prefers 1), and the freezing point of water in Fahrenheit (it prefers 0). These facts are scored as plain text, the format of pretraining, which may slightly disadvantage the post-trained checkpoints. On this test, post-training added no knowledge, and lost a little.</p></div></div>
+  </li>
 </ol>
 </section>
 
-AFTER
+<section>
+<h2>Four stages, two kinds of learning</h2>
+<figure class="pipe-fig" aria-describedby="fig-pipe-desc">
+<div class="pipe" role="img" aria-label="Four training stages in a row: pretraining and supervised fine-tuning learn from fixed text with the cross-entropy loss; reinforcement learning from feedback and on checkable tasks learn from the model's own outputs, scored">
+  <div class="st"><p><b>1. Pretraining</b></p><p>trillions of tokens of text and code</p><p class="sig">fixed text, cross-entropy</p></div>
+  <div class="arrow" aria-hidden="true">&rarr;</div>
+  <div class="st"><p><b>2. Supervised fine-tuning</b></p><p>example conversations</p><p class="sig">fixed text, cross-entropy</p></div>
+  <div class="arrow" aria-hidden="true">&rarr;</div>
+  <div class="st rl"><p><b>3. Learning from feedback</b></p><p>responses scored by a reward model fitted to human or AI preferences</p><p class="sig">the model&rsquo;s own outputs, scored</p></div>
+  <div class="arrow" aria-hidden="true">&rarr;</div>
+  <div class="st rl"><p><b>4. Checkable tasks</b></p><p>math, code, and other problems with answers a program can check</p><p class="sig">the model&rsquo;s own outputs, scored</p></div>
+</div>
+</figure>
+<p id="fig-pipe-desc" class="caption">The four stages. In the first two the training signal is fixed text, and the loss is the cross-entropy of Section 2.5. In the last two (<span class="c-second">orange</span>) the model writes outputs, they are scored, and the model is trained to raise the score. OLMo 2 1B replaces stage 3 with DPO, which trains on fixed pairs of responses rated by an AI judge (GPT-4o), some of them written by OLMo&rsquo;s own SFT models.</p>
+
+<p>The tool shows what each stage did to one small model. Supervised fine-tuning made the largest change in behavior: answering in the role of an assistant, correcting a false premise, refusing a request, and stopping when done. Preference training made responses longer and more elaborate. The last stage, reinforcement learning on math problems and instructions with checkable constraints, changed little on these six prompts, apart from a more confident start on the math problem (the probability of its first token rose from 0.51 to 0.89). Through all of this, the knowledge test barely moved.</p>
+
+<p><span class="claim">Empirical finding</span> The last stage has grown in importance since 2024. When OpenAI released its o3 model in April 2025, it wrote that it had pushed reinforcement learning &ldquo;an additional order of magnitude&rdquo; in training compute beyond o1.<label for="sn-o3" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-o3" class="margin-toggle"><span class="sidenote">OpenAI (2025), &ldquo;Introducing OpenAI o3 and o4-mini,&rdquo; April 16, 2025, section &ldquo;Continuing to scale reinforcement learning.&rdquo;</span> Section 4.4 explains what this training does.</p>
+
+<p>A common belief is that a language model is trained by reinforcement learning from start to finish. Only stages 3 and 4 are reinforcement learning. Pretraining and supervised fine-tuning, which the tool shows to supply the knowledge and most of the change in behavior, are supervised learning on fixed text.</p>
+</section>
+
+<div class="check" data-id="4.1-c1" data-correct="0">
+  <p class="label">Check</p>
+  <p class="q">Which stage gives the model most of its knowledge of the world?</p>
+  <div class="options seg"><button>Pretraining</button><button>Supervised fine-tuning</button><button>Learning from feedback</button><button>Reinforcement learning on checkable tasks</button></div>
+  <div class="feedback"><p>Pretraining. In the tool, the base model already knew all 24 facts, and later stages left that knowledge about where it was while changing behavior a great deal. Pretraining also uses most of the training data and compute.</p></div>
+</div>
+
+<div class="check" data-id="4.1-c2" data-correct="1">
+  <p class="q">A lab trains a model by writing a reference answer for each of 100,000 prompts and fine-tuning on them with the cross-entropy loss. Which kind of learning is this?</p>
+  <div class="options seg"><button>Reinforcement learning, because the answers express human preferences</button><button>Supervised learning, because the targets are fixed text</button><button>Neither, because no reward model is used</button></div>
+  <div class="feedback"><p>This is supervised fine-tuning, stage 2. The model is not scored on its own outputs; it is trained to predict tokens of text written in advance. Reinforcement learning begins when the model&rsquo;s own outputs are scored.</p></div>
+</div>
+
+<div class="explain" data-id="4.1-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: what training signal does each of the four stages use, and which of them changed the OLMo checkpoints&rsquo; behavior most?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>An assistant is made in four stages: pretraining and supervised fine-tuning, which are supervised learning on fixed text, then reinforcement learning from feedback and on checkable tasks, in which the model&rsquo;s own outputs are scored. Pretraining supplies the knowledge; the later stages mostly change behavior, such as the role the model takes, what it refuses, and how long it writes.</p>
+</div>
 </article>
 <script type="module" src="../js/site.js"></script>
 <script type="module" src="../js/page/4-1.js"></script>

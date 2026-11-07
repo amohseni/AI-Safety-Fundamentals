@@ -1,0 +1,12 @@
+{
+ "base": "Qwen/Qwen3-0.6B-Base@da87bfb",
+ "post": "Qwen/Qwen3-0.6B@c1899de",
+ "overall_relative_change": 0.0631,
+ "median_tensor_relative_change": 0.1018,
+ "max_tensor_relative_change": 0.1856,
+ "tensors": 310,
+ "missing_in_post": [],
+ "missing_in_base": [
+  "lm_head.weight"
+ ]
+}

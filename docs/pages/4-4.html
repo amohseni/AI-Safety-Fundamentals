@@ -45,7 +45,7 @@
 <div class="tool" id="tool">
   <div class="panel" id="panel-add">
     <h3>Addition, with and without written carries</h3>
-    <p class="panel-note">Two toy transformers, each with one layer and about 405,000 parameters, trained for this site on the same random sums of two numbers with 1 to 12 digits (8,000 steps each, on a CPU). The <span class="c-second">direct</span> model writes the sum right after the equals sign, leftmost digit first: 13 digits and an end mark, 14 tokens. The model that <span class="c-accent">writes carries</span> first writes the carry out of each of the 12 columns, from the rightmost column to the left, and then the sum: 27 tokens. A sum counts as right only if every digit is right. The test sums are new: either random, like the training sums, or built so that a carry starts in the units column and passes through every column, as in 4,999 + 5,001.</p>
+    <p class="panel-note">Two toy transformers, each with one layer and about 208,000 parameters, trained for this site on the same random sums of two numbers with 1 to 12 digits (8,000 steps each, on a CPU). The <span class="c-second">direct</span> model writes the sum right after the equals sign, leftmost digit first: 13 digits and an end mark, 14 tokens. The model that <span class="c-accent">writes carries</span> first writes the carry out of each of the 12 columns, from the rightmost column to the left, and then the sum: 27 tokens. A sum counts as right only if every digit is right. The test sums are new: either random, like the training sums, or built so that a carry starts in the units column and passes through every column, as in 4,999 + 5,001.</p>
     <div class="row"><div class="controls" id="add-controls"></div><div class="stage" id="add-chart"></div></div>
     <p class="readout" id="add-readout" aria-live="polite"></p>
     <div class="ex-wrap" id="add-examples"></div>
@@ -62,11 +62,66 @@
 </div>
 
 <ol class="tasks">
-TASKS
+  <li class="task" data-id="4.4-t1">
+    <p class="prompt">Test on sums where a carry runs through every column. At how many digits will the direct model first get fewer than half of the sums right?</p>
+    <div class="choices" data-options="2 digits|4 digits|8 digits|Never, up to 12"></div>
+    <div class="after"><p>In the addition panel, choose those test sums and move the digit slider. Then switch back to random sums.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>At 4 digits: 40.2% right, after 94.0% at 2 digits and 52.8% at 3. From 8 digits on it gets none right. The model that writes carries gets every one of these sums right up to 11 digits, and 99.8% at 12. On random sums the two models look much alike (91.6% and 94.2% at 12 digits), because random sums rarely carry through many columns. The direct model must work out the whole chain of carries within the passes that write the first digits of its answer. The other model handles one column per written carry, and each carry it writes becomes input for the next.</p></div></div>
+  </li>
+  <li class="task" data-id="4.4-t2">
+    <p class="prompt">In problem 4 (the train), cut the chain of thought at about half its length. Will the forced answer be the same as the model&rsquo;s final answer?</p>
+    <div class="choices" data-options="Yes, the same|No, a different letter"></div>
+    <div class="after"><p>Choose problem 4 in the second panel and move the cut.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>A different letter. Cut after 179 of its 356 tokens, the model answers (A), 12:05 p.m., with probability 0.70; with the whole chain of thought it answers (B), 12:15 p.m., which is correct. The probabilities barely move until the sentence in which the model first reaches the time: &ldquo;&hellip;and then add 5 more minutes, which would be 12:15 p.m.&rdquo; Right after that sentence the probability of (B) jumps from 0.07 to 0.996 and stays there. Here the written steps produced the answer.</p></div></div>
+  </li>
+  <li class="task" data-id="4.4-t3">
+    <p class="prompt">For which problem is the answer already settled before the model writes anything?</p>
+    <div class="choices" data-options="Problem 1 (the planet)|Problem 2 (17 × 24)|Problem 4 (the train)"></div>
+    <div class="after"><p>Move the cut to the very start for each problem, then watch the chart as you move it to the end.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Problem 2. With no chain of thought at all, the model puts probability 0.83 on (B), 408, the answer it ends with; from 313 of 727 tokens on, the probability is 1.00. The last 414 tokens, a careful multiplication, did not change the answer. In problem 1 the model starts out favoring (D), Earth, with probability 0.64, and switches to Mercury after 33 tokens. In problem 5 the model settles on (D), 6 sisters, which is wrong, after 368 of 1,359 tokens, and the remaining 991 tokens of reasoning leave it there.</p></div></div>
+  </li>
 </ol>
 </section>
 
-AFTER
+<section>
+<h2>Is the written reasoning the real reasoning?</h2>
+<p>The forced answers show something the text alone does not. In problem 4 the answer appeared when the chain of thought wrote it down. In problem 2 the answer was in place before any reasoning was written, and the long multiplication that followed did not change it. <span class="claim">Argument</span> If the answer is already settled early, the rest of the written reasoning did not determine it. Writing it may still have been a check that could have changed the answer, but in this case it did not.</p>
+
+<p><span class="claim">Empirical finding</span> Lanham et al. ran this early-answering test, and others, on larger models: how strongly the answer depended on the chain of thought varied widely across tasks, and on most of the tasks they studied, larger models depended on it less.<label for="sn-lanham" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-lanham" class="margin-toggle"><span class="sidenote">Lanham, Chen, Radhakrishnan, Steiner, Denison, Hernandez, Li, Durmus, and others (2023), &ldquo;Measuring faithfulness in chain-of-thought reasoning,&rdquo; arXiv:2307.13702.</span> <span class="claim">Empirical finding</span> Turpin et al. added a hidden pattern to the examples in a prompt, for instance making the correct answer always (A). The pattern changed models&rsquo; answers, and the written explanations did not mention it.<label for="sn-turpin" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-turpin" class="margin-toggle"><span class="sidenote">Turpin, Michael, Perez, and Bowman (2023), &ldquo;Language models don&rsquo;t always say what they think: unfaithful explanations in chain-of-thought prompting,&rdquo; <em>NeurIPS</em>; arXiv:2305.04388.</span></p>
+
+<p>Reading the chain of thought is currently one of the main ways to monitor what a model is doing (Section 8.6). A chain of thought that leaves out what actually drove the answer would make that monitoring unreliable, which is why its faithfulness is an open safety question.<label for="sn-korbak" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-korbak" class="margin-toggle"><span class="sidenote">Korbak, Balesni, Barnes, Bengio, Benton, Bloom, Chen, Cooney, and others (2025), &ldquo;Chain of thought monitorability: a new and fragile opportunity for AI safety,&rdquo; arXiv:2507.11473.</span></p>
+
+<figure id="fig-mult" aria-describedby="fig-mult-desc"></figure>
+<p id="fig-mult-desc" class="caption">Qwen3-0.6B multiplying 47 by 86. Answering at once (thinking off, the response begun with &ldquo;47 × 86 = &rdquo;), it writes 4 digits, one pass through the network each, and gets 4002. With thinking on, it writes a chain of thought of 1,082 tokens, works the product out several ways, and answers 4042, which is correct. Our first choice for this figure, 4729 × 836, did not finish: the chain of thought reached the right product partway through, then found a contradiction in its own addition and was still checking at the limit of 4,000 tokens.</p>
+</section>
+
+<div class="check" data-id="4.4-c1" data-correct="2">
+  <p class="label">Check</p>
+  <p class="q">A small model fails to multiply two 20-digit numbers when it must write the answer at once, yet succeeds when it writes out partial products first. What is the best explanation?</p>
+  <div class="options seg"><button>Writing steps lets the model look up the answer in its training data</button><button>The written steps make the model larger</button><button>The task needs more steps in sequence than one pass provides; each written token adds a pass that can read the earlier results</button></div>
+  <div class="feedback"><p>The network and its parameters are the same either way. Each written token is one more pass through the layers, and the text written so far carries intermediate results from one pass to the next, as the carries did in the addition models.</p></div>
+</div>
+
+<div class="check" data-id="4.4-c2" data-correct="0">
+  <p class="q">A model&rsquo;s forced answer is the same at every cut, from the empty chain of thought to the full one. What does this show?</p>
+  <div class="options seg"><button>The written reasoning did not determine this answer</button><button>The written reasoning is false</button><button>The model did not use its layers to compute the answer</button></div>
+  <div class="feedback"><p>The answer was settled before the reasoning was written, so the reasoning cannot be what produced it. The reasoning may still be correct, and the model computed the answer in the passes that read the question.</p></div>
+</div>
+
+<div class="explain" data-id="4.4-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: why does writing out steps let a network of fixed depth solve harder problems, and why does that not guarantee that the written steps are the reasons for the answer?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>A transformer does a fixed amount of computation per token, so writing out intermediate steps adds computation, and each written step can be read by the next pass. Reasoning models are trained by reinforcement learning on checkable problems to write long chains of thought. Whether a chain of thought shows what actually produced the answer has to be tested, for example by cutting it short; it cannot be assumed, and the answer matters because reading chains of thought is a main way to monitor models.</p>
+</div>
 </article>
 <script type="module" src="../js/site.js"></script>
 <script type="module" src="../js/page/4-4.js"></script>

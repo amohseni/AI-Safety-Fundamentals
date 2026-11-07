@@ -50,7 +50,7 @@ export const sections = [
         "id": "1.6",
         "title": "Assistants and reasoning models (2022 to 2025)",
         "core": false,
-        "href": null
+        "href": "pages/1-6.html"
       }
     ]
   },
@@ -170,7 +170,7 @@ export const sections = [
         "id": "4.1",
         "title": "From pretrained model to assistant",
         "core": true,
-        "href": null
+        "href": "pages/4-1.html"
       },
       {
         "id": "4.2",
@@ -188,7 +188,7 @@ export const sections = [
         "id": "4.4",
         "title": "Chain of thought and reasoning models",
         "core": false,
-        "href": null
+        "href": "pages/4-4.html"
       }
     ]
   },

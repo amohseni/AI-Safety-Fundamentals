@@ -2,7 +2,7 @@
 #   early   five multiple-choice problems; the chain of thought is cut at every sentence end and the
 #           model is made to answer there (an early answering test, after Lanham et al. 2023)
 #   mult    multiplication answered directly (thinking off) and with a chain of thought (thinking on)
-# Usage: HF_HOME=/home/claude/hf python3 tools/4-4/qwen_cot.py early|mult
+# Usage: HF_HOME=/home/claude/hf python3 tools/4-4/qwen_cot.py early|mult|forced|figure2   (in that order)
 # Writes docs/data/4-4/early.json or docs/data/4-4/mult.json.
 import json, os, sys, time, re
 import torch
@@ -27,7 +27,8 @@ INSTR = '\n\nAnswer with the letter of the correct option.'
 SUFFIX = '\n</think>\n\nThe answer is ('   # appended after the cut chain of thought
 
 MULT = [(47, 86), (472, 836), (4729, 836), (4729, 8361), (47293, 83615)]
-FIGURE = (4729, 836)       # the problem shown in the static figure, fixed before running
+FIGURE = (4729, 836)       # first choice for the static figure; its chain of thought did not finish in 4,000 tokens
+FIGURE2 = (47, 86)         # second choice, the smallest problem in MULT whose answer without working is wrong
 
 
 def crop_to(cache, n):
@@ -133,6 +134,47 @@ def mult(tok, model):
     print('figure', len(gen), flush=True)
 
 
+@torch.no_grad()
+def forced(tok, model):
+    """Answers with no working at all: the response is begun as 'a × b = ' and the model writes digits greedily."""
+    out_path = os.path.join(ROOT, 'docs', 'data', '4-4', 'mult.json')
+    data = json.load(open(out_path))
+    data['forced'] = []
+    for a, b in MULT:
+        ids = chat(tok, f'What is {a} × {b}? Reply with only the number.', False)
+        pre = tok(f'{a} × {b} = ', return_tensors='pt', add_special_tokens=False).input_ids
+        x = torch.cat([ids, pre], 1)
+        digits = ''
+        for _ in range(16):
+            nxt = model(x).logits[0, -1].argmax().item()
+            piece = tok.decode([nxt])
+            if not re.fullmatch(r'[0-9,]+', piece):
+                break
+            digits += piece
+            x = torch.cat([x, torch.tensor([[nxt]])], 1)
+        data['forced'].append({'a': a, 'b': b, 'true': a * b, 'output': digits, 'passes': len(digits.replace(',', '')),
+                               'correct': digits.replace(',', '') == str(a * b)})
+        print(a, b, digits, a * b, flush=True)
+    data['forced_settings'] = 'thinking off; the response is begun with "a × b = " and digits are chosen greedily until a non-digit'
+    json.dump(data, open(out_path, 'w'), indent=1, ensure_ascii=False)
+
+
+@torch.no_grad()
+def figure2(tok, model):
+    out_path = os.path.join(ROOT, 'docs', 'data', '4-4', 'mult.json')
+    data = json.load(open(out_path))
+    a, b = FIGURE2
+    q = f'What is {a} × {b}?'
+    ids = chat(tok, q, True)
+    torch.manual_seed(3000)
+    gen = model.generate(ids, pad_token_id=tok.eos_token_id, **{**THINK, 'max_new_tokens': 4000})[0][ids.shape[1]:].tolist()
+    data['figure2'] = {'a': a, 'b': b, 'true': a * b, 'prompt': q, 'sampling': THINK, 'seed': 3000,
+                       'output': tok.decode(gen, skip_special_tokens=True), 'tokens': len(gen),
+                       'thinking_tokens': gen.index(END_THINK) + 1 if END_THINK in gen else None}
+    json.dump(data, open(out_path, 'w'), indent=1, ensure_ascii=False)
+    print('figure2', len(gen), flush=True)
+
+
 if __name__ == '__main__':
     tok, model = load()
-    {'early': early, 'mult': mult}[sys.argv[1]](tok, model)
+    {'early': early, 'mult': mult, 'forced': forced, 'figure2': figure2}[sys.argv[1]](tok, model)

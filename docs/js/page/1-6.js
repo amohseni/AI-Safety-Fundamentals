@@ -13,7 +13,7 @@ const state = { prompt: 0, view: 'formatted', thought: 'shown' };
 let data = null;
 
 const show = (text) => (state.view === 'raw' ? raw(text) : formatted(text));
-const limitNote = (o, max) => (o.stopped ? '' : ` It reached the limit of ${max} tokens and was cut off there.`);
+const limitNote = (o, max) => (o.stopped ? '' : ` It reached the limit of ${max.toLocaleString("en-US")} tokens and was cut off there.`);
 
 function draw() {
   if (!data) return;
@@ -67,14 +67,14 @@ function draw() {
   }
 })();
 
-// Static figure: the first prompt, the three outputs side by side.
+// Static figure: the letter-count prompt, the three outputs side by side.
 function figure() {
   const fig = document.getElementById('fig-three');
   if (!fig) return;
   const box = document.createElement('div');
   box.className = 'three';
   for (const m of MODELS) {
-    const o = data.outputs[`${m.key}:0`];
+    const o = data.outputs[`${m.key}:1`];
     const d = document.createElement('div');
     let html;
     if (m.key === 'reasoning') {
