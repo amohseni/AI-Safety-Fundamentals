@@ -22,7 +22,8 @@ if (process.argv[2]) {
   const r = rng(5);
   dirs.random = { basis: 'statements', w: Array.from({ length: T.k }, () => r() - 0.5) };
   const test = T.S.filter((s) => s.topic === 'cities' && s.form === 'plain' && !T.isTrain(s)).map((s) => s.i);
-  const pick = test.filter((_, j) => j % 4 === 0); // 55 held-out city statements
+  // 56 held-out city statements: both statements (true and false) of every fourth held-out city.
+  const pick = test.filter((_, j) => j % 8 < 2);
   const train = T.S.filter((s) => s.topic === 'cities' && s.form === 'plain' && T.isTrain(s)).map((s) => s.i);
   fs.writeFileSync(process.argv[2], JSON.stringify({ strengths: [-3, -2, -1, 0, 1, 2, 3], test_rows: pick, train_rows: train, directions: dirs }));
   console.log('wrote', process.argv[2], pick.length, 'test statements');
@@ -41,6 +42,7 @@ if (process.argv[2]) {
 {
   const use = JSON.parse(fs.readFileSync(new URL('../docs/data/7-2/use.json', import.meta.url)));
   if (use.TEMP) { console.log('use.json is a placeholder'); process.exit(1); }
+  if (process.argv[2]) process.exit(0);
   const lab = use.rows.map((i) => T.S[i].label);
   const acc = (d) => d.filter((v, k) => (v > 0 ? 1 : 0) === lab[k]).length / d.length;
   console.log(`unsteered: model answers ${pct(acc(use.base))}% correctly; mean P(TRUE)-P(FALSE) ${(use.base.reduce((a, b) => a + b, 0) / use.base.length).toFixed(3)}`);
@@ -49,7 +51,7 @@ if (process.argv[2]) {
       if (s === 0) return '0: -';
       const want = s > 0 ? 1 : -1;
       let n = 0, m = 0;
-      use.base.forEach((v, k) => { if (Math.sign(v) !== want) { n++; if (Math.sign(P.diff[j][k]) === want) m++; } });
+      use.base.forEach((v, k) => { if (Math.sign(v) === -want) { n++; if (Math.sign(P.diff[j][k]) === want) m++; } });
       return `${s}: moved ${m}/${n} acc ${pct(acc(P.diff[j]))}`;
     });
     console.log(`  ${name} (sep ${P.sep}): ${parts.join(' | ')}`);

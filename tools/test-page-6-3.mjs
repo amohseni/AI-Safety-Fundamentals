@@ -43,3 +43,15 @@ if (process.argv[2] === 'directions') {
   fs.writeFileSync(process.argv[3], JSON.stringify(out));
   console.log('wrote', process.argv[3]);
 }
+
+// Ablation results (docs/data/6-3/ablation.json, from tools/truth/ablate.py), as the page reports them.
+if (!onlyDirections) {
+  const A = JSON.parse(fs.readFileSync(new URL('../docs/data/6-3/ablation.json', import.meta.url)));
+  if (A.TEMP) { console.log('ablation.json is a placeholder'); process.exit(1); }
+  console.log(`\nAblation. Base: loss all ${A.base.loss[0].toFixed(3)}, before nouns ${A.base.loss[1].toFixed(3)}, before closing quotes ${A.base.loss[2].toFixed(3)}; judgment accuracy ${pct(A.base.judge[0])}`);
+  for (const L of A.layers) {
+    const p = A.probe[L], r = A.random[L];
+    if (!p || p.noun === null) continue;
+    console.log(`  layer ${String(L).padStart(2)}: noun ${p.noun[1].toFixed(2)} (random ${r.noun[1].toFixed(2)}) | quote ${p.quote[2].toFixed(2)} (random ${r.quote[2].toFixed(2)}) | truth ${pct(p.truth[0])} (random ${pct(r.truth[0])})`);
+  }
+}

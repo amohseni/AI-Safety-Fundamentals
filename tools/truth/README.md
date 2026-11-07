@@ -29,7 +29,7 @@ Every claim appears in three forms: plain, negated ("is not in", "does not mean"
 
 ## Interventions
 
-- `steer.py` (page 7.2, the use test): `node tools/test-page-7-2.mjs <scratch>/directions.json` trains every probe the page offers with the page's own code and writes their directions; `steer.py` maps each back into the residual stream, scales it by the distance between the true and false training averages along it, adds it at strengths -3 to 3 after layer 13 at the statement's last two tokens, and records the model's few-shot judgment P(TRUE) - P(FALSE) (`judge.py`) for 55 held-out city statements. Output: `docs/data/7-2/use.json`.
+- `steer.py` (page 7.2, the use test): `node tools/test-page-7-2.mjs <scratch>/directions.json` trains every probe the page offers with the page's own code and writes their directions; `steer.py` maps each back into the residual stream, scales it by the distance between the true and false training averages along it, adds it at strengths -3 to 3 after layer 13 at the statement's last two tokens, and records the model's few-shot judgment P(TRUE) - P(FALSE) (`judge.py`) for 56 held-out city statements (28 true, 28 false). Output: `docs/data/7-2/use.json`.
 - `ablate.py` (page 6.3): `node tools/test-page-6-3.mjs directions <scratch>/dir63.json` writes the default linear probe's direction for each property and layer; `ablate.py` removes each direction (and a random one) after its layer and measures the next-token loss on the held-out passages and the few-shot judgment of 60 held-out city statements. Output: `docs/data/6-3/ablation.json`.
 
 ## Rerun

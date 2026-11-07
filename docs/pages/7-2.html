@@ -13,7 +13,8 @@
   table.card th, table.card td { text-align: left; font-weight: normal; padding: 0.15rem 0.6rem 0.15rem 0; vertical-align: baseline; border-bottom: 1px solid var(--rule); }
   table.card thead th { color: var(--quiet); }
   table.card th.crit { color: var(--ink); font-style: italic; white-space: nowrap; }
-  table.card td.num { text-align: right; white-space: nowrap; }
+  table.card td.num { text-align: right; }
+  @media (max-width: 760px) { table.card th.crit { white-space: normal; } }
   table.card .quiet, .quiet { color: var(--quiet); }
   #steer-controls, #steer-controls .ctl { min-width: 0; }
   #statement { min-width: 0; font: inherit; font-size: var(--text); color: var(--ink); background: transparent; border: 1px solid var(--rule); border-radius: 3px; max-width: 100%; width: 100%; }
@@ -58,7 +59,7 @@
   </div>
   <div class="panel">
     <h3>Use: steering along the probe&rsquo;s direction</h3>
-    <p class="panel-note">The model is asked whether a statement is true, after six worked examples in the form &ldquo;&hellip; This statement is: TRUE&rdquo;; its answer is TRUE if it gives the next token &ldquo;TRUE&rdquo; a higher probability than &ldquo;FALSE&rdquo;. Steering adds the probe&rsquo;s direction, scaled by the strength, to the activations after layer 13 at the statement&rsquo;s last two tokens; positive strengths push toward true. One unit of strength is the distance between the averages of the true and the false training statements along the direction. These runs were computed in advance for 55 held-out city statements.</p>
+    <p class="panel-note">The model is asked whether a statement is true, after six worked examples in the form &ldquo;&hellip; This statement is: TRUE&rdquo;; its answer is TRUE if it gives the next token &ldquo;TRUE&rdquo; a higher probability than &ldquo;FALSE&rdquo;. Steering adds the probe&rsquo;s direction, scaled by the strength, to the activations after layer 13 at the statement&rsquo;s last two tokens; positive strengths push toward true. One unit of strength is the distance between the averages of the true and the false training statements along the direction. These runs were computed in advance for 56 held-out city statements, half of them true.</p>
     <div class="row"><div class="controls" id="steer-controls"><label class="ctl"><span class="ctl-head"><span class="ctl-name">Statement</span></span><select id="statement"></select></label></div><div class="stage"><p class="readout" id="steer-readout" aria-live="polite"></p></div></div>
   </div>
 </div>
@@ -79,11 +80,11 @@
       <div class="notice"><p>Accuracy on negated cities rises from 30% to 95%, and the credences in a statement and its negation now add up to 1 within 0.06 on average. Truth stays near 95%. But paraphrases still get the same verdict only 67% of the time, Spanish words stay at 98%, chemical elements fall from 90% to 52%, and negated Spanish words and elements reach only 53% and 63%. Training on negations fixed the failure the scorecard showed on cities, and nothing more. A probe trained on negations alone sorts plain city statements at chance (50%).</p></div></div>
   </li>
   <li class="task" data-id="7.2-t3">
-    <p class="prompt">PLACEHOLDER</p>
-    <div class="choices" data-options="A|B"></div>
-    <div class="after"><p>PLACEHOLDER</p>
+    <p class="prompt">Supervised probe, plain training set. Without steering, the model answers FALSE for 31 of the 56 statements and TRUE for 20 (for the other 5 it gives the two answers equal probability). Set the steering strength to +2. Compared with steering along a random direction of the same length, how many of those 31 FALSE answers will turn to TRUE?</p>
+    <div class="choices" data-options="About as many|Clearly more|Clearly fewer"></div>
+    <div class="after"><p>Set the strength and read the use row of the scorecard; pick a few false statements in the list and watch the answer. Then try negative strengths, and the other probes.</p>
       <button class="show" type="button">Show what to notice</button>
-      <div class="notice"><p>PLACEHOLDER</p></div></div>
+      <div class="notice"><p>Clearly more: 21 of the 31 answers turn to TRUE, against 9 for the random direction. In the other direction the difference is smaller: at strength &minus;2, 11 of the 20 TRUE answers turn to FALSE, against 8 for the random direction. So pushing along the probe&rsquo;s direction moves the model&rsquo;s answers toward true more than an arbitrary push does, which is some evidence of use, and a large part of what any push of this size does is unrelated to the direction. The other probes&rsquo; directions are shorter and move few answers: the CCS direction from the plain set turns 2 of the 31 at +2, and the one from Alice&rsquo;s set none.</p></div></div>
   </li>
   <li class="task" data-id="7.2-t4">
     <p class="prompt">Choose contrast-consistent search. With the plain training set it finds a direction that sorts most held-out city statements. Switch the training set to the statements with Alice&rsquo;s opinion. What will CCS find?</p>

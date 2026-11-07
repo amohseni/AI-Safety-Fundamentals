@@ -76,14 +76,15 @@ function useRow() {
   const P = use.probes[key];
   if (!P) return pct(null);
   if (state.strength === 0) return '<span class="quiet">set a strength</span>';
-  return `${Math.round(moved(P) * 100)}% <span class="quiet">(random direction ${Math.round(moved(use.probes.random) * 100)}%)</span>`;
+  return `${Math.round(moved(P) * 100)}%<br><span class="quiet">random direction ${Math.round(moved(use.probes.random) * 100)}%</span>`;
 }
-// Share of statements whose answer, at this strength, is on the steered side and was not before.
+// Of the statements answered on the other side without steering, the share answered on the steered
+// side at this strength. (A few statements have P(TRUE) = P(FALSE) at the model's bfloat16 precision.)
 function moved(P) {
   const d = P.diff[sIx(state.strength)], b = use.base;
   const want = state.strength > 0 ? 1 : -1;
   let n = 0, m = 0;
-  b.forEach((v, k) => { if (Math.sign(v) !== want) { n++; if (Math.sign(d[k]) === want) m++; } });
+  b.forEach((v, k) => { if (Math.sign(v) === -want) { n++; if (Math.sign(d[k]) === want) m++; } });
   return n ? m / n : 0;
 }
 
@@ -114,7 +115,7 @@ function update() {
   renderCard(sc);
   const P = use.probes[`${state.method}-${state.set}`];
   const k = state.row, base = use.base[k];
-  const ans = (v) => (v > 0 ? 'TRUE' : 'FALSE');
+  const ans = (v) => (v > 0 ? 'TRUE' : v < 0 ? 'FALSE' : 'TRUE and FALSE with equal probability');
   const s = T.S[use.rows[k]];
   if (state.strength === 0 || !P) {
     stOut.innerHTML = `&ldquo;${s.text}&rdquo; is ${s.label ? 'true' : 'false'}. Without steering the model answers <b>${ans(base)}</b> (P(TRUE) &minus; P(FALSE) = ${base.toFixed(2)}).`;
@@ -129,17 +130,17 @@ window.__s72 = { state, update };
 // ---- Static figure: the probing setup and the four criteria ----
 (function figure() {
   const fig = document.getElementById('fig-setup-svg');
-  const w = Math.max(300, Math.min(620, fig.clientWidth || 620)), h = 230;
+  const w = Math.max(300, Math.min(620, fig.clientWidth || 620)), h = 260;
   const svg = d3.select(fig).append('svg').attr('class', 'chart').attr('width', w).attr('height', h).attr('viewBox', `0 0 ${w} ${h}`)
     .attr('role', 'img').attr('aria-label', 'A statement goes into the model; the activation after one layer goes to a linear probe, which outputs a credence.');
-  const cols = 5, rowsN = 4, gx = Math.min(36, (w * 0.5) / cols), gy = 34, x0 = 24, y0 = 30;
+  const cols = 5, rowsN = 4, gx = Math.min(64, (w - 170) / cols), gy = 34, x0 = 44, y0 = 30;
   const words = ['Lord', 'Byron', 'died', 'in', '1824.'];
   for (let r = 0; r < rowsN; r++) for (let c = 0; c < cols; c++) {
     svg.append('rect').attr('x', x0 + c * gx).attr('y', y0 + (rowsN - 1 - r) * gy).attr('width', gx - 8).attr('height', gy - 12)
       .attr('fill', 'none').attr('stroke', r === 2 && c === cols - 1 ? 'var(--accent)' : 'var(--rule)').attr('stroke-width', r === 2 && c === cols - 1 ? 2 : 1);
   }
-  words.forEach((t, c) => svg.append('text').attr('x', x0 + c * gx + (gx - 8) / 2).attr('y', y0 + rowsN * gy + 10).attr('text-anchor', 'middle')
-    .attr('transform', `rotate(-30 ${x0 + c * gx + (gx - 8) / 2} ${y0 + rowsN * gy + 10})`).text(t));
+  words.forEach((t, c) => svg.append('text').attr('x', x0 + c * gx + (gx - 8) / 2).attr('y', y0 + rowsN * gy + 14).attr('text-anchor', 'end')
+    .attr('transform', `rotate(-40 ${x0 + c * gx + (gx - 8) / 2} ${y0 + rowsN * gy + 14})`).text(t));
   const ax = x0 + cols * gx, ay = y0 + 1 * gy + (gy - 12) / 2;
   svg.append('line').attr('x1', ax - 6).attr('x2', ax + 40).attr('y1', ay).attr('y2', ay).attr('stroke', 'var(--accent)').attr('stroke-width', 1.5);
   svg.append('text').attr('x', ax + 46).attr('y', ay - 4).attr('class', 'label-accent').text('probe');

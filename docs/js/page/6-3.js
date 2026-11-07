@@ -137,7 +137,7 @@ changed();
     if (i >= boxes.length) return;
     const [prop, box] = boxes[i++];
     const pts = D.layers.map((L) => [L, train(prop, L, 'linear', PROBE_DEFAULTS.linear)]);
-    const cc = chart(box, { width: 300, height: 220, margin: { top: 16, right: 74, bottom: 40, left: 52 },
+    const cc = chart(box, { width: 300, height: 220, margin: { top: 16, right: 88, bottom: 40, left: 52 },
       x: { domain: [0, 24], ticks: 3 }, y: { domain: [0.4, 1], ticks: 3, format: '.0%' }, title: `${PROPERTIES[prop]}: test accuracy by layer` });
     cc.line('r', pts.map(([L, r]) => [L, r.te]), { color: 'accent', label: 'property' });
     cc.line('c', pts.map(([L, r]) => [L, r.cte]), { color: 'second', dash: '5 4', label: 'control' });
