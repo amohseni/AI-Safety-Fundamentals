@@ -79,7 +79,7 @@ function figure() {
     let html;
     if (m.key === 'reasoning') {
       const { thought, answer } = splitThinking(o.text);
-      html = `<div class="thought">${formatted(thought)}</div>${formatted(answer)}`;
+      html = `<div class="thought" tabindex="0" aria-label="Chain of thought">${formatted(thought)}</div>${formatted(answer)}`;
     } else html = formatted(o.text);
     d.innerHTML = `<p class="who">${m.name}</p><div class="out">${html}</div>`;
     box.append(d);

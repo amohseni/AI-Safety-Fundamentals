@@ -126,7 +126,7 @@ def mult(tok, model):
     ids = chat(tok, q, True)
     torch.manual_seed(3000)
     gen = model.generate(ids, pad_token_id=tok.eos_token_id, **{**THINK, 'max_new_tokens': 4000})[0][ids.shape[1]:].tolist()
-    data['figure'] = {'a': a, 'b': b, 'true': a * b, 'prompt': q, 'sampling': THINK, 'seed': 3000,
+    data['figure'] = {'a': a, 'b': b, 'true': a * b, 'prompt': q, 'sampling': {**THINK, 'max_new_tokens': 4000}, 'seed': 3000,
                       'output': tok.decode(gen, skip_special_tokens=True), 'tokens': len(gen),
                       'thinking_tokens': gen.index(END_THINK) if END_THINK in gen else None,
                       'direct_settings': 'thinking off, greedy decoding, max 30 new tokens'}
@@ -168,7 +168,7 @@ def figure2(tok, model):
     ids = chat(tok, q, True)
     torch.manual_seed(3000)
     gen = model.generate(ids, pad_token_id=tok.eos_token_id, **{**THINK, 'max_new_tokens': 4000})[0][ids.shape[1]:].tolist()
-    data['figure2'] = {'a': a, 'b': b, 'true': a * b, 'prompt': q, 'sampling': THINK, 'seed': 3000,
+    data['figure2'] = {'a': a, 'b': b, 'true': a * b, 'prompt': q, 'sampling': {**THINK, 'max_new_tokens': 4000}, 'seed': 3000,
                        'output': tok.decode(gen, skip_special_tokens=True), 'tokens': len(gen),
                        'thinking_tokens': gen.index(END_THINK) + 1 if END_THINK in gen else None}
     json.dump(data, open(out_path, 'w'), indent=1, ensure_ascii=False)

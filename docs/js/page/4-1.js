@@ -68,6 +68,13 @@ function drawFacts() {
   // Name the checkpoints on the horizontal axis.
   c.g.select('.axis').selectAll('.tick').each(function (d) { d3.select(this).style('display', Number.isInteger(d) && d >= 0 && d <= 3 ? null : 'none'); })
     .select('text').text((d) => (CK[d] ? CK[d].name : ''));
+  // On a narrow chart the four names would touch: set the first and last names in from the ends.
+  if ((stage.clientWidth || 560) < 420) {
+    c.g.select('.axis').selectAll('.tick text').each(function (d) {
+      if (d === 0) d3.select(this).attr('text-anchor', 'end').attr('dx', '0.9em');
+      if (d === 3) d3.select(this).attr('text-anchor', 'start').attr('dx', '-0.9em');
+    });
+  }
   for (let f = 0; f < nF; f++) {
     if (f === state.fact) continue;
     c.line(`f${f}`, P.map((p, k) => [k, p[f][0]]), { color: 'rule', width: 1 });

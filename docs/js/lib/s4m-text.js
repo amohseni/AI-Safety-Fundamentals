@@ -8,7 +8,9 @@ const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, 
 function inline(s) {
   // Inline math the way these models write it, "$ x $", with a space inside each dollar sign.
   // Prices ("$25") have no space after the dollar sign and are left as text.
-  let h = esc(s).replace(/\$ ([^$\n]+?) \$/g, '\\($1\\)');
+  // A LaTeX command right after a dollar sign ("$\\boxed{3}$") is also math; prices never start with a backslash.
+  let h = esc(s).replace(/\$(\\[a-zA-Z]+[^$\n]*?)\$/g, '\\($1\\)');
+  h = h.replace(/\$ ([^$\n]+?) \$/g, '\\($1\\)');
   h = h.replace(/`([^`]+)`/g, '<code>$1</code>');
   h = h.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
   h = h.replace(/(^|[\s(])\*(?!\s)([^*]+?)\*(?=[\s.,;:!?)]|$)/g, '$1<i>$2</i>');

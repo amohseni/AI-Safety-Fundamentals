@@ -32,7 +32,7 @@ check('reasoning later gets 10 cents by taking the bat as $1.00', bb.text.includ
 // Task 4: false premises.
 for (const m of ['base', 'chat', 'reasoning']) check(`${m} does not mention the photoelectric effect`, !/photoelectric/i.test(o(`${m}:6`).text));
 check('base Mars: David Scott, 1976', /David Scott/.test(o('base:7').text) && /1976/.test(o('base:7').text));
-check('chat Mars: Neil Armstrong, then no record', /Neil Armstrong/.test(o('chat:7').text) && /no record of a person walking on Mars/.test(o('chat:7').text));
+check('chat Mars: Neil Armstrong, then no record', /Neil Armstrong/.test(o('chat:7').text) && /no record of a person walking on Mars in 1969/.test(o('chat:7').text));
 check('reasoning Mars: Mariner 2', /Mariner 2/.test(o('reasoning:7').text.split('</think>')[1]));
 
 // After the tasks: parameter change.
