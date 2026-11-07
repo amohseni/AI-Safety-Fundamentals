@@ -140,13 +140,13 @@ export const sections = [
         "id": "3.5",
         "title": "Multiple heads",
         "core": false,
-        "href": null
+        "href": "pages/3-5.html"
       },
       {
         "id": "3.6",
         "title": "The residual stream and the MLP",
         "core": true,
-        "href": null
+        "href": "pages/3-6.html"
       },
       {
         "id": "3.7",
@@ -272,7 +272,7 @@ export const sections = [
         "id": "6.6",
         "title": "Steering vectors",
         "core": false,
-        "href": null
+        "href": "pages/6-6.html"
       },
       {
         "id": "6.7",

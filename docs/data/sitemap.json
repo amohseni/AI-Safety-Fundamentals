@@ -99,12 +99,12 @@
   {
    "id": "3.5",
    "question": "What do different heads do?",
-   "takeaway": null
+   "takeaway": "Each attention layer runs several heads in parallel, each with its own query, key, and value matrices, and their outputs are added to the residual stream. Some heads in GPT-2 small do recognizable jobs that can be found by looking at their attention patterns: previous-token heads attend to the position just before, and induction heads, in later layers, use what previous-token heads wrote to find the token that followed an earlier copy of the current token and copy it."
   },
   {
    "id": "3.6",
    "question": "Where does the model keep its working state?",
-   "takeaway": null
+   "takeaway": "Each position carries one vector, the residual stream, which the embedding starts and every layer reads from and adds to. Attention moves information between positions; the MLP transforms it at each position, and acts in part as a key-value memory. Reading the stream after each layer with the logit lens shows a prediction being built up gradually, by additions to one vector."
   },
   {
    "id": "3.7",
@@ -194,7 +194,7 @@
   {
    "id": "6.6",
    "question": "Can editing activations change behavior?",
-   "takeaway": null
+   "takeaway": "A steering vector is a direction added to the residual stream while the model runs, for example the difference between the activations for two contrasting prompts, scaled by a coefficient. If adding it changes behavior in the expected way, the model uses that direction, which a probe alone cannot show. The effect depends on the layer and the coefficient: there is a range where behavior changes and fluency holds, and past it the text falls apart."
   },
   {
    "id": "6.7",

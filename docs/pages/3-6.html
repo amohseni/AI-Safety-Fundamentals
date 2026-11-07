@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3.6 The residual stream and the MLP | A Primer on AI</title>
+<meta name="description" content="Each position carries one vector, the residual stream, that every layer reads and adds to; reading it after each layer of GPT-2 small shows the prediction being built up.">
+<link rel="stylesheet" href="../css/tufte.css">
+<link rel="stylesheet" href="../vendor/katex/katex.min.css">
+<link rel="stylesheet" href="../css/site.css">
+<style>
+  #controls { flex-direction: row; flex-wrap: wrap; gap: 0.9rem 1.6rem; max-width: none; margin-bottom: 1.2rem; align-items: flex-end; }
+  .scroller { overflow-x: auto; max-width: 100%; padding: 3px; }
+  table.lens { border-collapse: separate; border-spacing: 2px; font-size: var(--text); font-variant-numeric: lining-nums tabular-nums; }
+  table.lens th { font-weight: normal; color: var(--quiet); white-space: pre; padding: 0.1rem 0.25rem; text-align: left; }
+  table.lens thead th { color: var(--ink); border-bottom: 1px solid var(--rule); }
+  table.lens tbody th { text-align: right; position: sticky; left: 0; background: var(--paper); box-shadow: -6px 0 0 var(--paper), 2px 0 0 var(--paper); }
+  table.lens thead th:first-child { position: sticky; left: 0; background: var(--paper); }
+  table.lens td { white-space: pre; padding: 0.1rem 0.25rem; cursor: pointer; border-radius: 2px; }
+  table.lens td.sel { outline: 2px solid var(--accent); outline-offset: 0; }
+  table.lens td:focus-visible { outline: 2px solid var(--focus); }
+  #detail { display: flex; flex-wrap: wrap; gap: 1rem 2rem; margin-top: 1rem; align-items: flex-start; }
+  #detail > div { flex: 1 1 18rem; min-width: 0; }
+  #top10 svg { display: block; }
+  .small-title { margin: 0 0 0.3rem; }
+  #fig-block svg { display: block; max-width: 100%; height: auto; }
+</style>
+<script defer src="../vendor/katex/katex.min.js"></script>
+<script defer src="../vendor/katex/auto-render.min.js"></script>
+<script src="../vendor/d3.min.js"></script>
+</head>
+<body data-page="3.6">
+<article>
+<h1>The residual stream and the MLP</h1>
+
+<section>
+<p>Each position in a transformer carries a vector, called the <em>residual stream</em>. In GPT-2 small it has 768 numbers. The embedding writes its first value: the vector for the token plus a vector for its position. Each layer then reads the current vector, computes something, and adds the result to it. No layer replaces the vector; each adds to what is already there. At the end, the final vector is turned into a score for every token in the vocabulary, and softmax turns the scores into the probabilities of the next token.</p>
+
+<p>A transformer layer, also called a block, has two parts. The <em>attention</em> part (Sections 3.4 and 3.5) moves information from earlier positions into the current one. The <em>MLP</em> part, a small two-layer network applied to each position separately, takes the 768 numbers to 3,072, applies an activation function (GELU, a smooth version of ReLU), and takes the result back to 768. Each part reads the residual stream through a <em>layer norm</em>, which subtracts the mean of the vector&rsquo;s entries, divides by their standard deviation, and applies a learned scale and shift; each part then adds its output back to the stream. GPT-2 small has 12 such layers, numbered 0 to 11.<label for="sn-elhage" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-elhage" class="margin-toggle"><span class="sidenote">The name and the picture of the residual stream as a shared channel that every layer reads and writes come from Elhage et al. (2021), &ldquo;A Mathematical Framework for Transformer Circuits,&rdquo; Transformer Circuits Thread.</span></p>
+
+<figure id="fig-block" aria-describedby="fig-block-desc"></figure>
+<p id="fig-block-desc" class="caption">Three of GPT-2 small&rsquo;s 12 layers. The vertical line is one position&rsquo;s residual stream. Each attention part and each MLP part reads the stream through a layer norm and adds its output back at a plus sign. At the bottom, a last layer norm and the unembedding turn the final vector into a score for each token.</p>
+
+<p>Because the final vector is read by a fixed last step, a layer norm followed by the unembedding, the same step can be applied to the residual stream after any layer. This gives the token the model would predict if the computation stopped there. The method is called the <em>logit lens</em>.<label for="sn-lens" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-lens" class="margin-toggle"><span class="sidenote">nostalgebraist (2020), &ldquo;interpreting GPT: the logit lens,&rdquo; LessWrong. The earlier layers were not trained to be read this way, so the lens is a rough view. It works better on GPT-2 than on some later models: Belrose, Ostrovsky, McKinney, Furman, Smith, Halawi, Biderman, and Steinhardt (2023), &ldquo;Eliciting Latent Predictions from Transformers with the Tuned Lens,&rdquo; arXiv:2303.08112, found it unreliable on BLOOM, GPT-Neo, and OPT 125M.</span> It is a way of looking at the residual stream; it does not change what the model computes.</p>
+</section>
+
+<section>
+<h2>Read the stream</h2>
+<p>GPT-2 small, read with the logit lens after every layer. The readings were computed in advance from the real model. GPT-2 small is a small model, and its answers are not always right: for the Eiffel Tower its top prediction is &ldquo;London&rdquo; (0.0691), just ahead of &ldquo;Paris&rdquo; (0.0688). Each task asks for a prediction first.</p>
+
+<div class="tool" id="tool">
+  <div class="controls" id="controls"></div>
+  <div class="scroller"><table class="lens" id="lens" aria-label="The logit lens: one row per layer, one column per input position"></table></div>
+  <p class="panel-note">Each column is one position of the input, headed by the token there; each row is the residual stream after the layer named, with the embedding at the top and the model&rsquo;s output, after layer 11, at the bottom. Each cell shows the token the logit lens predicts <em>next</em> at that position, darker for a higher probability. Tap a cell, or move with the arrow keys, for its top 10 predictions and for what that layer&rsquo;s attention and MLP did to the cell&rsquo;s top token.</p>
+  <div id="detail">
+    <div><p class="small-title" id="top-title"></p><div id="top10"></div></div>
+    <div><p class="readout" id="readout" aria-live="polite"></p></div>
+  </div>
+</div>
+
+<ol class="tasks">
+  <li class="task" data-id="3.6-t1">
+    <p class="prompt">Choose &ldquo;The Colosseum is located in the city of&rdquo; and look at the last column. After which layer does &ldquo;Rome&rdquo; first become the top prediction?</p>
+    <div class="choices" data-options="Layer 2 or earlier|Layer 5|Layer 8|Only at the output, after layer 11"></div>
+    <div class="after"><p>Read down the last column.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>&ldquo;Rome&rdquo; first becomes the top prediction after layer 8, with probability 0.72, and stays on top to the output. After layers 0 to 4 the lens predicts &ldquo;the&rdquo; (with probability 0.63 to 0.84 after layers 0 to 3, and 0.27 after layer 4); after layers 5 to 7 it predicts word fragments (&ldquo;La&rdquo;, &ldquo;Ing&rdquo;) with probability under 0.2. The city appears only from layer 8 on. The embedding row predicts nonsense (&ldquo;destro&rdquo;): the lens reads the embedding poorly.</p></div></div>
+  </li>
+  <li class="task" data-id="3.6-t2">
+    <p class="prompt">Tap the cell where &ldquo;Rome&rdquo; first appears. Which part of that layer raised the probability of &ldquo;Rome&rdquo; more?</p>
+    <div class="choices" data-options="The attention part|The MLP|Both about equally"></div>
+    <div class="after"><p>Read the change made by each part, under the top 10.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>The MLP. Before layer 8, &ldquo;Rome&rdquo; has probability 0.04; after layer 8&rsquo;s attention, 0.17; after its MLP, 0.72. The changes are measured one after the other, attention first, as the layer computes them.</p></div></div>
+  </li>
+  <li class="task" data-id="3.6-t3">
+    <p class="prompt">Now choose &ldquo;The capital of Japan is the city of&rdquo;. In the layer where &ldquo;Tokyo&rdquo; first becomes the top prediction, will the MLP again make the larger change?</p>
+    <div class="choices" data-options="Yes, the MLP again|No, attention this time"></div>
+    <div class="after"><p>Find where &ldquo;Tokyo&rdquo; first appears in the last column, and tap it.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>Attention this time. &ldquo;Tokyo&rdquo; first becomes the top prediction after layer 9. Before layer 9 it has probability 0.07; layer 9&rsquo;s attention raises it to 0.76, and its MLP to 0.86. The logit lens shows <em>where</em> in the stack a prediction forms; which part forms it differs from prompt to prompt, and the lens alone does not show how.</p></div></div>
+  </li>
+  <li class="task" data-id="3.6-t4">
+    <p class="prompt">Back on the Colosseum prompt. From after layer 9 to the output, after layer 11, what happens to the probability of &ldquo;Rome&rdquo;?</p>
+    <div class="choices" data-options="It keeps rising|It stays about the same|It falls a lot, though Rome stays on top"></div>
+    <div class="after"><p>Tap the last three cells of the last column. Then check the other prompts.</p>
+      <button class="show" type="button">Show what to notice</button>
+      <div class="notice"><p>It falls from 0.86 after layer 9 to 0.45 after layer 10, and to 0.02 at the output, where &ldquo;Rome&rdquo; is still the top prediction, just ahead of &ldquo;P&rdquo; (0.018). In all six prompts, the last layer lowers the probability of the top token while keeping it on top: it spreads probability over more tokens. A possible mechanism is described below the tasks.</p></div></div>
+  </li>
+</ol>
+</section>
+
+<section>
+<h2>What the layers add</h2>
+<p><span class="claim">Empirical finding</span> The MLP layers can be read as key-value memories.<label for="sn-geva" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-geva" class="margin-toggle"><span class="sidenote">Geva, Schuster, Berant, and Levy (2021), &ldquo;Transformer Feed-Forward Layers Are Key-Value Memories,&rdquo; EMNLP 2021.</span> Each of the 3,072 hidden units has a row of the first matrix, which acts as a key: the unit&rsquo;s activation is large when the residual stream points along that row. Each unit also has a column of the second matrix, which acts as a value: the MLP adds that column to the residual stream, scaled by the unit&rsquo;s activation. Geva et al. found keys that respond to patterns in the input text and values that raise the probability of tokens likely to come next after such patterns. <span class="claim">Empirical finding</span> Many factual associations, such as that the Colosseum is in Rome, appear to depend largely on MLP layers in the middle of the model, at the last token of the subject (&ldquo;um&rdquo; in &ldquo;Colosseum&rdquo;).<label for="sn-meng" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-meng" class="margin-toggle"><span class="sidenote">Meng, Bau, Andonian, and Belinkov (2022), &ldquo;Locating and Editing Factual Associations in GPT,&rdquo; NeurIPS 2022. They found these MLP layers by patching (Section 6.7) and edited single facts by changing one MLP matrix.</span> How localized that storage is remains debated: the layer where patching finds a fact is often not the best layer at which to edit it.<label for="sn-hase" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-hase" class="margin-toggle"><span class="sidenote">Hase, Bansal, Kim, and Ghandeharioun (2023), &ldquo;Does Localization Inform Editing? Surprising Differences in Causality-Based Localization vs. Knowledge Editing in Language Models,&rdquo; NeurIPS 2023.</span> The tool on this page reads only what each layer adds at a position, so it cannot show where a fact is stored. In the Japan prompt, the attention in layer 9 can raise &ldquo;Tokyo&rdquo; at the last position by bringing in information from earlier positions, such as &ldquo;Japan&rdquo;.</p>
+
+<p><span class="claim">Empirical finding</span> In GPT-2 small, some neurons in the last layer lower the model&rsquo;s confidence without changing which token it ranks first: they enlarge the residual stream in directions the unembedding hardly reads, so the final layer norm shrinks every score.<label for="sn-stolfo" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-stolfo" class="margin-toggle"><span class="sidenote">Stolfo, Wu, Gurnee, Belinkov, Song, Sachan, and Nanda (2024), &ldquo;Confidence Regulation Neurons in Language Models,&rdquo; NeurIPS 2024. They call these entropy neurons.</span> Such neurons may be one cause of the fall in task 4; this page did not measure their contribution. <span class="claim">Argument</span> The loss is a proper scoring rule (Section 2.5), so it penalizes an output that is confident and wrong. A last layer that lowers confidence where the model often errs reduces that penalty.</p>
+
+<p>Because every layer reads from and writes to the same vector, the residual stream is the natural place to look for what a model represents. Section 6 looks there.</p>
+</section>
+
+<div class="check" data-id="3.6-c1" data-correct="0">
+  <p class="label">Check</p>
+  <p class="q">Can layer 8 use information computed by layer 2?</p>
+  <div class="options seg"><button>Yes</button><button>No; each layer sees only the output of the layer before it</button><button>Only if layer 2&rsquo;s result passes through every layer in between unchanged</button></div>
+  <div class="feedback"><p>Layer 2&rsquo;s output was added to the residual stream, and layer 8 reads the residual stream, which still contains that addition. Later layers add to it but do not replace it, so nothing has to pass layer 2&rsquo;s result along. They can, though, add something that cancels part of it.</p></div>
+</div>
+
+<div class="check" data-id="3.6-c2" data-correct="1">
+  <p class="q">In the Japan prompt, layer 9&rsquo;s attention part raises &ldquo;Tokyo&rdquo; at the last position from 0.07 to 0.76. What can the attention part do there that the MLP part cannot?</p>
+  <div class="options seg"><button>Apply an activation function</button><button>Bring information from the residual streams at other positions, such as &ldquo;Japan&rdquo;</button><button>Change the residual streams at earlier positions</button></div>
+  <div class="feedback"><p>The MLP acts on each position separately, so at the last position it can use only what is already in that position&rsquo;s residual stream. Attention takes a weighted average of values computed from the residual streams at the positions it may see, itself and earlier ones. Neither part changes the earlier positions: in a language model, information moves only forward.</p></div>
+</div>
+
+<div class="explain" data-id="3.6-e1">
+  <p class="label">In your own words</p>
+  <p>In one or two sentences: what is the residual stream, and why can the logit lens read a prediction from the middle of the model?</p>
+  <textarea aria-label="Your explanation"></textarea>
+  <p class="saved"></p>
+</div>
+
+<div class="takeaway">
+  <p class="label">Takeaway</p>
+  <p>Each position carries one vector, the residual stream, which the embedding starts and every layer reads from and adds to. Attention moves information between positions; the MLP transforms it at each position, and acts in part as a key-value memory. Reading the stream after each layer with the logit lens shows a prediction being built up gradually, by additions to one vector.</p>
+</div>
+</article>
+<script type="module" src="../js/site.js"></script>
+<script type="module" src="../js/page/3-6.js"></script>
+</body>
+</html>
