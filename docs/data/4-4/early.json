@@ -1,0 +1,6150 @@
+{
+ "model": {
+  "repo": "Qwen/Qwen3-0.6B",
+  "revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+  "mode": "thinking"
+ },
+ "sampling": {
+  "do_sample": true,
+  "temperature": 0.6,
+  "top_p": 0.95,
+  "top_k": 20,
+  "max_new_tokens": 2500
+ },
+ "seed_rule": "torch.manual_seed(2000 + problem index)",
+ "suffix": "\n</think>\n\nThe answer is (",
+ "problems": [
+  {
+   "question": "Which planet is closest to the Sun?\n(A) Venus\n(B) Mercury\n(C) Mars\n(D) Earth",
+   "key": "B",
+   "finished": true,
+   "cot": "\nOkay, so I need to figure out which planet is closest to the Sun. Let's see, the options are Venus, Mercury, Mars, and Earth. I remember that the order of planets from closest to the Sun is Mercury, Venus, Earth, Mars, Jupiter, Saturn, etc. Wait, but I also recall that Mercury is the closest because it's so close to the Sun. Venus is actually the second closest. Then Earth is third, and Mars is the fourth. So the correct answer should be Mercury. Let me double-check. Mercury has a very small distance compared to the others, right? Venus is a bit farther, so yes, Mercury is the closest. I think that's right. So the answer is option B.\n",
+   "answer_text": "\n\nAnswer: \\boxed{B}",
+   "cot_tokens": 151,
+   "generated_tokens": 162,
+   "cuts": [
+    {
+     "tokens": 0,
+     "chars": 0,
+     "p": [
+      0.0151,
+      0.3433,
+      0.0003,
+      0.6413
+     ],
+     "mass": 0.9994
+    },
+    {
+     "tokens": 1,
+     "chars": 1,
+     "p": [
+      0.0171,
+      0.3426,
+      0.0003,
+      0.64
+     ],
+     "mass": 0.9996
+    },
+    {
+     "tokens": 17,
+     "chars": 66,
+     "p": [
+      0.0307,
+      0.4243,
+      0.0001,
+      0.5449
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 33,
+     "chars": 126,
+     "p": [
+      0.0469,
+      0.6473,
+      0.0001,
+      0.3058
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 60,
+     "chars": 241,
+     "p": [
+      0.0227,
+      0.6637,
+      0.0001,
+      0.3135
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 80,
+     "chars": 327,
+     "p": [
+      0.0216,
+      0.9196,
+      0.0,
+      0.0588
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 87,
+     "chars": 365,
+     "p": [
+      0.0314,
+      0.9169,
+      0.0,
+      0.0517
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 98,
+     "chars": 410,
+     "p": [
+      0.0259,
+      0.8579,
+      0.0001,
+      0.1161
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 106,
+     "chars": 451,
+     "p": [
+      0.0025,
+      0.9973,
+      0.0,
+      0.0003
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 111,
+     "chars": 472,
+     "p": [
+      0.0032,
+      0.9964,
+      0.0,
+      0.0004
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 124,
+     "chars": 537,
+     "p": [
+      0.0036,
+      0.9958,
+      0.0,
+      0.0006
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 138,
+     "chars": 593,
+     "p": [
+      0.0052,
+      0.9944,
+      0.0,
+      0.0003
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 144,
+     "chars": 615,
+     "p": [
+      0.0067,
+      0.9929,
+      0.0,
+      0.0004
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 151,
+     "chars": 643,
+     "p": [
+      0.0005,
+      0.9992,
+      0.0,
+      0.0003
+     ],
+     "mass": 1.0
+    }
+   ],
+   "seconds": 35
+  },
+  {
+   "question": "What is 17 × 24?\n(A) 398\n(B) 408\n(C) 418\n(D) 428",
+   "key": "B",
+   "finished": true,
+   "cot": "\nOkay, so I need to figure out what 17 multiplied by 24 equals. Let me think. First, maybe I should just do the multiplication step by step. Let me write it down: 17 × 24. Hmm, how do I approach this?\n\nOne way is to break it down. 17 is the same as 10 + 7, right? So maybe I can calculate 10 × 24 and 7 × 24 separately and then add them together. Let me try that.\n\nCalculating 10 × 24: Well, 10 times 20 is 200, and 10 times 4 is 40. So adding those together, 200 + 40 equals 240. Okay, that's 240.\n\nNow, 7 × 24. Let me think. 7 times 20 is 140, and 7 times 4 is 28. So adding those gives me 140 + 28, which is 168. Wait, so then adding 240 and 168... 240 + 168. Let me add those. 200 + 100 is 300, and 40 + 68 is 108. So total is 300 + 108 = 408. So the answer would be 408, which is option B.\n\nBut let me check if there's another way to do this multiplication to make sure I didn't make a mistake. Maybe using another method like standard multiplication.\n\nMultiplying 17 by 24. Let me write it out vertically:\n\n  17\nx24\n------\nFirst, multiply 17 by 4, which is 68. Then multiply 17 by 20, which is 340. Then add those two results: 68 + 340. Let's see, 68 + 300 is 368, plus 40 is 408. Yep, same result. So that's consistent.\n\nAlternatively, maybe I can use the standard algorithm. Multiply 17 by 24. Let me confirm once again. 17 × 24. 17 × 20 is 340, 17 × 4 is 68, add them: 340 + 68 = 408. Correct.\n\nIs there any chance I could have messed up the multiplication? Let me check with another approach. Maybe using distributive property again. 17 × 24 is the same as 17 × (20 + 4). Which is 17×20 + 17×4. Which is 340 + 68 = 408. Yep, same answer.\n\nAlternatively, maybe using a calculator? Well, if I were to do 17 × 24, I can think of 17 × 20 = 340, and 17 × 4 = 68. Adding them gives 408. So I think that's solid.\n\nLooking at the options, option B is 408. So the answer should be B.\n\n**Final Answer**\n\\boxed{B}\n",
+   "answer_text": "\n\nTo solve the multiplication problem $17 \\times 24$, we can break it down into simpler parts for clarity and accuracy.\n\n### Step 1: Break Down the Multiplication\nWe can rewrite $17 \\times 24$ as:\n$$\n17 \\times (20 + 4) = 17 \\times 20 + 17 \\times 4\n$$\n\n### Step 2: Calculate Each Part\n- $17 \\times 20 = 340$\n- $17 \\times 4 = 68$\n\n### Step 3: Add the Results\n$$\n340 + 68 = 408\n$$\n\n### Final Answer\n$$\n\\boxed{B}\n$$",
+   "cot_tokens": 727,
+   "generated_tokens": 891,
+   "cuts": [
+    {
+     "tokens": 0,
+     "chars": 0,
+     "p": [
+      0.0119,
+      0.835,
+      0.0997,
+      0.0534
+     ],
+     "mass": 0.9986
+    },
+    {
+     "tokens": 1,
+     "chars": 1,
+     "p": [
+      0.0136,
+      0.8435,
+      0.0889,
+      0.0539
+     ],
+     "mass": 0.9989
+    },
+    {
+     "tokens": 20,
+     "chars": 63,
+     "p": [
+      0.0111,
+      0.8783,
+      0.0721,
+      0.0386
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 24,
+     "chars": 77,
+     "p": [
+      0.0117,
+      0.8183,
+      0.1107,
+      0.0593
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 37,
+     "chars": 140,
+     "p": [
+      0.0101,
+      0.8058,
+      0.1091,
+      0.075
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 43,
+     "chars": 162,
+     "p": [
+      0.0102,
+      0.8081,
+      0.0965,
+      0.0852
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 51,
+     "chars": 171,
+     "p": [
+      0.0134,
+      0.8318,
+      0.0774,
+      0.0774
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 59,
+     "chars": 202,
+     "p": [
+      0.016,
+      0.7731,
+      0.1186,
+      0.0923
+     ],
+     "mass": 0.9997
+    },
+    {
+     "tokens": 67,
+     "chars": 230,
+     "p": [
+      0.0161,
+      0.7767,
+      0.135,
+      0.0722
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 83,
+     "chars": 263,
+     "p": [
+      0.015,
+      0.8198,
+      0.0979,
+      0.0673
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 109,
+     "chars": 346,
+     "p": [
+      0.0137,
+      0.8472,
+      0.0695,
+      0.0695
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 114,
+     "chars": 365,
+     "p": [
+      0.0192,
+      0.8163,
+      0.0975,
+      0.067
+     ],
+     "mass": 0.9997
+    },
+    {
+     "tokens": 124,
+     "chars": 385,
+     "p": [
+      0.0126,
+      0.8799,
+      0.0637,
+      0.0438
+     ],
+     "mass": 0.9997
+    },
+    {
+     "tokens": 151,
+     "chars": 433,
+     "p": [
+      0.0165,
+      0.7939,
+      0.0948,
+      0.0948
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 170,
+     "chars": 480,
+     "p": [
+      0.0136,
+      0.8394,
+      0.0781,
+      0.0689
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 179,
+     "chars": 500,
+     "p": [
+      0.0202,
+      0.7577,
+      0.1317,
+      0.0905
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 188,
+     "chars": 512,
+     "p": [
+      0.0127,
+      0.7868,
+      0.1065,
+      0.094
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 192,
+     "chars": 526,
+     "p": [
+      0.0114,
+      0.7968,
+      0.1078,
+      0.084
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 215,
+     "chars": 566,
+     "p": [
+      0.0186,
+      0.7922,
+      0.0946,
+      0.0946
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 236,
+     "chars": 615,
+     "p": [
+      0.0135,
+      0.8375,
+      0.0883,
+      0.0607
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 251,
+     "chars": 651,
+     "p": [
+      0.0184,
+      0.7823,
+      0.1059,
+      0.0934
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 261,
+     "chars": 662,
+     "p": [
+      0.0183,
+      0.7799,
+      0.1196,
+      0.0822
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 266,
+     "chars": 680,
+     "p": [
+      0.0168,
+      0.8109,
+      0.0968,
+      0.0754
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 295,
+     "chars": 718,
+     "p": [
+      0.0194,
+      0.8268,
+      0.0769,
+      0.0769
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 313,
+     "chars": 747,
+     "p": [
+      0.0,
+      0.9999,
+      0.0,
+      0.0
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 328,
+     "chars": 796,
+     "p": [
+      0.0001,
+      0.9999,
+      0.0,
+      0.0
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 351,
+     "chars": 899,
+     "p": [
+      0.0002,
+      0.9997,
+      0.0,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 359,
+     "chars": 958,
+     "p": [
+      0.0003,
+      0.9995,
+      0.0001,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 369,
+     "chars": 979,
+     "p": [
+      0.0003,
+      0.9994,
+      0.0001,
+      0.0002
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 376,
+     "chars": 1013,
+     "p": [
+      0.0003,
+      0.9995,
+      0.0001,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 381,
+     "chars": 1018,
+     "p": [
+      0.0002,
+      0.9997,
+      0.0,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 385,
+     "chars": 1022,
+     "p": [
+      0.0001,
+      0.9998,
+      0.0,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 386,
+     "chars": 1029,
+     "p": [
+      0.0002,
+      0.9996,
+      0.0001,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 402,
+     "chars": 1066,
+     "p": [
+      0.0001,
+      0.9998,
+      0.0,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 419,
+     "chars": 1104,
+     "p": [
+      0.0001,
+      0.9998,
+      0.0,
+      0.0
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 425,
+     "chars": 1132,
+     "p": [
+      0.0001,
+      0.9998,
+      0.0,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 434,
+     "chars": 1142,
+     "p": [
+      0.0002,
+      0.9997,
+      0.0,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 462,
+     "chars": 1186,
+     "p": [
+      0.0001,
+      0.9997,
+      0.0,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 467,
+     "chars": 1204,
+     "p": [
+      0.0001,
+      0.9997,
+      0.0,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 472,
+     "chars": 1228,
+     "p": [
+      0.0001,
+      0.9998,
+      0.0,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 482,
+     "chars": 1282,
+     "p": [
+      0.0002,
+      0.9996,
+      0.0001,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 491,
+     "chars": 1301,
+     "p": [
+      0.0002,
+      0.9996,
+      0.0,
+      0.0002
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 497,
+     "chars": 1328,
+     "p": [
+      0.0001,
+      0.9996,
+      0.0001,
+      0.0002
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 505,
+     "chars": 1337,
+     "p": [
+      0.0002,
+      0.9994,
+      0.0001,
+      0.0003
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 532,
+     "chars": 1377,
+     "p": [
+      0.0001,
+      0.9997,
+      0.0,
+      0.0002
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 546,
+     "chars": 1393,
+     "p": [
+      0.0001,
+      0.9998,
+      0.0,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 548,
+     "chars": 1404,
+     "p": [
+      0.0001,
+      0.9997,
+      0.0,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 560,
+     "chars": 1466,
+     "p": [
+      0.0001,
+      0.9998,
+      0.0,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 567,
+     "chars": 1502,
+     "p": [
+      0.0002,
+      0.9996,
+      0.0001,
+      0.0002
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 574,
+     "chars": 1543,
+     "p": [
+      0.0003,
+      0.9994,
+      0.0001,
+      0.0003
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 596,
+     "chars": 1581,
+     "p": [
+      0.0004,
+      0.9983,
+      0.0003,
+      0.001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 611,
+     "chars": 1604,
+     "p": [
+      0.0004,
+      0.9984,
+      0.0002,
+      0.0009
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 627,
+     "chars": 1629,
+     "p": [
+      0.0003,
+      0.999,
+      0.0001,
+      0.0006
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 632,
+     "chars": 1649,
+     "p": [
+      0.0002,
+      0.9992,
+      0.0001,
+      0.0005
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 639,
+     "chars": 1689,
+     "p": [
+      0.0004,
+      0.9984,
+      0.0003,
+      0.0009
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 683,
+     "chars": 1767,
+     "p": [
+      0.0004,
+      0.9991,
+      0.0001,
+      0.0004
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 691,
+     "chars": 1790,
+     "p": [
+      0.0002,
+      0.9995,
+      0.0001,
+      0.0003
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 698,
+     "chars": 1817,
+     "p": [
+      0.0002,
+      0.9995,
+      0.0001,
+      0.0002
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 711,
+     "chars": 1857,
+     "p": [
+      0.0002,
+      0.9995,
+      0.0001,
+      0.0002
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 718,
+     "chars": 1886,
+     "p": [
+      0.0002,
+      0.9994,
+      0.0001,
+      0.0003
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 722,
+     "chars": 1903,
+     "p": [
+      0.0004,
+      0.9987,
+      0.0003,
+      0.0005
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 727,
+     "chars": 1913,
+     "p": [
+      0.0009,
+      0.9977,
+      0.0006,
+      0.0008
+     ],
+     "mass": 0.9999
+    }
+   ],
+   "seconds": 203
+  },
+  {
+   "question": "A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. How much does the ball cost?\n(A) 10 cents\n(B) 5 cents\n(C) 15 cents\n(D) 1 dollar",
+   "key": "B",
+   "finished": true,
+   "cot": "\nOkay, let's try to solve this problem. So, there's a bat and a ball that cost $1.10 in total. Also, the bat is $1.00 more than the ball. The question is asking how much the ball costs, with the options given. Let me think step by step.\n\nFirst, let me note down the given information:\n\n1. Total cost: Bat + Ball = $1.10\n2. Bat costs $1.00 more than the ball.\n\nLet me assign variables to the cost of the ball and the bat. Let me call the cost of the ball as B and the cost of the bat as T. \n\nSo, according to the problem, we have two equations:\n\n1. T + B = 1.10 (since they add up to $1.10)\n2. T = B + 1.00 (since the bat is $1.00 more than the ball)\n\nNow, I can substitute equation 2 into equation 1. Let me do that.\n\nFrom equation 2, T = B + 1.00. Substitute this into equation 1:\n\n(B + 1.00) + B = 1.10\n\nSimplify that:\n\n2B + 1.00 = 1.10\n\nNow, subtract 1.00 from both sides to solve for B:\n\n2B = 1.10 - 1.00\n2B = 0.10\n\nThen divide both sides by 2:\n\nB = 0.10 / 2\nB = 0.05\n\nSo, the ball costs 0.05 dollars, which is 5 cents. Looking at the answer choices, option B is 5 cents. Let me check if I did everything right.\n\nAlternatively, maybe I can approach it another way. Let's think about the total. If the bat is $1.00 more than the ball, then the total cost would be the ball plus $1.00. So, if the total is $1.10, then the ball is $1.10 minus the bat. But since the bat is $1.00 more, the ball must be $1.10 minus $1.00, which is $0.10. Wait, but that would be 10 cents. But that conflicts with the previous answer. Wait, so which one is correct?\n\nHold on, there's a contradiction here. Let me check again. If the bat is $1.00 more than the ball, then the bat is B + 1.00. The total is (B + 1.00) + B = 2B + 1.00 = 1.10. Therefore, 2B = 0.10, so B = 0.05. That's 5 cents. So that's answer B.\n\nBut when I thought of total as ball plus $1.00, that would be wrong. Because if the bat is $1.00 more, then the total should be ball + (ball + 1.00) = 2ball + 1.00. So that's 2B + 1.00 = 1.10. Therefore, B = 0.05. So that's correct. So the answer is B, 5 cents.\n\nBut let me verify with numbers. Suppose the ball costs 5 cents. Then the bat is 5 + 1 = 6 cents. Total is 5 + 6 = 11 cents, but the problem says it's $1.10, which is 110 cents. Wait, 5 cents and 6 cents would be 11 cents, which is 0.11 dollars. But the problem says total is $1.10. So that's a problem. Wait, so maybe my initial equations are wrong?\n\nWait, hold on. There's a confusion here. Let me check again. If the bat is $1.00 more than the ball, then bat = ball + 1.00. So, total cost is bat + ball = (ball + 1.00) + ball = 2ball + 1.00 = 1.10. Therefore, 2ball = 0.10, so ball = 0.05. Which is 5 cents. Then, bat is 0.05 + 1.00 = 1.05 dollars. Then total is 5 cents + 1.05 dollars. Which is 1.05 + 0.05 = 1.10. Yes, that's correct. So total is indeed 1.10. So that works.\n\nBut when I thought of 5 cents and 6 cents, I was adding 5 cents to the ball (5 cents) and then adding the bat which is 5 + 1 = 6 cents. But that would be 5 + 6 = 11 cents. But the total is 1.10 dollars, which is 110 cents. So where is the mistake here?\n\nAh! I think I confused the variables. The bat is $1.00 more than the ball. So if the ball is 5 cents, then the bat is 6 cents. But total is 5 + 6 = 11 cents, which is 0.11 dollars. But the problem says total is $1.10. Therefore, there's a mistake here. Wait, this is confusing. So according to the equations, the ball is 5 cents and the bat is 6 cents, but total is 11 cents, which contradicts the problem's total of 110 cents. Therefore, there must be a mistake in my reasoning.\n\nWait, but according to the equations, if the total is 1.10 dollars, then the ball is 0.05 dollars, which is 5 cents. Therefore, the bat is 1.00 + 0.05 = 1.05 dollars. Total is 1.05 + 0.05 = 1.10. So that works. But when I thought of adding 5 + 6, I was adding the ball and the bat as 5 + 6, but that's not correct. The bat is 1.05, not 6. So where did I get 6 cents from? If the ball is 5 cents, then the bat is 6 cents, but that would make the total 11 cents, not 110. Therefore, the problem must have a typo? Or maybe I made a miscalculation?\n\nWait, no, no. Let me check again. If the ball is 5 cents, then the bat is 5 + 1.00 = 6.00 dollars. Then total is 6.00 + 0.05 = 6.05 dollars. Wait, that's 6 dollars and 5 cents. Which is not 1.10. Wait, this is getting more confusing. Wait, there's a discrepancy here. So according to the equations, the total is 1.10, which is 1 dollar and 10 cents. But according to the variables, if ball is 5 cents, bat is 1.05 dollars. So 1.05 + 0.05 is 1.10. So that works. But if I think of the bat as 6 cents, that would be 0.06, and ball as 0.05, total 0.11. So why is there a difference?\n\nAh! Because when I said \"the bat costs $1.00 more than the ball\", I assumed that the bat is $1.00 more, but if the ball is 5 cents, then the bat is 6 cents. But according to the equations, the bat is 1.00 dollars more than the ball, so if ball is 5 cents, bat is 6.00 dollars. Therefore, total is 11.00 cents, which is 1.10 dollars. Wait, so 6.00 dollars plus 0.05 dollars is 6.05 dollars? Wait, no, 6.00 plus 0.05 is 6.05, which is 6 dollars and 5 cents. But the total is supposed to be 1.10 dollars, which is 1 dollar and 10 cents. So this is conflicting. Therefore, there must be a mistake here.\n\nWait, this is very confusing. Let me re-examine the equations. Let me take the equations again:\n\nBat = Ball + 1.00\n\nTotal = Bat + Ball = (Ball + 1.00) + Ball = 2Ball + 1.00 = 1.10\n\nTherefore, solving for Ball:\n\n2Ball = 1.10 - 1.00 = 0.10\n\nBall = 0.10 / 2 = 0.05 dollars = 5 cents.\n\nTherefore, Ball = 5 cents. Bat = 5 + 1.00 = 6.00 dollars. Total = 5 + 6 = 11 cents. Which is 0.11 dollars. But according to the problem, the total is 1.10 dollars. So this is conflicting. Therefore, something is wrong here.\n\nWait, but according to the problem statement, the bat and ball cost $1.10. So according to the equations, if Ball is 5 cents, Bat is 6.00 dollars, total is 11.00 cents, which is $0.11. But the problem says $1.10. Therefore, there's a contradiction here. Which means there must be a mistake in my equations.\n\nWait, but where is the mistake? Let me check again. The problem says the bat and ball cost $1.10. The bat costs $1.00 more than the ball. So Bat = Ball + 1.00. Therefore, total is Bat + Ball = 2Ball + 1.00 = 1.10. Therefore, 2Ball = 0.10 => Ball = 0.05. But then Bat = 0.05 + 1.00 = 1.05. Total is 1.05 + 0.05 = 1.10. Oh! Wait, I think I made a mistake in the decimal places. 0.05 is 5 cents, and 1.05 is 1 dollar and 5 cents. Adding them together gives 1 dollar and 10 cents, which is 1.10. So that works. Earlier, when I thought of Bat as 6 cents, I was adding 5 + 6, but that was incorrect. The bat is 1.05, not 6. So that was a miscalculation. So the answer is indeed 5 cents, which is option B.\n\nSo, the confusion was due to a miscalculation when I thought the bat was 6 cents instead of 1.05. Therefore, the correct answer is B, 5 cents.\n\n**Final Answer**\n\\boxed{B}\n",
+   "answer_text": "\n\nTo solve the problem, let’s define the cost of the ball as $ B $ and the cost of the bat as $ T $. \n\nWe are given two key pieces of information:\n\n1. The **total cost** of the bat and",
+   "cot_tokens": 2449,
+   "generated_tokens": 2500,
+   "cuts": [
+    {
+     "tokens": 0,
+     "chars": 0,
+     "p": [
+      0.3832,
+      0.4921,
+      0.1098,
+      0.0149
+     ],
+     "mass": 0.9987
+    },
+    {
+     "tokens": 1,
+     "chars": 1,
+     "p": [
+      0.3597,
+      0.5233,
+      0.103,
+      0.0139
+     ],
+     "mass": 0.9988
+    },
+    {
+     "tokens": 11,
+     "chars": 39,
+     "p": [
+      0.403,
+      0.5175,
+      0.07,
+      0.0095
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 25,
+     "chars": 82,
+     "p": [
+      0.4594,
+      0.4594,
+      0.0704,
+      0.0108
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 30,
+     "chars": 94,
+     "p": [
+      0.4497,
+      0.4497,
+      0.0886,
+      0.012
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 38,
+     "chars": 115,
+     "p": [
+      0.4862,
+      0.4291,
+      0.0746,
+      0.0101
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 45,
+     "chars": 137,
+     "p": [
+      0.4594,
+      0.4594,
+      0.0704,
+      0.0108
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 60,
+     "chars": 209,
+     "p": [
+      0.3076,
+      0.6512,
+      0.0367,
+      0.0044
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 67,
+     "chars": 238,
+     "p": [
+      0.4106,
+      0.5272,
+      0.0556,
+      0.0066
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 77,
+     "chars": 286,
+     "p": [
+      0.4226,
+      0.5426,
+      0.0306,
+      0.0041
+     ],
+     "mass": 0.9995
+    },
+    {
+     "tokens": 79,
+     "chars": 288,
+     "p": [
+      0.3956,
+      0.5756,
+      0.0253,
+      0.0034
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 82,
+     "chars": 300,
+     "p": [
+      0.3943,
+      0.5737,
+      0.0286,
+      0.0034
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 89,
+     "chars": 317,
+     "p": [
+      0.3101,
+      0.6566,
+      0.0288,
+      0.0044
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 92,
+     "chars": 320,
+     "p": [
+      0.2621,
+      0.7126,
+      0.0215,
+      0.0037
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 94,
+     "chars": 322,
+     "p": [
+      0.3386,
+      0.6326,
+      0.0245,
+      0.0043
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 99,
+     "chars": 336,
+     "p": [
+      0.364,
+      0.6002,
+      0.0299,
+      0.0059
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 106,
+     "chars": 360,
+     "p": [
+      0.3607,
+      0.5947,
+      0.038,
+      0.0066
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 120,
+     "chars": 420,
+     "p": [
+      0.2601,
+      0.7071,
+      0.0274,
+      0.0054
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 139,
+     "chars": 488,
+     "p": [
+      0.3076,
+      0.6512,
+      0.0367,
+      0.0044
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 140,
+     "chars": 491,
+     "p": [
+      0.3349,
+      0.6256,
+      0.0353,
+      0.0042
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 152,
+     "chars": 545,
+     "p": [
+      0.3813,
+      0.5548,
+      0.0585,
+      0.0054
+     ],
+     "mass": 0.9997
+    },
+    {
+     "tokens": 154,
+     "chars": 547,
+     "p": [
+      0.3074,
+      0.6509,
+      0.0367,
+      0.005
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 161,
+     "chars": 558,
+     "p": [
+      0.3589,
+      0.5917,
+      0.0429,
+      0.0066
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 172,
+     "chars": 586,
+     "p": [
+      0.2813,
+      0.6748,
+      0.0381,
+      0.0058
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 175,
+     "chars": 590,
+     "p": [
+      0.2324,
+      0.7157,
+      0.0458,
+      0.0062
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 177,
+     "chars": 592,
+     "p": [
+      0.2325,
+      0.7162,
+      0.0458,
+      0.0055
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 184,
+     "chars": 603,
+     "p": [
+      0.255,
+      0.693,
+      0.0443,
+      0.0077
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 194,
+     "chars": 627,
+     "p": [
+      0.3535,
+      0.5828,
+      0.0542,
+      0.0094
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 201,
+     "chars": 651,
+     "p": [
+      0.3204,
+      0.5985,
+      0.0715,
+      0.0097
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 214,
+     "chars": 700,
+     "p": [
+      0.4129,
+      0.5302,
+      0.0493,
+      0.0076
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 219,
+     "chars": 718,
+     "p": [
+      0.3596,
+      0.5929,
+      0.043,
+      0.0045
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 231,
+     "chars": 745,
+     "p": [
+      0.3333,
+      0.6227,
+      0.0398,
+      0.0042
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 234,
+     "chars": 748,
+     "p": [
+      0.3594,
+      0.5925,
+      0.0429,
+      0.0051
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 241,
+     "chars": 783,
+     "p": [
+      0.3525,
+      0.5812,
+      0.0613,
+      0.005
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 246,
+     "chars": 790,
+     "p": [
+      0.3813,
+      0.5548,
+      0.0585,
+      0.0054
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 255,
+     "chars": 802,
+     "p": [
+      0.4346,
+      0.4925,
+      0.0667,
+      0.0062
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 258,
+     "chars": 806,
+     "p": [
+      0.3969,
+      0.5096,
+      0.0886,
+      0.005
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 262,
+     "chars": 822,
+     "p": [
+      0.401,
+      0.5149,
+      0.079,
+      0.005
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 268,
+     "chars": 829,
+     "p": [
+      0.4411,
+      0.4999,
+      0.0527,
+      0.0063
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 274,
+     "chars": 836,
+     "p": [
+      0.4753,
+      0.4753,
+      0.0442,
+      0.0053
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 277,
+     "chars": 840,
+     "p": [
+      0.4728,
+      0.4728,
+      0.0498,
+      0.0046
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 283,
+     "chars": 856,
+     "p": [
+      0.4753,
+      0.4753,
+      0.0442,
+      0.0053
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 293,
+     "chars": 892,
+     "p": [
+      0.3928,
+      0.5715,
+      0.0322,
+      0.0034
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 299,
+     "chars": 899,
+     "p": [
+      0.4874,
+      0.4874,
+      0.0214,
+      0.0037
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 305,
+     "chars": 906,
+     "p": [
+      0.4257,
+      0.5466,
+      0.024,
+      0.0037
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 308,
+     "chars": 909,
+     "p": [
+      0.4259,
+      0.5468,
+      0.024,
+      0.0033
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 314,
+     "chars": 916,
+     "p": [
+      0.5786,
+      0.3977,
+      0.0198,
+      0.0039
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 317,
+     "chars": 920,
+     "p": [
+      0.3958,
+      0.5759,
+      0.0253,
+      0.003
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 325,
+     "chars": 950,
+     "p": [
+      0.4845,
+      0.4845,
+      0.0273,
+      0.0037
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 330,
+     "chars": 956,
+     "p": [
+      0.5855,
+      0.4024,
+      0.0095,
+      0.0027
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 336,
+     "chars": 963,
+     "p": [
+      0.4356,
+      0.5593,
+      0.0038,
+      0.0014
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 341,
+     "chars": 969,
+     "p": [
+      0.4358,
+      0.5596,
+      0.0033,
+      0.0012
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 344,
+     "chars": 973,
+     "p": [
+      0.0008,
+      0.9992,
+      0.0,
+      0.0
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 352,
+     "chars": 994,
+     "p": [
+      0.0067,
+      0.9932,
+      0.0,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 362,
+     "chars": 1023,
+     "p": [
+      0.0015,
+      0.9985,
+      0.0,
+      0.0
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 375,
+     "chars": 1075,
+     "p": [
+      0.0002,
+      0.9998,
+      0.0,
+      0.0
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 384,
+     "chars": 1117,
+     "p": [
+      0.0007,
+      0.9993,
+      0.0,
+      0.0
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 394,
+     "chars": 1168,
+     "p": [
+      0.0028,
+      0.9971,
+      0.0,
+      0.0
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 401,
+     "chars": 1197,
+     "p": [
+      0.0052,
+      0.9947,
+      0.0,
+      0.0
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 408,
+     "chars": 1215,
+     "p": [
+      0.0059,
+      0.994,
+      0.0,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 427,
+     "chars": 1284,
+     "p": [
+      0.0067,
+      0.9932,
+      0.0001,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 430,
+     "chars": 1287,
+     "p": [
+      0.0046,
+      0.9953,
+      0.0001,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 439,
+     "chars": 1311,
+     "p": [
+      0.0059,
+      0.994,
+      0.0001,
+      0.0
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 449,
+     "chars": 1335,
+     "p": [
+      0.0052,
+      0.9946,
+      0.0001,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 455,
+     "chars": 1352,
+     "p": [
+      0.0052,
+      0.9946,
+      0.0001,
+      0.0001
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 463,
+     "chars": 1377,
+     "p": [
+      0.0059,
+      0.9939,
+      0.0001,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 474,
+     "chars": 1406,
+     "p": [
+      0.0124,
+      0.9872,
+      0.0002,
+      0.0002
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 480,
+     "chars": 1418,
+     "p": [
+      0.0141,
+      0.9857,
+      0.0001,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 488,
+     "chars": 1434,
+     "p": [
+      0.0124,
+      0.9872,
+      0.0002,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 491,
+     "chars": 1437,
+     "p": [
+      0.0474,
+      0.9518,
+      0.0005,
+      0.0003
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 502,
+     "chars": 1471,
+     "p": [
+      0.4978,
+      0.4978,
+      0.0034,
+      0.001
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 510,
+     "chars": 1516,
+     "p": [
+      0.1641,
+      0.8334,
+      0.0018,
+      0.0007
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 518,
+     "chars": 1549,
+     "p": [
+      0.1188,
+      0.8782,
+      0.0022,
+      0.0008
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 527,
+     "chars": 1587,
+     "p": [
+      0.1189,
+      0.8785,
+      0.0019,
+      0.0007
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 532,
+     "chars": 1607,
+     "p": [
+      0.1065,
+      0.8916,
+      0.0013,
+      0.0006
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 539,
+     "chars": 1625,
+     "p": [
+      0.06,
+      0.9391,
+      0.0005,
+      0.0003
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 555,
+     "chars": 1670,
+     "p": [
+      0.0675,
+      0.9315,
+      0.0007,
+      0.0003
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 558,
+     "chars": 1673,
+     "p": [
+      0.0758,
+      0.9229,
+      0.001,
+      0.0004
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 567,
+     "chars": 1694,
+     "p": [
+      0.0757,
+      0.9228,
+      0.0011,
+      0.0004
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 580,
+     "chars": 1711,
+     "p": [
+      0.0474,
+      0.9512,
+      0.001,
+      0.0005
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 586,
+     "chars": 1718,
+     "p": [
+      0.06,
+      0.9386,
+      0.001,
+      0.0005
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 589,
+     "chars": 1721,
+     "p": [
+      0.06,
+      0.9384,
+      0.0011,
+      0.0005
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 598,
+     "chars": 1740,
+     "p": [
+      0.042,
+      0.9564,
+      0.0011,
+      0.0005
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 607,
+     "chars": 1753,
+     "p": [
+      0.0373,
+      0.9617,
+      0.0007,
+      0.0003
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 610,
+     "chars": 1756,
+     "p": [
+      0.018,
+      0.9817,
+      0.0002,
+      0.0001
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 616,
+     "chars": 1772,
+     "p": [
+      0.0203,
+      0.9795,
+      0.0001,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 622,
+     "chars": 1794,
+     "p": [
+      0.011,
+      0.9888,
+      0.0001,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 634,
+     "chars": 1838,
+     "p": [
+      0.0159,
+      0.9837,
+      0.0003,
+      0.0002
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 642,
+     "chars": 1862,
+     "p": [
+      0.023,
+      0.9767,
+      0.0002,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 650,
+     "chars": 1888,
+     "p": [
+      0.026,
+      0.9738,
+      0.0002,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 667,
+     "chars": 1939,
+     "p": [
+      0.0373,
+      0.962,
+      0.0005,
+      0.0002
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 678,
+     "chars": 1955,
+     "p": [
+      0.0474,
+      0.9519,
+      0.0005,
+      0.0002
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 681,
+     "chars": 1958,
+     "p": [
+      0.0331,
+      0.9663,
+      0.0004,
+      0.0002
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 691,
+     "chars": 1976,
+     "p": [
+      0.0421,
+      0.9574,
+      0.0004,
+      0.0002
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 697,
+     "chars": 1983,
+     "p": [
+      0.0293,
+      0.9702,
+      0.0004,
+      0.0002
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 700,
+     "chars": 1986,
+     "p": [
+      0.0203,
+      0.9793,
+      0.0003,
+      0.0001
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 707,
+     "chars": 2004,
+     "p": [
+      0.0203,
+      0.9793,
+      0.0003,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 710,
+     "chars": 2007,
+     "p": [
+      0.0141,
+      0.9857,
+      0.0002,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 715,
+     "chars": 2026,
+     "p": [
+      0.0159,
+      0.9839,
+      0.0002,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 725,
+     "chars": 2057,
+     "p": [
+      0.0041,
+      0.9957,
+      0.0001,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 732,
+     "chars": 2088,
+     "p": [
+      0.011,
+      0.9887,
+      0.0002,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 740,
+     "chars": 2120,
+     "p": [
+      0.0086,
+      0.9912,
+      0.0002,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 754,
+     "chars": 2153,
+     "p": [
+      0.011,
+      0.9887,
+      0.0002,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 776,
+     "chars": 2210,
+     "p": [
+      0.0097,
+      0.99,
+      0.0002,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 787,
+     "chars": 2233,
+     "p": [
+      0.0097,
+      0.99,
+      0.0002,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 808,
+     "chars": 2290,
+     "p": [
+      0.0331,
+      0.966,
+      0.0007,
+      0.0003
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 812,
+     "chars": 2301,
+     "p": [
+      0.0331,
+      0.966,
+      0.0007,
+      0.0003
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 821,
+     "chars": 2335,
+     "p": [
+      0.042,
+      0.957,
+      0.0007,
+      0.0003
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 824,
+     "chars": 2338,
+     "p": [
+      0.0533,
+      0.9455,
+      0.0009,
+      0.0002
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 830,
+     "chars": 2359,
+     "p": [
+      0.0533,
+      0.9456,
+      0.0008,
+      0.0002
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 840,
+     "chars": 2408,
+     "p": [
+      0.06,
+      0.9386,
+      0.0011,
+      0.0003
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 845,
+     "chars": 2422,
+     "p": [
+      0.1065,
+      0.8916,
+      0.0015,
+      0.0004
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 851,
+     "chars": 2448,
+     "p": [
+      0.0758,
+      0.9233,
+      0.0007,
+      0.0002
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 856,
+     "chars": 2468,
+     "p": [
+      0.06,
+      0.9391,
+      0.0007,
+      0.0002
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 863,
+     "chars": 2486,
+     "p": [
+      0.0373,
+      0.962,
+      0.0005,
+      0.0002
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 878,
+     "chars": 2529,
+     "p": [
+      0.0259,
+      0.9735,
+      0.0004,
+      0.0002
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 881,
+     "chars": 2532,
+     "p": [
+      0.0293,
+      0.9702,
+      0.0004,
+      0.0001
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 896,
+     "chars": 2574,
+     "p": [
+      0.0373,
+      0.9617,
+      0.0008,
+      0.0003
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 909,
+     "chars": 2597,
+     "p": [
+      0.0373,
+      0.9615,
+      0.0009,
+      0.0003
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 915,
+     "chars": 2604,
+     "p": [
+      0.0259,
+      0.9729,
+      0.0009,
+      0.0003
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 918,
+     "chars": 2607,
+     "p": [
+      0.0203,
+      0.9788,
+      0.0007,
+      0.0002
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 927,
+     "chars": 2629,
+     "p": [
+      0.0203,
+      0.979,
+      0.0005,
+      0.0002
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 936,
+     "chars": 2645,
+     "p": [
+      0.0259,
+      0.9732,
+      0.0006,
+      0.0003
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 939,
+     "chars": 2648,
+     "p": [
+      0.0124,
+      0.9871,
+      0.0003,
+      0.0002
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 945,
+     "chars": 2666,
+     "p": [
+      0.011,
+      0.9886,
+      0.0003,
+      0.0002
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 952,
+     "chars": 2682,
+     "p": [
+      0.018,
+      0.9815,
+      0.0004,
+      0.0002
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 958,
+     "chars": 2689,
+     "p": [
+      0.023,
+      0.9766,
+      0.0003,
+      0.0002
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 964,
+     "chars": 2696,
+     "p": [
+      0.0331,
+      0.9663,
+      0.0005,
+      0.0002
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 968,
+     "chars": 2707,
+     "p": [
+      0.0203,
+      0.9792,
+      0.0003,
+      0.0002
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 978,
+     "chars": 2734,
+     "p": [
+      0.0259,
+      0.9733,
+      0.0005,
+      0.0002
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 982,
+     "chars": 2745,
+     "p": [
+      0.0259,
+      0.9732,
+      0.0006,
+      0.0003
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 987,
+     "chars": 2757,
+     "p": [
+      0.0373,
+      0.9618,
+      0.0007,
+      0.0003
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 993,
+     "chars": 2764,
+     "p": [
+      0.0473,
+      0.951,
+      0.0013,
+      0.0004
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 999,
+     "chars": 2771,
+     "p": [
+      0.0373,
+      0.9614,
+      0.001,
+      0.0003
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1002,
+     "chars": 2774,
+     "p": [
+      0.033,
+      0.9657,
+      0.001,
+      0.0003
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1008,
+     "chars": 2795,
+     "p": [
+      0.023,
+      0.9762,
+      0.0006,
+      0.0002
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 1015,
+     "chars": 2817,
+     "p": [
+      0.06,
+      0.9388,
+      0.0009,
+      0.0003
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1018,
+     "chars": 2820,
+     "p": [
+      0.0757,
+      0.9228,
+      0.0011,
+      0.0004
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1022,
+     "chars": 2837,
+     "p": [
+      0.0534,
+      0.9458,
+      0.0006,
+      0.0002
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 1065,
+     "chars": 2972,
+     "p": [
+      0.0373,
+      0.9619,
+      0.0006,
+      0.0003
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1080,
+     "chars": 3008,
+     "p": [
+      0.06,
+      0.9389,
+      0.0008,
+      0.0003
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1087,
+     "chars": 3028,
+     "p": [
+      0.06,
+      0.9391,
+      0.0007,
+      0.0002
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1099,
+     "chars": 3059,
+     "p": [
+      0.0474,
+      0.9518,
+      0.0006,
+      0.0002
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 1106,
+     "chars": 3091,
+     "p": [
+      0.0421,
+      0.9575,
+      0.0003,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 1108,
+     "chars": 3094,
+     "p": [
+      0.0534,
+      0.9459,
+      0.0005,
+      0.0002
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1115,
+     "chars": 3128,
+     "p": [
+      0.0331,
+      0.9661,
+      0.0006,
+      0.0003
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1121,
+     "chars": 3143,
+     "p": [
+      0.042,
+      0.9567,
+      0.0009,
+      0.0004
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1128,
+     "chars": 3165,
+     "p": [
+      0.0474,
+      0.9511,
+      0.0011,
+      0.0005
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1145,
+     "chars": 3217,
+     "p": [
+      0.0533,
+      0.9453,
+      0.001,
+      0.0004
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1164,
+     "chars": 3260,
+     "p": [
+      0.1065,
+      0.8915,
+      0.0015,
+      0.0005
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1168,
+     "chars": 3271,
+     "p": [
+      0.0952,
+      0.903,
+      0.0014,
+      0.0004
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1177,
+     "chars": 3305,
+     "p": [
+      0.0757,
+      0.9226,
+      0.0012,
+      0.0004
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1180,
+     "chars": 3308,
+     "p": [
+      0.0951,
+      0.9026,
+      0.0017,
+      0.0005
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1188,
+     "chars": 3343,
+     "p": [
+      0.1065,
+      0.8913,
+      0.0017,
+      0.0005
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1194,
+     "chars": 3368,
+     "p": [
+      0.1064,
+      0.8912,
+      0.0019,
+      0.0004
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1236,
+     "chars": 3518,
+     "p": [
+      0.1325,
+      0.8642,
+      0.0028,
+      0.0005
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1247,
+     "chars": 3572,
+     "p": [
+      0.1638,
+      0.8319,
+      0.0034,
+      0.0009
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1262,
+     "chars": 3628,
+     "p": [
+      0.1325,
+      0.8642,
+      0.0028,
+      0.0005
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1273,
+     "chars": 3659,
+     "p": [
+      0.1476,
+      0.8492,
+      0.0027,
+      0.0005
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1283,
+     "chars": 3688,
+     "p": [
+      0.1478,
+      0.8507,
+      0.0011,
+      0.0003
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1291,
+     "chars": 3713,
+     "p": [
+      0.1641,
+      0.8336,
+      0.0018,
+      0.0004
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1297,
+     "chars": 3720,
+     "p": [
+      0.1641,
+      0.8336,
+      0.0018,
+      0.0005
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1303,
+     "chars": 3727,
+     "p": [
+      0.2011,
+      0.7954,
+      0.0029,
+      0.0006
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1307,
+     "chars": 3738,
+     "p": [
+      0.1641,
+      0.8334,
+      0.0021,
+      0.0005
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1312,
+     "chars": 3750,
+     "p": [
+      0.1641,
+      0.8334,
+      0.0021,
+      0.0004
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1318,
+     "chars": 3757,
+     "p": [
+      0.1476,
+      0.8495,
+      0.0024,
+      0.0005
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1324,
+     "chars": 3764,
+     "p": [
+      0.1476,
+      0.8492,
+      0.0027,
+      0.0005
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1327,
+     "chars": 3767,
+     "p": [
+      0.1327,
+      0.8651,
+      0.0019,
+      0.0004
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1331,
+     "chars": 3782,
+     "p": [
+      0.1189,
+      0.8787,
+      0.0019,
+      0.0005
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1364,
+     "chars": 3886,
+     "p": [
+      0.1478,
+      0.8504,
+      0.0014,
+      0.0003
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1370,
+     "chars": 3900,
+     "p": [
+      0.1641,
+      0.8334,
+      0.0021,
+      0.0005
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1377,
+     "chars": 3910,
+     "p": [
+      0.1189,
+      0.8785,
+      0.0022,
+      0.0004
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1387,
+     "chars": 3943,
+     "p": [
+      0.0951,
+      0.9027,
+      0.0017,
+      0.0004
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1420,
+     "chars": 4041,
+     "p": [
+      0.1641,
+      0.8334,
+      0.0021,
+      0.0005
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1429,
+     "chars": 4082,
+     "p": [
+      0.1325,
+      0.864,
+      0.0028,
+      0.0007
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1439,
+     "chars": 4118,
+     "p": [
+      0.1477,
+      0.8502,
+      0.0016,
+      0.0004
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1445,
+     "chars": 4131,
+     "p": [
+      0.1642,
+      0.8338,
+      0.0016,
+      0.0004
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1450,
+     "chars": 4151,
+     "p": [
+      0.1643,
+      0.8342,
+      0.0011,
+      0.0004
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1468,
+     "chars": 4198,
+     "p": [
+      0.1327,
+      0.8655,
+      0.0013,
+      0.0005
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1474,
+     "chars": 4205,
+     "p": [
+      0.1642,
+      0.8338,
+      0.0016,
+      0.0005
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1478,
+     "chars": 4216,
+     "p": [
+      0.182,
+      0.8157,
+      0.0018,
+      0.0005
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1484,
+     "chars": 4233,
+     "p": [
+      0.1641,
+      0.8336,
+      0.0018,
+      0.0004
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1490,
+     "chars": 4240,
+     "p": [
+      0.1642,
+      0.8338,
+      0.0016,
+      0.0004
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1496,
+     "chars": 4247,
+     "p": [
+      0.2014,
+      0.7964,
+      0.0017,
+      0.0004
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1500,
+     "chars": 4258,
+     "p": [
+      0.2219,
+      0.7746,
+      0.0028,
+      0.0006
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1512,
+     "chars": 4294,
+     "p": [
+      0.164,
+      0.833,
+      0.0023,
+      0.0006
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1518,
+     "chars": 4310,
+     "p": [
+      0.1476,
+      0.8491,
+      0.0027,
+      0.0006
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1521,
+     "chars": 4313,
+     "p": [
+      0.1476,
+      0.8494,
+      0.0024,
+      0.0006
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1529,
+     "chars": 4351,
+     "p": [
+      0.1818,
+      0.8146,
+      0.0029,
+      0.0007
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1537,
+     "chars": 4385,
+     "p": [
+      0.1637,
+      0.8315,
+      0.0039,
+      0.0009
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1549,
+     "chars": 4432,
+     "p": [
+      0.1813,
+      0.8127,
+      0.0048,
+      0.0011
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1563,
+     "chars": 4467,
+     "p": [
+      0.2216,
+      0.7733,
+      0.0041,
+      0.001
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1581,
+     "chars": 4529,
+     "p": [
+      0.1818,
+      0.8147,
+      0.0029,
+      0.0006
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1585,
+     "chars": 4540,
+     "p": [
+      0.2008,
+      0.7942,
+      0.0042,
+      0.0008
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1589,
+     "chars": 4546,
+     "p": [
+      0.2008,
+      0.7943,
+      0.0042,
+      0.0007
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1595,
+     "chars": 4553,
+     "p": [
+      0.1638,
+      0.8316,
+      0.0039,
+      0.0008
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1601,
+     "chars": 4561,
+     "p": [
+      0.1472,
+      0.847,
+      0.005,
+      0.0008
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1604,
+     "chars": 4564,
+     "p": [
+      0.1323,
+      0.863,
+      0.004,
+      0.0007
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1608,
+     "chars": 4579,
+     "p": [
+      0.1637,
+      0.8312,
+      0.0044,
+      0.0008
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1626,
+     "chars": 4634,
+     "p": [
+      0.1813,
+      0.8125,
+      0.0055,
+      0.0007
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1635,
+     "chars": 4652,
+     "p": [
+      0.1635,
+      0.8305,
+      0.0049,
+      0.001
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1642,
+     "chars": 4664,
+     "p": [
+      0.1635,
+      0.8305,
+      0.0049,
+      0.001
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1645,
+     "chars": 4667,
+     "p": [
+      0.1473,
+      0.8474,
+      0.0044,
+      0.0009
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1652,
+     "chars": 4699,
+     "p": [
+      0.1638,
+      0.8321,
+      0.0034,
+      0.0007
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1654,
+     "chars": 4702,
+     "p": [
+      0.1637,
+      0.8312,
+      0.0044,
+      0.0008
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1665,
+     "chars": 4741,
+     "p": [
+      0.1472,
+      0.8469,
+      0.005,
+      0.0009
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1681,
+     "chars": 4794,
+     "p": [
+      0.1637,
+      0.8312,
+      0.0044,
+      0.0008
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1702,
+     "chars": 4855,
+     "p": [
+      0.1474,
+      0.8485,
+      0.0035,
+      0.0006
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1714,
+     "chars": 4901,
+     "p": [
+      0.0847,
+      0.911,
+      0.0037,
+      0.0006
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1735,
+     "chars": 4964,
+     "p": [
+      0.1184,
+      0.8747,
+      0.0059,
+      0.001
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1739,
+     "chars": 4975,
+     "p": [
+      0.118,
+      0.8722,
+      0.0086,
+      0.0012
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1747,
+     "chars": 4999,
+     "p": [
+      0.1626,
+      0.8256,
+      0.0104,
+      0.0014
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1756,
+     "chars": 5020,
+     "p": [
+      0.1466,
+      0.8438,
+      0.0083,
+      0.0013
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1760,
+     "chars": 5031,
+     "p": [
+      0.2203,
+      0.7688,
+      0.0097,
+      0.0013
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1766,
+     "chars": 5043,
+     "p": [
+      0.2192,
+      0.7651,
+      0.014,
+      0.0017
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1773,
+     "chars": 5061,
+     "p": [
+      0.2417,
+      0.7444,
+      0.012,
+      0.0018
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1780,
+     "chars": 5077,
+     "p": [
+      0.2202,
+      0.7685,
+      0.0097,
+      0.0017
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1784,
+     "chars": 5088,
+     "p": [
+      0.2643,
+      0.7185,
+      0.0149,
+      0.0023
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1791,
+     "chars": 5101,
+     "p": [
+      0.3434,
+      0.6415,
+      0.0133,
+      0.0018
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1797,
+     "chars": 5111,
+     "p": [
+      0.2427,
+      0.7477,
+      0.0083,
+      0.0013
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1803,
+     "chars": 5119,
+     "p": [
+      0.2421,
+      0.7458,
+      0.0106,
+      0.0014
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1816,
+     "chars": 5154,
+     "p": [
+      0.2649,
+      0.7201,
+      0.0132,
+      0.0018
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1826,
+     "chars": 5189,
+     "p": [
+      0.265,
+      0.7203,
+      0.0132,
+      0.0016
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1841,
+     "chars": 5232,
+     "p": [
+      0.2916,
+      0.6996,
+      0.0078,
+      0.0011
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1846,
+     "chars": 5256,
+     "p": [
+      0.2916,
+      0.6996,
+      0.0078,
+      0.0011
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1855,
+     "chars": 5299,
+     "p": [
+      0.2921,
+      0.7008,
+      0.0061,
+      0.0011
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1862,
+     "chars": 5328,
+     "p": [
+      0.2214,
+      0.7729,
+      0.0046,
+      0.001
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1870,
+     "chars": 5361,
+     "p": [
+      0.2218,
+      0.7742,
+      0.0032,
+      0.0008
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1877,
+     "chars": 5396,
+     "p": [
+      0.2011,
+      0.7955,
+      0.0029,
+      0.0005
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1884,
+     "chars": 5411,
+     "p": [
+      0.2008,
+      0.7942,
+      0.0042,
+      0.0008
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1887,
+     "chars": 5415,
+     "p": [
+      0.1327,
+      0.8656,
+      0.0013,
+      0.0003
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1899,
+     "chars": 5446,
+     "p": [
+      0.2437,
+      0.7508,
+      0.0045,
+      0.001
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1912,
+     "chars": 5469,
+     "p": [
+      0.1816,
+      0.8139,
+      0.0038,
+      0.0007
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1918,
+     "chars": 5476,
+     "p": [
+      0.1637,
+      0.8315,
+      0.0039,
+      0.0009
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1921,
+     "chars": 5480,
+     "p": [
+      0.1064,
+      0.8913,
+      0.0017,
+      0.0006
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1927,
+     "chars": 5510,
+     "p": [
+      0.1189,
+      0.8787,
+      0.0019,
+      0.0005
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1933,
+     "chars": 5520,
+     "p": [
+      0.1637,
+      0.8311,
+      0.0044,
+      0.0009
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1939,
+     "chars": 5527,
+     "p": [
+      0.1321,
+      0.8617,
+      0.0051,
+      0.001
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1945,
+     "chars": 5534,
+     "p": [
+      0.1469,
+      0.8452,
+      0.0065,
+      0.0014
+     ],
+     "mass": 0.9997
+    },
+    {
+     "tokens": 1948,
+     "chars": 5538,
+     "p": [
+      0.1188,
+      0.8775,
+      0.0028,
+      0.0009
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1953,
+     "chars": 5547,
+     "p": [
+      0.1474,
+      0.848,
+      0.0035,
+      0.0011
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1962,
+     "chars": 5558,
+     "p": [
+      0.1637,
+      0.8313,
+      0.0038,
+      0.0011
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1970,
+     "chars": 5581,
+     "p": [
+      0.0952,
+      0.9036,
+      0.0008,
+      0.0004
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1978,
+     "chars": 5607,
+     "p": [
+      0.0758,
+      0.923,
+      0.0008,
+      0.0004
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1986,
+     "chars": 5620,
+     "p": [
+      0.1327,
+      0.8656,
+      0.0011,
+      0.0005
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1992,
+     "chars": 5627,
+     "p": [
+      0.1476,
+      0.8492,
+      0.0024,
+      0.0009
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 1996,
+     "chars": 5638,
+     "p": [
+      0.1817,
+      0.8145,
+      0.0029,
+      0.0008
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 2009,
+     "chars": 5664,
+     "p": [
+      0.244,
+      0.7516,
+      0.0035,
+      0.0009
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 2014,
+     "chars": 5676,
+     "p": [
+      0.2011,
+      0.7954,
+      0.0029,
+      0.0006
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 2018,
+     "chars": 5687,
+     "p": [
+      0.2219,
+      0.7746,
+      0.0028,
+      0.0007
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 2030,
+     "chars": 5733,
+     "p": [
+      0.2009,
+      0.7946,
+      0.0037,
+      0.0008
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 2034,
+     "chars": 5744,
+     "p": [
+      0.1638,
+      0.832,
+      0.0034,
+      0.0008
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 2039,
+     "chars": 5768,
+     "p": [
+      0.1815,
+      0.8133,
+      0.0043,
+      0.001
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 2046,
+     "chars": 5806,
+     "p": [
+      0.2669,
+      0.7254,
+      0.0063,
+      0.0014
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 2063,
+     "chars": 5877,
+     "p": [
+      0.2001,
+      0.7915,
+      0.0068,
+      0.0015
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2066,
+     "chars": 5880,
+     "p": [
+      0.2005,
+      0.793,
+      0.0053,
+      0.0012
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2084,
+     "chars": 5941,
+     "p": [
+      0.1999,
+      0.7908,
+      0.0078,
+      0.0015
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2094,
+     "chars": 5965,
+     "p": [
+      0.2431,
+      0.7489,
+      0.0065,
+      0.0014
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2103,
+     "chars": 5987,
+     "p": [
+      0.2211,
+      0.7718,
+      0.0059,
+      0.0012
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2106,
+     "chars": 5990,
+     "p": [
+      0.267,
+      0.7257,
+      0.0063,
+      0.0011
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2113,
+     "chars": 6015,
+     "p": [
+      0.2213,
+      0.7725,
+      0.0052,
+      0.001
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2116,
+     "chars": 6018,
+     "p": [
+      0.2205,
+      0.7695,
+      0.0085,
+      0.0015
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2124,
+     "chars": 6059,
+     "p": [
+      0.1809,
+      0.8107,
+      0.007,
+      0.0014
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2135,
+     "chars": 6114,
+     "p": [
+      0.147,
+      0.8457,
+      0.0057,
+      0.0016
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2143,
+     "chars": 6145,
+     "p": [
+      0.1183,
+      0.8744,
+      0.0059,
+      0.0013
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2148,
+     "chars": 6165,
+     "p": [
+      0.1467,
+      0.8442,
+      0.0073,
+      0.0018
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2159,
+     "chars": 6208,
+     "p": [
+      0.1807,
+      0.8098,
+      0.0079,
+      0.0016
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2162,
+     "chars": 6211,
+     "p": [
+      0.1807,
+      0.8096,
+      0.0079,
+      0.0018
+     ],
+     "mass": 0.9997
+    },
+    {
+     "tokens": 2168,
+     "chars": 6229,
+     "p": [
+      0.1809,
+      0.8106,
+      0.007,
+      0.0016
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2175,
+     "chars": 6251,
+     "p": [
+      0.1319,
+      0.8601,
+      0.0066,
+      0.0015
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2183,
+     "chars": 6270,
+     "p": [
+      0.147,
+      0.846,
+      0.0057,
+      0.0013
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2186,
+     "chars": 6273,
+     "p": [
+      0.1633,
+      0.8292,
+      0.0063,
+      0.0012
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2201,
+     "chars": 6317,
+     "p": [
+      0.1319,
+      0.8604,
+      0.0066,
+      0.0011
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2207,
+     "chars": 6324,
+     "p": [
+      0.1321,
+      0.8617,
+      0.0051,
+      0.001
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2210,
+     "chars": 6327,
+     "p": [
+      0.132,
+      0.861,
+      0.0058,
+      0.0011
+     ],
+     "mass": 0.9997
+    },
+    {
+     "tokens": 2219,
+     "chars": 6349,
+     "p": [
+      0.1469,
+      0.8455,
+      0.0065,
+      0.0011
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2227,
+     "chars": 6364,
+     "p": [
+      0.1468,
+      0.8449,
+      0.0073,
+      0.001
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2230,
+     "chars": 6367,
+     "p": [
+      0.1324,
+      0.8634,
+      0.0035,
+      0.0007
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2237,
+     "chars": 6385,
+     "p": [
+      0.1636,
+      0.8308,
+      0.0049,
+      0.0007
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2243,
+     "chars": 6392,
+     "p": [
+      0.1637,
+      0.8311,
+      0.0044,
+      0.0009
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2249,
+     "chars": 6399,
+     "p": [
+      0.2002,
+      0.7919,
+      0.0069,
+      0.0011
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2252,
+     "chars": 6402,
+     "p": [
+      0.1469,
+      0.8456,
+      0.0065,
+      0.001
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2257,
+     "chars": 6414,
+     "p": [
+      0.1468,
+      0.8446,
+      0.0073,
+      0.0013
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2263,
+     "chars": 6421,
+     "p": [
+      0.1469,
+      0.8454,
+      0.0065,
+      0.0013
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2269,
+     "chars": 6428,
+     "p": [
+      0.1999,
+      0.7908,
+      0.0078,
+      0.0015
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2272,
+     "chars": 6431,
+     "p": [
+      0.1633,
+      0.8293,
+      0.0063,
+      0.0011
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2274,
+     "chars": 6435,
+     "p": [
+      0.1634,
+      0.8299,
+      0.0056,
+      0.0011
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2287,
+     "chars": 6489,
+     "p": [
+      0.1635,
+      0.8304,
+      0.0049,
+      0.0011
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2290,
+     "chars": 6492,
+     "p": [
+      0.2004,
+      0.7924,
+      0.0061,
+      0.0012
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2301,
+     "chars": 6513,
+     "p": [
+      0.2008,
+      0.7941,
+      0.0042,
+      0.0009
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2312,
+     "chars": 6540,
+     "p": [
+      0.1473,
+      0.8479,
+      0.0039,
+      0.0009
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2330,
+     "chars": 6602,
+     "p": [
+      0.2212,
+      0.7719,
+      0.0059,
+      0.001
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2333,
+     "chars": 6605,
+     "p": [
+      0.1637,
+      0.8312,
+      0.0044,
+      0.0008
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2337,
+     "chars": 6620,
+     "p": [
+      0.1324,
+      0.8634,
+      0.0035,
+      0.0007
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 2363,
+     "chars": 6707,
+     "p": [
+      0.1188,
+      0.8775,
+      0.0032,
+      0.0006
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2369,
+     "chars": 6721,
+     "p": [
+      0.1637,
+      0.8312,
+      0.0044,
+      0.0008
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2376,
+     "chars": 6731,
+     "p": [
+      0.1323,
+      0.8628,
+      0.004,
+      0.0009
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2385,
+     "chars": 6761,
+     "p": [
+      0.1475,
+      0.8491,
+      0.0027,
+      0.0007
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2399,
+     "chars": 6815,
+     "p": [
+      0.0373,
+      0.9614,
+      0.0011,
+      0.0002
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 2425,
+     "chars": 6909,
+     "p": [
+      0.06,
+      0.9385,
+      0.0012,
+      0.0002
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2428,
+     "chars": 6912,
+     "p": [
+      0.0849,
+      0.913,
+      0.0018,
+      0.0003
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 2440,
+     "chars": 6959,
+     "p": [
+      0.0533,
+      0.9454,
+      0.0011,
+      0.0002
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 2444,
+     "chars": 6976,
+     "p": [
+      0.0259,
+      0.973,
+      0.0009,
+      0.0002
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 2449,
+     "chars": 6986,
+     "p": [
+      0.033,
+      0.9658,
+      0.001,
+      0.0002
+     ],
+     "mass": 0.9998
+    }
+   ],
+   "seconds": 731
+  },
+  {
+   "question": "A train leaves at 9:40 a.m. and the trip takes 2 hours and 35 minutes. When does it arrive?\n(A) 12:05 p.m.\n(B) 12:15 p.m.\n(C) 11:15 a.m.\n(D) 12:25 p.m.",
+   "key": "B",
+   "finished": true,
+   "cot": "\nOkay, let's see. The problem is about a train leaving at 9:40 a.m. and taking 2 hours and 35 minutes. I need to figure out when it arrives. The options are A through D. Let me think step by step.\n\nFirst, the departure time is 9:40 a.m. The trip duration is 2 hours and 35 minutes. So, adding those two together should give the arrival time. Let me break it down. \n\nStarting at 9:40, adding 2 hours would get me to 11:40 a.m. Then, adding the remaining 35 minutes. So from 11:40 a.m., adding 35 minutes. Let me convert that into minutes to make it easier. 35 minutes is the same as 35 minutes. So 11:40 plus 35 minutes. Let's add 30 minutes first to 11:40, which is 12:10 p.m., and then add 5 more minutes, which would be 12:15 p.m. \n\nSo that would be 12:15 p.m. Looking at the options, option B is 12:15 p.m. So the correct answer should be B. \n\nWait, let me double-check. Another way: 9:40 + 2 hours = 11:40. Then adding 35 minutes: 11:40 + 35 = 12:15. Yep, same result. So B is correct. I don't think I made any mistakes here. The answer is B.\n",
+   "answer_text": "\n\nTo determine the time when the train arrives, we start with the departure time of **9:40 a.m.** and add the duration of **2 hours and 35 minutes**.\n\n1. Add 2 hours to 9:40 a.m.:\n   - 9:40 + 2 hours = **11:40 a.m.**\n\n2. Then add the remaining 35 minutes:\n   - 11:40 + 35 minutes = **12:15 p.m.**\n\nTherefore, the train arrives at **12:15 p.m.**\n\nThe correct answer is:  \n**(B) 12:15 p.m.**\n\n$$\n\\boxed{B}\n$$",
+   "cot_tokens": 356,
+   "generated_tokens": 516,
+   "cuts": [
+    {
+     "tokens": 0,
+     "chars": 0,
+     "p": [
+      0.6962,
+      0.1068,
+      0.021,
+      0.176
+     ],
+     "mass": 0.999
+    },
+    {
+     "tokens": 1,
+     "chars": 1,
+     "p": [
+      0.7127,
+      0.1093,
+      0.019,
+      0.159
+     ],
+     "mass": 0.999
+    },
+    {
+     "tokens": 7,
+     "chars": 17,
+     "p": [
+      0.736,
+      0.0879,
+      0.0119,
+      0.1642
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 18,
+     "chars": 60,
+     "p": [
+      0.7908,
+      0.0649,
+      0.0068,
+      0.1374
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 23,
+     "chars": 67,
+     "p": [
+      0.8221,
+      0.0596,
+      0.0071,
+      0.1113
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 34,
+     "chars": 102,
+     "p": [
+      0.8045,
+      0.066,
+      0.0061,
+      0.1234
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 43,
+     "chars": 140,
+     "p": [
+      0.798,
+      0.0742,
+      0.0054,
+      0.1224
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 50,
+     "chars": 169,
+     "p": [
+      0.7621,
+      0.0803,
+      0.0075,
+      0.1501
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 57,
+     "chars": 198,
+     "p": [
+      0.7568,
+      0.0621,
+      0.0122,
+      0.1689
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 66,
+     "chars": 229,
+     "p": [
+      0.7701,
+      0.0716,
+      0.0067,
+      0.1516
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 71,
+     "chars": 236,
+     "p": [
+      0.7694,
+      0.0716,
+      0.0075,
+      0.1515
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 84,
+     "chars": 281,
+     "p": [
+      0.7412,
+      0.0608,
+      0.0106,
+      0.1874
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 96,
+     "chars": 341,
+     "p": [
+      0.7724,
+      0.0494,
+      0.0059,
+      0.1723
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 102,
+     "chars": 363,
+     "p": [
+      0.7673,
+      0.0556,
+      0.0059,
+      0.1712
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 103,
+     "chars": 366,
+     "p": [
+      0.7718,
+      0.0493,
+      0.0067,
+      0.1722
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 108,
+     "chars": 380,
+     "p": [
+      0.7836,
+      0.0568,
+      0.0053,
+      0.1543
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 123,
+     "chars": 418,
+     "p": [
+      0.7541,
+      0.0901,
+      0.0074,
+      0.1485
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 128,
+     "chars": 425,
+     "p": [
+      0.7566,
+      0.1024,
+      0.0095,
+      0.1315
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 138,
+     "chars": 464,
+     "p": [
+      0.7285,
+      0.0986,
+      0.0104,
+      0.1625
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 144,
+     "chars": 476,
+     "p": [
+      0.737,
+      0.088,
+      0.0105,
+      0.1644
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 155,
+     "chars": 503,
+     "p": [
+      0.7285,
+      0.0986,
+      0.0104,
+      0.1625
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 166,
+     "chars": 555,
+     "p": [
+      0.7416,
+      0.1004,
+      0.012,
+      0.146
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 179,
+     "chars": 593,
+     "p": [
+      0.7031,
+      0.1078,
+      0.0114,
+      0.1778
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 184,
+     "chars": 600,
+     "p": [
+      0.6921,
+      0.1203,
+      0.0127,
+      0.175
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 192,
+     "chars": 619,
+     "p": [
+      0.7121,
+      0.0964,
+      0.0115,
+      0.18
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 205,
+     "chars": 653,
+     "p": [
+      0.7668,
+      0.0713,
+      0.0109,
+      0.151
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 214,
+     "chars": 669,
+     "p": [
+      0.7595,
+      0.0801,
+      0.0108,
+      0.1496
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 234,
+     "chars": 725,
+     "p": [
+      0.7369,
+      0.0685,
+      0.0082,
+      0.1863
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 239,
+     "chars": 732,
+     "p": [
+      0.0025,
+      0.9959,
+      0.0001,
+      0.0015
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 240,
+     "chars": 735,
+     "p": [
+      0.0032,
+      0.9952,
+      0.0001,
+      0.0015
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 248,
+     "chars": 755,
+     "p": [
+      0.0019,
+      0.997,
+      0.0001,
+      0.001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 253,
+     "chars": 762,
+     "p": [
+      0.0001,
+      0.9999,
+      0.0,
+      0.0
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 265,
+     "chars": 802,
+     "p": [
+      0.0001,
+      0.9999,
+      0.0,
+      0.0
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 270,
+     "chars": 809,
+     "p": [
+      0.0001,
+      0.9998,
+      0.0,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 278,
+     "chars": 844,
+     "p": [
+      0.0004,
+      0.9995,
+      0.0,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 279,
+     "chars": 847,
+     "p": [
+      0.0003,
+      0.9996,
+      0.0,
+      0.0001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 286,
+     "chars": 873,
+     "p": [
+      0.0013,
+      0.9983,
+      0.0,
+      0.0004
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 289,
+     "chars": 886,
+     "p": [
+      0.0028,
+      0.9963,
+      0.0001,
+      0.0008
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 292,
+     "chars": 889,
+     "p": [
+      0.0028,
+      0.9962,
+      0.0001,
+      0.0009
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 303,
+     "chars": 907,
+     "p": [
+      0.0019,
+      0.9972,
+      0.0001,
+      0.0008
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 306,
+     "chars": 910,
+     "p": [
+      0.0019,
+      0.9968,
+      0.0001,
+      0.0012
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 313,
+     "chars": 934,
+     "p": [
+      0.0036,
+      0.9953,
+      0.0001,
+      0.001
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 317,
+     "chars": 938,
+     "p": [
+      0.0025,
+      0.9966,
+      0.0001,
+      0.0009
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 328,
+     "chars": 951,
+     "p": [
+      0.0028,
+      0.9964,
+      0.0001,
+      0.0007
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 331,
+     "chars": 954,
+     "p": [
+      0.0012,
+      0.9985,
+      0.0,
+      0.0003
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 336,
+     "chars": 972,
+     "p": [
+      0.0017,
+      0.998,
+      0.0001,
+      0.0002
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 341,
+     "chars": 989,
+     "p": [
+      0.0013,
+      0.9985,
+      0.0,
+      0.0002
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 351,
+     "chars": 1029,
+     "p": [
+      0.0022,
+      0.9975,
+      0.0,
+      0.0002
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 356,
+     "chars": 1047,
+     "p": [
+      0.0017,
+      0.9979,
+      0.0001,
+      0.0003
+     ],
+     "mass": 1.0
+    }
+   ],
+   "seconds": 115
+  },
+  {
+   "question": "Sally has 3 brothers. Each of her brothers has 2 sisters. How many sisters does Sally have?\n(A) 1\n(B) 2\n(C) 3\n(D) 6",
+   "key": "A",
+   "finished": true,
+   "cot": "\nOkay, let's try to figure out how many sisters Sally has. So, the problem says Sally has 3 brothers. Each of her brothers has 2 sisters. Hmm, I need to figure out how many sisters Sally has in total. Let me break this down step by step.\n\nFirst, Sally is one of the sisters. So, if Sally is a sister, she's one person. Now, Sally has 3 brothers. So, there are 3 brothers among the siblings. But wait, Sally is one of them. So, the total number of siblings would be Sally plus her brothers, which is 1 + 3 = 4 siblings. But how does that help me find the number of sisters?\n\nThe problem says that each of Sally's brothers has 2 sisters. So, each brother has 2 sisters. But how many brothers are there? Sally has 3 brothers. So, there are 3 brothers. Each of these brothers has 2 sisters. But wait, are we considering that Sally herself is a sister? So, if Sally is a sister, then each of her brothers has 2 sisters. So, each brother has 2 sisters. But how many sisters does Sally have?\n\nLet me think. Let's denote the number of sisters as S and the number of brothers as B. But Sally is one of the sisters. So, if Sally is a sister, then the number of sisters is at least 1. But we need to find how many sisters Sally has. Wait, but Sally is one sister, so if there are 3 brothers, then how many sisters are there?\n\nEach brother has 2 sisters. So, each brother contributes 2 sisters. But there are 3 brothers. So, 3 brothers * 2 sisters each = 6 sisters? But that would mean there are 6 sisters in total. But Sally is one of them. So, does that mean there are 6 sisters? But that would mean Sally is one of the 6, so the answer would be 6? But looking at the options, option D is 6. But let me check if that's correct.\n\nWait, but let me make sure. Let's think again. Let's suppose there are S sisters and B brothers. But Sally is a sister. So, Sally is one of the S sisters. Now, Sally has 3 brothers. So, the number of brothers is 3. So, B = 3. Each brother has 2 sisters. So, each brother is a brother, so he has 2 sisters. Therefore, the total number of sisters would be equal to the number of brothers times 2? Because each brother has 2 sisters. But since Sally is a sister, that would mean S = B * 2. But B is 3, so S would be 6. Therefore, the answer would be D) 6.\n\nBut wait, let me check if there's another way to think about this. Let's say there are S sisters and B brothers. Sally is one of the sisters. So, Sally is a sister. Now, Sally has 3 brothers. So, there are 3 brothers. Therefore, B = 3. Each of these brothers has 2 sisters. Therefore, each of these brothers has 2 sisters, which would be 2 sisters per brother. Therefore, total number of sisters would be 3 * 2 = 6. Therefore, Sally is one of the 6 sisters, so the answer is 6. That seems to check out.\n\nBut let me think again. Suppose there are 6 sisters. Then, how many brothers are there? Well, each brother has 2 sisters. So, if there are 6 sisters, then each brother is a brother, and each brother has 2 sisters. So, total number of brothers would be 6 / 2 = 3. Which matches the number of brothers Sally has. So, that works. So, if Sally has 3 brothers, then each brother has 2 sisters, so total sisters would be 6. So, the answer is D) 6.\n\nBut let me check if there's a possibility that Sally is one of the brothers. Wait, no. The problem says Sally has 3 brothers. So, Sally is a sister, not a brother. Therefore, the number of brothers is 3, and each brother has 2 sisters. Therefore, total number of sisters is 6. Therefore, answer is D.\n\nBut let me check the options again. The options are A)1, B)2, C)3, D)6. So, D is 6. Therefore, the answer should be D.\n\nBut wait, let me think again. Suppose there are 2 sisters. Then, each of Sally's brothers has 2 sisters. So, if there are 2 sisters, then each brother has 2 sisters. But Sally is one of the sisters. So, if Sally is a sister, then each brother would have 2 sisters. But if there are 2 sisters, then each brother would have 2 sisters, meaning that there are 2 brothers. But Sally has 3 brothers. So, that doesn't add up. Therefore, there must be more sisters.\n\nAlternatively, let's think of the siblings. Let's assume Sally is one of the sisters. Let's say there are S sisters and B brothers. Sally is a sister, so S ≥ 1. The problem says Sally has 3 brothers. So, B = 3. Each brother has 2 sisters. So, each brother is a brother, so he has 2 sisters. Therefore, total number of sisters is equal to the number of brothers times 2. Therefore, S = 3*2=6. Therefore, the answer is D) 6. So, that seems correct.\n\nBut let me check if there's another interpretation. Maybe the problem is that Sally has 3 brothers, which means Sally is a sister, not a brother. So, the number of brothers is 3. Each of these brothers has 2 sisters. Therefore, each brother is a brother, so they have 2 sisters. Therefore, total sisters is 3*2=6. So, Sally is one of the 6 sisters. Therefore, answer is D.\n\nAlternatively, maybe someone might think that Sally is one of the brothers, but that's not the case. The problem says Sally has 3 brothers. So, Sally is not a brother. Therefore, the answer must be D) 6.\n\nTherefore, I think the correct answer is D.\n",
+   "answer_text": "\n\nTo determine how many sisters Sally has, we begin by analyzing the information provided:\n\n- **Sally has 3 brothers**, which means there are **3 siblings** in total (Sally and her 3 brothers).\n- Each of **Sally's brothers has 2 sisters**, which means that each brother is a brother, and thus he has **2 sisters** in total.\n\nNow, let's calculate the total number of **sisters**:\n\n- Since Sally is a **sister**, and each of her brothers has 2 sisters, we multiply the number of brothers (3) by 2:\n  $$\n  3 \\text{ brothers} \\times 2 \\text{ sisters per brother} = 6 \\text{ sisters}\n  $$\n\nTherefore, Sally is one of the 6 sisters, and the total number of sisters Sally has is:\n\n$$\n\\boxed{D}\n$$",
+   "cot_tokens": 1359,
+   "generated_tokens": 1548,
+   "cuts": [
+    {
+     "tokens": 0,
+     "chars": 0,
+     "p": [
+      0.0702,
+      0.4577,
+      0.1157,
+      0.3564
+     ],
+     "mass": 0.9991
+    },
+    {
+     "tokens": 1,
+     "chars": 1,
+     "p": [
+      0.0625,
+      0.4615,
+      0.1167,
+      0.3594
+     ],
+     "mass": 0.999
+    },
+    {
+     "tokens": 15,
+     "chars": 58,
+     "p": [
+      0.0431,
+      0.525,
+      0.0711,
+      0.3608
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 26,
+     "chars": 101,
+     "p": [
+      0.0609,
+      0.5102,
+      0.0782,
+      0.3506
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 35,
+     "chars": 137,
+     "p": [
+      0.0361,
+      0.4989,
+      0.0765,
+      0.3885
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 50,
+     "chars": 200,
+     "p": [
+      0.0344,
+      0.5386,
+      0.0568,
+      0.3702
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 59,
+     "chars": 239,
+     "p": [
+      0.0467,
+      0.5022,
+      0.06,
+      0.3911
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 68,
+     "chars": 274,
+     "p": [
+      0.0488,
+      0.5948,
+      0.038,
+      0.3184
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 81,
+     "chars": 318,
+     "p": [
+      0.0746,
+      0.5512,
+      0.0399,
+      0.3343
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 89,
+     "chars": 345,
+     "p": [
+      0.0688,
+      0.5758,
+      0.0473,
+      0.3082
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 100,
+     "chars": 390,
+     "p": [
+      0.0363,
+      0.5671,
+      0.0527,
+      0.3439
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 109,
+     "chars": 422,
+     "p": [
+      0.0464,
+      0.5647,
+      0.0464,
+      0.3425
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 135,
+     "chars": 518,
+     "p": [
+      0.0626,
+      0.5941,
+      0.0626,
+      0.2806
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 147,
+     "chars": 574,
+     "p": [
+      0.0335,
+      0.5936,
+      0.0552,
+      0.3177
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 161,
+     "chars": 635,
+     "p": [
+      0.0438,
+      0.5334,
+      0.0562,
+      0.3666
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 170,
+     "chars": 667,
+     "p": [
+      0.0391,
+      0.5397,
+      0.0502,
+      0.371
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 177,
+     "chars": 700,
+     "p": [
+      0.0454,
+      0.5531,
+      0.0661,
+      0.3355
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 183,
+     "chars": 722,
+     "p": [
+      0.0342,
+      0.5346,
+      0.0638,
+      0.3674
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 191,
+     "chars": 748,
+     "p": [
+      0.0391,
+      0.4762,
+      0.0644,
+      0.4203
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 200,
+     "chars": 786,
+     "p": [
+      0.0312,
+      0.4301,
+      0.0514,
+      0.4874
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 213,
+     "chars": 847,
+     "p": [
+      0.0291,
+      0.4547,
+      0.0615,
+      0.4547
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 231,
+     "chars": 914,
+     "p": [
+      0.0397,
+      0.4831,
+      0.0509,
+      0.4263
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 240,
+     "chars": 946,
+     "p": [
+      0.0394,
+      0.4798,
+      0.0573,
+      0.4235
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 248,
+     "chars": 986,
+     "p": [
+      0.0272,
+      0.4255,
+      0.0652,
+      0.4821
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 252,
+     "chars": 999,
+     "p": [
+      0.0431,
+      0.525,
+      0.0711,
+      0.3608
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 269,
+     "chars": 1072,
+     "p": [
+      0.0474,
+      0.4495,
+      0.0537,
+      0.4495
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 277,
+     "chars": 1105,
+     "p": [
+      0.0563,
+      0.4714,
+      0.0563,
+      0.416
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 296,
+     "chars": 1173,
+     "p": [
+      0.0425,
+      0.4575,
+      0.0425,
+      0.4575
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 307,
+     "chars": 1221,
+     "p": [
+      0.0509,
+      0.4831,
+      0.0397,
+      0.4263
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 330,
+     "chars": 1315,
+     "p": [
+      0.0507,
+      0.4806,
+      0.0447,
+      0.4241
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 337,
+     "chars": 1342,
+     "p": [
+      0.0844,
+      0.4859,
+      0.0512,
+      0.3784
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 346,
+     "chars": 1382,
+     "p": [
+      0.0738,
+      0.545,
+      0.0507,
+      0.3306
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 353,
+     "chars": 1408,
+     "p": [
+      0.0612,
+      0.5805,
+      0.0476,
+      0.3107
+     ],
+     "mass": 0.9998
+    },
+    {
+     "tokens": 368,
+     "chars": 1453,
+     "p": [
+      0.0024,
+      0.0289,
+      0.012,
+      0.9567
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 380,
+     "chars": 1503,
+     "p": [
+      0.0005,
+      0.0046,
+      0.0015,
+      0.9934
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 387,
+     "chars": 1529,
+     "p": [
+      0.0011,
+      0.014,
+      0.0045,
+      0.9803
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 398,
+     "chars": 1569,
+     "p": [
+      0.0006,
+      0.0032,
+      0.0017,
+      0.9946
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 418,
+     "chars": 1638,
+     "p": [
+      0.0,
+      0.0,
+      0.0001,
+      0.9999
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 430,
+     "chars": 1681,
+     "p": [
+      0.0001,
+      0.0,
+      0.0,
+      0.9999
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 439,
+     "chars": 1719,
+     "p": [
+      0.0,
+      0.0,
+      0.0001,
+      0.9999
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 447,
+     "chars": 1746,
+     "p": [
+      0.0001,
+      0.0001,
+      0.0002,
+      0.9996
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 452,
+     "chars": 1765,
+     "p": [
+      0.0001,
+      0.0004,
+      0.0006,
+      0.9989
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 463,
+     "chars": 1815,
+     "p": [
+      0.0002,
+      0.0003,
+      0.0005,
+      0.999
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 469,
+     "chars": 1838,
+     "p": [
+      0.0002,
+      0.0004,
+      0.0004,
+      0.9991
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 479,
+     "chars": 1873,
+     "p": [
+      0.0002,
+      0.0003,
+      0.0003,
+      0.9992
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 487,
+     "chars": 1900,
+     "p": [
+      0.0002,
+      0.0003,
+      0.0004,
+      0.9991
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 497,
+     "chars": 1933,
+     "p": [
+      0.0001,
+      0.0003,
+      0.0004,
+      0.9992
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 504,
+     "chars": 1944,
+     "p": [
+      0.0001,
+      0.0003,
+      0.0004,
+      0.9991
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 511,
+     "chars": 1972,
+     "p": [
+      0.0002,
+      0.0003,
+      0.0004,
+      0.9991
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 526,
+     "chars": 2024,
+     "p": [
+      0.0002,
+      0.0003,
+      0.0003,
+      0.9991
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 545,
+     "chars": 2113,
+     "p": [
+      0.0002,
+      0.0003,
+      0.0003,
+      0.9991
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 553,
+     "chars": 2149,
+     "p": [
+      0.0002,
+      0.0005,
+      0.0005,
+      0.9988
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 570,
+     "chars": 2205,
+     "p": [
+      0.0002,
+      0.0006,
+      0.0007,
+      0.9984
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 583,
+     "chars": 2234,
+     "p": [
+      0.0001,
+      0.0001,
+      0.0001,
+      0.9997
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 594,
+     "chars": 2273,
+     "p": [
+      0.0001,
+      0.0001,
+      0.0001,
+      0.9998
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 610,
+     "chars": 2339,
+     "p": [
+      0.0001,
+      0.0003,
+      0.0004,
+      0.9991
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 621,
+     "chars": 2385,
+     "p": [
+      0.0002,
+      0.0006,
+      0.0005,
+      0.9988
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 628,
+     "chars": 2414,
+     "p": [
+      0.0002,
+      0.0005,
+      0.0005,
+      0.9989
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 635,
+     "chars": 2437,
+     "p": [
+      0.0002,
+      0.0006,
+      0.0004,
+      0.9987
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 643,
+     "chars": 2464,
+     "p": [
+      0.0003,
+      0.0008,
+      0.0006,
+      0.9984
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 651,
+     "chars": 2490,
+     "p": [
+      0.0003,
+      0.0008,
+      0.0006,
+      0.9984
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 658,
+     "chars": 2508,
+     "p": [
+      0.0003,
+      0.0007,
+      0.0005,
+      0.9985
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 667,
+     "chars": 2546,
+     "p": [
+      0.0003,
+      0.0008,
+      0.0006,
+      0.9983
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 687,
+     "chars": 2633,
+     "p": [
+      0.0004,
+      0.0008,
+      0.0006,
+      0.9982
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 704,
+     "chars": 2688,
+     "p": [
+      0.0002,
+      0.0003,
+      0.0003,
+      0.9992
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 722,
+     "chars": 2750,
+     "p": [
+      0.0001,
+      0.0003,
+      0.0003,
+      0.9993
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 728,
+     "chars": 2777,
+     "p": [
+      0.0001,
+      0.0002,
+      0.0002,
+      0.9996
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 734,
+     "chars": 2800,
+     "p": [
+      0.0001,
+      0.0006,
+      0.0006,
+      0.9988
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 741,
+     "chars": 2829,
+     "p": [
+      0.0001,
+      0.0004,
+      0.0003,
+      0.9992
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 749,
+     "chars": 2864,
+     "p": [
+      0.0002,
+      0.0006,
+      0.0005,
+      0.9988
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 758,
+     "chars": 2898,
+     "p": [
+      0.0003,
+      0.0008,
+      0.0007,
+      0.9982
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 782,
+     "chars": 2990,
+     "p": [
+      0.0002,
+      0.0009,
+      0.001,
+      0.9978
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 799,
+     "chars": 3039,
+     "p": [
+      0.0002,
+      0.0005,
+      0.0005,
+      0.9988
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 808,
+     "chars": 3087,
+     "p": [
+      0.0003,
+      0.0007,
+      0.0006,
+      0.9983
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 813,
+     "chars": 3103,
+     "p": [
+      0.0003,
+      0.0006,
+      0.0007,
+      0.9984
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 838,
+     "chars": 3194,
+     "p": [
+      0.0004,
+      0.0009,
+      0.0006,
+      0.9981
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 848,
+     "chars": 3220,
+     "p": [
+      0.0002,
+      0.0004,
+      0.0004,
+      0.9991
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 865,
+     "chars": 3296,
+     "p": [
+      0.0004,
+      0.0013,
+      0.0008,
+      0.9975
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 869,
+     "chars": 3306,
+     "p": [
+      0.0003,
+      0.0009,
+      0.0008,
+      0.998
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 878,
+     "chars": 3345,
+     "p": [
+      0.0005,
+      0.0015,
+      0.0013,
+      0.9967
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 889,
+     "chars": 3383,
+     "p": [
+      0.0005,
+      0.0012,
+      0.0013,
+      0.997
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 907,
+     "chars": 3455,
+     "p": [
+      0.0004,
+      0.0012,
+      0.001,
+      0.9974
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 917,
+     "chars": 3496,
+     "p": [
+      0.0002,
+      0.0007,
+      0.0005,
+      0.9986
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 923,
+     "chars": 3522,
+     "p": [
+      0.0001,
+      0.0003,
+      0.0004,
+      0.9992
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 931,
+     "chars": 3557,
+     "p": [
+      0.0002,
+      0.0004,
+      0.0005,
+      0.9989
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 950,
+     "chars": 3593,
+     "p": [
+      0.0002,
+      0.0009,
+      0.0008,
+      0.9981
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 957,
+     "chars": 3605,
+     "p": [
+      0.0002,
+      0.0008,
+      0.0009,
+      0.9981
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 965,
+     "chars": 3642,
+     "p": [
+      0.0001,
+      0.0003,
+      0.0004,
+      0.9991
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 973,
+     "chars": 3671,
+     "p": [
+      0.0003,
+      0.0008,
+      0.0012,
+      0.9977
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 980,
+     "chars": 3700,
+     "p": [
+      0.0004,
+      0.001,
+      0.0013,
+      0.9973
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 992,
+     "chars": 3746,
+     "p": [
+      0.0003,
+      0.0008,
+      0.0013,
+      0.9976
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1009,
+     "chars": 3807,
+     "p": [
+      0.0004,
+      0.0009,
+      0.0013,
+      0.9974
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1017,
+     "chars": 3840,
+     "p": [
+      0.0003,
+      0.0007,
+      0.001,
+      0.998
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1034,
+     "chars": 3906,
+     "p": [
+      0.0003,
+      0.0008,
+      0.0009,
+      0.998
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1059,
+     "chars": 4009,
+     "p": [
+      0.0003,
+      0.0008,
+      0.0009,
+      0.998
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1066,
+     "chars": 4035,
+     "p": [
+      0.0004,
+      0.0009,
+      0.001,
+      0.9977
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1074,
+     "chars": 4060,
+     "p": [
+      0.0003,
+      0.001,
+      0.0008,
+      0.9979
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1082,
+     "chars": 4101,
+     "p": [
+      0.0002,
+      0.0008,
+      0.0006,
+      0.9984
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1091,
+     "chars": 4144,
+     "p": [
+      0.0002,
+      0.0009,
+      0.0007,
+      0.9982
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 1101,
+     "chars": 4186,
+     "p": [
+      0.0003,
+      0.001,
+      0.001,
+      0.9976
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 1112,
+     "chars": 4232,
+     "p": [
+      0.0003,
+      0.0009,
+      0.0009,
+      0.9979
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1123,
+     "chars": 4261,
+     "p": [
+      0.0003,
+      0.001,
+      0.0009,
+      0.9978
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1132,
+     "chars": 4300,
+     "p": [
+      0.0003,
+      0.0013,
+      0.001,
+      0.9974
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1139,
+     "chars": 4311,
+     "p": [
+      0.0004,
+      0.0015,
+      0.001,
+      0.997
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1146,
+     "chars": 4339,
+     "p": [
+      0.0004,
+      0.0015,
+      0.0008,
+      0.9973
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1161,
+     "chars": 4391,
+     "p": [
+      0.0006,
+      0.0019,
+      0.0015,
+      0.996
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1178,
+     "chars": 4470,
+     "p": [
+      0.0006,
+      0.0025,
+      0.0015,
+      0.9954
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1189,
+     "chars": 4492,
+     "p": [
+      0.0004,
+      0.0015,
+      0.0009,
+      0.9972
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1199,
+     "chars": 4523,
+     "p": [
+      0.0002,
+      0.001,
+      0.0012,
+      0.9976
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1205,
+     "chars": 4549,
+     "p": [
+      0.0001,
+      0.0005,
+      0.0005,
+      0.9989
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 1215,
+     "chars": 4600,
+     "p": [
+      0.0002,
+      0.0008,
+      0.0007,
+      0.9983
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 1237,
+     "chars": 4694,
+     "p": [
+      0.0003,
+      0.0015,
+      0.001,
+      0.9971
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 1247,
+     "chars": 4727,
+     "p": [
+      0.0004,
+      0.0017,
+      0.0015,
+      0.9964
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1256,
+     "chars": 4765,
+     "p": [
+      0.0003,
+      0.0013,
+      0.0009,
+      0.9974
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1271,
+     "chars": 4827,
+     "p": [
+      0.0003,
+      0.0017,
+      0.0012,
+      0.9968
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 1283,
+     "chars": 4862,
+     "p": [
+      0.0004,
+      0.0012,
+      0.0007,
+      0.9977
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1294,
+     "chars": 4897,
+     "p": [
+      0.0003,
+      0.001,
+      0.0009,
+      0.9977
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1300,
+     "chars": 4923,
+     "p": [
+      0.0002,
+      0.0007,
+      0.0007,
+      0.9984
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 1321,
+     "chars": 5023,
+     "p": [
+      0.0005,
+      0.001,
+      0.001,
+      0.9975
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 1330,
+     "chars": 5062,
+     "p": [
+      0.0005,
+      0.001,
+      0.0009,
+      0.9976
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 1338,
+     "chars": 5090,
+     "p": [
+      0.0005,
+      0.0012,
+      0.001,
+      0.9973
+     ],
+     "mass": 0.9999
+    },
+    {
+     "tokens": 1349,
+     "chars": 5128,
+     "p": [
+      0.0002,
+      0.0005,
+      0.0004,
+      0.9989
+     ],
+     "mass": 1.0
+    },
+    {
+     "tokens": 1359,
+     "chars": 5172,
+     "p": [
+      0.0002,
+      0.0007,
+      0.0005,
+      0.9986
+     ],
+     "mass": 0.9999
+    }
+   ],
+   "seconds": 477
+  }
+ ]
+}
