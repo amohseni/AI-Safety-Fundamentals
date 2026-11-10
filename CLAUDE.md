@@ -4,7 +4,7 @@ Read this first in every session that works on the site.
 
 ## What this is
 
-An interactive explainer site that teaches a new graduate student how modern AI systems work, from a single neuron to the alignment problem. It is used one-to-one for self-teaching: no grades, no accounts. Owner: Aydin Mohseni. Public repo, served by GitHub Pages from `docs/`.
+An interactive explainer site that teaches a new graduate student how modern AI systems work, from a single neuron to the alignment problem. It is used one-to-one for self-teaching: no grades, no accounts. Owner: Aydin Mohseni. Public repo. Published at https://aydinmohseni.com/teaching/primer-on-ai/: the deploy workflow of `amohseni/Aydin-Mohseni-Website` copies this repo's `docs/` there on every build of that site (nightly, or run it by hand). This repo's own GitHub Pages copy (amohseni.github.io/AI-Safety-Fundamentals/) is a preview.
 
 ## Where things are
 
@@ -50,7 +50,7 @@ An interactive explainer site that teaches a new graduate student how modern AI 
 
 Built and independently reviewed: all 50 pages (the last 12, 1.6, 3.2, 3.3, 3.5 to 3.7, 4.1, 4.4, 6.2, 6.3, 6.6, 7.2, on 2026-11-06). Each spec ends with the builder's changes and the reviewer's changes. `node tools/build-registry.mjs` lists what is built.
 
-Pretrained-model pages use precomputed outputs only (never faked), with scripts, model revisions, and seeds in `tools/<page-id>/`. Models: GPT-2 small (3.2, 3.3, 3.5 to 3.7, 6.6), word2vec GoogleNews subset (3.2), Qwen2.5-0.5B (6.2, 6.3, 7.2, shared data in `docs/data/truth/`), Qwen3-0.6B and its base (1.6, 4.4), OLMo 2 1B checkpoints (4.1). Page 6.7 runs live activation patching on the modular-addition model. Page 6.6 masks profanity and slurs in stored GPT-2 text (`tools/6-6/mask.py`).
+Pretrained-model pages use precomputed outputs only (never faked), with scripts, model revisions, and seeds in `tools/<page-id>/`. Models: GPT-2 small (3.2, 3.3, 3.5 to 3.7, 6.6), word2vec GoogleNews subset (3.2), Qwen2.5-0.5B (6.2, 6.3, 7.2, shared data in `docs/data/truth/`), Qwen3-0.6B and its base (1.6, 4.4), OLMo 2 1B checkpoints (4.1). Page 6.7 runs live activation patching on the modular-addition model. Page 6.6 masks profanity and slurs in stored GPT-2 text (`tools/6-6/mask.py`). Owner decisions (2026-11-10): keep that masking; keep "Jerusalem is in Israel" in the truth dataset; leave em dashes and emoji in stored model output as the models wrote them.
 
 Modular addition runs use p = 59, not Nanda et al.'s 113, so training fits on a CPU (`tools/modadd/README.md`).
 
