@@ -24,7 +24,7 @@ Every page has the same parts, in this order. Each page spec in the section tabs
 3. **Text**: 150 to 300 words of plain prose, with at most one displayed formula. In the specs, the draft text is set as a quotation.
 4. **Image**: one static figure that carries the page's main idea and is readable without the tool. It also serves print, slow connections, and screen readers (with a text description).
 5. **Interactive**: one tool, with two to four numbered tasks. Each task asks the reader to predict the result before trying it; a line on what to notice is revealed afterward.
-6. **Check**: one or two questions the reader answers before seeing the answer. Questions from earlier pages return at the start of later sections for spaced review.
+6. **Check**: one or two questions the reader answers before seeing the answer. Questions from earlier pages return at the start of later sections for spaced review: the first page of each section, and its first core page, show up to three questions the reader has already answered, those answered wrongly first and then those answered longest ago (`review()` in `site.js`, questions in `docs/data/checks.json`).
 7. **Links and references**: earlier pages this page depends on, later pages that use it, and two or three references.
 
 ## Design principles
@@ -69,7 +69,7 @@ The model is Tufte's printed books, carried over to interactive figures, with th
 - **Controls.** As few as possible, placed beside what they change. Direct manipulation (drag the point, drag the arrow) is preferred to sliders, and sliders to menus. Every control shows its plain name and current value.
 - **Feedback.** Every change redraws within 100 milliseconds; slow computations show progress and never freeze the page.
 - **Motion.** Only to show a change the reader caused or asked for, such as stepping through layers. The reader's reduced-motion setting is respected.
-- **Navigation and progress.** A quiet top line with section, page, previous and next, and a dot for core-path pages. A page counts as done when its check question is answered, shown as a filled dot in the table of contents. No badges, streaks, or pop-ups.
+- **Navigation and progress.** A quiet top line with section, page, previous and next, and a dot for core-path pages. A page counts as done when all of its check questions have been answered correctly (owner decision, 2026-11-19); the first answer in a visit is the one that counts, and a question answered wrongly is asked again on the next visit. Done pages show a filled dot in the table of contents. The contents can be limited to the core path, and each page then also links to the previous and next core page. No badges, streaks, or pop-ups.
 - **Access.** Every tool works from the keyboard; every figure has a text description; contrast meets WCAG AA.
 
 References: Tufte, *The Visual Display of Quantitative Information* (1983), *Envisioning Information* (1990), *Beautiful Evidence* (2006); Liepmann, Tufte CSS; Victor (2011), "Explorable Explanations"; Hohman et al. (2020), "Communicating with Interactive Articles" (Distill).
@@ -144,7 +144,7 @@ All 50 pages, in reading order. "First 8" marks the tools to build first (see Sh
 
 ## Core path
 
-Twenty pages, about 5 hours, marked with a dot on the site. They carry the main line of argument, from "a network is a function" to "why a trained system can pursue unintended goals"; the other 30 pages deepen it. Where a core page relies on a page outside the path, the link opens a short summary of that page in the margin.
+Twenty-one pages, about 5 hours, marked with a dot on the site. They carry the main line of argument, from "a network is a function" to "why a trained system can pursue unintended goals"; the other 30 pages deepen it. Where a core page relies on a page outside the path, the link opens a short summary of that page in the margin.
 
 1. 1.1 The timeline
 2. 2.1 Learning means choosing parameters
@@ -152,20 +152,23 @@ Twenty pages, about 5 hours, marked with a dot on the site. They carry the main 
 4. 2.5 Loss as a proper scoring rule
 5. 2.6 Gradient descent
 6. 2.7 Backpropagation
-7. 3.4 Attention
-8. 3.6 The residual stream and the MLP
-9. 4.1 From pretrained model to assistant
-10. 4.3 Optimizing a learned reward
-11. 5.2 Learning as selection
-12. 5.5 Grown, not programmed
-13. 6.2 The linear representation hypothesis
-14. 6.4 Superposition and polysemanticity
-15. 6.7 Circuits and activation patching
-16. 7.1 Radical interpretation
-17. 8.1 Optimizing a proxy
-18. 8.2 Reward hacking and specification gaming
-19. 8.4 Instrumental convergence
-20. 8.5 Learned optimizers and deceptive alignment
+7. 3.3 Next-token prediction and sampling
+8. 3.4 Attention
+9. 3.6 The residual stream and the MLP
+10. 4.1 From pretrained model to assistant
+11. 4.3 Optimizing a learned reward
+12. 5.2 Learning as selection
+13. 5.5 Grown, not programmed
+14. 6.2 The linear representation hypothesis
+15. 6.4 Superposition and polysemanticity
+16. 6.7 Circuits and activation patching
+17. 7.1 Radical interpretation
+18. 8.1 Optimizing a proxy
+19. 8.2 Reward hacking and specification gaming
+20. 8.4 Instrumental convergence
+21. 8.5 Learned optimizers and deceptive alignment
+
+3.3 was added on 2026-11-19 (owner decision), so that the core path explains how a model produces text.
 
 ## Concept map
 

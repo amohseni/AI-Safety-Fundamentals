@@ -123,7 +123,7 @@
 </div>
 
 <div class="check" data-id="3.7-c2" data-correct="1">
-  <p class="q">Every entry of the residual stream entering a normalization step is doubled. What happens to the output of that step?</p>
+  <p class="q">Every entry of the residual stream entering a normalization step is doubled. Ignoring the tiny constant added to the variance, what happens to the output of that step?</p>
   <div class="options seg"><button>It doubles</button><button>It stays the same</button><button>It is multiplied by four</button></div>
   <div class="feedback"><p>Doubling a vector doubles its mean and its standard deviation, so subtracting the mean and dividing by the standard deviation gives the same result. A linear map would double its output, so normalization is not linear. (A tiny constant added to the variance before dividing makes the output change very slightly.)</p></div>
 </div>

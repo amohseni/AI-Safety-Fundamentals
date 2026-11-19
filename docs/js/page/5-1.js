@@ -15,7 +15,7 @@ const curve = (f) => XS.map((x) => [x, f(x)]);
 const drawnListeners = [];
 
 // Lets the reader draw a target by dragging on a chart.
-function enableDrawing(c, active, onChange) {
+function enableDrawing(c, active, onChange, ctl) {
   let last = null;
   const at = (ev) => {
     const [mx, my] = d3.pointer(ev, c.g.node());
@@ -27,6 +27,20 @@ function enableDrawing(c, active, onChange) {
   };
   c.svg.on('pointerdown.draw', (ev) => { if (!active()) return; last = null; at(ev); c.svg.on('pointermove.draw', at); })
     .on('pointerup.draw pointerleave.draw', () => { last = null; c.svg.on('pointermove.draw', null); drawnListeners.forEach((f) => f()); });
+  // The same edit without a pointer: choose a position, then set the height there.
+  // The height change tapers to zero 0.06 away on each side, so the target stays continuous.
+  const box = document.createElement('div');
+  ctl.append(box);
+  const at2 = () => Math.round(pos.value * 100);
+  const pos = slider(box, { name: 'Position on your target', min: 0, max: 1, step: 0.02, value: 0.5, format: (v) => v.toFixed(2),
+    onInput: () => height.set(drawn[at2()]) });
+  const height = slider(box, { name: 'Height at that position', min: -0.2, max: 1.2, step: 0.02, value: drawn[50], format: (v) => v.toFixed(2),
+    onInput: (y) => {
+      const i = at2();
+      for (let j = Math.max(0, i - 6); j <= Math.min(100, i + 6); j++) { const w = 1 - Math.abs(j - i) / 6; drawn[j] = drawn[j] * (1 - w) + y * w; }
+      onChange(); drawnListeners.forEach((f) => f());
+    } });
+  return () => { box.hidden = !active(); if (active() && document.activeElement !== height.el) height.set(drawn[at2()]); };
 }
 
 // ---- Static figure: smooth target with 4, 8, 32 units ----
@@ -88,11 +102,12 @@ function enableDrawing(c, active, onChange) {
       cS.set(st.units[dragging].c); draw();
     });
   }).on('pointerup.kink pointerleave.kink', () => { dragging = -1; c.svg.on('pointermove.kink', null); });
-  enableDrawing(c, () => st.target === 'drawn', () => draw());
+  const refreshDrawing = enableDrawing(c, () => st.target === 'drawn', () => draw(), ctl);
   drawnListeners.push(() => { if (st.target === 'drawn') draw(); });
 
   let shown = 0;
   function draw() {
+    refreshDrawing();
     const T = targetFn(st.target), f = handNet(st.b, st.units);
     for (let k = 0; k < shown; k++) { c.remove(`u${k}`); c.remove(`h${k}`); }
     st.units.forEach((u, k) => {
@@ -121,7 +136,7 @@ function enableDrawing(c, active, onChange) {
   segmented(ctl, { name: 'Target', options: TNAMES, value: st.target, onChange: (k) => { st.target = k; full(); } });
   slider(ctl, { name: 'Number of units m', min: 1, max: 128, step: 1, value: st.m, format: (v) => String(v),
     onInput: (v) => { st.m = v; draw(); } });
-  enableDrawing(c, () => st.target === 'drawn', () => draw());
+  const refreshDrawing = enableDrawing(c, () => st.target === 'drawn', () => draw(), ctl);
   drawnListeners.push(() => { if (st.target === 'drawn') full(); });
   let errs = [];
   function full() {
@@ -132,6 +147,7 @@ function enableDrawing(c, active, onChange) {
     draw();
   }
   function draw() {
+    refreshDrawing();
     const T = targetFn(st.target), F = fitEven(T, st.m);
     c.line('t', curve(T), { color: 'ink', width: 2.5 });
     c.line('f', curve(F.f), { color: 'accent', width: 1.6 });

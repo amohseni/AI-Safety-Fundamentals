@@ -75,7 +75,7 @@
 
 <section>
 <h2>What the game shows</h2>
-<p><span class="claim">Argument</span> A control protocol can be made safe without trusting the model, because its safety is computed against a model that is assumed to be trying to defeat it. The price is usefulness: work handed to the weaker trusted model, or held back, is work the stronger model does not do. Better monitors, larger audit budgets, and better trusted models move the whole trade-off curve up.</p>
+<p><span class="claim">Argument</span> A control protocol does not need the model to be aligned, because its safety is estimated against a model that is assumed to be trying to defeat it. The estimate is only as good as its assumptions: that the attacks designed by the red team, the researchers who play the model&rsquo;s part, are at least as effective as the attacks the model would find, that the trusted model really is trustworthy, and that the audits catch what they examine. A control evaluation measures safety against the attacks that were tried. It does not prove safety against every strategy. The price is usefulness: work handed to the weaker trusted model, or held back, is work the stronger model does not do. Better monitors, larger audit budgets, and better trusted models move the whole trade-off curve up.</p>
 <p><span class="claim">Empirical finding</span> In the AI control study, auditing the top 2% most suspicious solutions gave 62% safety; also handing the next 8% to the trusted model raised safety to 83%, with usefulness falling from 97% to 93% on the paper&rsquo;s own scale, where GPT-3.5 alone scores 0 and GPT-4 alone scores 100. Those numbers come from real models attacked with a red team&rsquo;s strategies; the toy above uses made-up score distributions and a fixed attack.</p>
 
 <table class="grid2" id="fig-grid" aria-describedby="fig-grid-desc">
@@ -90,21 +90,21 @@
 
 <div class="check" data-id="8.6-c1" data-correct="0">
   <p class="label">Check</p>
-  <p class="q">A lab shows that its protocol is safe against a model that tries its best to slip sabotage past the monitor. What does that safety claim not depend on?</p>
+  <p class="q">A lab estimates that its protocol is safe against a red team that tries its best to slip sabotage past the monitor. What does that safety claim not depend on?</p>
   <div class="options seg"><button>Whether the model is aligned</button><button>Whether the monitor scores sabotage higher than normal work</button><button>The size of the audit budget</button></div>
-  <div class="feedback"><p>A control argument assumes the worst about the model: it may be misaligned and actively trying to get around oversight. Its safety rests on the monitor, the audits, and the hand-offs, which the lab controls, not on the model&rsquo;s goals. Training with human feedback, by contrast, assumes that the model is trying to do what the feedback rewards and that humans can judge the outputs.</p></div>
+  <div class="feedback"><p>A control argument assumes the worst about the model: it may be misaligned and actively trying to get around oversight. Its safety rests on the monitor, the audits, and the hand-offs, which the lab controls, and on the red team attacking as well as the model could. It does not rest on the model&rsquo;s goals. Training with human feedback, by contrast, assumes that the model is trying to do what the feedback rewards and that humans can judge the outputs.</p></div>
 </div>
 
 <div class="explain" data-id="8.6-e1">
   <p class="label">In your own words</p>
-  <p>In one or two sentences: how can a protocol be safe without trusting the model, and what does that safety cost?</p>
+  <p>In one or two sentences: how can a protocol limit harm without assuming the model is aligned, what does its safety estimate assume, and what does the safety cost?</p>
   <textarea aria-label="Your explanation"></textarea>
   <p class="saved"></p>
 </div>
 
 <div class="takeaway">
   <p class="label">Takeaway</p>
-  <p>Approaches to overseeing capable systems differ in what they assume. Scalable oversight assumes the model is trying to help and asks how weaker overseers can still judge it; evaluations measure what a model can do; AI control assumes the model may be trying to subvert oversight and designs protocols that stay safe anyway; audits look inside the model for hidden objectives. Control buys safety without trusting the model, at a cost in usefulness that a better monitor reduces.</p>
+  <p>Approaches to overseeing capable systems differ in what they assume. Scalable oversight assumes the model is trying to help and asks how weaker overseers can still judge it; evaluations measure what a model can do; AI control assumes the model may be trying to subvert oversight and designs protocols that stay safe anyway; audits look inside the model for hidden objectives. Control does not assume the model is aligned. Its safety is an estimate against the attacks a red team tried, and it costs usefulness, a cost that a better monitor reduces.</p>
 </div>
 </article>
 <script type="module" src="../js/site.js"></script>

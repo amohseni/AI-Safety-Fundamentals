@@ -135,7 +135,9 @@ ol.tasks > li { margin-bottom: 1.3rem; }
 .takeaway p { margin-top: 0.4rem; }
 
 /* Page-end navigation. */
-.pagenav { width: 55%; display: flex; justify-content: space-between; gap: 2rem; margin: 3rem 0 4rem; font-size: var(--text); }
+.pagenav { width: 55%; margin: 3rem 0 4rem; font-size: var(--text); }
+.pagenav .row { display: flex; justify-content: space-between; gap: 2rem; }
+.pagenav .row + .row { margin-top: 1.4rem; }
 .pagenav a { text-decoration: none; background: none; }
 .pagenav a:hover { text-decoration: underline; }
 .pagenav .dir { display: block; color: var(--quiet); font-size: var(--text); }
@@ -198,3 +200,11 @@ h1 { hyphens: auto; overflow-wrap: break-word; }
 /* A page's own canvas cap (e.g. .plane) wins over the generic max-width. */
 .tool .plane { max-width: 34rem; }
 .sidenote > code { font-size: var(--text); }
+.check .again { color: var(--quiet); font-style: italic; margin: 0 0 0.6rem; }
+.check button.chosen:disabled { opacity: 1; }
+.review { width: 55%; clear: right; margin: 1.4rem 0 2.2rem; }
+.review > .label { font-style: italic; color: var(--quiet); font-size: var(--text); margin-bottom: 0; }
+.review .check { width: 100%; }
+.contents .view { margin-top: 1.4rem; }
+.contents .core-next { font-size: var(--text); margin: 0.9rem 0 0; }
+@media (max-width: 760px) { .review { width: 100%; } }

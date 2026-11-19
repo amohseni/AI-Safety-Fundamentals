@@ -8,7 +8,13 @@ export const sections = [
         "id": "0.1",
         "title": "Start here",
         "core": false,
-        "href": "pages/0-1.html"
+        "href": "pages/0-1.html",
+        "checks": [
+          [
+            "0.1-c1",
+            1
+          ]
+        ]
       }
     ]
   },
@@ -20,37 +26,97 @@ export const sections = [
         "id": "1.1",
         "title": "The timeline",
         "core": true,
-        "href": "pages/1-1.html"
+        "href": "pages/1-1.html",
+        "checks": [
+          [
+            "1.1-c1",
+            1
+          ],
+          [
+            "1.1-c2",
+            2
+          ]
+        ]
       },
       {
         "id": "1.2",
         "title": "Perceptrons and the first winter (1943 to 1980)",
         "core": false,
-        "href": "pages/1-2.html"
+        "href": "pages/1-2.html",
+        "checks": [
+          [
+            "1.2-c1",
+            0
+          ],
+          [
+            "1.2-c2",
+            1
+          ]
+        ]
       },
       {
         "id": "1.3",
         "title": "Backpropagation and the second winter (1980 to 2005)",
         "core": false,
-        "href": "pages/1-3.html"
+        "href": "pages/1-3.html",
+        "checks": [
+          [
+            "1.3-c1",
+            1
+          ],
+          [
+            "1.3-c2",
+            0
+          ]
+        ]
       },
       {
         "id": "1.4",
         "title": "Deep learning (2006 to 2016)",
         "core": false,
-        "href": "pages/1-4.html"
+        "href": "pages/1-4.html",
+        "checks": [
+          [
+            "1.4-c1",
+            1
+          ],
+          [
+            "1.4-c2",
+            0
+          ]
+        ]
       },
       {
         "id": "1.5",
         "title": "Transformers and scale (2017 to 2022)",
         "core": false,
-        "href": "pages/1-5.html"
+        "href": "pages/1-5.html",
+        "checks": [
+          [
+            "1.5-c1",
+            1
+          ],
+          [
+            "1.5-c2",
+            0
+          ]
+        ]
       },
       {
         "id": "1.6",
         "title": "Assistants and reasoning models (2022 to 2025)",
         "core": false,
-        "href": "pages/1-6.html"
+        "href": "pages/1-6.html",
+        "checks": [
+          [
+            "1.6-c1",
+            1
+          ],
+          [
+            "1.6-c2",
+            2
+          ]
+        ]
       }
     ]
   },
@@ -62,49 +128,117 @@ export const sections = [
         "id": "2.1",
         "title": "Learning means choosing parameters",
         "core": true,
-        "href": "pages/2-1.html"
+        "href": "pages/2-1.html",
+        "checks": [
+          [
+            "2.1-c1",
+            1
+          ]
+        ]
       },
       {
         "id": "2.2",
         "title": "The neuron",
         "core": false,
-        "href": "pages/2-2.html"
+        "href": "pages/2-2.html",
+        "checks": [
+          [
+            "2.2-c1",
+            1
+          ]
+        ]
       },
       {
         "id": "2.3",
         "title": "Why nonlinearity matters",
         "core": false,
-        "href": "pages/2-3.html"
+        "href": "pages/2-3.html",
+        "checks": [
+          [
+            "2.3-c1",
+            2
+          ],
+          [
+            "2.3-c2",
+            1
+          ]
+        ]
       },
       {
         "id": "2.4",
         "title": "Layers bend space",
         "core": true,
-        "href": "pages/2-4.html"
+        "href": "pages/2-4.html",
+        "checks": [
+          [
+            "2.4-c2",
+            1
+          ]
+        ]
       },
       {
         "id": "2.5",
         "title": "Loss as a proper scoring rule",
         "core": true,
-        "href": "pages/2-5.html"
+        "href": "pages/2-5.html",
+        "checks": [
+          [
+            "2.5-c1b",
+            1
+          ],
+          [
+            "2.5-c2",
+            1
+          ]
+        ]
       },
       {
         "id": "2.6",
         "title": "Gradient descent",
         "core": true,
-        "href": "pages/2-6.html"
+        "href": "pages/2-6.html",
+        "checks": [
+          [
+            "2.6-c1",
+            1
+          ],
+          [
+            "2.6-c2",
+            1
+          ]
+        ]
       },
       {
         "id": "2.7",
         "title": "Backpropagation",
         "core": true,
-        "href": "pages/2-7.html"
+        "href": "pages/2-7.html",
+        "checks": [
+          [
+            "2.7-c1",
+            2
+          ],
+          [
+            "2.7-c2",
+            0
+          ]
+        ]
       },
       {
         "id": "2.8",
         "title": "Overfitting and generalization",
         "core": false,
-        "href": "pages/2-8.html"
+        "href": "pages/2-8.html",
+        "checks": [
+          [
+            "2.8-c1",
+            2
+          ],
+          [
+            "2.8-c2",
+            1
+          ]
+        ]
       }
     ]
   },
@@ -116,49 +250,141 @@ export const sections = [
         "id": "3.1",
         "title": "Tokens",
         "core": false,
-        "href": "pages/3-1.html"
+        "href": "pages/3-1.html",
+        "checks": [
+          [
+            "3.1-c1",
+            1
+          ],
+          [
+            "3.1-c2",
+            1
+          ]
+        ]
       },
       {
         "id": "3.2",
         "title": "Embeddings",
         "core": false,
-        "href": "pages/3-2.html"
+        "href": "pages/3-2.html",
+        "checks": [
+          [
+            "3.2-c1",
+            1
+          ],
+          [
+            "3.2-c2",
+            0
+          ]
+        ]
       },
       {
         "id": "3.3",
         "title": "Next-token prediction and sampling",
-        "core": false,
-        "href": "pages/3-3.html"
+        "core": true,
+        "href": "pages/3-3.html",
+        "checks": [
+          [
+            "3.3-c1",
+            0
+          ],
+          [
+            "3.3-c2",
+            1
+          ],
+          [
+            "3.3-c3",
+            1
+          ]
+        ]
       },
       {
         "id": "3.4",
         "title": "Attention",
         "core": true,
-        "href": "pages/3-4.html"
+        "href": "pages/3-4.html",
+        "checks": [
+          [
+            "3.4-c1",
+            1
+          ],
+          [
+            "3.4-c2",
+            2
+          ],
+          [
+            "3.4-c3",
+            1
+          ]
+        ]
       },
       {
         "id": "3.5",
         "title": "Multiple heads",
         "core": false,
-        "href": "pages/3-5.html"
+        "href": "pages/3-5.html",
+        "checks": [
+          [
+            "3.5-c1",
+            1
+          ],
+          [
+            "3.5-c2",
+            0
+          ]
+        ]
       },
       {
         "id": "3.6",
         "title": "The residual stream and the MLP",
         "core": true,
-        "href": "pages/3-6.html"
+        "href": "pages/3-6.html",
+        "checks": [
+          [
+            "3.6-c1",
+            0
+          ],
+          [
+            "3.6-c2",
+            1
+          ]
+        ]
       },
       {
         "id": "3.7",
         "title": "A full forward pass",
         "core": false,
-        "href": "pages/3-7.html"
+        "href": "pages/3-7.html",
+        "checks": [
+          [
+            "3.7-c1",
+            2
+          ],
+          [
+            "3.7-c2",
+            1
+          ],
+          [
+            "3.7-c3",
+            1
+          ]
+        ]
       },
       {
         "id": "3.8",
         "title": "Scaling laws",
         "core": false,
-        "href": "pages/3-8.html"
+        "href": "pages/3-8.html",
+        "checks": [
+          [
+            "3.8-c1",
+            0
+          ],
+          [
+            "3.8-c2",
+            1
+          ]
+        ]
       }
     ]
   },
@@ -170,25 +396,65 @@ export const sections = [
         "id": "4.1",
         "title": "From pretrained model to assistant",
         "core": true,
-        "href": "pages/4-1.html"
+        "href": "pages/4-1.html",
+        "checks": [
+          [
+            "4.1-c1",
+            0
+          ],
+          [
+            "4.1-c2",
+            1
+          ]
+        ]
       },
       {
         "id": "4.2",
         "title": "Learning from human preferences",
         "core": false,
-        "href": "pages/4-2.html"
+        "href": "pages/4-2.html",
+        "checks": [
+          [
+            "4.2-c1",
+            0
+          ],
+          [
+            "4.2-c2",
+            1
+          ]
+        ]
       },
       {
         "id": "4.3",
         "title": "Optimizing a learned reward",
         "core": true,
-        "href": "pages/4-3.html"
+        "href": "pages/4-3.html",
+        "checks": [
+          [
+            "4.3-c1",
+            2
+          ],
+          [
+            "4.3-c2",
+            1
+          ]
+        ]
       },
       {
         "id": "4.4",
         "title": "Chain of thought and reasoning models",
         "core": false,
-        "href": "pages/4-4.html"
+        "href": "pages/4-4.html",
+        "checks": [
+          [
+            "4.4-c1",
+            2
+          ],
+          [
+            "4.4-c2",
+            0
+          ]
+        ]
       }
     ]
   },
@@ -200,37 +466,97 @@ export const sections = [
         "id": "5.1",
         "title": "Universal approximation",
         "core": false,
-        "href": "pages/5-1.html"
+        "href": "pages/5-1.html",
+        "checks": [
+          [
+            "5.1-c1",
+            1
+          ],
+          [
+            "5.1-c2",
+            1
+          ]
+        ]
       },
       {
         "id": "5.2",
         "title": "Learning as selection",
         "core": true,
-        "href": "pages/5-2.html"
+        "href": "pages/5-2.html",
+        "checks": [
+          [
+            "5.2-c1",
+            1
+          ],
+          [
+            "5.2-c2",
+            2
+          ]
+        ]
       },
       {
         "id": "5.3",
         "title": "Double descent",
         "core": false,
-        "href": "pages/5-3.html"
+        "href": "pages/5-3.html",
+        "checks": [
+          [
+            "5.3-c1",
+            1
+          ],
+          [
+            "5.3-c2",
+            2
+          ]
+        ]
       },
       {
         "id": "5.4",
         "title": "Grokking",
         "core": false,
-        "href": "pages/5-4.html"
+        "href": "pages/5-4.html",
+        "checks": [
+          [
+            "5.4-c1",
+            1
+          ],
+          [
+            "5.4-c2",
+            1
+          ]
+        ]
       },
       {
         "id": "5.5",
         "title": "Grown, not programmed",
         "core": true,
-        "href": "pages/5-5.html"
+        "href": "pages/5-5.html",
+        "checks": [
+          [
+            "5.5-c1",
+            1
+          ],
+          [
+            "5.5-c2",
+            2
+          ]
+        ]
       },
       {
         "id": "5.6",
         "title": "Emergence",
         "core": false,
-        "href": "pages/5-6.html"
+        "href": "pages/5-6.html",
+        "checks": [
+          [
+            "5.6-c1",
+            1
+          ],
+          [
+            "5.6-c2",
+            1
+          ]
+        ]
       }
     ]
   },
@@ -242,43 +568,113 @@ export const sections = [
         "id": "6.1",
         "title": "What interpretability tries to do",
         "core": false,
-        "href": "pages/6-1.html"
+        "href": "pages/6-1.html",
+        "checks": [
+          [
+            "6.1-c1",
+            1
+          ],
+          [
+            "6.1-c2",
+            2
+          ]
+        ]
       },
       {
         "id": "6.2",
         "title": "The linear representation hypothesis",
         "core": true,
-        "href": "pages/6-2.html"
+        "href": "pages/6-2.html",
+        "checks": [
+          [
+            "6.2-c1",
+            1
+          ],
+          [
+            "6.2-c2",
+            2
+          ]
+        ]
       },
       {
         "id": "6.3",
         "title": "Linear probes",
         "core": false,
-        "href": "pages/6-3.html"
+        "href": "pages/6-3.html",
+        "checks": [
+          [
+            "6.3-c1",
+            1
+          ],
+          [
+            "6.3-c2",
+            2
+          ]
+        ]
       },
       {
         "id": "6.4",
         "title": "Superposition and polysemanticity",
         "core": true,
-        "href": "pages/6-4.html"
+        "href": "pages/6-4.html",
+        "checks": [
+          [
+            "6.4-c1",
+            1
+          ],
+          [
+            "6.4-c2",
+            2
+          ]
+        ]
       },
       {
         "id": "6.5",
         "title": "Sparse dictionary learning",
         "core": false,
-        "href": "pages/6-5.html"
+        "href": "pages/6-5.html",
+        "checks": [
+          [
+            "6.5-c1",
+            0
+          ],
+          [
+            "6.5-c2",
+            1
+          ]
+        ]
       },
       {
         "id": "6.6",
         "title": "Steering vectors",
         "core": false,
-        "href": "pages/6-6.html"
+        "href": "pages/6-6.html",
+        "checks": [
+          [
+            "6.6-c1",
+            2
+          ],
+          [
+            "6.6-c2",
+            1
+          ]
+        ]
       },
       {
         "id": "6.7",
         "title": "Circuits and activation patching",
         "core": true,
-        "href": "pages/6-7.html"
+        "href": "pages/6-7.html",
+        "checks": [
+          [
+            "6.7-c1",
+            2
+          ],
+          [
+            "6.7-c2",
+            1
+          ]
+        ]
       }
     ]
   },
@@ -290,19 +686,49 @@ export const sections = [
         "id": "7.1",
         "title": "Radical interpretation",
         "core": true,
-        "href": "pages/7-1.html"
+        "href": "pages/7-1.html",
+        "checks": [
+          [
+            "7.1-c1",
+            2
+          ],
+          [
+            "7.1-c2",
+            1
+          ]
+        ]
       },
       {
         "id": "7.2",
         "title": "Belief",
         "core": false,
-        "href": "pages/7-2.html"
+        "href": "pages/7-2.html",
+        "checks": [
+          [
+            "7.2-c1",
+            0
+          ]
+        ]
       },
       {
         "id": "7.3",
         "title": "Desire and goals",
         "core": false,
-        "href": "pages/7-3.html"
+        "href": "pages/7-3.html",
+        "checks": [
+          [
+            "7.3-c1",
+            1
+          ],
+          [
+            "7.3-c2",
+            2
+          ],
+          [
+            "7.3-c3",
+            1
+          ]
+        ]
       }
     ]
   },
@@ -314,37 +740,89 @@ export const sections = [
         "id": "8.1",
         "title": "Optimizing a proxy (Goodhart's law)",
         "core": true,
-        "href": "pages/8-1.html"
+        "href": "pages/8-1.html",
+        "checks": [
+          [
+            "8.1-c1",
+            1
+          ],
+          [
+            "8.1-c2",
+            1
+          ]
+        ]
       },
       {
         "id": "8.2",
         "title": "Reward hacking and specification gaming",
         "core": true,
-        "href": "pages/8-2.html"
+        "href": "pages/8-2.html",
+        "checks": [
+          [
+            "8.2-c1",
+            0
+          ],
+          [
+            "8.2-c2",
+            0
+          ]
+        ]
       },
       {
         "id": "8.3",
         "title": "Goal misgeneralization",
         "core": false,
-        "href": "pages/8-3.html"
+        "href": "pages/8-3.html",
+        "checks": [
+          [
+            "8.3-c1",
+            1
+          ],
+          [
+            "8.3-c2",
+            0
+          ]
+        ]
       },
       {
         "id": "8.4",
         "title": "Instrumental convergence",
         "core": true,
-        "href": "pages/8-4.html"
+        "href": "pages/8-4.html",
+        "checks": [
+          [
+            "8.4-c1",
+            1
+          ],
+          [
+            "8.4-c2",
+            1
+          ]
+        ]
       },
       {
         "id": "8.5",
         "title": "Learned optimizers and deceptive alignment",
         "core": true,
-        "href": "pages/8-5.html"
+        "href": "pages/8-5.html",
+        "checks": [
+          [
+            "8.5-c1",
+            0
+          ]
+        ]
       },
       {
         "id": "8.6",
         "title": "Oversight and control",
         "core": false,
-        "href": "pages/8-6.html"
+        "href": "pages/8-6.html",
+        "checks": [
+          [
+            "8.6-c1",
+            0
+          ]
+        ]
       }
     ]
   },
@@ -356,7 +834,13 @@ export const sections = [
         "id": "9.1",
         "title": "Open problems and how to start",
         "core": false,
-        "href": "pages/9-1.html"
+        "href": "pages/9-1.html",
+        "checks": [
+          [
+            "9.1-c1",
+            0
+          ]
+        ]
       }
     ]
   }

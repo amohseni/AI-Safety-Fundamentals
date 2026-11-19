@@ -59,7 +59,7 @@
   {
    "id": "2.5",
    "question": "What does the training loss reward?",
-   "takeaway": "Cross-entropy is the logarithmic scoring rule. It is strictly proper, so the best a model can do is report the probabilities the data supports, and next-token training pushes models toward calibration. Pretraining is supervised learning; reinforcement learning comes later."
+   "takeaway": "Cross-entropy is the logarithmic scoring rule. It is strictly proper, so the best a model can do is report the probabilities the data supports, and next-token training pushes models toward calibration. How calibrated a trained model is has to be measured. Pretraining is supervised learning; reinforcement learning comes later."
   },
   {
    "id": "2.6",
@@ -134,7 +134,7 @@
   {
    "id": "4.4",
    "question": "Why does writing out steps help, and is the writing faithful?",
-   "takeaway": "A transformer does a fixed amount of computation per token, so writing out intermediate steps adds computation, and each written step can be read by the next pass. Reasoning models are trained by reinforcement learning on checkable problems to write long chains of thought. Whether a chain of thought shows what actually produced the answer has to be tested, for example by cutting it short; it cannot be assumed, and the answer matters because reading chains of thought is a main way to monitor models."
+   "takeaway": "A transformer does a fixed number of steps in sequence per token, so writing out intermediate steps adds steps, and each written step can be read by the next pass. Reasoning models are trained by reinforcement learning on checkable problems to write long chains of thought. Whether a chain of thought shows what actually produced the answer has to be tested, for example by cutting it short; it cannot be assumed, and the answer matters because reading chains of thought is a main way to monitor models."
   },
   {
    "id": "5.1",
@@ -244,7 +244,7 @@
   {
    "id": "8.6",
    "question": "How can we stay safe with systems we cannot fully judge?",
-   "takeaway": "Approaches to overseeing capable systems differ in what they assume. Scalable oversight assumes the model is trying to help and asks how weaker overseers can still judge it; evaluations measure what a model can do; AI control assumes the model may be trying to subvert oversight and designs protocols that stay safe anyway; audits look inside the model for hidden objectives. Control buys safety without trusting the model, at a cost in usefulness that a better monitor reduces."
+   "takeaway": "Approaches to overseeing capable systems differ in what they assume. Scalable oversight assumes the model is trying to help and asks how weaker overseers can still judge it; evaluations measure what a model can do; AI control assumes the model may be trying to subvert oversight and designs protocols that stay safe anyway; audits look inside the model for hidden objectives. Control does not assume the model is aligned. Its safety is an estimate against the attacks a red team tried, and it costs usefulness, a cost that a better monitor reduces."
   },
   {
    "id": "9.1",

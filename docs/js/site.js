@@ -17,6 +17,20 @@ export const store = {
 };
 
 const allPages = sections.flatMap((s) => s.pages.map((p) => ({ ...p, section: s })));
+
+// A check's record is { k, right, t }: the option chosen, whether it was correct, and when.
+// (Records written before 2026-11 are a bare option number.)
+function checkRecord(id, correct) {
+  const r = store.get(`check:${id}`, null);
+  if (r === null) return null;
+  return typeof r === 'number' ? { k: r, right: r === correct, t: 0 } : r;
+}
+// A page is done when every one of its check questions has been answered correctly.
+export function pageDone(p) {
+  return !!(p.checks && p.checks.length) && p.checks.every(([id, correct]) => { const r = checkRecord(id, correct); return r && r.right; });
+}
+const corePages = allPages.filter((p) => p.core && p.href);
+const dot = (p) => (p.core ? '<span class="core-dot" title="Core path"></span> ' : '');
 const base = document.body.dataset.base || '../';
 
 function pageHref(p) { return p.href ? base + p.href : null; }
@@ -41,12 +55,19 @@ function shell() {
 
   const builtBefore = allPages.slice(0, i).reverse().find((p) => p.href);
   const builtAfter = allPages.slice(i + 1).find((p) => p.href);
+  const coreBefore = allPages.slice(0, i).reverse().find((p) => p.href && p.core);
+  const coreAfter = allPages.slice(i + 1).find((p) => p.href && p.core);
+  const link = (p, cls, dir) => (p ? `<a class="${cls}" href="${pageHref(p)}"><span class="dir">${dir}</span>${dot(p)}${p.id} ${p.title}</a>` : '<span></span>');
   const nav = document.createElement('nav');
   nav.className = 'pagenav';
   nav.setAttribute('aria-label', 'Previous and next page');
-  nav.innerHTML =
-    (builtBefore ? `<a class="prev" href="${pageHref(builtBefore)}"><span class="dir">Previous</span>${builtBefore.id} ${builtBefore.title}</a>` : '<span></span>') +
-    (builtAfter ? `<a class="next" href="${pageHref(builtAfter)}"><span class="dir">Next</span>${builtAfter.id} ${builtAfter.title}</a>` : `<a class="next" href="${base}index.html"><span class="dir">Next</span>Contents</a>`);
+  let html = `<div class="row">${link(builtBefore, 'prev', 'Previous')}` +
+    (builtAfter ? link(builtAfter, 'next', 'Next') : `<a class="next" href="${base}index.html"><span class="dir">Next</span>Contents</a>`) + '</div>';
+  // A second row for readers following the core path, shown when it leads somewhere else.
+  if ((coreBefore || coreAfter) && (coreBefore !== builtBefore || coreAfter !== builtAfter)) {
+    html += `<div class="row">${link(coreBefore, 'prev', 'Previous on the core path')}${link(coreAfter, 'next', 'Next on the core path')}</div>`;
+  }
+  nav.innerHTML = html;
   article.after(nav);
 }
 
@@ -100,26 +121,71 @@ function tasks() {
 // <div class="check" data-id="2.5-c1" data-correct="1">
 //   <p class="q">...</p><div class="options"><button>..</button>...</div>
 //   <div class="feedback"><p>...</p></div></div>
-function checks() {
-  const page = document.body.dataset.page;
-  document.querySelectorAll('.check').forEach((el) => {
-    const id = el.dataset.id;
-    const correct = Number(el.dataset.correct);
-    const buttons = [...el.querySelectorAll('.options button')];
-    const verdict = document.createElement('p');
-    el.querySelector('.feedback').prepend(verdict);
-    const answer = (k) => {
-      buttons.forEach((b, j) => b.classList.toggle('chosen', j === k));
-      el.classList.add('answered');
-      verdict.className = k === correct ? 'verdict-right' : 'verdict-wrong';
-      verdict.textContent = k === correct ? 'Right.' : `Not quite. The answer is: ${buttons[correct].textContent}`;
-      store.set(`check:${id}`, k);
-      store.set(`done:${page}`, true);
-    };
-    buttons.forEach((b, k) => { b.type = 'button'; b.addEventListener('click', () => answer(k)); });
-    const prev = store.get(`check:${id}`, null);
-    if (prev !== null) answer(prev);
+function wireCheck(el, { review = false } = {}) {
+  const id = el.dataset.id;
+  const correct = Number(el.dataset.correct);
+  const buttons = [...el.querySelectorAll('.options button')];
+  const verdict = document.createElement('p');
+  el.querySelector('.feedback').prepend(verdict);
+  // The first answer in a visit is the one that counts, so the options lock once one is chosen.
+  const show = (k) => {
+    buttons.forEach((b, j) => { b.classList.toggle('chosen', j === k); b.disabled = true; });
+    el.classList.add('answered');
+    verdict.className = k === correct ? 'verdict-right' : 'verdict-wrong';
+    verdict.textContent = k === correct ? 'Right.' : `Not quite. The answer is: ${buttons[correct].textContent}`;
+  };
+  buttons.forEach((b, k) => {
+    b.type = 'button';
+    b.addEventListener('click', () => { show(k); store.set(`check:${id}`, { k, right: k === correct, t: Date.now() }); });
   });
+  const prev = checkRecord(id, correct);
+  if (review || !prev) return;
+  if (prev.right) { show(prev.k); return; }
+  // Answered wrongly on an earlier visit: ask again, without showing the answer.
+  const again = document.createElement('p');
+  again.className = 'again';
+  again.textContent = 'You missed this question last time. Try it again.';
+  el.querySelector('.q').after(again);
+}
+function checks() {
+  document.querySelectorAll('.check').forEach((el) => wireCheck(el));
+}
+
+// ---- Review: questions from earlier sections return at the start of a section ----
+// Shown on the first page of a section, and on its first core page for readers who skipped the first page. Up to three questions the
+// reader has already answered: those answered wrongly first, then those answered longest ago.
+async function review() {
+  const id = document.body.dataset.page;
+  const page = allPages.find((p) => p.id === id);
+  if (!page || page.section.n < 2) return;
+  const inSection = page.section.pages.filter((p) => p.href);
+  const firstCore = inSection.find((p) => p.core);
+  if (id !== inSection[0].id && !(firstCore && id === firstCore.id)) return;
+  // A reader who already did this section's review on its first page is not asked again on its first core page.
+  const doneKey = `reviewed:${page.section.n}`;
+  if (id !== inSection[0].id && store.get(doneKey, false)) return;
+  const earlier = allPages.filter((p) => p.section.n < page.section.n && p.section.n > 0);
+  const seen = earlier.flatMap((p) => (p.checks || []).map(([cid, correct]) => ({ cid, p, r: checkRecord(cid, correct) }))).filter((x) => x.r);
+  if (!seen.length) return;
+  let bank;
+  try { bank = await (await fetch(`${base}data/checks.json`)).json(); } catch { return; }
+  const pick = seen.filter((x) => bank[x.cid])
+    .sort((a, b) => (a.r.right - b.r.right) || (a.r.t - b.r.t)).slice(0, 3);
+  if (!pick.length) return;
+  const box = document.createElement('div');
+  box.className = 'review';
+  box.innerHTML = '<p class="label">Review. These questions are from earlier sections. Answer them from memory before you start this one.</p>' +
+    pick.map(({ cid, p }) => { const c = bank[cid]; return `
+    <div class="check" data-id="${cid}" data-correct="${c.correct}">
+      <p class="label">From <a href="${pageHref(p)}">${p.id} ${p.title}</a></p>
+      <p class="q">${c.q}</p>
+      <div class="options seg">${c.options.map((o) => `<button>${o}</button>`).join('')}</div>
+      <div class="feedback"><p>${c.feedback}</p></div>
+    </div>`; }).join('');
+  document.querySelector('article h1').after(box);
+  box.querySelectorAll('.check').forEach((el) => wireCheck(el, { review: true }));
+  box.addEventListener('click', (ev) => { if (ev.target.closest('.options button')) store.set(doneKey, true); });
+  math(box);
 }
 
 // ---- Self-explanation boxes, kept in this browser ----
@@ -129,11 +195,8 @@ function explains() {
     const ta = el.querySelector('textarea');
     const note = el.querySelector('.saved');
     ta.value = store.get(`explain:${id}`, '');
-    let t;
-    ta.addEventListener('input', () => {
-      clearTimeout(t);
-      t = setTimeout(() => { store.set(`explain:${id}`, ta.value); if (note) note.textContent = 'Saved in this browser.'; }, 400);
-    });
+    // Saved on every keystroke, so nothing is lost when the reader leaves the page at once.
+    ta.addEventListener('input', () => { store.set(`explain:${id}`, ta.value); if (note) note.textContent = 'Saved in this browser.'; });
   });
 }
 
@@ -150,9 +213,9 @@ function sidenotes() {
   });
 }
 
-function math() {
+function math(root = document.body) {
   if (window.renderMathInElement) {
-    window.renderMathInElement(document.body, {
+    window.renderMathInElement(root, {
       delimiters: [{ left: '$$', right: '$$', display: true }, { left: '\\(', right: '\\)', display: false }],
       throwOnError: false,
     });
@@ -160,13 +223,24 @@ function math() {
 }
 
 export function contents(el) {
-  el.innerHTML = sections.map((s) => `
+  const view = store.get('view', 'all') === 'core' ? 'core' : 'all';
+  const next = corePages.find((p) => !pageDone(p));
+  const list = sections.map((s) => {
+    const pages = s.pages.filter((p) => view === 'all' || p.core);
+    if (!pages.length) return '';
+    return `
     <h2>${s.n}. ${s.title}</h2>
-    <ol>${s.pages.map((p) => {
-      const done = store.get(`done:${p.id}`, false);
+    <ol>${pages.map((p) => {
+      const done = pageDone(p);
       const title = p.href ? `<a href="${p.href}">${p.title}</a>` : `<span class="planned">${p.title}</span>`;
       return `<li><span class="no">${p.id}</span><span class="mark">${p.core ? '<span class="core-dot" title="Core path"></span>' : ''}</span>${title}${p.href ? ` <span class="done-dot${done ? ' done' : ''}" title="${done ? 'Done' : 'Not done yet'}"></span>` : ''}</li>`;
-    }).join('')}</ol>`).join('');
+    }).join('')}</ol>`; }).join('');
+  el.innerHTML = `<div class="seg view" role="group" aria-label="Pages shown">
+      <button type="button" data-view="all" aria-pressed="${view === 'all'}">All ${allPages.length} pages</button>
+      <button type="button" data-view="core" aria-pressed="${view === 'core'}">Core path, ${corePages.length} pages</button>
+    </div>` +
+    (view === 'core' ? `<p class="core-next">${next ? `Next on the core path: <a href="${next.href}">${next.id} ${next.title}</a>` : 'You have finished the core path.'}</p>` : '') + list;
+  el.querySelectorAll('.view button').forEach((b) => b.addEventListener('click', () => { store.set('view', b.dataset.view); contents(el); el.querySelector(`.view [data-view="${b.dataset.view}"]`).focus(); }));
 }
 
 shell();
@@ -174,4 +248,5 @@ sidenotes();
 tasks();
 checks();
 explains();
-if (document.readyState === 'complete') math(); else window.addEventListener('load', math);
+review();
+if (document.readyState === 'complete') math(); else window.addEventListener('load', () => math());
