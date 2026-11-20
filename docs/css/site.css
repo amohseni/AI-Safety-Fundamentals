@@ -82,7 +82,7 @@ figure.multiples, ol.tasks, .check, .explain, .takeaway { clear: right; }
 .tool .panel { margin-bottom: 2.2rem; }
 .tool h3 { margin-top: 0.4rem; margin-bottom: 0.6rem; font-size: var(--text); }
 .tool .panel-note { font-size: var(--text); line-height: 1.5; color: var(--quiet); width: 61%; margin: 0.2rem 0 0.8rem; }
-.tool .row { display: flex; flex-wrap: wrap; gap: 1.6rem; align-items: flex-start; }
+.tool div.row { display: flex; flex-wrap: wrap; gap: 1.6rem; align-items: flex-start; }
 .tool .controls { display: flex; flex-direction: column; gap: 0.9rem; min-width: 15rem; max-width: 19rem; flex: 0 1 19rem; }
 .tool .stage { flex: 1 1 26rem; min-width: 0; }
 .tool svg, .tool canvas, figure svg { display: block; max-width: 100%; height: auto; touch-action: none; }
@@ -281,9 +281,9 @@ p, dl, ol, ul, .sidenote, .marginnote, .caption, .readout, .tool .panel-note, .t
   .tool h3 { margin: 0 0 var(--u); font-style: normal; font-weight: 600; line-height: var(--line); }
   .tool .panel-note, .readout { width: var(--col); margin: 0 0 calc(2 * var(--u)); }
   .readout { margin: calc(2 * var(--u)) 0 0; }
-  .tool .row { display: grid; grid-template-columns: var(--col) var(--side); column-gap: var(--gap); align-items: start; }
-  .tool .row > .stage { grid-column: 1; grid-row: 1; min-width: 0; }
-  .tool .row > .controls { grid-column: 2; grid-row: 1; min-width: 0; max-width: none; gap: var(--u); }
+  .tool div.row { display: grid; grid-template-columns: var(--col) var(--side); column-gap: var(--gap); align-items: start; }
+  .tool div.row > .stage { grid-column: 1; grid-row: 1; min-width: 0; }
+  .tool div.row > .controls { grid-column: 2; grid-row: 1; min-width: 0; max-width: none; gap: var(--u); }
 
   /* Blocks that end a page: the name of the block sits in the margin column, level with its first line. */
   ol.tasks, .check, .explain, .takeaway { width: var(--col); position: relative; box-sizing: border-box; }
@@ -365,7 +365,19 @@ figure { margin: calc(3 * var(--u)) 0 calc(2 * var(--u)); }
 .tool .controls > button { align-self: flex-start; }
 /* A stage that needs both columns: add class "wide" to its .row; the controls go in a row above it. */
 @media (min-width: 1080px) {
-  .tool .row.wide { display: block; }
-  .tool .row.wide > .controls { flex-direction: row; flex-wrap: wrap; align-items: flex-start; gap: var(--u) calc(2 * var(--u)); margin-bottom: calc(2 * var(--u)); }
+  .tool div.row.wide { display: block; }
+  .tool div.row.wide > .controls { flex-direction: row; flex-wrap: wrap; align-items: flex-start; gap: var(--u) calc(2 * var(--u)); margin-bottom: calc(2 * var(--u)); }
 }
 .small-title { margin: 0 0 var(--u); line-height: var(--line); }
+
+/* Review block: closed by a rule before the page's own text begins. */
+.review > .label { font-style: normal; }
+@media (min-width: 1080px) {
+  .review { margin: 0 0 calc(6 * var(--u)); padding-bottom: calc(4 * var(--u)); border-bottom: 1px solid var(--rule); }
+  .review > .label { margin: 0 0 var(--u); line-height: var(--line); }
+}
+/* A tool's panel title looks the same at every width. */
+.tool h3 { font-style: normal; font-weight: 600; }
+.tool .stage > div + div { margin-top: calc(2 * var(--u)); }
+figure.multiples.two { gap: var(--gap); }
+.tool .readout + .panel-note { margin-top: calc(2 * var(--u)); }
