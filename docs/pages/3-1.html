@@ -23,6 +23,8 @@
   .merges:empty { display: none; }
   .merges li { break-inside: avoid; margin: 0; }
   .merges .n { color: var(--quiet); }
+  /* A row of buttons outside a named control takes the controls' face, like the buttons inside one. */
+  .tool .seg button { font-family: var(--font-label); }
   /* Fit to the layout grid (2026-11-20). */
   figure { margin: calc(2 * var(--u)) 0 var(--u); }
   .caption { margin: 0 0 calc(2 * var(--u)); }

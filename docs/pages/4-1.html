@@ -15,7 +15,7 @@
   @media (min-width: 1080px) { .above { grid-template-columns: var(--col) var(--side); column-gap: var(--gap); align-items: start; } }
   .four { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: calc(2 * var(--u)); margin: 0 0 calc(3 * var(--u)); }
   .four > div { min-width: 0; border-top: 1px solid var(--rule); padding-top: var(--u); }
-  .four .who { font-style: italic; color: var(--quiet); margin: 0 0 var(--u); width: auto; line-height: var(--line); min-height: calc(3 * var(--line)); }
+  .four .who { font-style: italic; color: var(--quiet); margin: 0 0 var(--u); width: auto; line-height: var(--line); min-height: calc(4 * var(--line)); }
   @media (max-width: 1079px) { .four { grid-template-columns: minmax(0, 1fr); } .four .who { min-height: 0; } }
   .out { font-size: var(--text); line-height: var(--line); overflow-wrap: anywhere; max-height: calc(13 * var(--line)); overflow-y: auto; }
   .out p, .out li { width: auto; font-size: var(--text); line-height: var(--line); margin: 0 0 var(--u); }
@@ -36,6 +36,8 @@
   .pipe .st.rl .sig { color: var(--second); }
   .pipe .arrow { flex: 0 0 var(--gap); align-self: center; text-align: center; color: var(--quiet); font-size: var(--text); }
   @media (max-width: 1079px) { .pipe .arrow { display: none; } .pipe { gap: calc(2 * var(--u)) var(--u); } }
+  /* The opening paragraph is one line long, so the list starts below the three-line initial instead of beside it. */
+  article > section:first-of-type > p:first-of-type + ol { clear: left; }
   /* Fit to the layout grid (2026-11-20). */
   figure { margin: calc(2 * var(--u)) 0 var(--u); }
   .caption { margin: 0 0 calc(2 * var(--u)); }

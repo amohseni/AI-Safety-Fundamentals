@@ -77,8 +77,10 @@ function drawFacts() {
   }
   for (let f = 0; f < nF; f++) {
     if (f === state.fact) continue;
-    c.line(`f${f}`, P.map((p, k) => [k, p[f][0]]), { color: 'rule', width: 1 });
+    c.line(`f${f}`, P.map((p, k) => [k, p[f][0]]), { color: 'quiet', width: 1 });
   }
+  // The other facts are a tint of the quiet ink: the rule color is too close to the paper for thin lines.
+  c.svg.selectAll('path[stroke="var(--quiet)"]').attr('stroke-opacity', 0.4);
   const mean = P.map((p, k) => [k, d3.mean(p, (r) => r[0])]);
   c.line('mean', mean, { color: 'ink', width: 2, label: 'average' });
   c.line('sel', P.map((p, k) => [k, p[state.fact][0]]), { color: 'accent', width: 2.2 });
