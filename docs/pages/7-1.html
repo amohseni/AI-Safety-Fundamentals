@@ -9,26 +9,33 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
-  table.jb { border-collapse: collapse; margin: 0.2rem 0 0.6rem; font-variant-numeric: lining-nums tabular-nums; }
-  table.jb th, table.jb td { padding: 0.15rem 0.55rem 0.15rem 0; text-align: right; font-weight: normal; vertical-align: baseline; }
+  /* Tables in the stage: as wide as the text column; the row name takes the spare width, numbers sit at the right edge. */
+  table.jb { border-collapse: collapse; width: 100%; margin: 0; line-height: var(--line); font-variant-numeric: lining-nums tabular-nums; }
+  table.jb th, table.jb td { padding: 0 0 0 1.2rem; text-align: right; font-weight: normal; vertical-align: baseline; white-space: nowrap; }
   table.jb th { color: var(--quiet); }
-  table.jb th.row { text-align: left; color: var(--ink); }
+  table.jb th.rname { text-align: left; color: var(--ink); width: 100%; padding-left: 0; white-space: normal; }
   table.jb thead th { border-bottom: 1px solid var(--rule); }
-  table.jb td.sep, table.jb th.sep { border-left: 1px solid var(--rule); padding-left: 0.55rem; }
-  table.jb tr.chosen-a th.row, table.jb tr.chosen-a td.val { color: var(--accent); }
-  table.jb tr.chosen-b th.row, table.jb tr.chosen-b td.val { color: var(--second); }
-  .tool .stage p.t-title { margin: 0.6rem 0 0.1rem; }
-  .dgrid { border-collapse: collapse; width: 100%; }
-  .dgrid th { font-weight: normal; color: var(--quiet); text-align: left; padding: 0 0.3rem 0 0; }
-  .dgrid td { padding: 0 0.25rem 0.35rem 0; vertical-align: top; }
-  .dgrid input[type="range"] { width: 100%; min-width: 3.5rem; }
-  .dgrid output { display: block; color: var(--ink); }
-  .tool .wide-controls { max-width: 24rem; flex-basis: 24rem; }
+  table.jb td.sep, table.jb th.sep { border-left: 1px solid var(--rule); }
+  table.jb td.terms { text-align: left; color: var(--quiet); padding: 0 0 var(--u); white-space: normal; }
+  table.jb tr.chosen-a th.rname, table.jb tr.chosen-a td.val { color: var(--accent); }
+  table.jb tr.chosen-b th.rname, table.jb tr.chosen-b td.val { color: var(--second); }
+  .tool .stage p.t-title { margin: calc(2 * var(--u)) 0 0; line-height: var(--line); }
+  .tool .stage p.t-title:first-child { margin-top: 0; }
+  /* Desirability sliders: each action's name on its own line, its three sliders under the three locations. */
+  .dgrid, .dgrid thead, .dgrid tbody { display: block; width: 100%; }
+  /* The third column is as wide as its heading, Elsewhere, which is the widest of the three. */
+  .dgrid tr { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 5.85rem; column-gap: 0.5rem; }
+  .dgrid th { font-weight: normal; color: var(--quiet); text-align: left; padding: 0; line-height: var(--line); }
+  .dgrid thead th:first-child { display: none; }
+  .dgrid tbody th { grid-column: 1 / -1; color: var(--ink); margin-top: calc(0.5 * var(--u)); }
+  .dgrid td { padding: 0; }
+  .dgrid input[type="range"] { width: 100%; min-width: 0; display: block; }
+  .dgrid output { display: block; color: var(--ink); line-height: var(--line); }
   .status-bad { color: var(--bad); }
-  svg.triangle text { font-family: et-book, Georgia, serif; font-size: var(--text); fill: var(--ink); }
+  svg.triangle text { font-family: et-book, Georgia, serif; font-size: var(--small); fill: var(--ink); }
   svg.triangle text.quiet { fill: var(--quiet); font-style: italic; }
   svg.triangle line, svg.triangle path { stroke: var(--quiet); stroke-width: 1; fill: none; }
-  @media (max-width: 760px) { .tool .wide-controls { max-width: none; } table.jb th, table.jb td { padding-right: 0.3rem; } table.jb td.sep, table.jb th.sep { padding-left: 0.3rem; } }
+  @media (max-width: 760px) { table.jb th, table.jb td { padding-left: 0.5rem; } }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>
@@ -56,7 +63,7 @@
   <div class="panel" id="panel-agent">
     <h3>The agent</h3>
     <p class="panel-note">A coding agent must choose which file to edit. The bug is in the parser, in the renderer, or elsewhere. Set the agent&rsquo;s <span class="c-accent">credences</span> in the three locations and its <span class="c-accent">desirabilities</span> for each action and location. The table shows the desirability of each action, computed by averaging, and the action the agent takes.</p>
-    <div class="row"><div class="controls wide-controls" id="agent-controls"></div><div class="stage" id="agent-stage"></div></div>
+    <div class="row"><div class="controls" id="agent-controls"></div><div class="stage" id="agent-stage"></div></div>
     <p class="readout" id="agent-readout" aria-live="polite"></p>
   </div>
 
