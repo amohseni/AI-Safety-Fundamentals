@@ -81,7 +81,7 @@
       <div id="fp-strip"></div>
     </div>
   </div>
-  <p class="panel-note">Each heat map row is one position; each column is one number. <span class="c-accent">Blue</span> is positive and <span class="c-second">orange</span> negative. Colors are cut off at the 99th percentile of the absolute values in that step, because a few entries of GPT-2&rsquo;s residual stream are hundreds of times larger than the rest; the values were rounded to 15 levels for display. The strip under the map shows all 124,439,808 parameters: the parameters used so far are <span class="c-accent">blue</span>, and those of the current step are outlined.</p>
+  <p class="panel-note">Each heat map row is one position; each column is one number. <span class="c-accent">Red</span> is positive and <span class="c-second">blue</span> negative. Colors are cut off at the 99th percentile of the absolute values in that step, because a few entries of GPT-2&rsquo;s residual stream are hundreds of times larger than the rest; the values were rounded to 15 levels for display. The strip under the map shows all 124,439,808 parameters: the parameters used so far are <span class="c-accent">red</span>, and those of the current step are outlined.</p>
 </div>
 
 <ol class="tasks">
@@ -102,7 +102,7 @@
   <li class="task" data-id="3.7-t3">
     <p class="prompt">Within one layer, what share of the parameters belong to the MLP?</p>
     <div class="choices" data-options="About a third|About half|About two thirds"></div>
-    <div class="after"><p>Step through one layer and add up the parameter counts, or watch how far the blue part of the strip moves.</p>
+    <div class="after"><p>Step through one layer and add up the parameter counts, or watch how far the red part of the strip moves.</p>
       <button class="show" type="button">Show what to notice</button>
       <div class="notice"><p>About two thirds: the MLP&rsquo;s two matrices and their biases hold 4,722,432 parameters, the attention&rsquo;s two matrices and their biases hold 2,362,368, and the two normalizations 3,072, out of 7,087,872 per layer. The MLP widens each vector by a factor of four, which is where its share comes from.</p></div></div>
   </li>

@@ -9,7 +9,8 @@ const copy = (a) => a.map((v) => v.slice());
 const state = { q: copy(START.q), k: copy(START.k), v: copy(START.v), sel: 3, causal: true, scale: true, table: 'weights' };
 // Labels get a paper-colored outline so lines passing under them do not cut through the letters.
 const halo = (sel) => sel.attr('stroke', 'var(--paper)').attr('stroke-width', 5).attr('stroke-linejoin', 'round').attr('paint-order', 'stroke');
-const SUB = (name, i) => `${name}<tspan dy="5">${i}</tspan>`;
+// The index is set as a subscript: lowered and at the size KaTeX gives a subscript, since the face has lining figures.
+const SUB = (name, i) => `${name}<tspan dy="4" font-size="0.75em">${i}</tspan>`;
 
 // A square plane in an SVG drawn at its true pixel width.
 function plane(container, { range = 3.4, maxW = 400 } = {}) {

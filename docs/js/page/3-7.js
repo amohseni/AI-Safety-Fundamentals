@@ -1,8 +1,10 @@
 // Page 3.7: step through one GPT-2 small forward pass, recorded in advance.
-import { button, cssVar } from '../lib/ui.js';
+import { button, cssVar, fontsReady } from '../lib/ui.js';
 import { steps, shapeOf, paramsThrough, tensorAt } from '../lib/s3j-gpt2.js';
 
 const d3 = window.d3;
+// Canvas text keeps the face that was loaded when it was drawn, so the faces are loaded first.
+await fontsReady();
 // Chart text is drawn at the --small size, read from the CSS so the canvas follows the tokens.
 function tokenPx(name) {
   const probe = document.createElement('span');
@@ -12,7 +14,7 @@ function tokenPx(name) {
   probe.remove();
   return v;
 }
-const FONT = `${tokenPx('--small')}px ${(getComputedStyle(document.documentElement).getPropertyValue('--font-data') || '').trim() || 'et-book, Georgia, serif'}`;
+const FONT = `${tokenPx('--small')}px ${(getComputedStyle(document.documentElement).getPropertyValue('--font-data') || '').trim() || 'sans-serif'}`;
 const S = steps();
 const fmtN = (v) => v.toLocaleString('en-US');
 const showTok = (t) => t.replace(/ /g, '·').replace(/\n/g, '↵');
@@ -173,7 +175,7 @@ function drawTensor(box, rec, st) {
     }
     const note = document.createElement('p');
     note.className = 'what';
-    note.textContent = `Row i of each square holds the weights position i puts on positions 1 to i (a stronger blue is more). Cells above the diagonal are masked.`;
+    note.textContent = `Row i of each square holds the weights position i puts on positions 1 to i (a stronger red is more). Cells above the diagonal are masked.`;
     box.append(note);
     return;
   }
@@ -181,7 +183,7 @@ function drawTensor(box, rec, st) {
   const cols = T.shape[1];
   const isP = st.key === 'probs';
   rowMap(box, rec, cols, (r, j) => T.values[r * cols + j] / 255, (v) => mixc(K.paper, K.accent, v),
-    isP ? 'Columns: the 50,257 tokens in order of id. A stronger blue means a higher probability.' : 'Columns: the 50,257 tokens in order of id. A stronger blue means a higher score.')
+    isP ? 'Columns: the 50,257 tokens in order of id. A stronger red means a higher probability.' : 'Columns: the 50,257 tokens in order of id. A stronger red means a higher score.')
     .setAttribute('aria-label', `Heat map, ${n} rows by 50,257 tokens, in ${cols} bins`);
   const ul = document.createElement('div');
   ul.className = 'tops';

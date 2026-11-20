@@ -130,7 +130,7 @@
   <div class="st rl"><p><b>4. Checkable tasks</b></p><p>math, code, and other problems with answers a program can check</p><p class="sig">the model&rsquo;s own outputs, scored</p></div>
 </div>
 </figure>
-<p id="fig-pipe-desc" class="caption">The four stages. In the first two the training signal is fixed text, and the loss is the cross-entropy of Section 2.5. In the last two (<span class="c-second">orange</span>) the model writes outputs, they are scored, and the model is trained to raise the score. OLMo 2 1B replaces stage 3 with DPO, which trains on fixed pairs of responses rated by an AI judge (GPT-4o), some of them written by OLMo&rsquo;s own SFT models.</p>
+<p id="fig-pipe-desc" class="caption">The four stages. In the first two the training signal is fixed text, and the loss is the cross-entropy of Section 2.5. In the last two (<span class="c-second">blue</span>) the model writes outputs, they are scored, and the model is trained to raise the score. OLMo 2 1B replaces stage 3 with DPO, which trains on fixed pairs of responses rated by an AI judge (GPT-4o), some of them written by OLMo&rsquo;s own SFT models.</p>
 
 <p>The tool shows what each stage did to one small model. Supervised fine-tuning made the largest change in behavior: answering in the role of an assistant, correcting a false premise, refusing a request, and stopping when done. Preference training made responses longer and more elaborate. The last stage, reinforcement learning on math problems and instructions with checkable constraints, changed little on these six prompts, apart from a more confident start on the math problem (the probability of its first token rose from 0.51 to 0.89). Through all of this, the knowledge test barely moved.</p>
 
