@@ -1,4 +1,4 @@
-// Checks every claim pages 1.6 makes about the stored outputs (data/1-6/*.json).
+// Checks every claim page 1.6 makes about the stored outputs (data/1-6/*.json). Exits nonzero if any claim fails.
 // Run: node tools/test-page-1-6.mjs
 import fs from 'node:fs';
 const d = JSON.parse(fs.readFileSync(new URL('../docs/data/1-6/outputs.json', import.meta.url)));
@@ -7,6 +7,7 @@ const o = (k) => d.outputs[k];
 let fails = 0;
 const check = (name, ok, got) => { console.log(`${ok ? 'ok  ' : 'FAIL'} ${name}${got !== undefined ? ': ' + got : ''}`); if (!ok) fails++; };
 
+check('eight prompts', d.prompts.length === 8, d.prompts.length);
 // Task 1: the base model continues the document only on the Einstein prompt (6): its text opens with a new question.
 const opensWithQuestion = [0, 1, 2, 3, 4, 5, 6, 7].filter((i) => /^\s*[^.!\n]*\?/.test(o(`base:${i}`).text.split('\n')[0]));
 check('base opens with a further question only on prompt 6', JSON.stringify(opensWithQuestion) === '[6]', JSON.stringify(opensWithQuestion));
@@ -19,6 +20,7 @@ check('chat model stopped by itself on all eight', [0, 1, 2, 3, 4, 5, 6, 7].ever
 check('chat says once', /\*\*once\*\*/.test(o('chat:1').text) && o('chat:1').tokens === 28, o('chat:1').tokens);
 check('reasoning says 3, with 319 thinking tokens', /\*\*3 times\*\*/.test(o('reasoning:1').text) && o('reasoning:1').thinking_tokens === 319);
 check('reasoning asks "Wait, is that correct?" and lists positions 3, 8, 9', o('reasoning:1').text.includes('Wait, is that correct?') && o('reasoning:1').text.includes('positions 3, 8, and 9'));
+check('reasoning numbers the ten letters', o('reasoning:1').text.includes('1. S\n2. T\n3. R') && o('reasoning:1').text.includes('10. Y'));
 check('base says twice', /twice/.test(o('base:1').text));
 
 // Task 3: bat and ball.
@@ -27,10 +29,12 @@ const frac = bb.text.indexOf('0.05') / bb.text.length;
 check('chat finds 0.05', /0\.05/.test(o('chat:5').text));
 check('reasoning hits the 3,000-token limit with no </think>', !bb.stopped && bb.tokens === 3000 && !bb.text.includes('</think>'));
 check('0.05 first appears about 350 tokens in', Math.abs(frac * 3000 - 350) < 60, Math.round(frac * 3000));
+check('reasoning checks $0.05: $0.05 plus $1.05 is $1.10, before it tries another way', bb.text.includes('$0.05 + $1.05 = $1.10') && bb.text.indexOf('$0.05 + $1.05 = $1.10') < bb.text.indexOf('another way'), `${bb.text.indexOf('$0.05 + $1.05 = $1.10')} < ${bb.text.indexOf('another way')}`);
 check('reasoning later gets 10 cents by taking the bat as $1.00', bb.text.includes('the ball would be 10 cents'));
 
 // Task 4: false premises.
 for (const m of ['base', 'chat', 'reasoning']) check(`${m} does not mention the photoelectric effect`, !/photoelectric/i.test(o(`${m}:6`).text));
+check('all three explain why he won it for relativity', ['base', 'chat', 'reasoning'].every((m) => /relativity/i.test(o(`${m}:6`).text)));
 check('base Mars: David Scott, 1976', /David Scott/.test(o('base:7').text) && /1976/.test(o('base:7').text));
 check('chat Mars: Neil Armstrong, then no record', /Neil Armstrong/.test(o('chat:7').text) && /no record of a person walking on Mars in 1969/.test(o('chat:7').text));
 check('reasoning Mars: Mariner 2', /Mariner 2/.test(o('reasoning:7').text.split('</think>')[1]));
@@ -38,4 +42,5 @@ check('reasoning Mars: Mariner 2', /Mariner 2/.test(o('reasoning:7').text.split(
 // After the tasks: parameter change.
 check('overall relative change 6.3%', Math.abs(w.overall_relative_change - 0.063) < 0.0006, w.overall_relative_change);
 check('median tensor 10.2%, max 18.6%, 310 tensors', Math.abs(w.median_tensor_relative_change - 0.102) < 0.0006 && Math.abs(w.max_tensor_relative_change - 0.186) < 0.0006 && w.tensors === 310);
-console.log(fails ? `${fails} failed` : 'all passed');
+console.log(fails ? `${fails} FAILED` : 'all checks passed');
+process.exit(fails ? 1 : 0);

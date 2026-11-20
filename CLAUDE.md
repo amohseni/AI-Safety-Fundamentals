@@ -20,12 +20,18 @@ An interactive explainer site that teaches a new graduate student how modern AI 
 | `docs/css/tufte.css`, `docs/css/site.css` | Tufte CSS (vendored, font paths edited) and the site layer with color tokens. |
 | `tools/` | `check.mjs` (browser check and screenshots), `build-registry.mjs`, `test-*.mjs` (numerical tests behind claims in the text). |
 
+## Tests
+
+Each `tools/test-page-<id>.mjs` recomputes the numbers that page's text quotes, with the page's own code and settings. Every number or behavior the text states must be an assertion, written with the `check(label, ok, got)` pattern of `tools/test-page-6-6.mjs`: the label states the claim as the page states it, and the script ends with `process.exit(fails ? 1 : 0)`. A script that only prints numbers is not a test. Compare a quoted number at the precision the text quotes it, and give a claim such as "about" or "most runs" a stated range. If the text and the code disagree, leave the assertion failing and fix the text or the code; do not loosen the assertion.
+
+Run one script with `node tools/test-page-<id>.mjs`, all of them with `node tools/run-tests.mjs` (about eleven minutes on 2 cores), or all but the slow ones with `node tools/run-tests.mjs --fast` (about four and a half minutes; the slow scripts, those that take over a minute, are listed in `SLOW` in `run-tests.mjs`). The tests need Node 22 and nothing else. GitHub Actions (`.github/workflows/test.yml`) runs the fast set on every push and pull request, and the full set every Monday and when started by hand.
+
 ## How a page is built
 
 1. Read the page's spec in `specs/` and the overview sections it depends on.
 2. Copy the structure of the reference pages, `docs/pages/2-5.html` and `docs/pages/2-4.html`: title, text with sidenotes for references, the static figure, the tool, the task list, check questions, the self-explanation box, the takeaway.
 3. Every task asks for a prediction before the reader can reveal what to notice (`.task` markup is documented in `docs/js/site.js`).
-4. Any claim a task or notice makes about what the tool will show must be tested numerically first (see `tools/test-mlp.mjs`). If a claim holds only in most runs, say so and give the numbers.
+4. Any claim a task or notice makes about what the tool will show must be tested numerically first, as an assertion in the page's test script (see Tests above). If a claim holds only in most runs, say so and give the numbers.
 5. Run `node tools/build-registry.mjs`, then `node tools/check.mjs <id>`; look at the desktop and phone screenshots.
 6. Have an agent that did not build the page review it against the checklist below before showing it to Aydin.
 7. Aydin reviews by section, using the Review column of the planning doc.
