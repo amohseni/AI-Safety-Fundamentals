@@ -23,6 +23,8 @@
   .tool .stage p.t-title:first-child { margin-top: 0; }
   /* Desirability sliders: each action's name on its own line, its three sliders under the three locations. */
   .dgrid, .dgrid thead, .dgrid tbody { display: block; width: 100%; }
+  /* The grid is a control, so it is set at the size of the other controls (.ctl in site.css). */
+  .dgrid th, .dgrid td, .dgrid output { font-size: 17px; }
   /* The third column is as wide as its heading, Elsewhere, which is the widest of the three. */
   .dgrid tr { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 5.85rem; column-gap: 0.5rem; }
   .dgrid th { font-weight: normal; color: var(--quiet); text-align: left; padding: 0; line-height: var(--line); }

@@ -33,7 +33,7 @@ segmented(ctl, { name: 'Statements shown', options: SHOWN, value: state.shown, o
 
 // ---- Plot: credence on the horizontal axis; dots spread up and down at random so they do not overlap ----
 const plotEl = document.getElementById('plot');
-const W = Math.max(260, plotEl.clientWidth || 630), H = 240, mx = 6; // the stage's own width: the text column
+const W = Math.max(260, plotEl.clientWidth || 612), H = 240, mx = 6; // the stage's own width: the text column
 const svg = d3.select(plotEl).append('svg').attr('class', 'chart').attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`)
   .attr('role', 'img').attr('aria-label', 'Statements placed left to right by the probe\u2019s credence that they are true');
 const xs = d3.scaleLinear().domain([0, 1]).range([mx, W - mx]);
@@ -44,7 +44,7 @@ svg.append('text').attr('x', W - mx).attr('y', H - 6).attr('text-anchor', 'end')
 svg.append('text').attr('x', xs(0.5)).attr('y', H - 6).attr('text-anchor', 'middle').text('0.5');
 const gDots = svg.append('g');
 // A fixed vertical position for each statement, from a hash of its index.
-const jitter = (i) => { let h = Math.imul(i + 1, 2654435761) >>> 0; h ^= h >>> 15; return (h % 1000) / 1000; };
+const jitter = (i) => { let h = Math.imul(i + 1, 2654435761) >>> 0; h ^= h >>> 15; return ((h >>> 0) % 1000) / 1000; }; // >>> 0: the xor gives a signed number, and a negative one put the dot above the plot
 
 function shownList() {
   const [topic, form] = state.shown.split('-');

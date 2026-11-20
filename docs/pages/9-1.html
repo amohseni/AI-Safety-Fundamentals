@@ -14,7 +14,8 @@
   ol.problems { list-style: none; padding: 0; margin: 0; width: 100%; }
   ol.problems > li { border-top: 1px solid var(--rule); padding: calc(2 * var(--u)) 0; margin: 0; }
   ol.problems > li[hidden] { display: none; }
-  ol.problems h3 { font-size: var(--text); font-style: italic; margin: 0 0 var(--u); font-weight: normal; line-height: var(--line); }
+  /* A problem's title is part of the list, not a panel title: it stays in the text column in the text face, out of the label rail. */
+  ol.problems h3 { position: static; width: auto; font-family: var(--font-text); font-size: var(--text); font-style: italic; letter-spacing: 0; text-transform: none; color: var(--ink); margin: 0 0 var(--u); font-weight: normal; line-height: var(--line); }
   ol.problems p { margin: 0; line-height: var(--line); width: auto; }
   ol.problems .k { color: var(--quiet); }
   ol.problems .pg a { text-decoration: none; background: none; border-bottom: 1px solid var(--rule); }
@@ -40,7 +41,7 @@
 <h2>Find a problem</h2>
 <div class="tool" id="tool">
   <div class="panel">
-    <p class="panel-note">Filter the problems by the kind of work, by the setup you have, or by the pages you have finished. A page counts as finished when you have answered its check question; finished pages are shown in <span class="c-accent">blue</span> and marked &ldquo;finished&rdquo;.</p>
+    <p class="panel-note">Filter the problems by the kind of work, by the setup you have, or by the pages you have finished. A page counts as finished when you have answered its check question; finished pages are shown in <span class="c-accent">red</span> and marked &ldquo;finished&rdquo;.</p>
     <div class="row"><div class="controls" id="controls"></div>
       <div class="stage"><p class="readout" id="readout" aria-live="polite"></p>
         <ol class="problems" id="problems"></ol></div></div>

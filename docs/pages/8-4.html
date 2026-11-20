@@ -9,6 +9,8 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
+  /* The first paragraph has a claim label inside it, which the shared rule for the initial takes for a paragraph that starts with one. This paragraph starts with a letter, so it gets the initial. */
+  body[data-page="8.4"] article > section:first-of-type > p:first-of-type::first-letter { font-style: normal; font-weight: 400; float: left; font-size: 3.05em; line-height: 0.82; padding: 0.07em 0.12em 0 0; color: var(--accent); }
   .stack { display: flex; flex-direction: column; gap: calc(2 * var(--u)); }
   svg.graph { display: block; max-width: 100%; touch-action: manipulation; }
   svg.graph text { font-family: var(--font-data); font-size: var(--small); fill: var(--quiet); font-variant-numeric: lining-nums tabular-nums; }
