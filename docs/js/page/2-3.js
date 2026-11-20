@@ -14,19 +14,22 @@ const MAX_STEPS = 2000, LR = 0.01, LO = -1.2, HI = 1.2, GRID = 300;
 (function figure() {
   const fig = document.getElementById('fig-acts');
   const curves = [['ReLU', ACTS.relu.f, [-1, 3]], ['GELU', ACTS.gelu.f, [-1, 3]], ['sigmoid', ACTS.sigmoid.f, [-0.2, 1.2]]];
-  for (const [name, f, yd] of curves) {
+  // All four boxes are laid out first, so each chart can be drawn at the true width of its box.
+  const boxes = [...curves.map(([name]) => name), 'softmax of 2, 1, 0'].map((name) => {
     const box = document.createElement('div');
     box.innerHTML = `<p class="small-title">${name}</p>`;
     fig.append(box);
-    const c = chart(box, { width: 300, height: 190, margin: { top: 16, right: 14, bottom: 34, left: 40 }, x: { domain: [-3, 3], ticks: 3 }, y: { domain: yd, ticks: 3 }, title: `${name} activation function` });
+    return box;
+  });
+  curves.forEach(([name, f, yd], i) => {
+    const box = boxes[i];
+    const c = chart(box, { width: box.clientWidth || 300, height: 190, margin: { top: 16, right: 14, bottom: 34, left: 40 }, x: { domain: [-3, 3], ticks: 3 }, y: { domain: yd, ticks: 3 }, title: `${name} activation function` });
     c.line('f', d3.range(-3, 3.001, 0.05).map((z) => [z, f(z)]), { color: 'ink', width: 2 });
-  }
+  });
   // Softmax of the scores (2, 1, 0).
-  const box = document.createElement('div');
-  box.innerHTML = '<p class="small-title">softmax of 2, 1, 0</p>';
-  fig.append(box);
+  const box = boxes[3];
   const s = [2, 1, 0].map(Math.exp), tot = s.reduce((a, b) => a + b), p = s.map((v) => v / tot);
-  const W = 220, H = 190, m = { top: 16, right: 14, bottom: 34, left: 40 };
+  const W = Math.max(200, box.clientWidth || 220), H = 190, m = { top: 16, right: 14, bottom: 34, left: 40 };
   const svg = d3.select(box).append('svg').attr('class', 'chart').attr('viewBox', `0 0 ${W} ${H}`).attr('width', W).attr('height', H)
     .attr('role', 'img').attr('aria-label', 'Softmax turns the scores 2, 1, 0 into probabilities 0.67, 0.24, 0.09');
   const g = svg.append('g').attr('transform', `translate(${m.left},${m.top})`);

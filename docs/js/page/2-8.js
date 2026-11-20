@@ -23,11 +23,17 @@ function fitChart(el, data, d, { width = 420, small = false } = {}) {
 // ---- Static figure ----
 (function figure() {
   const fig = document.getElementById('fig-fits'), data = sample(12, 0.3, 1);
-  for (const d of [1, 3, 15]) {
+  // The three boxes are laid out first, so each chart can be drawn at the true width of its box.
+  const degs = [1, 3, 15];
+  const boxes = degs.map((d) => {
     const box = document.createElement('div');
     box.innerHTML = `<p class="small-title">Degree ${d}</p>`;
     fig.append(box);
-    const c = fitChart(box, data, d, { width: 260, small: true });
+    return box;
+  });
+  for (const [i, d] of degs.entries()) {
+    const box = boxes[i];
+    const c = fitChart(box, data, d, { width: box.clientWidth || 260, small: true });
     const f = fit(data, d).f;
     c.line('fit', xs.map((x) => [x, clipY(f(x))]), { color: 'accent', width: 1.8 });
   }
@@ -55,11 +61,11 @@ function recompute() {
 
 function build() {
   for (const id of ['fit-chart', 'err-chart']) document.getElementById(id).innerHTML = '';
-  // The stages start empty, so their width is read from the tool; charts are drawn at their true width.
-  const avail = document.getElementById('tool').clientWidth || 420;
-  fc = fitChart(document.getElementById('fit-chart'), data, state.deg, { width: Math.min(420, avail) });
+  // Charts are drawn at the true width of their half of the tool.
+  const fitBox = document.getElementById('fit-chart'), errBox = document.getElementById('err-chart');
+  fc = fitChart(fitBox, data, state.deg, { width: fitBox.clientWidth || 420 });
   const thr = state.n - 1;
-  ec = chart(document.getElementById('err-chart'), { width: Math.min(420, avail), height: 300, margin: { top: 34, right: 54, bottom: 50, left: 58 },
+  ec = chart(errBox, { width: errBox.clientWidth || 420, height: 300, margin: { top: 34, right: 54, bottom: 50, left: 58 },
     x: { domain: [0, 30], label: 'degree', ticks: 6 }, y: { domain: [LO, HI], log: true, ticks: 5, format: pow10, label: 'mean squared error' },
     title: 'Training and test error against degree' });
   if (thr <= 30) ec.vline('thr', thr, { color: 'quiet', label: null });

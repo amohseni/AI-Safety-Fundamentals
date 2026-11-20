@@ -34,8 +34,9 @@ const pg = new Playground(canvas, { w: START.w, b: START.b, onChange: () => { st
 const out = document.getElementById('readout');
 const ctl = document.getElementById('controls');
 
-const errsChart = chart(document.getElementById('errs'), {
-  height: 200, margin: { top: 34, right: 30, bottom: 50, left: 46 },
+const errsBox = document.getElementById('errs');
+const errsChart = chart(errsBox, {
+  width: errsBox.clientWidth || 560, height: 200, margin: { top: 34, right: 30, bottom: 50, left: 46 },
   x: { domain: [1, 10], label: 'pass', ticks: 5, format: 'd' }, y: { domain: [0, 4], label: 'mistakes in the pass', ticks: 4, format: 'd' },
   title: 'Mistakes per pass through the data',
 });

@@ -6,12 +6,12 @@ const d3 = window.d3;
 
 // ---- Static figure: a neuron with three inputs ----
 (function figure() {
-  // Drawn at its true width (at most 300 pixels) so its labels stay at the text size.
-  const W = Math.max(260, Math.min(300, document.getElementById('fig-neuron').clientWidth || 300)), H = 230;
+  // Drawn at the true width of the text column, so its labels stay at their set size.
+  const W = Math.max(260, document.getElementById('fig-neuron').clientWidth || 300), H = 230;
   const svg = d3.select('#fig-neuron').append('svg').attr('class', 'chart').attr('viewBox', `0 0 ${W} ${H}`).attr('width', W).attr('height', H)
     .attr('role', 'img').attr('aria-label', 'Diagram of a neuron with three inputs, weights, a bias, a sum, an activation function, and an output');
   const ink = 'var(--ink)', quiet = 'var(--quiet)';
-  const sx = 136, sy = 120;
+  const sx = Math.round(W * 0.45), sy = 120;
   const ins = [[26, 40, 'x₁', 'w₁'], [26, 120, 'x₂', 'w₂'], [26, 200, 'x₃', 'w₃']];
   svg.append('defs').append('marker').attr('id', 'arr').attr('viewBox', '0 0 10 10').attr('refX', 9).attr('refY', 5)
     .attr('markerWidth', 7).attr('markerHeight', 7).attr('orient', 'auto').append('path').attr('d', 'M0,0 L10,5 L0,10 z').attr('fill', quiet);
@@ -25,7 +25,7 @@ const d3 = window.d3;
   svg.append('circle').attr('cx', sx).attr('cy', sy).attr('r', 22).attr('fill', 'none').attr('stroke', ink);
   svg.append('text').attr('x', sx).attr('y', sy + 7).attr('text-anchor', 'middle').attr('class', 'label-ink').text('Σ');
   svg.append('text').attr('x', sx).attr('y', sy - 32).attr('text-anchor', 'middle').text('+ b');
-  const ax = 184, aw = 46;
+  const aw = 46, ax = Math.max(sx + 48, Math.round(W * 0.61));
   svg.append('line').attr('x1', sx + 22).attr('y1', sy).attr('x2', ax - 4).attr('y2', sy).attr('stroke', quiet).attr('marker-end', 'url(#arr)');
   svg.append('text').attr('x', (sx + 22 + ax) / 2 - 2).attr('y', sy - 8).attr('text-anchor', 'middle').text('z');
   const curve = d3.range(-6, 6.01, 0.25).map((z) => [ax + ((z + 6) / 12) * aw, sy + 22 - 44 / (1 + Math.exp(-z))]);

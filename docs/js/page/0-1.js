@@ -56,11 +56,11 @@ function build() {
 
   // ---- layout ----
   const stage = document.getElementById('map-stage');
-  const W = Math.max(300, Math.min(820, stage.clientWidth || 600));
+  const W = Math.max(300, stage.clientWidth || 600);
   const wide = W >= 640;
-  const labelW = wide ? 250 : 0;
+  const labelW = wide ? 220 : 0;
   const maxN = Math.max(...sections.map((s) => s.pages.length));
-  const gap = Math.min(62, (W - labelW - 40) / (maxN - 1 || 1));
+  const gap = Math.min(96, (W - labelW - 40) / (maxN - 1 || 1));
   const rowH = wide ? 62 : 86;
   const top = wide ? 20 : 34;
   const pos = new Map();
@@ -80,7 +80,7 @@ function build() {
   sections.forEach((s, r) => {
     const y = top + r * rowH;
     if (wide) svgEl(svg, 'text', { x: 0, y: y + 6, class: 'quiet' }, `${s.n} ${SHORT[s.n]}`);
-    else svgEl(svg, 'text', { x: 6, y: y - 16, class: 'quiet' }, `${s.n} ${SHORT[s.n]}`);
+    else svgEl(svg, 'text', { x: 0, y: y - 16, class: 'quiet' }, `${s.n} ${SHORT[s.n]}`);
   });
   const nodeEls = new Map();
   pages.forEach((p) => {
@@ -165,11 +165,11 @@ function build() {
 // ---- Static figure: running examples as threads through the sections ----
 function threads() {
   const fig = document.getElementById('fig-threads');
-  const W = Math.max(300, Math.min(620, fig.clientWidth || 620));
+  const W = Math.max(300, fig.clientWidth || 620);
   const ex = data.examples;
-  const colW = Math.min(90, (W - 170) / ex.length);
+  const colW = Math.min(110, (W - 170) / ex.length);
   const x0 = W - colW * ex.length + colW / 2;
-  const headH = 190, rowH = 34;
+  const headH = 150, rowH = 34;
   const secs = sections.filter((s) => s.n >= 1);
   const H = headH + secs.length * rowH + 10;
   const svg = document.createElementNS(NS, 'svg');

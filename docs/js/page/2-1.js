@@ -8,20 +8,20 @@ const d3 = window.d3;
 
 // ---- Static figure: the box with knobs ----
 (function figure() {
-  // Drawn at its true width (at most 300 pixels) so its labels stay at the text size.
-  const W = Math.max(260, Math.min(300, document.getElementById('fig-box').clientWidth || 300)), H = 170;
+  // Drawn at the true width of the text column, with the box in the middle, so its labels stay at their set size.
+  const W = Math.max(260, document.getElementById('fig-box').clientWidth || 300), H = 170;
   const svg = d3.select('#fig-box').append('svg').attr('class', 'chart').attr('viewBox', `0 0 ${W} ${H}`).attr('width', W).attr('height', H)
     .attr('role', 'img').attr('aria-label', 'A box labeled f of x and theta, with an input arrow x, an output arrow y, and four knobs on top labeled theta');
   const quiet = 'var(--quiet)', ink = 'var(--ink)';
   svg.append('defs').append('marker').attr('id', 'arr21').attr('viewBox', '0 0 10 10').attr('refX', 9).attr('refY', 5)
     .attr('markerWidth', 7).attr('markerHeight', 7).attr('orient', 'auto').append('path').attr('d', 'M0,0 L10,5 L0,10 z').attr('fill', quiet);
-  const bx = 80, by = 70, bw = 140, bh = 70;
+  const bw = 140, bh = 70, bx = Math.round((W - bw) / 2), by = 70;
   svg.append('rect').attr('x', bx).attr('y', by).attr('width', bw).attr('height', bh).attr('fill', 'none').attr('stroke', ink);
   svg.append('text').attr('x', bx + bw / 2).attr('y', by + bh / 2 + 7).attr('text-anchor', 'middle').attr('class', 'label-ink').text('f(x; θ)');
-  svg.append('line').attr('x1', 22).attr('y1', by + bh / 2).attr('x2', bx - 4).attr('y2', by + bh / 2).attr('stroke', quiet).attr('marker-end', 'url(#arr21)');
-  svg.append('text').attr('x', 14).attr('y', by + bh / 2 + 7).attr('text-anchor', 'middle').attr('class', 'label-ink').text('x');
-  svg.append('line').attr('x1', bx + bw).attr('y1', by + bh / 2).attr('x2', W - 24).attr('y2', by + bh / 2).attr('stroke', quiet).attr('marker-end', 'url(#arr21)');
-  svg.append('text').attr('x', W - 12).attr('y', by + bh / 2 + 7).attr('text-anchor', 'middle').attr('class', 'label-ink').text('y');
+  svg.append('line').attr('x1', 18).attr('y1', by + bh / 2).attr('x2', bx - 4).attr('y2', by + bh / 2).attr('stroke', quiet).attr('marker-end', 'url(#arr21)');
+  svg.append('text').attr('x', 0).attr('y', by + bh / 2 + 6).attr('text-anchor', 'start').attr('class', 'label-ink').text('x');
+  svg.append('line').attr('x1', bx + bw).attr('y1', by + bh / 2).attr('x2', W - 18).attr('y2', by + bh / 2).attr('stroke', quiet).attr('marker-end', 'url(#arr21)');
+  svg.append('text').attr('x', W).attr('y', by + bh / 2 + 6).attr('text-anchor', 'end').attr('class', 'label-ink').text('y');
   const angles = [-40, 25, 70, -10];
   angles.forEach((ang, i) => {
     const cx = bx + 22 + i * 32, cy = by - 16;
@@ -55,16 +55,16 @@ function build() {
       onInput: (v) => { p[q.k] = v; draw(); } });
   }
   for (const id of ['data-chart', 'map-chart']) document.getElementById(id).innerHTML = '';
-  // The stages start empty, so their width is read from the tool; charts are drawn at their true width.
-  const avail = document.getElementById('tool').clientWidth || 420;
-  dataC = chart(document.getElementById('data-chart'), { width: Math.min(420, avail), height: 300, margin: { top: 34, right: 20, bottom: 50, left: 46 },
+  // Charts are drawn at the true width of their half of the tool.
+  const dataBox = document.getElementById('data-chart'), mapBox = document.getElementById('map-chart');
+  dataC = chart(dataBox, { width: dataBox.clientWidth || 420, height: 300, margin: { top: 34, right: 20, bottom: 50, left: 46 },
     x: { domain: m.xDomain, label: 'x' }, y: { domain: m.yDomain, label: 'y' }, title: 'The data and the model' });
   dataC.res = dataC.g.insert('g', ':first-child');
   dataC.pts = dataC.g.append('g');
   dataC.pts.selectAll('circle').data(m.data.X).join('circle').attr('cx', (x) => dataC.x(x)).attr('cy', (x, i) => dataC.y(m.data.Y[i])).attr('r', 3.5).attr('fill', 'var(--ink)');
   const [kx, ky] = m.map;
   const qx = m.params.find((q) => q.k === kx), qy = m.params.find((q) => q.k === ky);
-  mapC = chart(document.getElementById('map-chart'), { width: Math.min(340, avail), height: 300, margin: { top: 34, right: 20, bottom: 50, left: 46 },
+  mapC = chart(mapBox, { width: mapBox.clientWidth || 340, height: 300, margin: { top: 34, right: 20, bottom: 50, left: 46 },
     x: { domain: [qx.min, qx.max], label: qx.name }, y: { domain: [qy.min, qy.max], label: qy.name }, title: 'Map of the loss over two parameters' });
   mapC.bands = mapC.g.insert('g', ':first-child');
   const setFromPointer = (ev) => {

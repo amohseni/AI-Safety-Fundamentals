@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
-  svg.map text, svg.threads text { font-family: et-book, Georgia, serif; font-size: var(--text); fill: var(--ink); }
+  svg.map text, svg.threads text { font-family: et-book, Georgia, serif; font-size: var(--small); fill: var(--ink); font-variant-numeric: lining-nums tabular-nums; }
   svg.map text.quiet, svg.threads text.quiet { fill: var(--quiet); }
   svg.map text { paint-order: stroke; stroke: var(--paper); stroke-width: 5px; stroke-linejoin: round; }
   svg.map .edge { fill: none; stroke: var(--rule); stroke-width: 1; }
@@ -38,8 +38,13 @@
   .tool select { font: inherit; font-size: var(--text); color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 3px; padding: 0.1rem 0.3rem; }
   .tool .pair { display: flex; gap: 0.8rem; flex-wrap: wrap; }
   .tool .pair label { display: flex; flex-direction: column; gap: 0.2rem; color: var(--quiet); }
+  /* The map needs both columns: the controls sit in a row above it. */
   #map-stage { min-height: 20rem; flex-basis: 100%; }
-  #tool .controls { max-width: none; flex-basis: 100%; flex-direction: row; flex-wrap: wrap; align-items: flex-end; }
+  #tool .controls { max-width: none; flex-basis: 100%; flex-direction: row; flex-wrap: wrap; align-items: flex-end; gap: var(--u) calc(2 * var(--u)); }
+  @media (min-width: 1080px) {
+    #tool .row { display: block; }
+    #tool .row > .controls { margin-bottom: calc(2 * var(--u)); }
+  }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>
