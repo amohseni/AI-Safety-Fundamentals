@@ -10,7 +10,8 @@
 <link rel="stylesheet" href="../css/site.css">
 <style>
   #ablation:empty { display: none; }
-  figure#fig-layers > div { flex: 1 1 14rem; }
+  /* The note under the readouts: a full line above it, none below (the tool ends there). */
+  .tool .readout + .panel-note { margin: calc(2 * var(--u)) 0 0; }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>

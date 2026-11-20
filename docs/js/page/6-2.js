@@ -104,10 +104,10 @@ function dayLabels(mp, s2) {
   // Day names sit just outside each day's cluster.
   plot.setLabels(dayLabels(mp, s2));
   const strip = document.getElementById('wd-strip');
-  const W = Math.max(260, Math.min(520, strip.clientWidth || 520));
+  const W = Math.max(260, strip.clientWidth || 520);
   const svg = d3.select(strip).append('svg').attr('class', 'chart').attr('width', W).attr('height', 120).attr('viewBox', `0 0 ${W} 120`)
     .attr('role', 'img').attr('aria-label', 'Where each day falls along the arrow');
-  svg.append('line').attr('x1', 10).attr('x2', W - 10).attr('y1', 60).attr('y2', 60).attr('stroke', 'var(--rule)');
+  svg.append('line').attr('x1', 0).attr('x2', W).attr('y1', 60).attr('y2', 60).attr('stroke', 'var(--rule)');
   const ticks = svg.selectAll('g.t').data(DAYS).join('g').attr('class', 't');
   ticks.append('line').attr('y1', 52).attr('y2', 68).attr('stroke', 'var(--ink)');
   ticks.append('text').attr('text-anchor', 'middle').attr('class', 'label-ink');
@@ -147,13 +147,13 @@ function dayLabels(mp, s2) {
   const cxy = cities.map((s) => [dot(T.X[s.i], b.e1), dot(T.X[s.i], b.e2)]);
   const m1 = [0, 1].map((j) => cxy.reduce((a, p) => a + p[j], 0) / cxy.length);
   const s1 = robustScale(cxy.flatMap((p) => [p[0] - m1[0], p[1] - m1[1]]));
-  const p1 = scatterArrow(box1, { height: 300, maxWidth: 340, interactive: false, label: 'True and false city statements with the difference of class means drawn as an arrow' });
+  const p1 = scatterArrow(box1, { height: 300, interactive: false, label: 'True and false city statements with the difference of class means drawn as an arrow' });
   p1.setPoints(cities.map((s, k) => ({ x: cxy[k][0] - m1[0], y: cxy[k][1] - m1[1], kind: s.label ? 'a' : 'b' })), { fixedScale: s1 }).setAngle(0);
   const X = rows(decodeF16(wdJson.X), wdJson.k);
   const { e1, e2, means, center } = weekdayPlane(X, wdJson.day);
   const pts = X.map((x) => { const c = center(x); return { x: dot(c, e1), y: dot(c, e2), kind: 'q' }; });
   const s2 = Math.max(...pts.map((p) => Math.max(Math.abs(p.x), Math.abs(p.y)))) * 1.05;
-  const p2 = scatterArrow(box2, { height: 300, maxWidth: 340, arrow: false, interactive: false, label: 'The seven weekday names arranged on a circle in weekly order' });
+  const p2 = scatterArrow(box2, { height: 300, arrow: false, interactive: false, label: 'The seven weekday names arranged on a circle in weekly order' });
   p2.setPoints(pts, { fixedScale: s2 * 1.25 });
   p2.setLabels(dayLabels(means.map((m) => ({ x: dot(m, e1), y: dot(m, e2) })), s2));
 })();

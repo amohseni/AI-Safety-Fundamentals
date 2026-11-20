@@ -1,10 +1,11 @@
 // Views for Section 6 pages: an arrow view for directions in a 2- or 3-dimensional space (canvas),
-// a heat map for a matrix, and a bar chart, all drawn at true pixel width so labels stay at 16pt.
+// a heat map for a matrix, and a bar chart, all drawn at true pixel width so labels stay at the small size (--small).
 // Colors are named by role ('accent', 'second', 'ink', 'quiet', 'rule') and read from the CSS tokens.
 import { cssVar } from './ui.js';
 
 const d3 = window.d3;
-const FONT = '21.33px et-book, Georgia, serif';
+// Canvas labels are chart text: the size comes from the --small token.
+const font = () => `${cssVar('--small') || '13pt'} et-book, Georgia, serif`;
 const TOKEN = { accent: '--accent', second: '--second', ink: '--ink', quiet: '--quiet', rule: '--rule', paper: '--paper' };
 const col = (name) => cssVar(TOKEN[name] || '--ink');
 
@@ -12,7 +13,7 @@ const col = (name) => cssVar(TOKEN[name] || '--ink');
 // items: [{ vec: [x, y(, z)], color, width, dash, label, alpha }]
 // points: [[x, y(, z)], ...] drawn as small dots; axes: names of the coordinate axes; highlight: index of an axis in accent.
 export class ArrowView {
-  constructor(canvas, { dim = 2, interactive = true, maxSide = 520 } = {}) {
+  constructor(canvas, { dim = 2, interactive = true, maxSide = Infinity } = {}) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
     this.dim = dim;
@@ -70,7 +71,7 @@ export class ArrowView {
     ctx.clearRect(0, 0, side, side);
     const pad = 34, s = (side / 2 - pad) / this.extent;
     const P = (v) => { const p = this._proj(v); return [side / 2 + p[0] * s, side / 2 - p[1] * s, p[2]]; };
-    ctx.font = FONT;
+    ctx.font = font();
     ctx.textBaseline = 'middle';
 
     // Coordinate axes.
@@ -160,7 +161,8 @@ export class ArrowView {
 }
 
 // ---- Heat map: matrix M (rows x cols), positive entries in accent, negative in second ----
-export function heatmap(container, { title = '', maxWidth = 360 } = {}) {
+// The cells fill the container's width. They are square unless maxCellHeight caps their height.
+export function heatmap(container, { title = '', maxWidth = Infinity, maxCellHeight = Infinity } = {}) {
   const svg = d3.select(container).append('svg').attr('class', 'chart').attr('role', 'img').attr('aria-label', title);
   const g = svg.append('g');
   const labels = svg.append('g');
@@ -168,21 +170,21 @@ export function heatmap(container, { title = '', maxWidth = 360 } = {}) {
     update(M, { max = 1, rowLabel = (i) => i + 1, colLabel = (j) => j + 1, top = 'columns', left = 'rows', every = 1 } = {}) {
       const R = M.length, C = M[0].length;
       const lw = 44, th = 52;
-      const avail = Math.max(220, Math.min(maxWidth, container.clientWidth || maxWidth));
-      const cell = Math.max(6, Math.min(40, Math.floor((avail - lw) / C)));
-      const W = lw + cell * C, H = th + cell * R + 4;
+      const avail = Math.max(220, Math.min(maxWidth, container.clientWidth || 360));
+      const cell = Math.max(6, (avail - lw) / C), cellH = Math.min(cell, maxCellHeight);
+      const W = lw + cell * C, H = th + cellH * R + 4;
       svg.attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`);
       const data = [];
       M.forEach((row, i) => row.forEach((v, j) => data.push({ i, j, v })));
       g.selectAll('rect').data(data).join('rect')
-        .attr('x', (d) => lw + d.j * cell).attr('y', (d) => th + d.i * cell).attr('width', cell - 1).attr('height', cell - 1)
+        .attr('x', (d) => lw + d.j * cell).attr('y', (d) => th + d.i * cellH).attr('width', cell - 1).attr('height', cellH - 1)
         .attr('fill', (d) => (d.v >= 0 ? 'var(--accent)' : 'var(--second)'))
         .attr('fill-opacity', (d) => Math.min(1, Math.abs(d.v) / max));
       const rl = [], cl = [];
       for (let i = 0; i < R; i++) if (i % every === 0 || i === R - 1) rl.push(i);
       for (let j = 0; j < C; j++) if (j % every === 0 || j === C - 1) cl.push(j);
       labels.selectAll('text.r').data(rl).join('text').attr('class', 'r').attr('text-anchor', 'end')
-        .attr('x', lw - 6).attr('y', (i) => th + i * cell + cell / 2 + 6).text((i) => rowLabel(i));
+        .attr('x', lw - 6).attr('y', (i) => th + i * cellH + cellH / 2 + 6).text((i) => rowLabel(i));
       labels.selectAll('text.c').data(cl).join('text').attr('class', 'c').attr('text-anchor', 'middle')
         .attr('x', (j) => lw + j * cell + cell / 2).attr('y', th - 8).text((j) => colLabel(j));
       labels.selectAll('text.t').data([top]).join('text').attr('class', 't').attr('x', lw).attr('y', 18).text((d) => d);
@@ -192,7 +194,7 @@ export function heatmap(container, { title = '', maxWidth = 360 } = {}) {
 }
 
 // ---- Bar chart with a zero line, optional dashed reference lines, and value-free labels ----
-export function bars(container, { title = '', height = 250, maxWidth = 420 } = {}) {
+export function bars(container, { title = '', height = 250, maxWidth = Infinity } = {}) {
   const svg = d3.select(container).append('svg').attr('class', 'chart').attr('role', 'img').attr('aria-label', title);
   const m = { top: 44, right: 12, bottom: 58, left: 48 };
   const g = svg.append('g').attr('transform', `translate(${m.left},${m.top})`);
@@ -204,7 +206,7 @@ export function bars(container, { title = '', height = 250, maxWidth = 420 } = {
   const xl = svg.append('text').attr('text-anchor', 'end');
   return {
     update(values, { domain = [0, 1.5], yLabel = '', xLabel = '', ref = [], color = 'accent', every = 1, tickLabel = (i) => i + 1 } = {}) {
-      const avail = Math.max(260, Math.min(maxWidth, container.clientWidth || maxWidth));
+      const avail = Math.max(260, Math.min(maxWidth, container.clientWidth || 420));
       const iw = avail - m.left - m.right, ih = height - m.top - m.bottom;
       svg.attr('width', avail).attr('height', height).attr('viewBox', `0 0 ${avail} ${height}`);
       const x = d3.scaleBand().domain(values.map((_, i) => i)).range([0, iw]).padding(0.25);

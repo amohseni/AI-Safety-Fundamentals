@@ -9,30 +9,38 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
-  #map { display: grid; grid-template-columns: minmax(8rem, 1.1fr) repeat(3, minmax(0, 1fr)); gap: 0; max-width: 54rem; margin: 0.6rem 0 1rem; }
-  #map .map-col { color: var(--quiet); padding: 0 0.5rem 0.4rem; border-bottom: 1px solid var(--rule); }
+  /* The map is a table across both columns. Its first three columns divide the text column in
+     three, and its last column is the margin column, so every column starts on a grid edge. */
+  #mode { margin-bottom: calc(2 * var(--u)); }
+  #map { display: grid; grid-template-columns: minmax(8rem, 1.1fr) repeat(3, minmax(0, 1fr)); gap: 0; margin: 0 0 calc(2 * var(--u)); }
+  #map .map-col { color: var(--quiet); padding: 0 1rem var(--u) 0; border-bottom: 1px solid var(--rule); line-height: var(--line); }
   #map .map-corner { border-bottom: 1px solid var(--rule); }
-  #map .map-row { color: var(--quiet); padding: 0.6rem 0.5rem 0.6rem 0; border-bottom: 1px solid var(--rule); line-height: 1.35; }
+  #map .map-row { color: var(--quiet); padding: var(--u) 1rem var(--u) 0; border-bottom: 1px solid var(--rule); line-height: var(--line); }
   #map .map-row .kind { font-style: italic; }
-  #map .map-cell { display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem; padding: 0.6rem 0.5rem; border-bottom: 1px solid var(--rule); }
-  #map .map-cell button { text-align: left; line-height: 1.3; padding: 0.2rem 0.55rem; }
+  #map .map-cell { display: flex; flex-direction: column; align-items: flex-start; gap: calc(0.5 * var(--u)); padding: var(--u) 1rem var(--u) 0; border-bottom: 1px solid var(--rule); }
+  #map .map-cell button { text-align: left; line-height: 1.5; }
   #map .map-cell button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
-  #card, #quiz { width: 61%; min-height: 6rem; }
-  #card dl { margin: 0.3rem 0 0; }
-  #card dt { color: var(--quiet); font-style: italic; margin-top: 0.4rem; }
-  #card dd { margin: 0 0 0 1.2rem; }
-  #card p, #quiz p { margin: 0.3rem 0; }
+  #card, #quiz { min-height: calc(6 * var(--u)); }
+  #card dl { margin: var(--u) 0 0; }
+  #card dt { color: var(--quiet); font-style: italic; margin-top: var(--u); }
+  #card dd { margin: 0 0 0 2rem; }
+  #card p, #quiz p { margin: 0 0 var(--u); line-height: var(--line); }
   .quiet { color: var(--quiet); }
   #map, #card, #quiz, #map .map-row, #map .map-col { font-size: var(--text); }
-  #quiz .claim-text { margin: 0.5rem 0 0.6rem; }
-  #quiz #kind { margin: 0.6rem 0; }
-  #quiz #qbtns { margin: 0.3rem 0 0.6rem; }
-  #mode { margin-bottom: 0.4rem; }
+  #quiz .claim-text { margin: var(--u) 0; }
+  #quiz #kind { margin: calc(2 * var(--u)) 0 var(--u); }
+  #quiz #qbtns { margin: var(--u) 0 calc(2 * var(--u)); }
+  /* Two diagrams side by side: each takes half of both columns, less the gap. */
+  #fig-evidence { gap: var(--gap); }
+  @media (min-width: 1080px) {
+    #map { grid-template-columns: repeat(3, calc(var(--col) / 3)) calc(var(--gap) + var(--side)); }
+    #map > :nth-child(4n) { padding-left: var(--gap); padding-right: 0; }
+    #card, #quiz { width: var(--col); }
+  }
   @media (max-width: 760px) {
-    #card, #quiz { width: 100%; }
     #map { grid-template-columns: 1fr; }
     #map .map-col, #map .map-corner { display: none; }
-    #map .map-row { border-bottom: 0; padding-top: 1rem; color: var(--ink); }
+    #map .map-row { border-bottom: 0; padding-top: 1rem; padding-bottom: 0; color: var(--ink); }
     #map .map-cell { border-bottom: 0; padding: 0.2rem 0 0.4rem; }
     #map .map-cell::before { content: attr(data-label); color: var(--quiet); font-style: italic; }
   }

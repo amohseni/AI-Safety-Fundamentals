@@ -12,7 +12,7 @@
   /* The large plot is square and as wide as the text column. */
   .overlay { width: 100%; aspect-ratio: 1 / 1; }
   /* The rows of unit pictures: a name and four pictures across the text column. */
-  .unit-rows { margin-top: calc(2 * var(--u)); }
+  .unit-rows { margin-top: calc(2 * var(--u)); font-size: var(--text); }
   .unit-row { display: grid; grid-template-columns: 4rem repeat(4, minmax(0, 1fr)); gap: var(--u); align-items: center; margin-bottom: var(--u); }
   .unit-row.head { margin-bottom: 0; }
   .unit-row.head span { color: var(--quiet); line-height: var(--line); }

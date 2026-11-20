@@ -9,7 +9,11 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
-  .tool .readout + .panel-note { margin-top: 1.2rem; }
+  /* The similarity matrix is a second block under the readout, in the text column. */
+  .tool .readout + .panel-note { margin-top: calc(4 * var(--u)); }
+  @media (min-width: 1080px) { #sim { width: var(--col); } }
+  /* The picture and the chart side by side: each takes half of both columns, less the gap. */
+  #fig-decomp { gap: var(--gap); }
   #fig-decomp canvas { display: block; }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>

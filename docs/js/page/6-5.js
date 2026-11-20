@@ -38,7 +38,7 @@ const figDraw = [];
   const right = document.createElement('div');
   right.innerHTML = '<p class="small-title">The code: one number per unit</p>';
   fig.append(left, right);
-  const v = new ArrowView(c, { dim: 2, interactive: false, maxSide: 300 });
+  const v = new ArrowView(c, { dim: 2, interactive: false });
   v.extent = 1.3;
   const dB = [D[1] * f[1], D[6] * f[1]], dC = [D[2] * f[2], D[7] * f[2]];
   v.items = [
@@ -59,7 +59,9 @@ const figDraw = [];
   };
   const chartBox = document.createElement('div');
   right.append(chartBox);
-  const b = bars(chartBox, { title: 'Code values for units A to E', height: 230, maxWidth: 300 });
+  // Beside the arrow picture the chart is as tall as the picture, which is square; stacked on a phone it is shorter.
+  const beside = right.getBoundingClientRect().left > left.getBoundingClientRect().left + 10;
+  const b = bars(chartBox, { title: 'Code values for units A to E', height: beside ? left.clientWidth : 230 });
   const drawAll = () => { drawSum(); b.update(f, { domain: [0, 1], yLabel: 'unit activation', xLabel: 'unit', tickLabel: (i) => LETTERS[i] }); };
   figDraw.push(drawAll);
 })();
@@ -67,7 +69,7 @@ const figDraw = [];
 // ---- The tool ----
 const canvas = document.getElementById('plane');
 const view = new ArrowView(canvas, { dim: 2, interactive: false });
-const heat = heatmap(document.getElementById('sim'), { title: 'Cosine similarity between true features and dictionary units', maxWidth: 520 });
+const heat = heatmap(document.getElementById('sim'), { title: 'Cosine similarity between true features and dictionary units', maxCellHeight: 40 });
 const out = document.getElementById('readout');
 const matches = document.getElementById('matches');
 let sae = null, raf = null, training = false, last = null;
