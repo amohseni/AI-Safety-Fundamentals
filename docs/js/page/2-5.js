@@ -30,12 +30,18 @@ const changed = () => listeners.forEach((f) => f());
 // ---- Static figure: three small multiples at p = 0.7 ----
 (function figure() {
   const fig = document.getElementById('fig-rules');
-  for (const rule of ['log', 'brier', 'linear']) {
+  // The three boxes are laid out first, so each chart can be drawn at the true width of its box.
+  const rules = ['log', 'brier', 'linear'];
+  const boxes = rules.map((rule) => {
     const box = document.createElement('div');
     box.innerHTML = `<p class="small-title">${RULES[rule].name} rule</p>`;
     fig.append(box);
+    return box;
+  });
+  for (const [i, rule] of rules.entries()) {
+    const box = boxes[i];
     const pts = curve(rule, 0.7);
-    const c = chart(box, { width: 300, height: 220, margin: { top: 16, right: 20, bottom: 36, left: 46 },
+    const c = chart(box, { width: box.clientWidth || 300, height: 220, margin: { top: 16, right: 20, bottom: 36, left: 46 },
       x: { domain: [0, 1], ticks: 3 }, y: { domain: [0, 1.2], ticks: 3 }, title: `${RULES[rule].name} rule, expected loss` });
     c.line('c', pts, { color: 'ink' });
     const [bq, bv] = argmin(rule, 0.7);
@@ -54,7 +60,9 @@ const changed = () => listeners.forEach((f) => f());
     onInput: (v) => { state.q = v; changed(); } });
   ctl.dataset.ready = '1';
 
-  const c = chart(document.getElementById('one-chart'), {
+  const oneBox = document.getElementById('one-chart');
+  const c = chart(oneBox, {
+    width: oneBox.clientWidth || 560,
     x: { domain: [0, 1], label: 'report q' }, y: { domain: [0, 2.5], label: 'expected loss' }, title: 'Expected loss against the report',
   });
   // Drag on the chart to set q.
@@ -89,7 +97,9 @@ const changed = () => listeners.forEach((f) => f());
   const N = 1000;
   const ctl = document.getElementById('many-controls');
   const out = document.getElementById('many-readout');
-  const c = chart(document.getElementById('many-chart'), {
+  const manyBox = document.getElementById('many-chart');
+  const c = chart(manyBox, {
+    width: manyBox.clientWidth || 560,
     x: { domain: [1, N], label: 'number of events' }, y: { domain: [0, 1.5], label: 'average loss so far' }, title: 'Average loss of three forecasters',
   });
   let seed = 11, n = 0, outcomes = [], raf = null;
@@ -144,7 +154,7 @@ const changed = () => listeners.forEach((f) => f());
   let model = [0.2, 0.2, 0.2, 0.2, 0.2];
   const ctl = document.getElementById('tok-controls');
   const out = document.getElementById('tok-readout');
-  const W = Math.max(280, Math.min(520, document.getElementById('tok-chart').clientWidth || 520)), H = 300, m = { top: 34, right: 16, bottom: 40, left: 52 };
+  const W = Math.max(280, document.getElementById('tok-chart').clientWidth || 520), H = 300, m = { top: 34, right: 16, bottom: 40, left: 52 };
   const svg = d3.select('#tok-chart').append('svg').attr('class', 'chart').attr('viewBox', `0 0 ${W} ${H}`).attr('width', W).attr('height', H)
     .attr('role', 'group').attr('aria-label', 'Model probabilities for five next tokens; each bar is adjustable');
   const g = svg.append('g').attr('transform', `translate(${m.left},${m.top})`);

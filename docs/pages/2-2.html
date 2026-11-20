@@ -9,10 +9,12 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
-  .tool .plane { width: 100%; aspect-ratio: 1 / 1; max-width: 460px; outline-offset: 4px; }
+  .tool .plane { width: 100%; aspect-ratio: 1 / 1; max-width: 100%; outline-offset: 4px; }
   #fig-neuron svg { max-width: 100%; height: auto; }
-  table.sums { border-collapse: collapse; margin-top: 0.6rem; }
-  table.sums td, table.sums th { padding: 0.1rem 0.9rem 0.1rem 0; text-align: right; font-weight: normal; }
+  /* The table of sums is as wide as the text column: the first column starts at its left edge, the last ends at its right edge. */
+  table.sums { border-collapse: collapse; width: 100%; margin-top: var(--u); line-height: var(--line); }
+  table.sums td, table.sums th { padding: 0 0 0 0.9rem; text-align: right; font-weight: normal; }
+  table.sums td:first-child, table.sums th:first-child { padding-left: 0; text-align: left; }
   table.sums th { color: var(--quiet); }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>

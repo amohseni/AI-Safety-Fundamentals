@@ -11,13 +11,17 @@
 <style>
   /* The one-word title is wider than a phone screen at the h1 size. */
   h1 { hyphens: auto; overflow-wrap: break-word; }
+  /* The graph spans both columns; the controls sit in a row above it. */
   #tool .row { flex-direction: column; }
-  #tool .controls { flex-direction: row; flex-wrap: wrap; align-items: flex-start; max-width: none; flex: 1 1 100%; gap: 0.9rem 1.6rem; }
+  #tool .controls { flex-direction: row; flex-wrap: wrap; align-items: flex-start; max-width: none; flex: 1 1 100%; gap: var(--u) calc(2 * var(--u)); }
   #tool .controls .ctl { flex: 1 1 11rem; max-width: 16rem; }
   #tool .stage { flex: 1 1 100%; width: 100%; }
-  #readout p { margin: 0 0 0.6rem; }
-  #fig-graph { max-width: 90%; }
-  @media (max-width: 760px) { #fig-graph { max-width: 100%; } }
+  @media (min-width: 1080px) {
+    #tool .row { display: block; }
+    #tool .row > .controls { margin-bottom: calc(2 * var(--u)); }
+  }
+  #readout p { margin: 0 0 var(--u); }
+  @media (max-width: 760px) { #tool .controls .ctl { flex-basis: 100%; max-width: none; } }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>
@@ -69,7 +73,7 @@ $$\frac{\partial L}{\partial w_1} = \frac{\partial L}{\partial a}\,\sigma'(z)\,x
   </li>
 </ol>
 
-<figure id="fig-graph" aria-describedby="fig-graph-desc"></figure>
+<figure class="wide" id="fig-graph" aria-describedby="fig-graph-desc"></figure>
 <p id="fig-graph-desc" class="caption">The computation graph for \(L = (w_2\,\sigma(w_1 x + b) - y)^2\) with \(x = 1.5\), \(w_1 = 0.8\), \(b = -0.5\), \(w_2 = 2\), \(y = 0.5\). Under each node, the first number is its value from the forward pass, and the second, in blue, is the derivative of \(L\) with respect to that node from the backward pass, starting from 1 at \(L\).</p>
 </section>
 

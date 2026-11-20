@@ -23,7 +23,7 @@ function contourMap(c, S) {
 }
 function squareChart(el, S, extra = {}) {
   const m = { top: 30, right: 20, bottom: 50, left: 46 };
-  const w = Math.max(280, Math.min(extra.width || 440, el.clientWidth || 440));
+  const w = Math.max(280, el.clientWidth || extra.width || 440); // the true width of its half of the tool
   return chart(el, { width: w, height: w - m.left - m.right + m.top + m.bottom, margin: m,
     x: { domain: S.xd, label: 'x', ticks: 5 }, y: { domain: S.yd, label: 'y', ticks: 5 }, title: extra.title || `Map of the ${S.name.toLowerCase()} loss` });
 }
@@ -32,11 +32,17 @@ function squareChart(el, S, extra = {}) {
 (function figure() {
   const S = SURFACES.valley;
   const fig = document.getElementById('fig-paths');
-  for (const lr of [0.002, 0.019, 0.021]) {
+  // The three boxes are laid out first, so each chart can be drawn at the true width of its box.
+  const lrs = [0.002, 0.019, 0.021];
+  const boxes = lrs.map((lr) => {
     const box = document.createElement('div');
     box.innerHTML = `<p class="small-title">Learning rate ${lr}</p>`;
     fig.append(box);
-    const m = { top: 10, right: 12, bottom: 34, left: 34 }, w = 250;
+    return box;
+  });
+  for (const [i, lr] of lrs.entries()) {
+    const box = boxes[i];
+    const m = { top: 10, right: 12, bottom: 34, left: 34 }, w = Math.max(200, box.clientWidth || 250);
     const c = chart(box, { width: w, height: w - m.left - m.right + m.top + m.bottom, margin: m, x: { domain: S.xd, ticks: 3 }, y: { domain: S.yd, ticks: 3 },
       title: `Gradient descent path at learning rate ${lr} on the narrow valley` });
     contourMap(c, S);
@@ -102,7 +108,7 @@ function build() {
     reset(true);
   });
   const lw = document.getElementById('loss-chart').clientWidth || 440;
-  lossC = chart(document.getElementById('loss-chart'), { width: Math.min(440, lw), height: 220, margin: { top: 30, right: 84, bottom: 50, left: 58 },
+  lossC = chart(document.getElementById('loss-chart'), { width: lw, height: 220, margin: { top: 30, right: 84, bottom: 50, left: 58 },
     x: { domain: [0, 100], label: 'step', ticks: 3 }, y: { domain: [1e-5, 1e3], log: true, ticks: 3, format: pow10, label: 'loss above lowest' }, title: 'Loss above its lowest value, against step' });
   tenBtn.disabled = state.surface !== 'two';
   reset(false);
