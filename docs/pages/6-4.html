@@ -67,7 +67,7 @@ $$h = W x, \qquad x' = \mathrm{ReLU}\big(W^{\top} h + b\big).$$
         <div id="bars"></div>
       </div>
       <div class="half">
-        <p class="panel-note" id="heat-note">The matrix \(W^{\top} W\). The square in row \(i\) and column \(j\) shows the dot product of directions \(i\) and \(j\): <span class="c-accent">positive</span> or <span class="c-second">negative</span>, darker when larger in size. Squares off the diagonal show interference between features.</p>
+        <p class="panel-note" id="heat-note">The matrix \(W^{\top} W\). The square in row \(i\) and column \(j\) shows the dot product of directions \(i\) and \(j\): <span class="c-accent">positive</span> or <span class="c-second">negative</span>, more strongly colored when larger in size. Squares off the diagonal show interference between features.</p>
         <div id="heat"></div>
       </div>
     </div>
@@ -87,7 +87,7 @@ $$h = W x, \qquad x' = \mathrm{ReLU}\big(W^{\top} h + b\big).$$
     <div class="choices" data-options="2, at right angles|4, in two opposite pairs|5, evenly spaced"></div>
     <div class="after"><p>Stop at each value of \(S\) and let training finish. Watch the arrows and the matrix.</p>
       <button class="show" type="button">Show what to notice</button>
-      <div class="notice"><p><span class="claim">Empirical finding</span> Five, evenly spaced: a regular pentagon, with 72 degrees between neighbors, in all eight groups we tested at \(S = 0.9\) and at 0.95. On the way there, at \(S = 0.5\) and 0.7, the model stores four features as two opposite pairs, with 90 degrees between neighbors (eight of eight groups). At \(S = 0.8\) we found the pentagon in three groups and the two pairs in five. In the matrix, an opposite pair shows as a dark <span class="c-second">negative</span> square. With two dimensions and five features, the directions cannot all be perpendicular, so the matrix has squares off its diagonal: the features interfere.</p></div></div>
+      <div class="notice"><p><span class="claim">Empirical finding</span> Five, evenly spaced: a regular pentagon, with 72 degrees between neighbors, in all eight groups we tested at \(S = 0.9\) and at 0.95. On the way there, at \(S = 0.5\) and 0.7, the model stores four features as two opposite pairs, with 90 degrees between neighbors (eight of eight groups). At \(S = 0.8\) we found the pentagon in three groups and the two pairs in five. In the matrix, an opposite pair shows as a strongly colored <span class="c-second">negative</span> square. With two dimensions and five features, the directions cannot all be perpendicular, so the matrix has squares off its diagonal: the features interfere.</p></div></div>
   </li>
   <li class="task" data-id="6.4-t3">
     <p class="prompt">Set the importance falloff back to 0.8 and raise \(S\) from 0 to 0.9. Which features are the last to be stored?</p>

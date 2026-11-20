@@ -42,13 +42,13 @@ $$f = \mathrm{ReLU}\big(E(h - c) + e\big), \qquad \hat h = D f + c,$$
 
 <div class="tool" id="tool">
   <div class="panel">
-    <p class="panel-note">Gray dots are activation vectors of the toy model (the many inputs with no active feature all sit at the center). Black lines are the five true feature directions. <span class="c-accent">Arrows</span> are the SAE&rsquo;s dictionary directions, all drawn at the same length and labeled with letters; a dashed gray arrow is a unit that never fires.</p>
+    <p class="panel-note">Gray dots are activation vectors of the toy model (the many inputs with no active feature all sit at the center). The thin lines without arrowheads, numbered 1 to 5, are the five true feature directions. <span class="c-accent">Arrows</span> are the SAE&rsquo;s dictionary directions, all drawn at the same length and labeled with letters; a dashed gray arrow is a unit that never fires.</p>
     <div class="row">
       <div class="controls" id="controls"></div>
       <div class="stage"><canvas id="plane" aria-label="Activations, true feature directions, and dictionary directions"></canvas></div>
     </div>
     <p class="readout" id="readout" aria-live="polite"></p>
-    <p class="panel-note">Cosine similarity between each true feature (rows) and each unit&rsquo;s direction (columns): <span class="c-accent">positive</span> or <span class="c-second">negative</span>, darker when larger in size. A recovered feature has one dark square near 1 in its row.</p>
+    <p class="panel-note">Cosine similarity between each true feature (rows) and each unit&rsquo;s direction (columns): <span class="c-accent">positive</span> or <span class="c-second">negative</span>, more strongly colored when larger in size. A recovered feature has one strongly colored square, near 1, in its row.</p>
     <div id="sim"></div>
     <p class="readout" id="matches"></p>
   </div>

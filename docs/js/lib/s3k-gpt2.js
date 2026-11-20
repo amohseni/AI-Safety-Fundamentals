@@ -73,8 +73,8 @@ export function sizedCanvas(canvas, w, h) {
 
 // Token text for display: the end-of-text token is shown by name, newlines as a symbol.
 export function showToken(t) {
-  if (t === '<|endoftext|>') return '⟨start⟩';
-  return t.replace(/\n/g, '⏎');
+  if (t === '<|endoftext|>') return '‹start›';
+  return t.replace(/\n/g, '¶');
 }
 
 export function escapeHTML(s) {

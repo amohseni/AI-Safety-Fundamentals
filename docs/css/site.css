@@ -446,15 +446,16 @@ button, .ctl, .topline, .pagenav .dir, .choices-label, .tool h3, .small-title, .
   --line: 2rem; --u: 1rem;
   --rail: 10.2rem; --col: 40.8rem; --gap: 3rem; --side: 18rem;   /* 8.5rem, 34rem, 2.5rem, 15rem of the website's 18px root */
   --paper: #fbf8f0; --ink: #141413; --quiet: #5d5d58; --rule: #ddd6c6; --faint: #f1ecdf;   /* warm paper (owner decision 2026-11-20); the website's ink and graphite */
-  /* --second is a slate blue, not the website's green: red and green together cannot be told apart
-     by readers with the common color-vision deficiencies. A wrong answer is marked in ink, since red is the accent. */
-  --accent: #b0122b; --second: #2a5078; --good: #1a7f4e; --bad: #141413; --focus: #b0122b;
+  /* One red and one mineral blue, the same pair as aydinmohseni.com (owner decision 2026-11-20). --second
+     (a compared quantity) and --good (a correct answer) are the same blue; red and blue can be told apart by
+     readers with the common color-vision deficiencies. A wrong answer is marked in ink, since red is the accent. */
+  --accent: #b0122b; --second: #1f4e8c; --good: #1f4e8c; --bad: #141413; --focus: #b0122b;
   font-synthesis: none;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --paper: #050505; --ink: #f5f5f2; --quiet: #b8b8b3; --rule: #2c2c2a; --faint: #1a1a19;
-    --accent: #e0304f; --second: #8fb4dc; --good: #1fa463; --bad: #f5f5f2; --focus: #e0304f;
+    --accent: #e0304f; --second: #7fb2e5; --good: #7fb2e5; --bad: #f5f5f2; --focus: #e0304f;
   }
 }
 h1 { font-size: 2.9rem; font-weight: 400; letter-spacing: 0; }

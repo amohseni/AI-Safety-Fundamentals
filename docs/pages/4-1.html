@@ -52,7 +52,7 @@
 <h1>From pretrained model to assistant</h1>
 
 <section>
-<p>A current assistant model is produced in stages.</p>
+<p>A current assistant model is produced in four stages. Each stage trains the same network on a different kind of data, with a different signal for what counts as a good output. The first stage supplies most of what the model knows, and the later stages mostly change how the model behaves.</p>
 <ol>
 <li><b>Pretraining.</b> The model learns to predict the next token on trillions of tokens of text and code, using the cross-entropy loss (Section 2.5). This stage uses most of the compute. The result is a <em>base model</em>, which continues documents.</li>
 <li><b>Supervised fine-tuning.</b> The model is trained with the same loss on example conversations written or selected to show the desired behavior. It learns the format and role of an assistant.</li>

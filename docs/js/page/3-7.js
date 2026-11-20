@@ -17,7 +17,7 @@ function tokenPx(name) {
 const FONT = `${tokenPx('--small')}px ${(getComputedStyle(document.documentElement).getPropertyValue('--font-data') || '').trim() || 'sans-serif'}`;
 const S = steps();
 const fmtN = (v) => v.toLocaleString('en-US');
-const showTok = (t) => t.replace(/ /g, '·').replace(/\n/g, '↵');
+const showTok = (t) => t.replace(/ /g, '·').replace(/\n/g, '¶');
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 const shapeText = (sh) => sh.map((v, i) => (i === 0 && sh.length === 2 ? 'n' : fmtN(v))).join(' × ');
 
