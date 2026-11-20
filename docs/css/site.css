@@ -65,7 +65,6 @@ a:link, a:visited {
 }
 .topline a { text-decoration: none; background: none; color: var(--quiet); }
 .topline a:hover { color: var(--ink); }
-.topline .core-dot { margin-left: 0.4rem; }
 article { padding-top: 1.5rem; }
 h1 { margin-top: 1.5rem; }
 h1 .pageno { color: var(--quiet); margin-right: 0.6rem; }

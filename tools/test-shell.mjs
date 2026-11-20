@@ -76,7 +76,7 @@ for (let k = 0; k < 30 && at; k++) {
   const nextCore = (await r.count()) === 2 ? r.nth(1).locator('a.next') : r.nth(0).locator('a.next');
   const href = (await nextCore.count()) ? await nextCore.getAttribute('href') : null;
   const target = href && href.match(/(\d-\d)\.html$/);
-  at = target && (await r.count() === 2 || (await page.locator('.pagenav .row a.next .core-dot').count())) ? `pages/${target[1]}.html` : null;
+  at = target && (await r.count() === 2 || (await page.locator('.pagenav .row a.next[data-core]').count())) ? `pages/${target[1]}.html` : null;
 }
 check('following the core links from 1.1 visits the 21 core pages in order', walked.length === 21 && walked[6] === '3.3' && walked[20] === '8.5', walked.join(' '));
 

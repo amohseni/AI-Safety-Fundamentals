@@ -30,7 +30,6 @@ export function pageDone(p) {
   return !!(p.checks && p.checks.length) && p.checks.every(([id, correct]) => { const r = checkRecord(id, correct); return r && r.right; });
 }
 const corePages = allPages.filter((p) => p.core && p.href);
-const dot = (p) => (p.core ? '<span class="core-dot" title="Core path"></span> ' : '');
 const base = document.body.dataset.base || '../';
 
 function pageHref(p) { return p.href ? base + p.href : null; }
@@ -59,7 +58,7 @@ function shell() {
   const builtAfter = allPages.slice(i + 1).find((p) => p.href);
   const coreBefore = allPages.slice(0, i).reverse().find((p) => p.href && p.core);
   const coreAfter = allPages.slice(i + 1).find((p) => p.href && p.core);
-  const link = (p, cls, dir) => (p ? `<a class="${cls}" href="${pageHref(p)}"><span class="dir">${dir}</span>${dot(p)}${p.id} ${p.title}</a>` : '<span></span>');
+  const link = (p, cls, dir) => (p ? `<a class="${cls}" href="${pageHref(p)}"${p.core ? ' data-core' : ''}><span class="dir">${dir}</span>${p.id} ${p.title}</a>` : '<span></span>');
   const nav = document.createElement('nav');
   nav.className = 'pagenav';
   nav.setAttribute('aria-label', 'Previous and next page');
