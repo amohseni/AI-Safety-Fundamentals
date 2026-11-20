@@ -49,7 +49,7 @@ function barChart(container, rows, { max = null, compact = false, style = () => 
   const W = Math.max(240, container.clientWidth || 520);
   const small = tokenPx('--small');
   const probe = document.createElement('canvas').getContext('2d');
-  probe.font = `${small}px et-book, Georgia, serif`;
+  probe.font = `${small}px ${(getComputedStyle(document.documentElement).getPropertyValue('--font-data') || '').trim() || 'et-book, Georgia, serif'}`;
   m.left = Math.ceil(Math.max(...rows.map((r) => probe.measureText(showTok(word(r.id))).width))) + 12;
   const H = rows.length * rowH + m.top + m.bottom;
   const svg = d3.select(container).append('svg').attr('class', 'chart').attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`);

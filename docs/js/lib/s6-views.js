@@ -5,7 +5,7 @@ import { cssVar } from './ui.js';
 
 const d3 = window.d3;
 // Canvas labels are chart text: the size comes from the --small token.
-const font = () => `${cssVar('--small') || '13pt'} et-book, Georgia, serif`;
+const font = () => `${cssVar('--small') || '13pt'} ${(getComputedStyle(document.documentElement).getPropertyValue('--font-data') || '').trim() || 'et-book, Georgia, serif'}`;
 const TOKEN = { accent: '--accent', second: '--second', ink: '--ink', quiet: '--quiet', rule: '--rule', paper: '--paper' };
 const col = (name) => cssVar(TOKEN[name] || '--ink');
 

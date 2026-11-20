@@ -1,0 +1,75 @@
+/* Skin "Folio": the printed page of the sixteenth to eighteenth centuries (Aldus, Garamond,
+   Plantin, Baskerville), as analyzed by Tschichold and Bringhurst.
+   One old-style face (EB Garamond). A narrow measure with wide outer margins that hold shoulder
+   notes. Paragraphs marked by indent, not by space. Headings centered in small capitals. Old-style
+   figures in the text. Two-color printing: black, and printer's red for what the reader can act on,
+   as red once marked what the reader should attend to. */
+@font-face { font-family: "EB Garamond"; src: url("../../fonts/skins/eb-garamond-latin-wght-normal.woff2") format("woff2"); font-weight: 400 800; font-style: normal; font-display: swap; }
+@font-face { font-family: "EB Garamond"; src: url("../../fonts/skins/eb-garamond-latin-wght-italic.woff2") format("woff2"); font-weight: 400 800; font-style: italic; font-display: swap; }
+
+:root[data-skin="folio"] {
+  --font-text: "EB Garamond", "Adobe Garamond Pro", Garamond, Georgia, serif;
+  --font-label: var(--font-text); --font-data: var(--font-text);
+  --text: 22.5px; --small: 17.5px;             /* Garamond's x-height is small, so it is set larger */
+  --line: 2.1333rem; --u: 1.0667rem;           /* 32px line */
+  --col: 38rem; --gap: 3.5rem; --side: 17rem;  /* about 62 characters */
+  --paper: #fbf8f0; --ink: #1d1a16; --quiet: #6a6257; --rule: #d9d0bf; --faint: #f0eadb;
+  --accent: #a3271c; --second: #2f4d6b; --good: #3d6a3a; --bad: #a3271c; --focus: #a3271c;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-skin="folio"]:not([data-theme="light"]) {
+    --paper: #17150f; --ink: #e9e2d2; --quiet: #a59b88; --rule: #3d382c; --faint: #262219;
+    --accent: #e0705f; --second: #8fb0d0; --good: #8cc488; --bad: #e0705f; --focus: #e0705f;
+  }
+}
+[data-skin="folio"] body { font-variant-numeric: oldstyle-nums proportional-nums; font-feature-settings: "liga", "dlig" 0, "kern"; }
+[data-skin="folio"] .num, [data-skin="folio"] .readout, [data-skin="folio"] table, [data-skin="folio"] .tool output, [data-skin="folio"] .chart text { font-variant-numeric: lining-nums tabular-nums; }
+
+/* Title: centered, with the page number above it in red. */
+[data-skin="folio"] h1 { text-align: center; font-size: 3.2rem; font-weight: 400; line-height: 1.15; margin-top: calc(4 * var(--u)); }
+[data-skin="folio"] h1 .pageno { display: block; color: var(--accent); font-size: 1.5rem; letter-spacing: 0.12em; margin: 0 0 var(--u); }
+[data-skin="folio"] h1::after { content: ""; display: block; width: 4rem; margin: calc(2 * var(--u)) auto 0; border-top: 1px solid var(--ink); }
+[data-skin="folio"] h2 { text-align: center; font-style: normal; font-size: 1.6rem; font-variant-caps: small-caps; letter-spacing: 0.1em; font-weight: 400; text-transform: lowercase; }
+
+/* Paragraphs: indent marks a new paragraph; the first after a heading starts flush. Justified with hyphens. */
+[data-skin="folio"] article > p, [data-skin="folio"] section > p { text-align: justify; hyphens: auto; -webkit-hyphens: auto; hyphenate-limit-chars: 7 3 3; margin-bottom: 0; text-indent: 1.4em; hanging-punctuation: first; }
+[data-skin="folio"] section > h2 + p, [data-skin="folio"] section > ul + p, [data-skin="folio"] section > ol + p, [data-skin="folio"] section > figure + p, [data-skin="folio"] section > .caption + p, [data-skin="folio"] section > .tool + p, [data-skin="folio"] section > .katex-display + p, [data-skin="folio"] section > ol.tasks + p,
+[data-skin="folio"] article > h1 + p, [data-skin="folio"] article > h2 + p, [data-skin="folio"] article > ul + p, [data-skin="folio"] article > ol + p,
+[data-skin="folio"] article > figure + p, [data-skin="folio"] article > .caption + p, [data-skin="folio"] article > .tool + p, [data-skin="folio"] article > .katex-display + p,
+[data-skin="folio"] article > p.caption, [data-skin="folio"] article > .review + p, [data-skin="folio"] p.subtitle { text-indent: 0; }
+[data-skin="folio"] article > section:first-of-type > p:first-of-type { text-indent: 0; }
+[data-skin="folio"] article > section:first-of-type > p:first-of-type::first-letter { float: left; font-size: 3.05em; line-height: 0.82; padding: 0.06em 0.14em 0 0; color: var(--accent); }
+[data-skin="folio"] article > p + ul, [data-skin="folio"] article > p + ol, [data-skin="folio"] article > p + figure, [data-skin="folio"] article > p + .tool { margin-top: var(--u); }
+
+/* Running head: centered small capitals. */
+[data-skin="folio"] .topline { justify-content: center; column-gap: 2.5rem; font-variant-caps: small-caps; letter-spacing: 0.08em; text-transform: lowercase; font-size: var(--small); }
+[data-skin="folio"] .topline a { font-size: inherit; }
+[data-skin="folio"] .topline .pages li { font-size: inherit; }
+[data-skin="folio"] .topline .pages a[aria-current="page"] { color: var(--accent); border-bottom: 0; }
+
+/* Names of blocks: red small capitals in the shoulder. */
+[data-skin="folio"] .check > .label, [data-skin="folio"] .explain > .label, [data-skin="folio"] .takeaway > .label, [data-skin="folio"] .review > .label, [data-skin="folio"] .pagenav .dir {
+  font-style: normal; font-variant-caps: small-caps; letter-spacing: 0.08em; text-transform: lowercase; color: var(--accent);
+}
+[data-skin="folio"] .tool h3 { font-style: italic; font-weight: 400; font-size: 1.15em; }
+[data-skin="folio"] .claim { font-style: normal; font-variant-caps: small-caps; letter-spacing: 0.06em; text-transform: lowercase; color: var(--accent); }
+[data-skin="folio"] .sidenote, [data-skin="folio"] .marginnote { font-style: italic; line-height: 1.4; color: var(--quiet); }
+[data-skin="folio"] .sidenote em, [data-skin="folio"] .sidenote i { font-style: normal; }
+[data-skin="folio"] .tool .panel-note, [data-skin="folio"] .caption { font-style: italic; color: var(--quiet); }
+[data-skin="folio"] .tool .panel-note em, [data-skin="folio"] .caption em { font-style: normal; }
+
+/* Controls: fine lines, as engraved; the chosen one in red. */
+[data-skin="folio"] button { border-radius: 1px; border-color: var(--quiet); padding: 0.2rem 0.9rem; }
+[data-skin="folio"] .tool, [data-skin="folio"] .tool .panel + .panel { border-top: 0; }
+[data-skin="folio"] .tool::before, [data-skin="folio"] .tool .panel + .panel::before { content: "❦"; display: block; text-align: center; color: var(--accent); font-size: 1.3rem; margin-bottom: calc(2 * var(--u)); }
+[data-skin="folio"] .check, [data-skin="folio"] .explain { border-top: 1px solid var(--rule); }
+[data-skin="folio"] .takeaway { border-top: 0; text-align: center; }
+[data-skin="folio"] .takeaway::before { content: ""; display: block; width: 4rem; margin: 0 auto calc(2 * var(--u)); border-top: 1px solid var(--ink); }
+[data-skin="folio"] .takeaway > p:not(.label) { font-style: italic; font-size: calc(1.08 * var(--text)); line-height: var(--line); text-align: center; text-wrap: balance; }
+[data-skin="folio"] .takeaway > p:not(.label) em { font-style: normal; }
+[data-skin="folio"] .contents h2 { text-align: left; }
+[data-skin="folio"] p.subtitle { text-align: center; }
+[data-skin="folio"] h1:has(+ .subtitle)::after { display: none; }
+[data-skin="folio"] .takeaway > .label { text-align: left; }
+[data-skin="folio"] .check .options button { border-color: var(--quiet); }
+[data-skin="folio"] .topline .pages a { font-variant-numeric: lining-nums; font-size: 0.86em; }

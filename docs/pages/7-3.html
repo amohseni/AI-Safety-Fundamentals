@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="../css/tufte.css">
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
+<script src="../js/skin.js"></script>
 <style>
   .maze { display: block; outline-offset: 4px; }
   /* Six environments: three to a row in the text column, two to a row on a phone. */
@@ -21,7 +22,7 @@
   .fig-row:last-child { margin-bottom: 0; }
   .fig-row > div { min-width: 0; }
   figure .small-title { margin: 0; line-height: var(--line); }
-  svg.means text { font-family: et-book, Georgia, serif; font-size: var(--small); fill: var(--ink); }
+  svg.means text { font-family: var(--font-data); font-size: var(--small); fill: var(--ink); }
   svg.means text.quiet { fill: var(--quiet); font-style: italic; }
   svg.means line { stroke: var(--quiet); stroke-width: 1; }
   @media (max-width: 1079px) {

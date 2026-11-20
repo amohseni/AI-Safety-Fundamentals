@@ -13,7 +13,7 @@ function tokenPx(name) {
   probe.remove();
   return v;
 }
-const FONT = `${tokenPx('--small')}px et-book, Georgia, serif`;
+const FONT = `${tokenPx('--small')}px ${(getComputedStyle(document.documentElement).getPropertyValue('--font-data') || '').trim() || 'et-book, Georgia, serif'}`;
 const readout = document.getElementById('readout');
 
 let data;

@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="../css/tufte.css">
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
+<script src="../js/skin.js"></script>
 <style>
   /* Tables in the stage: as wide as the text column; the row name takes the spare width, numbers sit at the right edge. */
   table.jb { border-collapse: collapse; width: 100%; margin: 0; line-height: var(--line); font-variant-numeric: lining-nums tabular-nums; }
@@ -32,7 +33,7 @@
   .dgrid input[type="range"] { width: 100%; min-width: 0; display: block; }
   .dgrid output { display: block; color: var(--ink); line-height: var(--line); }
   .status-bad { color: var(--bad); }
-  svg.triangle text { font-family: et-book, Georgia, serif; font-size: var(--small); fill: var(--ink); }
+  svg.triangle text { font-family: var(--font-data); font-size: var(--small); fill: var(--ink); }
   svg.triangle text.quiet { fill: var(--quiet); font-style: italic; }
   svg.triangle line, svg.triangle path { stroke: var(--quiet); stroke-width: 1; fill: none; }
   @media (max-width: 1079px) { table.jb th, table.jb td { padding-left: 0.5rem; } }

@@ -12,7 +12,7 @@ function tokenPx(name) {
   probe.remove();
   return v;
 }
-const FONT = `${tokenPx('--small')}px et-book, Georgia, serif`;
+const FONT = `${tokenPx('--small')}px ${(getComputedStyle(document.documentElement).getPropertyValue('--font-data') || '').trim() || 'et-book, Georgia, serif'}`;
 const S = steps();
 const fmtN = (v) => v.toLocaleString('en-US');
 const showTok = (t) => t.replace(/ /g, '·').replace(/\n/g, '↵');
