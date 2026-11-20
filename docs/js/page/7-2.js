@@ -33,7 +33,7 @@ segmented(ctl, { name: 'Statements shown', options: SHOWN, value: state.shown, o
 
 // ---- Plot: credence on the horizontal axis; dots spread up and down at random so they do not overlap ----
 const plotEl = document.getElementById('plot');
-const W = Math.max(260, Math.min(520, plotEl.clientWidth || 520)), H = 240, mx = 24;
+const W = Math.max(260, plotEl.clientWidth || 630), H = 240, mx = 6; // the stage's own width: the text column
 const svg = d3.select(plotEl).append('svg').attr('class', 'chart').attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`)
   .attr('role', 'img').attr('aria-label', 'Statements placed left to right by the probe\u2019s credence that they are true');
 const xs = d3.scaleLinear().domain([0, 1]).range([mx, W - mx]);
@@ -133,10 +133,10 @@ window.__s72 = { state, update };
 // ---- Static figure: the probing setup and the four criteria ----
 (function figure() {
   const fig = document.getElementById('fig-setup-svg');
-  const w = Math.max(300, Math.min(620, fig.clientWidth || 620)), h = 260;
+  const w = Math.max(280, fig.clientWidth || 630), h = 260; // the figure's own width: the text column
   const svg = d3.select(fig).append('svg').attr('class', 'chart').attr('width', w).attr('height', h).attr('viewBox', `0 0 ${w} ${h}`)
     .attr('role', 'img').attr('aria-label', 'A statement goes into the model; the activation after one layer goes to a linear probe, which outputs a credence.');
-  const cols = 5, rowsN = 4, gx = Math.min(64, (w - 170) / cols), gy = 34, x0 = 44, y0 = 30;
+  const cols = 5, rowsN = 4, x0 = 1, gx = (w - x0 - 116) / cols, gy = 34, y0 = 30; // the grid starts at the column's left edge; 116 px hold the probe line and its label
   const words = ['Lord', 'Byron', 'died', 'in', '1824.'];
   for (let r = 0; r < rowsN; r++) for (let c = 0; c < cols; c++) {
     svg.append('rect').attr('x', x0 + c * gx).attr('y', y0 + (rowsN - 1 - r) * gy).attr('width', gx - 8).attr('height', gy - 12)

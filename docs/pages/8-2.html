@@ -10,14 +10,22 @@
 <link rel="stylesheet" href="../css/site.css">
 <style>
   .room { display: block; outline-offset: 4px; }
+  /* Two groups of controls in the margin column: playback first, then the parts of the reward.
+     On a phone the playback controls come last, directly above the room. */
+  #room-controls { gap: calc(2 * var(--u)); }
+  #room-controls .group { display: flex; flex-direction: column; gap: var(--u); min-width: 0; }
+  @media (min-width: 761px) { #room-play { order: -1; } }
   .weights .ctl-head output { min-width: 2.5rem; text-align: right; }
-  .cases { width: 90%; border-collapse: collapse; margin: 1rem 0 1.5rem; }
-  .cases th, .cases td { text-align: left; vertical-align: top; padding: 0.35rem 0.8rem 0.35rem 0; border-bottom: 1px solid var(--rule); }
+  /* The table of cases has four columns of text, so it spans both columns. */
+  .table-wrap { width: 90%; clear: right; overflow-x: auto; margin: calc(2 * var(--u)) 0; }
+  .cases { width: 100%; border-collapse: collapse; margin: 0; line-height: var(--line); }
+  .cases th, .cases td { text-align: left; vertical-align: top; padding: calc(0.5 * var(--u)) 1.5rem calc(0.5 * var(--u)) 0; border-bottom: 1px solid var(--rule); }
+  .cases th:last-child, .cases td:last-child { padding-right: 0; }
   .cases th { font-weight: normal; font-style: italic; color: var(--quiet); }
-  .table-wrap { overflow-x: auto; }
+  @media (min-width: 1080px) { .table-wrap { width: var(--wide); } }
   svg.schematic { display: block; max-width: 100%; height: auto; }
-  svg.schematic text { font-family: et-book, Georgia, serif; font-size: var(--text); fill: var(--quiet); }
-  @media (max-width: 760px) { #panel-room .stage { order: -1; } .cases { width: 100%; } .cases th, .cases td { padding-right: 0.5rem; } }
+  svg.schematic text { font-family: et-book, Georgia, serif; font-size: var(--small); fill: var(--quiet); }
+  @media (max-width: 760px) { .table-wrap { width: 100%; } .cases th, .cases td { padding-right: 0.5rem; } }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>
@@ -42,10 +50,9 @@
     <h3>The cleaning robot</h3>
     <p class="panel-note">The <span class="c-accent">robot</span> starts on its dock and works a shift of 30 steps. In each step it can move, wait, or drag the mess it stands on one cell along with it; cleaning the mess it stands on takes 3 steps; on the dock it can end its shift. Moving into the bin tips it over and spills trash (a new <span class="c-second">mess</span>) onto the robot&rsquo;s cell. Moving into the vase breaks it. The camera above the top-left corner sees the shaded cells, unless the robot stands right in front of it. The <em>true task score</em> is what the owner wants: it counts &minus;1 for each mess left in the room at the end of the shift, seen by the camera or not, and &minus;10 for a broken vase or a knocked-over plant.</p>
     <div class="row">
-      <div class="controls weights" id="room-weights"></div>
+      <div class="controls" id="room-controls"><div class="group weights" id="room-weights"></div><div class="group" id="room-play"></div></div>
       <div class="stage">
         <canvas class="room" id="room" tabindex="0" aria-label="The room at the selected step of the shift"></canvas>
-        <div class="controls" id="room-play" style="max-width: 100%; margin-top: 0.8rem;"></div>
       </div>
     </div>
     <p class="readout" id="room-readout" aria-live="polite"></p>

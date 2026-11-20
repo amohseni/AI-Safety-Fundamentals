@@ -9,17 +9,20 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
-  ol.problems { list-style: none; padding: 0; margin: 1rem 0 0; width: 61%; }
-  ol.problems > li { border-top: 1px solid var(--rule); padding: 0.8rem 0 0.9rem; }
+  /* The list of problems is the stage, in the text column; the filters sit beside it in the margin column. */
+  .tool .stage > .readout { margin: 0 0 calc(2 * var(--u)); width: auto; }
+  ol.problems { list-style: none; padding: 0; margin: 0; width: 100%; }
+  ol.problems > li { border-top: 1px solid var(--rule); padding: calc(2 * var(--u)) 0; margin: 0; }
   ol.problems > li[hidden] { display: none; }
-  ol.problems h3 { font-size: var(--text); font-style: italic; margin: 0 0 0.3rem; font-weight: normal; }
-  ol.problems p { margin: 0.2rem 0; }
+  ol.problems h3 { font-size: var(--text); font-style: italic; margin: 0 0 var(--u); font-weight: normal; line-height: var(--line); }
+  ol.problems p { margin: 0; line-height: var(--line); width: auto; }
   ol.problems .k { color: var(--quiet); }
   ol.problems .pg a { text-decoration: none; background: none; border-bottom: 1px solid var(--rule); }
   ol.problems .pg .fin { color: var(--accent); }
-  .tool .controls { max-width: none; flex-basis: 100%; }
-  ul.start { width: 61%; overflow-wrap: anywhere; }
-  @media (max-width: 760px) { ol.problems, ul.start { width: 100%; } }
+  ol.problems a { overflow-wrap: anywhere; }
+  /* The list is long, so the filters stay in view beside it while it scrolls. */
+  @media (min-width: 1080px) { .tool .row > .controls { position: sticky; top: calc(2 * var(--u)); } }
+  ul.start { overflow-wrap: anywhere; }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>
@@ -38,9 +41,9 @@
 <div class="tool" id="tool">
   <div class="panel">
     <p class="panel-note">Filter the problems by the kind of work, by the setup you have, or by the pages you have finished. A page counts as finished when you have answered its check question; finished pages are shown in <span class="c-accent">blue</span> and marked &ldquo;finished&rdquo;.</p>
-    <div class="row"><div class="controls" id="controls"></div></div>
-    <p class="readout" id="readout" aria-live="polite"></p>
-    <ol class="problems" id="problems"></ol>
+    <div class="row"><div class="controls" id="controls"></div>
+      <div class="stage"><p class="readout" id="readout" aria-live="polite"></p>
+        <ol class="problems" id="problems"></ol></div></div>
   </div>
 </div>
 
