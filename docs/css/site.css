@@ -368,3 +368,4 @@ figure { margin: calc(3 * var(--u)) 0 calc(2 * var(--u)); }
   .tool .row.wide { display: block; }
   .tool .row.wide > .controls { flex-direction: row; flex-wrap: wrap; align-items: flex-start; gap: var(--u) calc(2 * var(--u)); margin-bottom: calc(2 * var(--u)); }
 }
+.small-title { margin: 0 0 var(--u); line-height: var(--line); }
