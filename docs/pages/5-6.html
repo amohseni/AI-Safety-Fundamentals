@@ -25,6 +25,8 @@
 <h1>Emergence</h1>
 
 <section>
+<p>The loss of a language model falls smoothly as the model grows (Section 3.8). Some abilities were reported to behave differently: absent in smaller models and present in larger ones, with little warning in between. This page states that report and shows that part of the suddenness can come from the way an ability is scored.</p>
+
 <p><span class="claim">Empirical finding</span> Wei et al. reported &ldquo;emergent abilities&rdquo;: tasks on which performance stayed near chance as language models grew, and then rose well above chance beyond some size.<label for="sn-wei" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-wei" class="margin-toggle"><span class="sidenote">Wei, Tay, Bommasani, Raffel, Zoph, Borgeaud, Yogatama, Bosma, Zhou, Metzler, Chi, Hashimoto, Vinyals, Liang, Dean, and Fedus (2022), &ldquo;<a href="https://openreview.net/forum?id=yzkSU5zdwD">Emergent abilities of large language models</a>,&rdquo; <em>Transactions on Machine Learning Research</em>.</span> If abilities appear suddenly, the smooth scaling laws for the loss (Section 3.8) would not warn of them, which matters for safety: a new model could have an ability that its smaller predecessors gave no sign of.</p>
 
 <p>Many of these tasks are scored by <em>exact match</em>: an answer counts only if every part of it is right. Take an answer of \(k\) digits, and suppose a model gets each digit right with probability \(p\), independently. Then three measures of the same model are</p>

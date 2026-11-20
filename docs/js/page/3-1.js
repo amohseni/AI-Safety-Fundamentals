@@ -36,7 +36,7 @@ function chip(parts, id, cls = '') {
     const s = document.createElement('span');
     if (p.byte !== undefined) { s.className = 'byte'; s.textContent = p.byte; }
     else if (p.text === ' ') { s.className = 'sp'; s.textContent = '·'; }
-    else if (p.text === '\n') { s.className = 'sp'; s.textContent = '↵'; }
+    else if (p.text === '\n') { s.className = 'sp'; s.textContent = '¶'; }
     else if (p.text === '\t') { s.className = 'sp'; s.textContent = '→'; }
     else s.textContent = p.text;
     t.append(s);

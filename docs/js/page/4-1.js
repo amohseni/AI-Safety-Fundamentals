@@ -14,7 +14,7 @@ const LABELS = ['Factual question', 'Request to refuse', 'False premise', 'Math 
 const state = { prompt: 0, view: 'formatted', fact: 0 };
 let data = null;
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-const shown = (t) => JSON.stringify(t).slice(1, -1).replace(/\\n/g, '↵');
+const shown = (t) => JSON.stringify(t).slice(1, -1).replace(/\\n/g, '¶');
 
 function drawOutputs() {
   const i = state.prompt;

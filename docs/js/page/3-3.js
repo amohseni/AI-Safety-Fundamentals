@@ -6,7 +6,7 @@ const d3 = window.d3;
 // Label widths are measured on a canvas, which needs the site's faces loaded.
 await fontsReady();
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
-const showTok = (t) => t.replace(/ /g, '·').replace(/\n/g, '↵');
+const showTok = (t) => t.replace(/ /g, '·').replace(/\n/g, '¶');
 const pct = (v) => (v >= 0.995 ? `${(v * 100).toFixed(0)}%` : v >= 0.1 ? `${(v * 100).toFixed(0)}%` : v >= 0.001 ? `${(v * 100).toFixed(1)}%` : '<0.1%');
 const prob = (v) => (v >= 0.001 ? v.toFixed(3) : v > 0 ? '<0.001' : '0');
 
