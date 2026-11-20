@@ -1,10 +1,10 @@
 // Page 8.2: write a reward function for the cleaning robot.
-import { slider, segmented, button, cssVar, reducedMotion } from '../lib/ui.js';
+import { slider, segmented, button, cssVar, reducedMotion, fontsReady } from '../lib/ui.js';
 import { fitCanvas, cellLayout } from '../lib/gridworld.js';
 import { G, LAYOUT, T, PARTS, ACTIONS, A_CLEAN } from '../lib/8-cleaning.js';
 
 // Labels in the drawing are chart text: the small size, read from the CSS token.
-const font = () => `${cssVar('--small') || '13pt'} ${(getComputedStyle(document.documentElement).getPropertyValue('--font-data') || '').trim() || 'et-book, Georgia, serif'}`;
+const font = () => `${cssVar('--small') || '13pt'} ${(getComputedStyle(document.documentElement).getPropertyValue('--font-data') || '').trim() || '"CMU Sans Serif", sans-serif'}`;
 const weights = Object.fromEntries(PARTS.map((p) => [p.id, 0]));
 const st = { plant: false, t: T, result: null, playing: false };
 let reqId = 0, raf = null;
@@ -171,6 +171,8 @@ function readout(e) {
     ` <span style="color: var(--quiet)">(${res.nS.toLocaleString('en-US')} states solved.)</span>`;
 }
 
+// The room's labels are canvas text, which keeps the face it was drawn with: draw again once the site's faces have loaded.
+fontsReady().then(draw);
 let resizeT = null;
 window.addEventListener('resize', () => { clearTimeout(resizeT); resizeT = setTimeout(draw, 100); });
 draw();
