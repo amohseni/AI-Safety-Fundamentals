@@ -281,6 +281,9 @@ export function contents(el) {
   if (!p) return;
   const first = [...p.childNodes].find((n) => n.nodeType !== 3 || n.textContent.trim());
   if (first && first.nodeType === 1 && first.classList.contains('claim')) p.classList.add('starts-claim');
+  // An initial three lines deep needs three lines of text beside it.
+  const lines = p.getBoundingClientRect().height / (parseFloat(getComputedStyle(p).lineHeight) || 30);
+  if (lines < 2.6) p.classList.add('no-initial');
 })();
 shell();
 sidenotes();

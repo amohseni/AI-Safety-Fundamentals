@@ -26,11 +26,6 @@
   .ex-list .q { color: var(--quiet); font-style: italic; }
   /* The site's faces have no superscript zero, so the exponents of the circuit classes are set as superscripts. */
   sup.exp { font-size: 0.75em; line-height: 0; }
-  /* The shared rule for the opening initial leaves out a paragraph whose first element is a claim label,
-     and this page's first paragraph has one in the middle of its text. The rule is repeated here. */
-  article > section:first-of-type > p:first-of-type::first-letter {
-    font-style: normal; font-weight: 400; float: left; font-size: 3.05em; line-height: 0.82; padding: 0.07em 0.12em 0 0; color: var(--accent);
-  }
   /* Fit to the layout grid (2026-11-20). */
   figure { margin: calc(2 * var(--u)) 0 var(--u); }
   .caption { margin: 0 0 calc(2 * var(--u)); }

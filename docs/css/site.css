@@ -502,7 +502,7 @@ button { border-radius: 0; border-color: var(--quiet); padding: 0.3rem 0.8rem; }
 .topline .pages a { font-size: 12.3px; letter-spacing: 0.06em; }
 
 /* The page opens with a red initial, three lines deep. */
-article > section:first-of-type > p:first-of-type:not(.starts-claim)::first-letter {
+article > section:first-of-type > p:first-of-type:not(.starts-claim):not(.no-initial)::first-letter {
   font-style: normal; font-weight: 400; float: left; font-size: 3.05em; line-height: 0.82; padding: 0.07em 0.12em 0 0; color: var(--accent);
 }
 .check .verdict-wrong { font-weight: 700; }
