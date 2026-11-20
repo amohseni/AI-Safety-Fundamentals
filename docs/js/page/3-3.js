@@ -19,10 +19,14 @@ const word = (id) => doc.vocab[String(id)] ?? `#${id}`;
 (function figure() {
   const fig = document.getElementById('fig-temps');
   const tree = trees[0];
-  for (const T of [0.5, 1, 2]) {
+  // All three boxes are placed first, so each chart is drawn at the width its box ends up with.
+  const boxes = [0.5, 1, 2].map((T) => {
     const box = document.createElement('div');
     box.innerHTML = `<p class="small-title">T = ${T}</p>`;
     fig.append(box);
+    return [T, box];
+  });
+  for (const [T, box] of boxes) {
     const rows = distribution(tree, 0, TEMPS, T, 1).rows.slice(0, 10);
     barChart(box, rows, { max: 0.4, compact: true });
   }

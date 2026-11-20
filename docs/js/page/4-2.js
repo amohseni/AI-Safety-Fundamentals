@@ -16,7 +16,7 @@ const refit = () => { w = labels().length ? fitBT(labels()) : [0, 0, 0, 0]; list
 (function figure() {
   const box = document.createElement('div');
   document.getElementById('fig-bt').append(box);
-  const c = chart(box, { width: 520, height: 260, margin: { top: 30, right: 30, bottom: 56, left: 52 },
+  const c = chart(box, { width: box.clientWidth || 520, height: 260, margin: { top: 30, right: 30, bottom: 56, left: 52 },
     x: { domain: [-5, 5], ticks: 5, label: 'r(A) − r(B)' }, y: { domain: [0, 1], ticks: 2, label: 'P(A preferred)' }, title: 'Bradley-Terry curve' });
   c.line('s', d3.range(-5, 5.001, 0.05).map((z) => [z, 1 / (1 + Math.exp(-z))]), { color: 'ink' });
   for (const z of [0, 1, 3]) {
@@ -61,8 +61,8 @@ const refit = () => { w = labels().length ? fitBT(labels()) : [0, 0, 0, 0]; list
   const ctl = document.getElementById('w-controls'), el = document.getElementById('weights'), out = document.getElementById('w-readout');
   button(ctl, 'Add 20 labels from the biased labeler', () => { state.batches++; refit(); });
   button(ctl, 'Remove the simulated labels', () => { state.batches = 0; refit(); });
-  const W = Math.max(280, Math.min(520, el.clientWidth || 520)), rowH = 40, top = 10, left = 118, right = 50;
-  const H = top + rowH * FEATURES.length + 34;
+  const W = Math.max(280, el.clientWidth || 520), rowH = 45, top = 15, left = 118, right = 50;
+  const H = top + rowH * FEATURES.length + 30;
   const svg = d3.select(el).append('svg').attr('class', 'chart').attr('viewBox', `0 0 ${W} ${H}`).attr('width', W).attr('height', H)
     .attr('role', 'img').attr('aria-label', 'Fitted weight on each feature');
   const x = d3.scaleLinear().domain([-3, 3]).range([left, W - right]);

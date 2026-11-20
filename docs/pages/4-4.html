@@ -9,21 +9,25 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
-  table.ex { border-collapse: collapse; margin: 0.6rem 0 0; font-variant-numeric: lining-nums tabular-nums; }
-  table.ex th, table.ex td { padding: 0.15rem 0.6rem 0.15rem 0; text-align: right; font-weight: normal; white-space: nowrap; }
+  table.ex { width: 100%; border-collapse: collapse; margin: 0; font-variant-numeric: lining-nums tabular-nums; line-height: var(--line); }
+  table.ex th, table.ex td { padding: 0 0 0 1rem; text-align: right; font-weight: normal; white-space: nowrap; }
+  table.ex th:first-child, table.ex td:first-child { padding-left: 0; text-align: left; }
   table.ex th { color: var(--quiet); }
   table.ex th.d { color: var(--second); }
   table.ex th.c { color: var(--accent); }
   table.ex .q { color: var(--quiet); font-style: italic; }
-  .ex-wrap { overflow-x: auto; max-width: 100%; }
-  #cot-question { margin: 0.4rem 0 0.6rem; width: auto; }
-  #cot-text { white-space: pre-wrap; max-height: 20rem; overflow-y: auto; border-left: 2px solid var(--rule); padding-left: 0.7rem; line-height: 1.45; font-size: var(--text); overflow-wrap: anywhere; }
+  .ex-wrap { box-sizing: border-box; overflow-x: auto; max-width: var(--col); margin-top: calc(2 * var(--u)); }
+  #cot-question { box-sizing: border-box; max-width: var(--col); margin: calc(2 * var(--u)) 0 var(--u); width: auto; line-height: var(--line); }
+  #cot-text { box-sizing: border-box; max-width: var(--col); white-space: pre-wrap; max-height: calc(10 * var(--line)); overflow-y: auto; border-left: 2px solid var(--rule); padding-left: 0.8rem; line-height: var(--line); font-size: var(--text); overflow-wrap: anywhere; }
   #cot-text .dropped { color: var(--quiet); text-decoration: line-through; text-decoration-color: var(--rule); }
   #cot-text .mark { display: inline-block; width: 2px; height: 1.1em; background: var(--accent); vertical-align: -0.15em; margin: 0 2px; }
-  #fig-mult .small-title { width: 55%; }
-  .ex-list { margin: 0.6rem 0 0; font-variant-numeric: lining-nums tabular-nums; }
-  .ex-list p { margin: 0 0 0.6rem; width: auto; }
+  .ex-list { margin: 0; font-variant-numeric: lining-nums tabular-nums; }
+  .ex-list p { margin: 0 0 var(--u); width: auto; line-height: var(--line); }
   .ex-list .q { color: var(--quiet); font-style: italic; }
+  /* Fit to the layout grid (2026-11-20). */
+  figure { margin: calc(2 * var(--u)) 0 var(--u); }
+  .caption { margin: 0 0 calc(2 * var(--u)); }
+  @media (max-width: 760px) { figure, figure.multiples { max-width: 100%; } ol.tasks { box-sizing: border-box; } section > ol, section > ul { width: 100%; box-sizing: border-box; } }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>

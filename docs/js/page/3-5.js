@@ -210,13 +210,17 @@ function figure() {
   const fig = document.getElementById('fig-heads');
   fig.innerHTML = '';
   const d = inputs[0];
-  for (const [l, h, title] of [[4, 11, 'Head 4.11'], [5, 5, 'Head 5.5'], [1, 10, 'Head 1.10']]) {
+  // All three boxes are placed first, so each pattern is drawn at the width its box ends up with.
+  const boxes = [[4, 11, 'Head 4.11'], [5, 5, 'Head 5.5'], [1, 10, 'Head 1.10']].map(([l, h, title]) => {
     const box = document.createElement('div');
     box.innerHTML = `<p class="small-title">${title}</p>`;
+    fig.append(box);
+    return [l, h, box];
+  });
+  for (const [l, h, box] of boxes) {
     const cv = document.createElement('canvas');
     cv.setAttribute('aria-hidden', 'true');
     box.append(cv);
-    fig.append(box);
     const size = Math.max(200, box.clientWidth || 260);
     const ctx = sizedCanvas(cv, size, size);
     drawPattern(ctx, d.att, l, h, 0, 0, size, palette('--ink'));

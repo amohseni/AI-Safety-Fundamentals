@@ -9,28 +9,37 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
-  .four { display: flex; flex-wrap: wrap; gap: 1.2rem; margin-top: 0.6rem; }
-  .four > div { flex: 1 1 13rem; min-width: 0; border-top: 1px solid var(--rule); padding-top: 0.4rem; }
-  .four .who { font-style: italic; color: var(--quiet); margin: 0 0 0.4rem; width: auto; }
-  .out { font-size: var(--text); line-height: 1.45; overflow-wrap: anywhere; max-height: 26rem; overflow-y: auto; }
-  .out p, .out li { width: auto; font-size: var(--text); margin: 0 0 0.5rem; }
-  .out ul, .out ol { width: auto; padding-left: 1.2rem; margin: 0 0 0.5rem; }
-  .out hr { border: 0; border-top: 1px solid var(--rule); margin: 0.5rem 0; width: auto; }
-  .out .katex-display { width: auto; margin: 0.3rem 0; }
-  .out pre.raw { white-space: pre-wrap; font-family: inherit; font-size: var(--text); margin: 0; width: auto; }
+  /* The four responses span both columns, so the two controls sit in a row above them:
+     the prompt over the text column, the view over the margin column. */
+  .above { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--u); margin: 0 0 calc(2 * var(--u)); }
+  @media (min-width: 1080px) { .above { grid-template-columns: var(--col) var(--side); column-gap: var(--gap); align-items: start; } }
+  .four { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: calc(2 * var(--u)); margin: 0 0 calc(3 * var(--u)); }
+  .four > div { min-width: 0; border-top: 1px solid var(--rule); padding-top: var(--u); }
+  .four .who { font-style: italic; color: var(--quiet); margin: 0 0 var(--u); width: auto; line-height: var(--line); min-height: calc(3 * var(--line)); }
+  @media (max-width: 760px) { .four { grid-template-columns: minmax(0, 1fr); } .four .who { min-height: 0; } }
+  .out { font-size: var(--text); line-height: var(--line); overflow-wrap: anywhere; max-height: calc(13 * var(--line)); overflow-y: auto; }
+  .out p, .out li { width: auto; font-size: var(--text); line-height: var(--line); margin: 0 0 var(--u); }
+  .out ul, .out ol { width: auto; padding-left: 1.2rem; margin: 0 0 var(--u); }
+  .out hr { border: 0; border-top: 1px solid var(--rule); margin: var(--u) 0; width: auto; }
+  .out .katex-display { width: auto; margin: 0 0 var(--u); }
+  .out pre.raw { white-space: pre-wrap; font-family: inherit; font-size: var(--text); line-height: var(--line); margin: 0; width: auto; }
   .out code { font-size: var(--text); }
-  .meta { color: var(--quiet); margin: 0.3rem 0 0; width: auto; }
-  .prompt-text { margin: 0.6rem 0 0; width: auto; }
+  .meta { color: var(--quiet); margin: var(--u) 0 0; width: auto; line-height: var(--line); }
+  .prompt-text { box-sizing: border-box; max-width: var(--col); margin: 0 0 calc(2 * var(--u)); width: auto; line-height: var(--line); }
   .prompt-text b { font-weight: normal; color: var(--accent); }
-  figure.pipe-fig { width: 90%; max-width: 90%; }
-  .pipe { display: flex; flex-wrap: wrap; gap: 0.4rem 0; align-items: stretch; width: 100%; }
-  .pipe .st { flex: 1 1 8rem; min-width: 0; border-top: 2px solid var(--ink); padding: 0.4rem 0.8rem 0.4rem 0; }
+  #first-chart { box-sizing: border-box; max-width: var(--col); }
+  .pipe { display: flex; flex-wrap: wrap; gap: var(--u) 0; align-items: stretch; width: 100%; }
+  .pipe .st { flex: 1 1 8rem; min-width: 0; border-top: 2px solid var(--ink); padding: var(--u) 0 0; }
   .pipe .st.rl { border-top-color: var(--second); }
-  .pipe .st p { margin: 0 0 0.3rem; width: auto; }
+  .pipe .st p { margin: 0; width: auto; line-height: var(--line); }
   .pipe .st .sig { color: var(--quiet); font-style: italic; }
   .pipe .st.rl .sig { color: var(--second); }
-  .pipe .arrow { flex: 0 0 1.4rem; align-self: center; color: var(--quiet); font-size: var(--text); }
-  @media (max-width: 760px) { .pipe .arrow { display: none; } .pipe { gap: 0.8rem 1rem; } }
+  .pipe .arrow { flex: 0 0 var(--gap); align-self: center; text-align: center; color: var(--quiet); font-size: var(--text); }
+  @media (max-width: 760px) { .pipe .arrow { display: none; } .pipe { gap: calc(2 * var(--u)) var(--u); } }
+  /* Fit to the layout grid (2026-11-20). */
+  figure { margin: calc(2 * var(--u)) 0 var(--u); }
+  .caption { margin: 0 0 calc(2 * var(--u)); }
+  @media (max-width: 760px) { figure, figure.multiples { max-width: 100%; } ol.tasks { box-sizing: border-box; } section > ol, section > ul { width: 100%; box-sizing: border-box; } }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>
@@ -61,10 +70,10 @@
   <div class="panel">
     <h3>Responses</h3>
     <p class="panel-note">Each checkpoint wrote one response to each prompt, with the same sampling settings. The base model was given the prompt as plain text; the other three were given it in their chat format. The chart below the responses shows how likely each checkpoint was, before writing anything, to begin its response with the token the final model began with.</p>
-    <div class="ctl" id="prompt-menu"></div>
+    <div class="above"><div class="ctl" id="prompt-menu"></div><div id="view-controls"></div></div>
     <p class="prompt-text" id="prompt-text" aria-live="polite"></p>
     <div class="four" id="outputs"></div>
-    <div class="row" style="margin-top:1rem"><div class="controls" id="view-controls"></div><div class="stage" id="first-chart"></div></div>
+    <div id="first-chart"></div>
     <p class="readout" id="readout" aria-live="polite"></p>
   </div>
 
@@ -110,7 +119,7 @@
 
 <section>
 <h2>Four stages, two kinds of learning</h2>
-<figure class="pipe-fig" aria-describedby="fig-pipe-desc">
+<figure class="pipe-fig wide" aria-describedby="fig-pipe-desc">
 <div class="pipe" role="img" aria-label="Four training stages in a row: pretraining and supervised fine-tuning learn from fixed text with the cross-entropy loss; reinforcement learning from feedback and on checkable tasks learn from the model's own outputs, scored">
   <div class="st"><p><b>1. Pretraining</b></p><p>trillions of tokens of text and code</p><p class="sig">fixed text, cross-entropy</p></div>
   <div class="arrow" aria-hidden="true">&rarr;</div>
