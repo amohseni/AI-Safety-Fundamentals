@@ -528,3 +528,8 @@ label.sidenote-number { display: inline; line-height: 0; }
   .review > .label { left: calc(-1 * (var(--rail) + var(--gap))); width: var(--rail); top: 0.5rem; }
 }
 @media (max-width: 1079px) { .review { margin-bottom: calc(4 * var(--u)); } }
+@font-face { font-family: "CMU Typewriter Text"; src: url("../fonts/cmu/cmu-typewriter-text-500-roman.woff2") format("woff2"); font-weight: 400 700; font-style: normal; font-display: swap; }
+code, pre { font-family: "CMU Typewriter Text", monospace; }
+button, .seg button { font-family: var(--font-label); font-size: 17px; }
+.sidenote .katex, .marginnote .katex { font-size: 1em; }
+h2 .katex { font-size: 1em; }
