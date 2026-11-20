@@ -21,6 +21,8 @@
   #s-draws .ptext { color: var(--quiet); }
   .small-title { margin: 0 0 var(--u); line-height: var(--line); color: var(--quiet); }
   figure .small-title { color: var(--ink); }
+  /* A row of buttons outside a named control takes the controls' face, like the buttons inside one. */
+  .tool .seg button { font-family: var(--font-label); }
   /* Fit to the layout grid (2026-11-20). */
   figure { margin: calc(2 * var(--u)) 0 var(--u); }
   .caption { margin: 0 0 calc(2 * var(--u)); }
@@ -67,9 +69,9 @@ $$p_i = \frac{\exp(z_i / T)}{\sum_j \exp(z_j / T)},$$
       <div class="notice"><p>The same, every time. At \(T = 0\) the draw is always the most likely token, so the whole text is fixed by the prompt. After &ldquo;My favorite food is&rdquo; GPT-2&rsquo;s greedy text is &ldquo;the chicken. I love the chicken. I love the chicken.&rdquo; and so on: always taking the most likely token often falls into a loop. The text under the tool, GPT-2&rsquo;s greedy continuation for 30 tokens, shows the same loop.</p></div></div>
   </li>
   <li class="task" data-id="3.3-t2">
-    <p class="prompt">Choose &ldquo;Once upon a time&rdquo; and set top-p to 1. Under the tool are four continuations GPT-2 sampled in advance at your temperature. At \(T = 1.5\), how will they read compared with \(T = 1\)?</p>
+    <p class="prompt">Choose &ldquo;Once upon a time&rdquo; and set top-p to 1. Under the tool are four continuations GPT-2 sampled in advance at your temperature. At \(T = 1.5\), how will they read compared with <span style="white-space: nowrap">\(T = 1\)?</span></p>
     <div class="choices" data-options="About the same|More like ordinary English|Less coherent, with odd words"></div>
-    <div class="after"><p>Move the temperature between 0.5, 1, 1.5, and 2. Then, at \(T = 1.5\), set top-p to 0.9.</p>
+    <div class="after"><p>Move the temperature between 0.5, 1, 1.5, and 2. Then, at <span style="white-space: nowrap">\(T = 1.5\),</span> set top-p to 0.9.</p>
       <button class="show" type="button">Show what to notice</button>
       <div class="notice"><p>Less coherent. At \(T = 1\) the continuations of &ldquo;Once upon a time&rdquo; are strange but mostly grammatical. At \(T = 1.5\) they break down within a few words into unrelated words and pieces of words, for example &ldquo;Marty stood consulting here where Tam today had conductedphotograph orb&rdquo;. A higher temperature moves probability from the few likely tokens to the tens of thousands of unlikely ones: after &ldquo;Once upon a time&rdquo;, the 20 most likely tokens hold 79% of the probability at \(T = 1\) and 22% at \(T = 1.5\). Top-p 0.9 cuts off only a little of that tail at \(T = 1.5\); top-p 0.5 cuts off much more, and the text is again made of ordinary words in mostly grammatical order.</p></div></div>
   </li>

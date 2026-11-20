@@ -1,8 +1,10 @@
 // Page 3.3: sample the next token, from GPT-2 small's next-token distributions computed in advance.
-import { slider, button, fmt } from '../lib/ui.js';
+import { slider, button, fmt, fontsReady } from '../lib/ui.js';
 import { decodeTree, distribution, storedMass, draw as drawToken } from '../lib/s3j-sample.js';
 
 const d3 = window.d3;
+// Label widths are measured on a canvas, which needs the site's faces loaded.
+await fontsReady();
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 const showTok = (t) => t.replace(/ /g, '·').replace(/\n/g, '↵');
 const pct = (v) => (v >= 0.995 ? `${(v * 100).toFixed(0)}%` : v >= 0.1 ? `${(v * 100).toFixed(0)}%` : v >= 0.001 ? `${(v * 100).toFixed(1)}%` : '<0.1%');
@@ -49,7 +51,7 @@ function barChart(container, rows, { max = null, compact = false, style = () => 
   const W = Math.max(240, container.clientWidth || 520);
   const small = tokenPx('--small');
   const probe = document.createElement('canvas').getContext('2d');
-  probe.font = `${small}px ${(getComputedStyle(document.documentElement).getPropertyValue('--font-data') || '').trim() || 'et-book, Georgia, serif'}`;
+  probe.font = `${small}px ${(getComputedStyle(document.documentElement).getPropertyValue('--font-data') || '').trim() || 'sans-serif'}`;
   m.left = Math.ceil(Math.max(...rows.map((r) => probe.measureText(showTok(word(r.id))).width))) + 12;
   const H = rows.length * rowH + m.top + m.bottom;
   const svg = d3.select(container).append('svg').attr('class', 'chart').attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`);

@@ -23,6 +23,8 @@
   .merges:empty { display: none; }
   .merges li { break-inside: avoid; margin: 0; }
   .merges .n { color: var(--quiet); }
+  /* A row of buttons outside a named control takes the controls' face, like the buttons inside one. */
+  .tool .seg button { font-family: var(--font-label); }
   /* Fit to the layout grid (2026-11-20). */
   figure { margin: calc(2 * var(--u)) 0 var(--u); }
   .caption { margin: 0 0 calc(2 * var(--u)); }
@@ -58,7 +60,7 @@
 
   <div class="panel" id="panel-build">
     <h3>Build your own</h3>
-    <p class="panel-note">A tiny corpus, split the way GPT-2 splits text, with characters in place of bytes. Each press of Merge finds the most frequent adjacent pair and makes it a new token; if two pairs are equally frequent, the one that appears first in the text wins. The tokens made by the last merge are outlined in <span class="c-accent">blue</span>. You can edit the corpus.</p>
+    <p class="panel-note">A tiny corpus, split the way GPT-2 splits text, with characters in place of bytes. Each press of Merge finds the most frequent adjacent pair and makes it a new token; if two pairs are equally frequent, the one that appears first in the text wins. The tokens made by the last merge are outlined in <span class="c-accent">red</span>. You can edit the corpus.</p>
     <div class="row"><div class="controls" id="build-controls"></div><div class="stage" id="build-stage"><div class="toks" id="build-toks"></div></div></div>
     <p class="readout" id="build-readout" aria-live="polite"></p>
     <ol class="merges" id="merges"></ol>

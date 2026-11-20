@@ -75,6 +75,19 @@ const rowLong = (s) => (s === 0 ? 'at the embedding' : `after layer ${s - 1}`);
 const tk = (t) => escapeHTML(showToken(t));
 const q = (t) => `&ldquo;${escapeHTML(showToken(t).trim() || t)}&rdquo;`;
 
+// The text on a shaded cell takes whichever of the paper and ink colors contrasts more with the shade,
+// so that it stays legible in the light and the dark theme.
+function textOn(shade, paper, ink) {
+  const lum = (s) => {
+    const m = s.startsWith('#') ? [1, 3, 5].map((k) => parseInt(s.length === 4 ? s[(k + 1) / 2].repeat(2) : s.slice(k, k + 2), 16)) : s.match(/\d+(\.\d+)?/g).slice(0, 3).map(Number);
+    const [r, g, b] = m.map((v) => (v / 255 <= 0.03928 ? v / 255 / 12.92 : ((v / 255 + 0.055) / 1.055) ** 2.4));
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  const ratio = (a, b) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+  const L = lum(shade);
+  return ratio(L, lum(paper)) > ratio(L, lum(ink)) ? paper : ink;
+}
+
 function draw() {
   const P = data.prompts[st.p];
   const n = P.tokens.length;
@@ -89,7 +102,7 @@ function draw() {
     for (let i = 1; i < n; i++) {
       const c = P.cells[s][i], p = c.p[0];
       const sel = s === st.row && i === st.col;
-      html += `<td tabindex="${sel ? 0 : -1}" data-s="${s}" data-i="${i}" class="${sel ? 'sel' : ''}" style="background:${shade(p)};color:${Math.sqrt(p) > 0.55 ? paper : ink}" aria-label="${rowLong(s)}, position ${i}: ${escapeHTML(c.t[0])}, ${p.toFixed(2)}">${tk(c.t[0])}</td>`;
+      html += `<td tabindex="${sel ? 0 : -1}" data-s="${s}" data-i="${i}" class="${sel ? 'sel' : ''}" style="background:${shade(p)};color:${textOn(shade(p), paper, ink)}" aria-label="${rowLong(s)}, position ${i}: ${escapeHTML(c.t[0])}, ${p.toFixed(2)}">${tk(c.t[0])}</td>`;
     }
     html += '</tr>';
   }

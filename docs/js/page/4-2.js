@@ -78,7 +78,7 @@ const refit = () => { w = labels().length ? fitBT(labels()) : [0, 0, 0, 0]; list
     g.select('line.bar').attr('x2', (d, i) => x(cl(w[i])));
     g.select('circle').attr('cx', (d, i) => x(cl(w[i])));
     g.select('text.v').attr('x', (d, i) => x(cl(w[i])) + (w[i] >= 0 ? 10 : -10)).attr('text-anchor', (d, i) => (w[i] >= 0 ? 'start' : 'end'))
-      .text((d, i) => w[i].toFixed(2));
+      .text((d, i) => w[i].toFixed(2).replace('-', '−'));
     const n = state.mine.length, m = state.batches * 20;
     out.textContent = n + m === 0 ? 'No labels yet. Label some pairs above.'
       : `Fitted to ${n} of your labels${m ? ` and ${m} simulated labels` : ''}.`;
@@ -116,7 +116,7 @@ const refit = () => { w = labels().length ? fitBT(labels()) : [0, 0, 0, 0]; list
   function draw() {
     for (const k of ['A', 'B']) texts[k].innerHTML = `<em>${PROMPTS[prompt].q}</em> ${compose(prompt, resp[k])}`;
     const rA = score(w, resp.A), rB = score(w, resp.B), p = prefProb(w, resp.A, resp.B);
-    out.innerHTML = `Scores: response A <b>${rA.toFixed(2)}</b>, response B <b>${rB.toFixed(2)}</b>. ` +
+    out.innerHTML = `Scores: response A <b>${rA.toFixed(2).replace('-', '−')}</b>, response B <b>${rB.toFixed(2).replace('-', '−')}</b>. ` +
       `The reward model predicts that a labeler prefers A with probability <b>${p.toFixed(2)}</b>.`;
   }
   listeners.push(draw);
