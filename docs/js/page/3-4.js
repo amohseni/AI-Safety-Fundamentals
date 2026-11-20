@@ -13,7 +13,7 @@ const SUB = (name, i) => `${name}<tspan dy="5">${i}</tspan>`;
 
 // A square plane in an SVG drawn at its true pixel width.
 function plane(container, { range = 3.4, maxW = 400 } = {}) {
-  const W = Math.max(240, Math.min(maxW, container.clientWidth || maxW));
+  const W = Math.max(240, container.clientWidth || maxW);
   const svg = d3.select(container).append('svg').attr('class', 'chart').attr('width', W).attr('height', W).attr('viewBox', `0 0 ${W} ${W}`);
   const s = d3.scaleLinear().domain([-range, range]).range([0, W]);
   const t = d3.scaleLinear().domain([-range, range]).range([W, 0]);
@@ -59,15 +59,15 @@ function valuesPlane(g, P, values, w, allowed, sel) {
   const q3 = FIGURE.q;
   const { scores, weights } = attention([q3, q3, q3], FIGURE.k);
   const w = weights[2], sc = scores[2];
-  const b1 = box('Query and keys');
+  // All three boxes are placed first, so each drawing gets the width its box ends up with.
+  const b1 = box('Query and keys'), b2 = box('Weights, with scores below'), b3 = box('Values and the output');
   const P1 = plane(b1, { maxW: 280, range: 2.6 });
   const g1 = P1.svg.append('g');
   FIGURE.k.forEach((k, j) => arrow(g1, P1, k, 'var(--ink)', SUB('k', j + 1)));
   arrow(g1, P1, q3, 'var(--accent)', SUB('q', 3));
   P1.svg.attr('aria-hidden', 'true');
 
-  const b2 = box('Weights, with scores below');
-  const W = Math.max(240, Math.min(280, b2.clientWidth || 280)), H = W;
+  const W = Math.max(240, b2.clientWidth || 280), H = W;
   const svg = d3.select(b2).append('svg').attr('class', 'chart').attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`).attr('aria-hidden', 'true');
   const m = { top: 30, bottom: 64, left: 10, right: 10 };
   const x = d3.scaleBand().domain([0, 1, 2]).range([m.left, W - m.right]).padding(0.4);
@@ -80,7 +80,6 @@ function valuesPlane(g, P, values, w, allowed, sel) {
   });
   svg.append('line').attr('x1', m.left).attr('x2', W - m.right).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', 'var(--rule)');
 
-  const b3 = box('Values and the output');
   const P3 = plane(b3, { maxW: 280, range: 2.6 });
   valuesPlane(P3.svg.append('g'), P3, FIGURE.v, w, [true, true, true], 2);
   P3.svg.attr('aria-hidden', 'true');

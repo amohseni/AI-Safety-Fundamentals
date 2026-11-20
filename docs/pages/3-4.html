@@ -9,18 +9,26 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
-  #controls { flex-direction: row; flex-wrap: wrap; gap: 0.9rem 1.6rem; max-width: none; margin-bottom: 1.2rem; align-items: flex-end; }
-  .planes { display: flex; flex-wrap: wrap; gap: 1.2rem 1.6rem; align-items: flex-start; }
-  .planes > div { flex: 1 1 18rem; min-width: 0; max-width: 26rem; }
+  /* The stage spans both columns: the controls sit in a row above it, and each plane takes half. */
+  #controls { flex-direction: row; flex-wrap: wrap; gap: var(--u) var(--gap); max-width: none; margin-bottom: calc(2 * var(--u)); align-items: flex-end; }
+  .planes { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: calc(2 * var(--u)) var(--gap); align-items: start; margin-bottom: calc(2 * var(--u)); }
+  .planes > div { min-width: 0; }
+  @media (max-width: 760px) { .planes { grid-template-columns: minmax(0, 1fr); } }
   .handle { cursor: grab; outline: none; }
   .handle:focus-visible .ring { stroke: var(--focus); stroke-width: 2; }
-  table.wts { border-collapse: collapse; margin: 0.4rem 0 0; font-variant-numeric: lining-nums tabular-nums; }
-  table.wts th, table.wts td { white-space: nowrap; padding: 0.15rem 0.45rem; text-align: right; font-weight: normal; }
+  #table { box-sizing: border-box; max-width: var(--col); }
+  table.wts { width: 100%; border-collapse: collapse; margin: 0; font-variant-numeric: lining-nums tabular-nums; line-height: var(--line); }
+  table.wts th, table.wts td { white-space: nowrap; padding: 0 0.45rem; text-align: right; font-weight: normal; }
+  table.wts th:first-child { text-align: left; padding-left: 0; }
   table.wts th { color: var(--quiet); }
   table.wts tr.sel th { color: var(--accent); }
   table.wts tbody tr { cursor: pointer; }
   table.wts td.masked { color: var(--quiet); }
-  .small-title { margin: 0 0 0.2rem; }
+  .small-title { margin: 0 0 var(--u); line-height: var(--line); }
+  /* Fit to the layout grid (2026-11-20). */
+  figure { margin: calc(2 * var(--u)) 0 var(--u); }
+  .caption { margin: 0 0 calc(2 * var(--u)); }
+  @media (max-width: 760px) { figure, figure.multiples { max-width: 100%; } ol.tasks { box-sizing: border-box; } section > ol, section > ul { width: 100%; box-sizing: border-box; } }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>

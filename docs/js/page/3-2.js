@@ -3,7 +3,17 @@ import { segmented, button, cssVar } from '../lib/ui.js';
 import { decodeVectors, nearest, row, analogy, pca2, mapNeighbors } from '../lib/s3j-embed.js';
 
 const d3 = window.d3;
-const FONT = '21.33px et-book, Georgia, serif';
+// Chart text is drawn at the --small size, read from the CSS so the canvas follows the tokens.
+function tokenPx(name) {
+  const probe = document.createElement('span');
+  probe.style.cssText = `position:absolute;visibility:hidden;font-size:var(${name})`;
+  document.body.append(probe);
+  const v = parseFloat(getComputedStyle(probe).fontSize) || 17;
+  probe.remove();
+  return v;
+}
+const SMALL = tokenPx('--small');
+const FONT = `${SMALL}px et-book, Georgia, serif`;
 const EXAMPLES = [
   ['king', 'man', 'woman'],
   ['Tokyo', 'Japan', 'France'],
@@ -30,7 +40,7 @@ try {
   const fig = document.getElementById('fig-capitals');
   const ids = FIG_PAIRS.flat().map((w) => E.index.get(w));
   const [c1, c2] = pca2(E, ids);
-  const W = Math.max(300, Math.min(560, fig.clientWidth || 560)), H = Math.round(W * 0.72);
+  const W = Math.max(300, fig.clientWidth || 560), H = Math.round(W * 0.72);
   const m = { top: 24, right: 24, bottom: 24, left: 24 };
   const xs = d3.extent(c1), ys = d3.extent(c2);
   // Keep the two axes on the same scale, so directions are not distorted.
@@ -110,10 +120,6 @@ const exSel = document.createElement('label');
 exSel.className = 'ctl';
 exSel.innerHTML = '<span class="ctl-head"><span class="ctl-name">Examples</span></span>';
 const sel = document.createElement('select');
-sel.style.font = 'inherit';
-sel.style.fontSize = 'var(--text)';
-sel.style.color = 'var(--ink)';
-sel.style.background = 'transparent';
 sel.innerHTML = EXAMPLES.map((e, k) => `<option value="${k}">${e[0]} − ${e[1]} + ${e[2]}</option>`).join('');
 exSel.append(sel);
 ctl.append(exSel);
@@ -133,7 +139,7 @@ canvas.setAttribute('role', 'img');
 stage.append(canvas);
 let W = 0, H = 0;
 function size() {
-  const avail = Math.min(640, stage.clientWidth || 560);
+  const avail = stage.clientWidth || 560;
   W = Math.max(260, avail); H = Math.round(W * 0.8);
   const dpr = window.devicePixelRatio || 1;
   canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);

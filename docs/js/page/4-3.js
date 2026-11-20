@@ -11,12 +11,16 @@ const fmtB = (b) => (b >= 1 ? b.toFixed(1) : b >= 0.1 ? b.toFixed(2) : b.toFixed
 // ---- Static figure: the two rewards against KL divergence, with and without the hack ----
 (function figure() {
   const fig = document.getElementById('fig-kl');
-  for (const [hack, title] of [[true, 'With the hack response'], [false, 'Without it']]) {
+  // Both boxes are placed first, so each chart is drawn at the width its box ends up with.
+  const boxes = [[true, 'With the hack response'], [false, 'Without it']].map(([hack, title]) => {
     const box = document.createElement('div');
     box.innerHTML = `<p class="small-title">${title}</p>`;
     fig.append(box);
+    return [hack, title, box];
+  });
+  for (const [hack, title, box] of boxes) {
     const s = sweep(candidates(hack));
-    const c = chart(box, { width: 340, height: 250, margin: { top: 16, right: 70, bottom: 58, left: 46 },
+    const c = chart(box, { width: box.clientWidth || 340, height: 250, margin: { top: 16, right: 70, bottom: 58, left: 46 },
       x: { domain: [0, 3.6], ticks: 4, label: 'KL divergence' }, y: { domain: [0, 1], ticks: 3 }, title: `${title}: rewards against KL divergence` });
     c.line('p', s.map((v) => [v.kl, v.proxy]), { color: 'ink', label: 'score' });
     c.line('t', s.map((v) => [v.kl, v.truth]), { color: 'second', label: 'true' });
@@ -49,8 +53,8 @@ function build() {
   sw = sweep(rs);
   // Bars: one row per response, label above its bar; score and true reward at the right.
   barsEl.innerHTML = '';
-  const W = Math.max(280, Math.min(560, barsEl.clientWidth || 560));
-  const rowH = 54, top = 26, H = top + rowH * rs.length;
+  const W = Math.max(280, barsEl.clientWidth || 560);
+  const rowH = 60, top = 30, H = top + rowH * rs.length;
   const colTrue = W, colScore = W - 64, barMax = W - 150;
   svg = d3.select(barsEl).append('svg').attr('class', 'chart').attr('viewBox', `0 0 ${W} ${H}`).attr('width', W).attr('height', H)
     .attr('role', 'img').attr('aria-label', 'Probability of each response under the starting model and under the policy');
@@ -70,7 +74,7 @@ function build() {
 
   // Curve: both expected rewards as beta decreases (beta on a log scale, falling to the right).
   curveEl.innerHTML = '';
-  curve = chart(curveEl, { width: 560, height: 300, margin: { top: 34, right: 70, bottom: 52, left: 52 },
+  curve = chart(curveEl, { width: curveEl.clientWidth || 560, height: 300, margin: { top: 34, right: 70, bottom: 52, left: 52 },
     x: { domain: [10, 0.01], log: true, ticks: 4, format: '~g', label: 'β, falling to the right' },
     y: { domain: [0, 1], ticks: 4, label: 'expected reward' }, title: 'Expected reward model score and expected true reward as beta decreases' });
   draw();

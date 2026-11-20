@@ -19,21 +19,37 @@ const word = (id) => doc.vocab[String(id)] ?? `#${id}`;
 (function figure() {
   const fig = document.getElementById('fig-temps');
   const tree = trees[0];
-  for (const T of [0.5, 1, 2]) {
+  // All three boxes are placed first, so each chart is drawn at the width its box ends up with.
+  const boxes = [0.5, 1, 2].map((T) => {
     const box = document.createElement('div');
     box.innerHTML = `<p class="small-title">T = ${T}</p>`;
     fig.append(box);
+    return [T, box];
+  });
+  for (const [T, box] of boxes) {
     const rows = distribution(tree, 0, TEMPS, T, 1).rows.slice(0, 10);
-    barChart(box, rows, { width: 260, max: 0.4, compact: true });
+    barChart(box, rows, { max: 0.4, compact: true });
   }
 })();
 
+// The pixel size of a type token (--small, --text), read from the CSS.
+function tokenPx(name) {
+  const probe = document.createElement('span');
+  probe.style.cssText = `position:absolute;visibility:hidden;font-size:var(${name})`;
+  document.body.append(probe);
+  const v = parseFloat(getComputedStyle(probe).fontSize) || 17;
+  probe.remove();
+  return v;
+}
+
 // Horizontal bars: one row per token, label on the left, value on the right.
-function barChart(container, rows, { width = 520, max = null, compact = false, style = () => 'kept' } = {}) {
-  const rowH = 26, m = { top: 4, right: 64, bottom: 6, left: 0 };
-  const W = Math.max(240, Math.min(width, container.clientWidth || width));
+function barChart(container, rows, { max = null, compact = false, style = () => 'kept' } = {}) {
+  const rowH = 30, m = { top: 0, right: 64, bottom: 0, left: 0 };
+  // Drawn at the container's true width, with chart text at the --small size.
+  const W = Math.max(240, container.clientWidth || 520);
+  const small = tokenPx('--small');
   const probe = document.createElement('canvas').getContext('2d');
-  probe.font = '21.33px et-book, Georgia, serif';
+  probe.font = `${small}px et-book, Georgia, serif`;
   m.left = Math.ceil(Math.max(...rows.map((r) => probe.measureText(showTok(word(r.id))).width))) + 12;
   const H = rows.length * rowH + m.top + m.bottom;
   const svg = d3.select(container).append('svg').attr('class', 'chart').attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`);
