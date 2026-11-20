@@ -35,3 +35,66 @@ export function setPow(t, v, { digits = 1, bare = false } = {}) {
   t.append('tspan').attr('dy', '-0.45em').text(String(k).replace('-', MINUS));
   t.append('tspan').attr('dy', '0.45em').text(' ');
 }
+
+// ---- Subscript and superscript digits ----
+// The site's faces (Computer Modern) have no glyphs for ₀ to ₉, ⁰, ⁴ to ⁹, or ⁻, so a browser would
+// take them from another font. These helpers set such a digit in the same face instead: a subscript
+// smaller and lowered, an exponent raised at the same size (as setPow does).
+const SUBS = '₀₁₂₃₄₅₆₇₈₉', SUPS = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+const kindOf = (c) => (SUBS.includes(c) ? 'sub' : SUPS.includes(c) || c === '⁻' ? 'sup' : '');
+const plainOf = (c) => (c === '⁻' ? MINUS : SUBS.includes(c) ? String(SUBS.indexOf(c)) : SUPS.includes(c) ? String(SUPS.indexOf(c)) : c);
+
+// Splits "w₁ x" into runs [text, kind] with kind '', 'sub', or 'sup'; script digits become plain digits.
+export function scriptRuns(s) {
+  const runs = [];
+  for (const c of String(s)) {
+    const k = kindOf(c);
+    if (runs.length && runs[runs.length - 1][1] === k) runs[runs.length - 1][0] += plainOf(c);
+    else runs.push([plainOf(c), k]);
+  }
+  return runs;
+}
+
+// HTML string with subscript digits as <sub> elements, e.g. "weight on x<sub>1</sub>".
+export function subHTML(s) {
+  return scriptRuns(s).map(([t, k]) => (k === 'sub' ? `<sub style="font-size:0.75em;line-height:0">${t}</sub>` : k === 'sup' ? `<span class="exp">${t}</span>` : t)).join('');
+}
+
+// Writes a label with script digits into an SVG <text> selection (d3) as tspans.
+export function setScripts(t, s) {
+  const runs = scriptRuns(s);
+  if (runs.every(([, k]) => !k)) { if (t.text() !== String(s)) t.text(s); return t; }
+  t.text(null);
+  let back = null; // the dy that returns the next run to the baseline
+  for (const [txt, k] of runs) {
+    const ts = t.append('tspan').text(txt);
+    if (k === 'sub') { ts.attr('font-size', '0.75em').attr('dy', '0.3em'); back = '-0.225em'; }
+    else if (k === 'sup') { ts.attr('dy', '-0.45em'); back = '0.45em'; }
+    else if (back) { ts.attr('dy', back); back = null; }
+  }
+  return t;
+}
+
+// Draws a label with subscript digits on a canvas at (x, y), honoring the context's textAlign and textBaseline.
+export function fillScripts(ctx, s, x, y) {
+  const runs = scriptRuns(s);
+  const m = /(\d+(?:\.\d+)?)px/.exec(ctx.font);
+  if (!m || runs.every(([, k]) => !k)) { ctx.fillText(runs.map((r) => r[0]).join(''), x, y); return; }
+  const size = Number(m[1]), font = ctx.font, small = font.replace(m[0], `${0.75 * size}px`);
+  const align = ctx.textAlign, base = ctx.textBaseline;
+  // The alphabetic baseline that the current textBaseline puts the text on.
+  const d0 = ctx.measureText('x').fontBoundingBoxDescent;
+  ctx.textBaseline = 'alphabetic';
+  const d1 = ctx.measureText('x').fontBoundingBoxDescent;
+  const ya = y + (Number.isFinite(d0) && Number.isFinite(d1) ? d0 - d1 : 0);
+  const parts = runs.map(([txt, k]) => { ctx.font = k ? small : font; return [txt, k, ctx.measureText(txt).width]; });
+  const total = parts.reduce((a, p) => a + p[2], 0);
+  let cx = align === 'right' || align === 'end' ? x - total : align === 'center' ? x - total / 2 : x;
+  ctx.textAlign = 'left';
+  for (const [txt, k, w] of parts) {
+    ctx.font = k ? small : font;
+    ctx.fillText(txt, cx, ya + (k === 'sub' ? 0.22 * size : k === 'sup' ? -0.4 * size : 0));
+    cx += w;
+  }
+  ctx.font = font; ctx.textAlign = align; ctx.textBaseline = base;
+}

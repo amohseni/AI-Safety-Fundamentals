@@ -1,6 +1,7 @@
 // Page 2.2: the neuron (perceptron playground, neuron mode).
 import { Playground, datasets, ACT, sum } from '../lib/perceptron.js';
 import { slider, segmented } from '../lib/ui.js';
+import { subHTML, setScripts } from '../lib/sci.js';
 
 const d3 = window.d3;
 
@@ -16,11 +17,11 @@ const d3 = window.d3;
   svg.append('defs').append('marker').attr('id', 'arr').attr('viewBox', '0 0 10 10').attr('refX', 9).attr('refY', 5)
     .attr('markerWidth', 7).attr('markerHeight', 7).attr('orient', 'auto').append('path').attr('d', 'M0,0 L10,5 L0,10 z').attr('fill', quiet);
   for (const [x, y, lab, wl] of ins) {
-    svg.append('text').attr('x', x - 6).attr('y', y + 6).attr('text-anchor', 'end').attr('class', 'label-ink').text(lab);
+    svg.append('text').attr('x', x - 6).attr('y', y + 6).attr('text-anchor', 'end').attr('class', 'label-ink').call(setScripts, lab);
     const ex = sx - 24, ey = sy + (y - sy) * 0.2;
     svg.append('line').attr('x1', x).attr('y1', y).attr('x2', ex).attr('y2', ey).attr('stroke', quiet).attr('marker-end', 'url(#arr)');
-    if (y !== sy) svg.append('text').attr('x', x + (ex - x) * 0.5).attr('y', y + (ey - y) * 0.5 + (y < sy ? -8 : 20)).attr('text-anchor', 'middle').text(wl);
-    else svg.append('text').attr('x', x + (ex - x) * 0.5).attr('y', y - 8).attr('text-anchor', 'middle').text(wl);
+    if (y !== sy) svg.append('text').attr('x', x + (ex - x) * 0.5).attr('y', y + (ey - y) * 0.5 + (y < sy ? -8 : 20)).attr('text-anchor', 'middle').call(setScripts, wl);
+    else svg.append('text').attr('x', x + (ex - x) * 0.5).attr('y', y - 8).attr('text-anchor', 'middle').call(setScripts, wl);
   }
   svg.append('circle').attr('cx', sx).attr('cy', sy).attr('r', 22).attr('fill', 'none').attr('stroke', ink);
   svg.append('text').attr('x', sx).attr('y', sy + 7).attr('text-anchor', 'middle').attr('class', 'label-ink').text('Σ');
@@ -47,8 +48,8 @@ segmented(ctl, { name: 'Dataset', options: [['and', 'AND'], ['or', 'OR'], ['xor'
   onChange: (k) => { state.data = k; pg.setData(datasets[k]()); draw(); } });
 segmented(ctl, { name: 'Activation function', options: [['step', 'step'], ['sigmoid', 'sigmoid'], ['relu', 'ReLU']], value: state.act,
   onChange: (k) => { state.act = k; pg.act = k; draw(); } });
-const w1S = slider(ctl, { name: 'Weight w₁', min: -6, max: 6, step: 0.05, value: 1, format: (v) => v.toFixed(2), onInput: (v) => { pg.w = [v, pg.w[1]]; draw(); } });
-const w2S = slider(ctl, { name: 'Weight w₂', min: -6, max: 6, step: 0.05, value: 1, format: (v) => v.toFixed(2), onInput: (v) => { pg.w = [pg.w[0], v]; draw(); } });
+const w1S = slider(ctl, { name: subHTML('Weight w₁'), min: -6, max: 6, step: 0.05, value: 1, format: (v) => v.toFixed(2), onInput: (v) => { pg.w = [v, pg.w[1]]; draw(); } });
+const w2S = slider(ctl, { name: subHTML('Weight w₂'), min: -6, max: 6, step: 0.05, value: 1, format: (v) => v.toFixed(2), onInput: (v) => { pg.w = [pg.w[0], v]; draw(); } });
 slider(ctl, { name: 'Bias b', min: -6, max: 6, step: 0.1, value: -1.5, format: (v) => v.toFixed(1), onInput: (v) => { pg.b = v; draw(); } });
 
 function syncSliders() {

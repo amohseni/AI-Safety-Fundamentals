@@ -2,6 +2,7 @@
 import { sample, fit, mse, truth } from '../lib/s2-poly.js';
 import { chart } from '../lib/chart.js';
 import { slider, button } from '../lib/ui.js';
+import { setScripts } from '../lib/sci.js';
 
 const d3 = window.d3;
 const LO = 1e-4, HI = 1e6;
@@ -68,6 +69,8 @@ function build() {
   ec = chart(errBox, { width: errBox.clientWidth || 420, height: 300, margin: { top: 34, right: 54, bottom: 50, left: 58 },
     x: { domain: [0, 30], label: 'degree', ticks: 6 }, y: { domain: [LO, HI], log: true, ticks: 5, format: pow10, label: 'mean squared error' },
     title: 'Training and test error against degree' });
+  // The faces lack most superscript digits, so the exponents on the axis are set as raised digits.
+  ec.g.selectAll('.axis .tick text').each(function () { setScripts(d3.select(this), this.textContent); });
   if (thr <= 30) ec.vline('thr', thr, { color: 'quiet', label: null });
   ec.line('train', errs.map((e, d) => [d, clampE(e[0])]), { color: 'accent', label: 'train' });
   ec.line('test', errs.map((e, d) => [d, clampE(e[1])]), { color: 'second', label: 'test' });

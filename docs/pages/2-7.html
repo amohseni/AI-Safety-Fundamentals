@@ -39,7 +39,7 @@ $$\frac{\partial L}{\partial w_1} = \frac{\partial L}{\partial a}\,\sigma'(z)\,x
 
 <section>
 <h2>Gradients by hand</h2>
-<p>The graph below computes a loss from inputs and parameters (the parameters are in italics). Under each node, the first number is its value from the forward pass and the second, <span class="c-accent">blue number</span> is the derivative of the loss with respect to that node, from the backward pass. Three dots mark a node that has received some but not all of its derivatives. Press a parameter, or choose it in the controls, to see its chain-rule product. The nudge test changes one parameter by 0.001 up and down and compares the change in the loss with the derivative.</p>
+<p>The graph below computes a loss from inputs and parameters (the parameters are in italics). Under each node, the first number is its value from the forward pass and the second, <span class="c-accent">red number</span> is the derivative of the loss with respect to that node, from the backward pass. Three dots mark a node that has received some but not all of its derivatives. Press a parameter, or choose it in the controls, to see its chain-rule product. The nudge test changes one parameter by 0.001 up and down and compares the change in the loss with the derivative.</p>
 
 <div class="tool" id="tool">
   <div class="row">
@@ -74,7 +74,7 @@ $$\frac{\partial L}{\partial w_1} = \frac{\partial L}{\partial a}\,\sigma'(z)\,x
 </ol>
 
 <figure class="wide" id="fig-graph" aria-describedby="fig-graph-desc"></figure>
-<p id="fig-graph-desc" class="caption">The computation graph for \(L = (w_2\,\sigma(w_1 x + b) - y)^2\) with \(x = 1.5\), \(w_1 = 0.8\), \(b = -0.5\), \(w_2 = 2\), \(y = 0.5\). Under each node, the first number is its value from the forward pass, and the second, in blue, is the derivative of \(L\) with respect to that node from the backward pass, starting from 1 at \(L\).</p>
+<p id="fig-graph-desc" class="caption">The computation graph for \(L = (w_2\,\sigma(w_1 x + b) - y)^2\) with \(x = 1.5\), \(w_1 = 0.8\), \(b = -0.5\), \(w_2 = 2\), \(y = 0.5\). Under each node, the first number is its value from the forward pass, and the second, in red, is the derivative of \(L\) with respect to that node from the backward pass, starting from 1 at \(L\).</p>
 </section>
 
 <section>

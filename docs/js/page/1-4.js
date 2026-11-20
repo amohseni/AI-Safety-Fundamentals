@@ -34,7 +34,7 @@ function imagenetFigure() {
   g.append('line').attr('x1', hx).attr('x2', hx).attr('y1', -8).attr('y2', 0)
     .attr('stroke', 'var(--ink)').attr('stroke-dasharray', '3 3');
   for (let i = 0; i < n; i++) {
-    g.append('line').attr('x1', hx).attr('x2', hx).attr('y1', top(i) + 23).attr('y2', i === n - 1 ? rowH * n : top(i) + rowH)
+    g.append('line').attr('x1', hx).attr('x2', hx).attr('y1', top(i) + 25).attr('y2', i === n - 1 ? rowH * n : top(i) + rowH)
       .attr('stroke', 'var(--ink)').attr('stroke-dasharray', '3 3');
   }
   g.append('text').attr('x', hx + 4).attr('y', -14).attr('text-anchor', 'start').attr('class', 'label-ink').text('one trained person, 5.1%');

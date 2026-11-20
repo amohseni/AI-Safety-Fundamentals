@@ -23,7 +23,7 @@
 <h1>Layers bend space</h1>
 
 <section>
-<p>The four clusters of the XOR dataset sit at the corners of a square, with each class on one diagonal. No single line separates the <span class="c-accent">blue</span> points from the <span class="c-second">orange</span> ones. A network with two small hidden layers usually learns to classify them. This page shows how: each hidden layer moves the points, and after the last hidden layer one line can separate them.</p>
+<p>The four clusters of the XOR dataset sit at the corners of a square, with each class on one diagonal. No single line separates the <span class="c-accent">red</span> points from the <span class="c-second">blue</span> ones. A network with two small hidden layers usually learns to classify them. This page shows how: each hidden layer moves the points, and after the last hidden layer one line can separate them.</p>
 
 <p>Each layer does two things. First a linear map, plus a shift, rotates, stretches, shears, or flattens space. Then the activation function bends it. The network on this page uses the hyperbolic tangent, tanh, which squashes each coordinate into the range from \(-1\) to \(1\). ReLU, the other common choice, sets every negative coordinate to zero. For a network with two hidden layers,</p>
 $$\begin{gathered} h_1 = \tanh(W_1 x + b_1), \quad h_2 = \tanh(W_2 h_1 + b_2), \\[4pt] \text{output} = \sigma(w \cdot h_2 + b). \end{gathered}$$
