@@ -22,6 +22,8 @@ console.log(`seeds reaching 100% in ${STEPS} steps in all three versions (of 1..
 
 // Panel note: "trained on the spirals from five seeds for 4,000 steps each. Of 40 seeds we tried, these five reached 100% on
 // the training points within 4,000 steps in every test we ran."
+// Panel note as corrected 2026-11-19: "Of 40 seeds we tried, six reached 100% ... The tool uses five of the six."
+check('panel 1: of 40 seeds, six reach 100% on the training points within 4,000 steps in every version', reach.length === 6, reach.join(' '));
 check('panel 1: five seeds, 4,000 steps each', SEEDS.length === 5 && STEPS === 4000, `${SEEDS.length} ${STEPS}`);
 check('panel 1: each of the five seeds reaches 100% on the training points within 4,000 steps in all three versions', SEEDS.every((s) => reach.includes(s)), reach.join(' '));
 
