@@ -38,7 +38,15 @@ for (const page of pages) {
     tab.on('pageerror', (e) => errors.push(String(e)));
     await tab.goto(`http://localhost:${port}/${page}`, { waitUntil: 'load' });
     await tab.waitForTimeout(1500);
-    const overflow = await tab.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    // Measured twice: as loaded, and with every sidenote opened (on a phone they open in the text column).
+    const overflow = await tab.evaluate(() => {
+      const over = () => document.documentElement.scrollWidth - window.innerWidth;
+      const closed = over();
+      document.querySelectorAll('input.margin-toggle').forEach((i) => { i.checked = true; });
+      const open = over();
+      document.querySelectorAll('input.margin-toggle').forEach((i) => { i.checked = false; });
+      return Math.max(closed, open);
+    });
     const shot = path.join(outDir, `${page.replace(/[\/.]/g, '_')}-${label}.png`);
     await tab.screenshot({ path: shot, fullPage: true });
     const ok = errors.length === 0 && overflow <= 1;

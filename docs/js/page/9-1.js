@@ -15,7 +15,7 @@ const PROBLEMS = [
     refs: [['Lanham et al. (2023), “Measuring faithfulness in chain-of-thought reasoning”', 'https://arxiv.org/abs/2307.13702'], ['Korbak et al. (2025), “Chain of thought monitorability”', 'https://arxiv.org/abs/2507.11473']] },
   { title: 'Probes that generalize', why: 'Lie detection and monitoring need probes that work on new kinds of input.', pages: ['6.3', '7.2'], kinds: ['interp', 'theory'], setups: ['gpu'],
     project: 'Train truth probes on a small open model and test them on negated statements and on topics left out of training.',
-    refs: [['Levinstein and Herrmann (2025), “Still no lie detector for language models,” Philosophical Studies', 'https://arxiv.org/abs/2307.00175'], ['Herrmann and Levinstein (2026), Radical AI Interpretability, Ch. 4', 'https://arxiv.org/abs/2606.26523']] },
+    refs: [['Levinstein and Herrmann (2025), “Still no lie detector for language models,” Philosophical Studies', 'https://doi.org/10.1007/s11098-023-02094-3'], ['Herrmann and Levinstein (2026), Radical AI Interpretability, Ch. 4', 'https://arxiv.org/abs/2606.26523']] },
   { title: 'Reward model overoptimization', why: 'Every model trained with human feedback is optimized against a proxy.', pages: ['4.3', '8.1'], kinds: ['training'], setups: ['gpu'],
     project: 'Reproduce a best-of-n overoptimization curve with small open models: a proxy reward model, a larger “gold” reward model, and the gap between them as n grows.',
     refs: [['Gao, Schulman, and Hilton (2022), “Scaling laws for reward model overoptimization”', 'https://arxiv.org/abs/2210.10760']] },

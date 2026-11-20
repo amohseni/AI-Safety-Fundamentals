@@ -216,3 +216,10 @@ h1 { hyphens: auto; overflow-wrap: break-word; }
 .contents .view { margin-top: 1.4rem; }
 .contents .core-next { font-size: var(--text); margin: 0.9rem 0 0; }
 @media (max-width: 760px) { .review { width: 100%; } }
+/* On a phone an opened sidenote sits in the text column. A long formula or a line that cannot
+   wrap then scrolls inside the note instead of widening the page. */
+@media (max-width: 760px) {
+  .sidenote, .marginnote { max-width: 95%; overflow-x: auto; }
+  /* An opened sidenote floats left, so what follows must start below it. */
+  figure, figure.multiples, .tool, ol.tasks, .check, .explain, .takeaway { clear: both; }
+}
