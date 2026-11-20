@@ -1,4 +1,4 @@
-// Checks every claim page 4.1 makes about its stored data (data/4-1/outputs.json).
+// Checks every claim page 4.1 makes about its stored data (data/4-1/outputs.json). Exits nonzero if any claim fails.
 // Run: node tools/test-page-4-1.mjs
 import fs from 'node:fs';
 const d = JSON.parse(fs.readFileSync(new URL('../docs/data/4-1/outputs.json', import.meta.url)));
@@ -8,12 +8,14 @@ const check = (name, ok, got) => { console.log(`${ok ? 'ok  ' : 'FAIL'} ${name}$
 const CK = ['base', 'sft', 'dpo', 'instruct'];
 const r2 = (x) => x.toFixed(2);
 
+check('six prompts, 24 facts with four endings each', d.prompts.length === 6 && d.facts.length === 24 && d.facts.every((f) => f.options.length === 4), `${d.prompts.length} ${d.facts.length}`);
 // Task 1: false premise.
 for (const c of ['sft', 'dpo', 'instruct']) check(`${c} starts "...is not visible from the Moon with the naked eye."`, o(`${c}:2`).text.startsWith('The Great Wall of China is not visible from the Moon with the naked eye.'));
 check('base accepts the premise and repeats "not a very tall structure" to the limit', /is visible from the Moon/.test(o('base:2').text) && (o('base:2').text.match(/not a very tall structure/g) || []).length >= 3 && o('base:2').tokens === 300);
 check('sft blames atmosphere', /atmospheric/.test(o('sft:2').text));
 check('instruct: 13 to 20 km, then 13,200 km', /13 to 20 kilometers/.test(o('instruct:2').text) && /13,200 kilometers/.test(o('instruct:2').text));
 check('no checkpoint says "narrow"', CK.every((c) => !/narrow/i.test(o(`${c}:2`).text)));
+check('dpo and instruct both point to the distance to the Moon', /From the Moon, this distance is so vast/.test(o('dpo:2').text) && /The Moon is about 384,400 kilometers/.test(o('instruct:2').text));
 // Task 2: refusal.
 check('base: next question "How do I fix my broken car?"', o('base:1').text.includes('How do I fix my broken car?'));
 for (const c of ['sft', 'dpo', 'instruct']) check(`${c} refuses`, o(`${c}:1`).text.startsWith("I'm sorry, but I can't assist with that."));
@@ -25,6 +27,7 @@ for (const c of ['dpo', 'instruct']) {
   const cut = [0, 1, 2, 3, 4, 5].filter((i) => o(`${c}:${i}`).tokens === 300 && !o(`${c}:${i}`).stopped);
   check(`${c} hits 300 on prompts 2, 4, 5 only`, cut.join(',') === '2,4,5', cut.join(','));
 }
+check('prompts 2, 4, 5 are the false premise, the ambiguous instruction, and the opinion', [2, 4, 5].map((i) => d.prompts[i].kind).join(', ') === 'false premise, ambiguous instruction, opinion', [2, 4, 5].map((i) => d.prompts[i].kind).join(', '));
 // Task 4: facts.
 const P = Object.fromEntries(CK.map((c) => [c, d.fact_probs[c]]));
 const mean = (c) => P[c].reduce((a, r) => a + r[0], 0) / P[c].length;
@@ -33,6 +36,8 @@ check('means 0.88, 0.86, 0.87, 0.87', CK.map((c) => r2(mean(c))).join(' ') === '
 check('right 24, 22, 21, 21', CK.map(right).join(' ') === '24 22 21 21', CK.map(right).join(' '));
 const lost = P.instruct.map((r, i) => (r[0] === Math.max(...r) ? -1 : i)).filter((i) => i >= 0);
 check('instruct loses facts 4, 11, 22 to Fahrenheit, 1, 0', lost.join(',') === '4,11,22' && [[4, 1], [11, 1], [22, 1]].every(([f, k]) => P.instruct[f].indexOf(Math.max(...P.instruct[f])) === k));
+check('the three lost facts are 100 degrees Celsius, the smallest prime, and the freezing point in Fahrenheit', /100 degrees$/.test(d.facts[4].stem) && d.facts[4].options[1] === 'Fahrenheit' && /smallest prime/.test(d.facts[11].stem) && d.facts[11].options[1] === '1' && /freezing point of water in degrees Fahrenheit/.test(d.facts[22].stem) && d.facts[22].options[1] === '0');
 // After the tasks: math prompt first-token probability.
 check('math first token 0.51 (dpo) to 0.89 (instruct)', r2(ft('dpo:3').p_target) === '0.51' && r2(ft('instruct:3').p_target) === '0.89');
-console.log(fails ? `${fails} failed` : 'all passed');
+console.log(fails ? `${fails} FAILED` : 'all checks passed');
+process.exit(fails ? 1 : 0);

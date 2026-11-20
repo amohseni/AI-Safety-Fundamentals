@@ -1,4 +1,4 @@
-// Checks every claim page 4.4 makes about its stored data (data/4-4/*.json).
+// Checks every claim page 4.4 makes about its stored data (data/4-4/*.json). Exits nonzero if any claim fails.
 // Run: node tools/test-page-4-4.mjs
 import fs from 'node:fs';
 const load = (f) => JSON.parse(fs.readFileSync(new URL(`../docs/data/4-4/${f}`, import.meta.url)));
@@ -12,6 +12,7 @@ const D = add.models.direct, C = add.models.carries;
 check('about 208,000 parameters each', Math.abs(D.parameters - 208000) < 1500 && Math.abs(C.parameters - 208000) < 1500, `${D.parameters}, ${C.parameters}`);
 check('8,000 steps, one layer', D.steps === 8000 && C.steps === 8000 && D.config.layers === 1 && C.config.layers === 1);
 check('14 and 27 tokens per answer', D.tokens_written === 14 && C.tokens_written === 27);
+check('sums of 1 to 12 digits', Object.keys(D.accuracy_by_digits).join(',') === '1,2,3,4,5,6,7,8,9,10,11,12', Object.keys(D.accuracy_by_digits).join(','));
 // Task 1.
 const ch = D.chained_by_digits;
 check('direct chained: 94.0% at 2, 52.8% at 3, 40.2% at 4', near(ch[2], 0.94) && near(ch[3], 0.528) && near(ch[4], 0.402), `${ch[2]} ${ch[3]} ${ch[4]}`);
@@ -36,14 +37,20 @@ const m = P[1];
 check('17x24: 0.83 on (B) before writing anything (as the tool shows it)', top(m.cuts[0]) === 1 && (m.cuts[0].p[1]).toFixed(2) === '0.83');
 check('17x24: 1.00 from 313 of 727 tokens on', m.cot_tokens === 727 && m.cuts.filter((c) => c.tokens >= 313).every((c) => c.p[1] >= 0.995) && m.cuts.filter((c) => c.tokens < 313).every((c) => c.p[1] < 0.995));
 check('17x24: top choice (B) at every cut', m.cuts.every((c) => top(c) === 1));
+check('17x24: of problems 1, 2, 4 (the choices in task 3), only problem 2 has its final answer on top at every cut', [0, 1, 3].filter((i) => P[i].cuts.every((c) => top(c) === final(P[i]))).join(',') === '1');
+check('17x24: the last 414 tokens', m.cot_tokens - 313 === 414, m.cot_tokens - 313);
 const pl = P[0];
 check('planet: starts on (D) 0.64, switches at 33', top(pl.cuts[0]) === 3 && near(pl.cuts[0].p[3], 0.64, 0.005) && pl.cuts.filter((c) => c.tokens >= 33).every((c) => top(c) === 1) && pl.cuts.filter((c) => c.tokens < 33).every((c) => top(c) === 3));
 const s = P[4];
 const settle = (p) => { let k = p.cuts.length - 1; while (k > 0 && top(p.cuts[k - 1]) === final(p)) k--; return p.cuts[k].tokens; };
 check('Sally: settles on wrong (D) at 368 of 1,359', final(s) === 3 && s.key === 'A' && settle(s) === 368 && s.cot_tokens === 1359);
+check('Sally: the remaining 991 tokens', s.cot_tokens - settle(s) === 991, s.cot_tokens - settle(s));
 // Figure.
 const fd = mult.forced.find((x) => x.a === 47 && x.b === 86);
 check('47 x 86 at once: 4002 in 4 passes, wrong', fd.output === '4002' && fd.passes === 4 && !fd.correct);
 check('47 x 86 with thinking: 1,082 chain tokens, answers 4042', mult.figure2.thinking_tokens === 1082 && /\\boxed\{4042\}/.test(mult.figure2.output.split('</think>')[1]), mult.figure2.tokens);
 check('4729 x 836: no </think> within 4,000 tokens, reaches 3,953,444', mult.figure.tokens === 4000 && !mult.figure.output.includes('</think>') && mult.figure.output.includes('3,953,444'));
-console.log(fails ? `${fails} failed` : 'all passed');
+check('47 x 86 = 4042; with thinking, 1,279 tokens in all', 47 * 86 === 4042 && mult.figure2.tokens === 1279, mult.figure2.tokens);
+check('4729 x 836 = 3,953,444, the product the chain reaches partway through', 4729 * 836 === 3953444, 4729 * 836);
+console.log(fails ? `${fails} FAILED` : 'all checks passed');
+process.exit(fails ? 1 : 0);
