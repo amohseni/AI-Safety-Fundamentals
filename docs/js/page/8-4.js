@@ -38,7 +38,7 @@ function drawGraph(svgSel, graph, result, { width, height = width < 450 ? 420 : 
     const fromStart = a === 'start' && !both;
     const share = fromStart ? result.share.get(ix.get(b)) || 0 : 0;
     eg.append('line').attr('x1', x1 + ux * (R + 2)).attr('y1', y1 + uy * (R + 2)).attr('x2', x2 - ux * (R + 3)).attr('y2', y2 - uy * (R + 3))
-      .attr('stroke', fromStart ? 'var(--accent)' : 'var(--rule)').attr('stroke-width', fromStart ? 1.5 + 14 * share : 1.5)
+      .attr('stroke', fromStart ? 'var(--accent)' : 'var(--quiet)').attr('stroke-opacity', fromStart ? null : 0.5).attr('stroke-width', fromStart ? 1.5 + 14 * share : 1.5) // --rule was too faint to see on the dark paper
       .attr('marker-end', `url(#${fromStart ? 'arrow-a' : 'arrow-q'})`).attr('marker-start', both ? 'url(#arrow-q)' : null);
     if (fromStart) {
       const nx = -uy, ny = ux;

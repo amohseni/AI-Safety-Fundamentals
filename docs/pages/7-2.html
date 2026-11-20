@@ -9,6 +9,8 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
+  /* Two sidenotes that meet in the margin column are kept a line apart. */
+  @media (min-width: 1080px) { .sidenote { margin-bottom: var(--u); } }
   /* Scorecard: as wide as the text column; results sit at its right edge. */
   table.card { border-collapse: collapse; width: 100%; max-width: var(--col); margin: calc(2 * var(--u)) 0 0; line-height: var(--line); }
   table.card th, table.card td { text-align: left; font-weight: normal; padding: calc(0.5 * var(--u)) 1.2rem calc(0.5 * var(--u)) 0; vertical-align: baseline; border-bottom: 1px solid var(--rule); }

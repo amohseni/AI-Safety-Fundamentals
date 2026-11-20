@@ -9,6 +9,8 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
+  /* Two sidenotes that meet in the margin column are kept a line apart. */
+  @media (min-width: 1080px) { .sidenote { margin-bottom: var(--u); } }
   /* Tables in the stage: as wide as the text column; the row name takes the spare width, numbers sit at the right edge. */
   table.jb { border-collapse: collapse; width: 100%; margin: 0; line-height: var(--line); font-variant-numeric: lining-nums tabular-nums; }
   table.jb th, table.jb td { padding: 0 0 0 1.2rem; text-align: right; font-weight: normal; vertical-align: baseline; white-space: nowrap; }
