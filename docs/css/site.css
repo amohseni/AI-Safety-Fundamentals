@@ -182,7 +182,7 @@ figure .small-title { font-size: var(--text); color: var(--ink); margin: 0 0 0.2
 .contents li a:hover { text-decoration: underline; }
 
 /* Phones: the tool and its text take the full column. */
-@media (max-width: 760px) {
+@media (max-width: 1079px) {
   .katex-display, .topline, .tool, ol.tasks, .readout, .check, .explain, .takeaway, .pagenav, .contents, .tool .panel-note, .caption { width: 100%; }
   .tool .controls { max-width: none; flex: 1 1 100%; }
   ol.tasks { padding-left: 1.2rem; }
@@ -217,10 +217,10 @@ h1 { hyphens: auto; overflow-wrap: break-word; }
 .review .check { width: 100%; }
 .contents .view { margin-top: 1.4rem; }
 .contents .core-next { font-size: var(--text); margin: 0.9rem 0 0; }
-@media (max-width: 760px) { .review { width: 100%; } }
+@media (max-width: 1079px) { .review { width: 100%; } }
 /* On a phone an opened sidenote sits in the text column. A long formula or a line that cannot
    wrap then scrolls inside the note instead of widening the page. */
-@media (max-width: 760px) {
+@media (max-width: 1079px) {
   .sidenote, .marginnote { max-width: 95%; overflow-x: auto; }
   /* An opened sidenote floats left, so what follows must start below it. */
   figure, figure.multiples, .tool, ol.tasks, .check, .explain, .takeaway { clear: both; }
@@ -355,7 +355,7 @@ p.subtitle { margin-top: 0; margin-bottom: calc(3 * var(--u)); line-height: var(
 .contents .key span > span { display: inline-block; margin: 0 0.45rem 0 0; white-space: nowrap; }
 
 /* Shared fixes found while fitting pages to the grid (2026-11-20). */
-@media (max-width: 760px) {
+@media (max-width: 1079px) {
   ol.tasks { box-sizing: border-box; }
   figure, figure.multiples, .fullwidth { max-width: 100%; }
   section > ul, section > ol, section > dl, article > ul, article > ol { width: auto; }
@@ -381,3 +381,32 @@ figure { margin: calc(3 * var(--u)) 0 calc(2 * var(--u)); }
 .tool .stage > div + div { margin-top: calc(2 * var(--u)); }
 figure.multiples.two { gap: var(--gap); }
 .tool .readout + .panel-note { margin-top: calc(2 * var(--u)); }
+
+/* Two layouts only (2026-11-20): two columns at 1080 px and wider, one column below. In one column
+   the text keeps its measure and is centered, and vertical space follows the same units. */
+@media (max-width: 1079px) {
+  body { width: auto; max-width: none; margin: 0; padding: 0 1.6rem; }
+  .topline, article, .pagenav { max-width: var(--col); margin-left: auto; margin-right: auto; }
+  .topline, .pagenav, .contents, .review, .caption, .katex-display, .readout, .tool, .tool .panel-note,
+  ol.tasks, .check, .explain, .takeaway { width: 100%; box-sizing: border-box; }
+  section > p, section > ul, section > ol, section > dl, article > p, article > ul, article > ol, figure { width: auto; max-width: 100%; }
+  p { margin-top: 0; margin-bottom: var(--u); }
+  h1 { margin: calc(2 * var(--u)) 0 calc(3 * var(--u)); }
+  h2 { margin: calc(6 * var(--u)) 0 calc(2 * var(--u)); }
+  .tool { margin: calc(3 * var(--u)) 0; border-top: 1px solid var(--rule); padding-top: calc(2 * var(--u)); }
+  .tool .panel { margin-bottom: calc(3 * var(--u)); }
+  .tool .panel + .panel { border-top: 1px solid var(--rule); padding-top: calc(2 * var(--u)); }
+  .tool .controls { max-width: none; flex: 1 1 100%; gap: var(--u); }
+  .tool div.row { gap: calc(2 * var(--u)); }
+  .tool .panel-note { margin: 0 0 calc(2 * var(--u)); }
+  .readout { margin: calc(2 * var(--u)) 0 0; }
+  ol.tasks { margin: calc(3 * var(--u)) 0 calc(2 * var(--u)); padding-left: 1.6rem; }
+  ol.tasks > li { margin-bottom: calc(2.5 * var(--u)); }
+  .task .choices { margin-top: var(--u); }
+  .check, .explain, .takeaway { margin-top: calc(3 * var(--u)); padding-top: calc(1.5 * var(--u)); }
+  .check > .label, .explain > .label, .takeaway > .label { font-style: normal; margin: 0 0 var(--u); }
+  .check .q { margin-bottom: calc(1.5 * var(--u)); }
+  .takeaway { border-top: 2px solid var(--ink); }
+  .pagenav { margin: calc(6 * var(--u)) auto calc(4 * var(--u)); }
+  .margin-toggle:checked + .sidenote, .margin-toggle:checked + .marginnote { width: 100%; left: 0; margin: var(--u) 0; box-sizing: border-box; }
+}

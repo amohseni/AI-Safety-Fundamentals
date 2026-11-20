@@ -20,7 +20,7 @@
     #tool .row { display: block; }
     #tool .row > .controls { margin-bottom: calc(2 * var(--u)); }
   }
-  @media (max-width: 760px) { .images > div { flex-basis: 100%; } }
+  @media (max-width: 1079px) { .images > div { flex-basis: 100%; } }
   .kernel { display: grid; grid-template-columns: repeat(3, 4.2rem); gap: 0.3rem; }
   .kernel input { width: 4.2rem; box-sizing: border-box; font: inherit; font-size: var(--text); color: var(--ink); background: transparent;
     border: 1px solid var(--rule); border-radius: 3px; padding: 0.1rem 0.3rem; text-align: right; font-variant-numeric: lining-nums tabular-nums; }
@@ -29,7 +29,7 @@
   /* 96 filters: 4 rows of 24 across both columns, 6 rows of 16 on a narrow screen, 12 rows of 8 on a phone. */
   .alex { display: grid; grid-template-columns: repeat(24, 1fr); gap: 4px; }
   @media (max-width: 1079px) { .alex { grid-template-columns: repeat(16, 1fr); } }
-  @media (max-width: 760px) { .alex { grid-template-columns: repeat(8, 1fr); } }
+  @media (max-width: 1079px) { .alex { grid-template-columns: repeat(8, 1fr); } }
   .alex button { padding: 0; border: 2px solid transparent; border-radius: 2px; line-height: 0; background: none; }
   .alex button[aria-pressed="true"] { border-color: var(--accent); }
   .alex canvas { width: 100%; height: auto; image-rendering: pixelated; }

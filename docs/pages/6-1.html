@@ -37,7 +37,7 @@
     #map > :nth-child(4n) { padding-left: var(--gap); padding-right: 0; }
     #card, #quiz { width: var(--col); }
   }
-  @media (max-width: 760px) {
+  @media (max-width: 1079px) {
     #map { grid-template-columns: 1fr; }
     #map .map-col, #map .map-corner { display: none; }
     #map .map-row { border-bottom: 0; padding-top: 1rem; padding-bottom: 0; color: var(--ink); }
@@ -45,7 +45,7 @@
     #map .map-cell::before { content: attr(data-label); color: var(--quiet); font-style: italic; }
   }
   /* Until the shared CSS does this: on a phone, figures and the task list end at the column's edge. */
-  @media (max-width: 760px) { figure, figure.multiples { max-width: 100%; } ol.tasks { box-sizing: border-box; } }
+  @media (max-width: 1079px) { figure, figure.multiples { max-width: 100%; } ol.tasks { box-sizing: border-box; } }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>

@@ -13,7 +13,7 @@
   #controls { flex-direction: row; flex-wrap: wrap; gap: var(--u) var(--gap); max-width: none; margin-bottom: calc(2 * var(--u)); align-items: flex-end; }
   .planes { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: calc(2 * var(--u)) var(--gap); align-items: start; margin-bottom: calc(2 * var(--u)); }
   .planes > div { min-width: 0; }
-  @media (max-width: 760px) { .planes { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 1079px) { .planes { grid-template-columns: minmax(0, 1fr); } }
   .handle { cursor: grab; outline: none; }
   .handle:focus-visible .ring { stroke: var(--focus); stroke-width: 2; }
   #table { box-sizing: border-box; max-width: var(--col); }
@@ -28,7 +28,7 @@
   /* Fit to the layout grid (2026-11-20). */
   figure { margin: calc(2 * var(--u)) 0 var(--u); }
   .caption { margin: 0 0 calc(2 * var(--u)); }
-  @media (max-width: 760px) { figure, figure.multiples { max-width: 100%; } ol.tasks { box-sizing: border-box; } section > ol, section > ul { width: 100%; box-sizing: border-box; } }
+  @media (max-width: 1079px) { figure, figure.multiples { max-width: 100%; } ol.tasks { box-sizing: border-box; } section > ol, section > ul { width: 100%; box-sizing: border-box; } }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>

@@ -16,7 +16,7 @@
   .four { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: calc(2 * var(--u)); margin: 0 0 calc(3 * var(--u)); }
   .four > div { min-width: 0; border-top: 1px solid var(--rule); padding-top: var(--u); }
   .four .who { font-style: italic; color: var(--quiet); margin: 0 0 var(--u); width: auto; line-height: var(--line); min-height: calc(3 * var(--line)); }
-  @media (max-width: 760px) { .four { grid-template-columns: minmax(0, 1fr); } .four .who { min-height: 0; } }
+  @media (max-width: 1079px) { .four { grid-template-columns: minmax(0, 1fr); } .four .who { min-height: 0; } }
   .out { font-size: var(--text); line-height: var(--line); overflow-wrap: anywhere; max-height: calc(13 * var(--line)); overflow-y: auto; }
   .out p, .out li { width: auto; font-size: var(--text); line-height: var(--line); margin: 0 0 var(--u); }
   .out ul, .out ol { width: auto; padding-left: 1.2rem; margin: 0 0 var(--u); }
@@ -35,11 +35,11 @@
   .pipe .st .sig { color: var(--quiet); font-style: italic; }
   .pipe .st.rl .sig { color: var(--second); }
   .pipe .arrow { flex: 0 0 var(--gap); align-self: center; text-align: center; color: var(--quiet); font-size: var(--text); }
-  @media (max-width: 760px) { .pipe .arrow { display: none; } .pipe { gap: calc(2 * var(--u)) var(--u); } }
+  @media (max-width: 1079px) { .pipe .arrow { display: none; } .pipe { gap: calc(2 * var(--u)) var(--u); } }
   /* Fit to the layout grid (2026-11-20). */
   figure { margin: calc(2 * var(--u)) 0 var(--u); }
   .caption { margin: 0 0 calc(2 * var(--u)); }
-  @media (max-width: 760px) { figure, figure.multiples { max-width: 100%; } ol.tasks { box-sizing: border-box; } section > ol, section > ul { width: 100%; box-sizing: border-box; } }
+  @media (max-width: 1079px) { figure, figure.multiples { max-width: 100%; } ol.tasks { box-sizing: border-box; } section > ol, section > ul { width: 100%; box-sizing: border-box; } }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>
