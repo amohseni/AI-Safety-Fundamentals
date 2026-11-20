@@ -6,6 +6,10 @@ Read this first in every session that works on the site.
 
 An interactive explainer site that teaches a new graduate student how modern AI systems work, from a single neuron to the alignment problem. It is used one-to-one for self-teaching: no grades, no accounts. Owner: Aydin Mohseni. Public repo. Published at https://aydinmohseni.com/teaching/primer-on-ai/: the deploy workflow of `amohseni/Aydin-Mohseni-Website` copies this repo's `docs/` there on every build of that site (nightly, or run it by hand). This repo's own GitHub Pages copy (amohseni.github.io/AI-Safety-Fundamentals/) is a preview.
 
+## Publishing
+
+Owner's standing instruction (2026-11-20): publish without asking him to do anything on GitHub. After every push to `main` that changes `docs/`, start the website's deploy with `gh workflow run deploy.yml --ref main -R amohseni/Aydin-Mohseni-Website`, wait for the run to succeed, then fetch a changed file from https://aydinmohseni.com/teaching/primer-on-ai/ and confirm the change is in it. Report the result of that check, not only the push. The run named "pages-build-deployment" in that repository is GitHub's own Jekyll build; it fails on every push and does not affect the live site.
+
 ## Where things are
 
 | Path | What it holds |
