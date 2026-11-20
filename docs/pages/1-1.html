@@ -16,14 +16,14 @@
   #timeline .ev:focus { outline: none; }
   #timeline .ev:focus-visible circle { stroke: var(--focus); stroke-width: 3; }
   #timeline .winter { cursor: pointer; }
-  .tl-bar { display: flex; flex-wrap: wrap; gap: 0.8rem 1.6rem; align-items: flex-end; margin-bottom: 0.8rem; }
-  #card { width: 61%; border-top: 1px solid var(--rule); padding-top: 0.6rem; margin-top: 0.8rem; }
-  #card h3 { margin: 0.2rem 0 0.4rem; font-size: var(--text); font-weight: 600; }
-  #card p { margin: 0.35rem 0; }
+  /* The timeline spans both columns; its controls sit in a row above it and the card below it is as wide as the text column. */
+  .tl-bar { display: flex; flex-wrap: wrap; gap: var(--u) calc(2 * var(--u)); align-items: flex-end; margin-bottom: calc(2 * var(--u)); }
+  #card { width: 100%; max-width: var(--col); box-sizing: border-box; border-top: 1px solid var(--rule); padding-top: var(--u); margin-top: calc(2 * var(--u)); }
+  #card h3 { margin: 0 0 var(--u); font-size: var(--text); font-weight: 600; font-style: normal; line-height: var(--line); }
+  #card p { margin: 0 0 var(--u); line-height: var(--line); }
   #card .meta { color: var(--quiet); }
-  #card .lr { margin: 0.6rem 0 0.2rem; }
+  #card .lr { margin: var(--u) 0; }
   #fig-static svg { display: block; max-width: 100%; }
-  @media (max-width: 760px) { #card { width: 100%; } }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>

@@ -9,24 +9,27 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
-  .three { display: flex; flex-wrap: wrap; gap: 1.4rem; margin-top: 0.6rem; }
-  .three > div { flex: 1 1 15rem; min-width: 0; border-top: 1px solid var(--rule); padding-top: 0.4rem; }
-  .three .who { font-style: italic; color: var(--quiet); margin: 0 0 0.4rem; width: auto; }
-  .out { font-size: var(--text); line-height: 1.45; overflow-wrap: anywhere; }
-  .out p, .out li { width: auto; font-size: var(--text); margin: 0 0 0.5rem; }
-  .out ul, .out ol { width: auto; padding-left: 1.2rem; margin: 0 0 0.5rem; }
-  .out hr { border: 0; border-top: 1px solid var(--rule); margin: 0.5rem 0; width: auto; }
-  .out .katex-display { width: auto; margin: 0.3rem 0; }
-  .out pre.raw { white-space: pre-wrap; font-family: inherit; font-size: var(--text); margin: 0; width: auto; overflow-x: visible; }
+  /* Three outputs side by side across both columns; the controls sit in rows above them. */
+  .three { display: flex; flex-wrap: wrap; gap: calc(2 * var(--u)) var(--gap); margin-top: calc(2 * var(--u)); }
+  .three > div { flex: 1 1 12rem; min-width: 0; border-top: 1px solid var(--rule); padding-top: var(--u); }
+  .three .who { font-style: italic; color: var(--quiet); margin: 0 0 var(--u); width: auto; line-height: var(--line); }
+  .out { font-size: var(--text); line-height: var(--line); overflow-wrap: anywhere; }
+  .out p, .out li { width: auto; font-size: var(--text); margin: 0 0 var(--u); line-height: var(--line); }
+  .out ul, .out ol { width: auto; padding-left: 1.2rem; margin: 0 0 var(--u); }
+  .out hr { border: 0; border-top: 1px solid var(--rule); margin: var(--u) 0; width: auto; }
+  .out .katex-display { width: auto; margin: var(--u) 0; }
+  .out pre.raw { white-space: pre-wrap; font-family: inherit; font-size: var(--text); line-height: var(--line); margin: 0; width: auto; overflow-x: visible; }
   .out code { font-size: var(--text); }
-  .thought { color: var(--quiet); font-style: italic; max-height: 26rem; overflow-y: auto; border-left: 2px solid var(--rule); padding-left: 0.7rem; margin: 0.4rem 0 0.7rem; }
-  .thought p { margin-bottom: 0.4rem; }
-  .meta { color: var(--quiet); margin: 0.3rem 0 0; width: auto; }
-  .prompt-text { margin: 0.6rem 0 0; width: auto; }
+  .thought { color: var(--quiet); font-style: italic; max-height: 26rem; overflow-y: auto; border-left: 2px solid var(--rule); padding-left: 0.7rem; margin: 0 0 var(--u); }
+  .thought p { margin-bottom: var(--u); }
+  .meta { color: var(--quiet); margin: 0 0 var(--u); width: auto; line-height: var(--line); }
+  .prompt-text { margin: calc(2 * var(--u)) 0 0; width: auto; max-width: var(--col); line-height: var(--line); }
   .prompt-text b { font-weight: normal; color: var(--accent); }
   #prompt-menu .seg { display: flex; flex-wrap: wrap; }
-  #view-controls { flex-direction: row; flex-wrap: wrap; max-width: none; flex-basis: auto; gap: 0.9rem 2rem; }
-  figure#fig-three .three > div { flex-basis: 12rem; }
+  #tool .row { display: block; margin-top: var(--u); }
+  #view-controls { flex-direction: row; flex-wrap: wrap; max-width: none; flex-basis: auto; gap: var(--u) calc(2 * var(--u)); }
+  figure#fig-three { padding-top: var(--u); }
+  figure#fig-three .three { margin-top: 0; }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>
@@ -53,9 +56,9 @@
 <div class="tool" id="tool">
   <div class="panel">
     <div class="ctl" id="prompt-menu"></div>
+    <div class="row"><div class="controls" id="view-controls"></div></div>
     <p class="prompt-text" id="prompt-text" aria-live="polite"></p>
     <div class="three" id="outputs"></div>
-    <div class="row" style="margin-top:0.8rem"><div class="controls" id="view-controls"></div></div>
     <p class="readout" id="readout" aria-live="polite"></p>
   </div>
 </div>

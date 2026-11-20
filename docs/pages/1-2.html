@@ -9,12 +9,12 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
-  .tool .plane { width: 100%; aspect-ratio: 1 / 1; max-width: 460px; outline-offset: 4px; }
-  #errs { margin-top: 0.8rem; }
+  .tool .plane { width: 100%; aspect-ratio: 1 / 1; max-width: 100%; outline-offset: 4px; }
+  #errs { margin-top: calc(2 * var(--u)); }
   .mini { width: 100%; aspect-ratio: 1 / 1; }
-  #hidden-controls { display: none; flex-direction: column; gap: 0.9rem; }
+  #hidden-controls { display: none; flex-direction: column; gap: var(--u); }
   #hidden-controls.on { display: flex; }
-  #hidden-controls .unit { color: var(--quiet); font-style: italic; margin: 0.4rem 0 -0.4rem; }
+  #hidden-controls .unit { color: var(--quiet); font-style: italic; margin: var(--u) 0 0; line-height: var(--line); }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>

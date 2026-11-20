@@ -37,7 +37,7 @@ function drawChart(box, { scale, pts, trend, interactive, sel }) {
   const log = scale === 'log';
   const yMax = d3.max(ALL, (p) => p.flop);
   const c = chart(box, {
-    width: 640, height: 380, margin: { top: 44, right: 24, bottom: 52, left: 70 },
+    width: box.clientWidth || 640, height: 380, margin: { top: 44, right: 24, bottom: 52, left: 70 },
     x: { domain: [2012, 2025], ticks: (box.clientWidth || 640) < 440 ? 3 : 5, format: 'd', label: 'publication year' },
     y: log ? { domain: [1e15, 1e27], log: true } : { domain: [0, yMax * 1.08] },
     title: `Training compute of ${pts.length} AI models by publication date, ${log ? 'log' : 'linear'} scale`,
