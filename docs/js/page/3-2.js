@@ -13,7 +13,7 @@ function tokenPx(name) {
   return v;
 }
 const SMALL = tokenPx('--small');
-const FONT = `${SMALL}px et-book, Georgia, serif`;
+const FONT = `${SMALL}px ${(getComputedStyle(document.documentElement).getPropertyValue('--font-data') || '').trim() || 'et-book, Georgia, serif'}`;
 const EXAMPLES = [
   ['king', 'man', 'woman'],
   ['Tokyo', 'Japan', 'France'],

@@ -4,6 +4,11 @@
 
 :root {
   /* Type sizes: page title (h1), section heading (h2), --text for the text, and --small (below). */
+  /* Faces. --font-text: what is read. --font-label: controls, block names, navigation.
+     --font-data: text inside charts and diagrams. A skin (css/skins/) may change them. */
+  --font-text: et-book, Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  --font-label: var(--font-text);
+  --font-data: var(--font-text);
   --text: 16pt;
   /* A fourth size (owner decision 2026-11-20), used only for chart text, sidenotes, and the top line. */
   --small: 13pt;
@@ -154,7 +159,7 @@ ol.tasks > li { margin-bottom: 1.3rem; }
 .pagenav .next { text-align: right; }
 
 /* Charts: no frames or grids; quiet axes; labels on the lines. */
-.chart text { font-family: et-book, Georgia, serif; fill: var(--quiet); font-size: var(--text); font-variant-numeric: lining-nums tabular-nums; }
+.chart text { font-family: var(--font-data); fill: var(--quiet); font-size: var(--text); font-variant-numeric: lining-nums tabular-nums; }
 .chart .axis path, .chart .axis line { stroke: var(--rule); }
 .chart .label-ink { fill: var(--ink); }
 .chart .label-accent { fill: var(--accent); }
@@ -410,3 +415,8 @@ figure.multiples.two { gap: var(--gap); }
   .pagenav { margin: calc(6 * var(--u)) auto calc(4 * var(--u)); }
   .margin-toggle:checked + .sidenote, .margin-toggle:checked + .marginnote { width: 100%; left: 0; margin: var(--u) 0; box-sizing: border-box; }
 }
+
+/* Faces by role. */
+body { font-family: var(--font-text); }
+button, .ctl, .topline, .pagenav .dir, .choices-label, .tool h3, .small-title, .contents .key, .contents .view,
+.check > .label, .explain > .label, .takeaway > .label, .review > .label, .explain .saved, select, input, textarea { font-family: var(--font-label); }

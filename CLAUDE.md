@@ -68,6 +68,8 @@ Transfer questions (2026-11-19): one per section for Sections 1 to 8, in `docs/d
 
 Licence (owner decision 2026-11-19): text and figures CC BY 4.0 (`LICENSE-TEXT.md`), code MIT (`LICENSE`).
 
+Skins (2026-11-20, under review by the owner): five alternative designs in `docs/css/skins/` (`mohseni` after aydinmohseni.com, `swiss`, `interface`, `folio`, `voices`), each a set of token overrides and rules scoped to `[data-skin]`, with open fonts in `docs/fonts/skins/`. `docs/js/skin.js` (loaded in every page's head) applies the skin named by `?skin=` or chosen on `docs/skins.html`, and shows a switching bar only to a browser that has opened that page. Readers who have not see the default design. Faces are set through `--font-text`, `--font-label`, and `--font-data`; no page or script names a typeface. Each skin has been checked on pages 2.5, 3.4, 4.1, 6.4, 7.1, 8.2 and the contents only; the chosen one needs a pass over every page, and the others can then be removed.
+
 References: each sidenote reference links to its source (DOI, arXiv, or the official page), each checked against the record; `tools/check-links.mjs` reports dead links, and `tools/AUDIT-LINKS-FINDINGS.md` lists the references left unlinked and the citations that point at a different edition. `tools/check.mjs` measures sideways scrolling with the sidenotes closed and opened.
 
 Modular addition runs use p = 59, not Nanda et al.'s 113, so training fits on a CPU (`tools/modadd/README.md`).

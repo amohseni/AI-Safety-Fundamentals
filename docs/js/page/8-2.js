@@ -4,7 +4,7 @@ import { fitCanvas, cellLayout } from '../lib/gridworld.js';
 import { G, LAYOUT, T, PARTS, ACTIONS, A_CLEAN } from '../lib/8-cleaning.js';
 
 // Labels in the drawing are chart text: the small size, read from the CSS token.
-const font = () => `${cssVar('--small') || '13pt'} et-book, Georgia, serif`;
+const font = () => `${cssVar('--small') || '13pt'} ${(getComputedStyle(document.documentElement).getPropertyValue('--font-data') || '').trim() || 'et-book, Georgia, serif'}`;
 const weights = Object.fromEntries(PARTS.map((p) => [p.id, 0]));
 const st = { plant: false, t: T, result: null, playing: false };
 let reqId = 0, raf = null;
