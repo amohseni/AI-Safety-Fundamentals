@@ -420,3 +420,88 @@ figure.multiples.two { gap: var(--gap); }
 body { font-family: var(--font-text); }
 button, .ctl, .topline, .pagenav .dir, .choices-label, .tool h3, .small-title, .contents .key, .contents .view,
 .check > .label, .explain > .label, .takeaway > .label, .review > .label, .explain .saved, select, input, textarea { font-family: var(--font-label); }
+
+
+/* ==========================================================================
+   The design of aydinmohseni.com (owner decision 2026-11-20). These rules come last and set the
+   site's faces, colors, and label rail; the layout grid above supplies the columns and rhythm.
+   Three zones at 1240 px and wider: a label rail on the left (page number, panel titles, block
+   names), the text column, and the margin column (sidenotes, controls). From 1080 to 1239 px there
+   is no rail and the names sit in the margin column. Below 1080 px, one column.
+   Computer Modern throughout: CMU Serif for text, CMU Sans Serif for labels, controls, and chart
+   text. Ink on warm paper with one red. No rules between blocks; space separates them.
+   ========================================================================== */
+@font-face { font-family: "CMU Serif"; src: url("../fonts/cmu/cmu-serif-500-roman.woff2") format("woff2"); font-weight: 400 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "CMU Serif"; src: url("../fonts/cmu/cmu-serif-500-italic.woff2") format("woff2"); font-weight: 400 500; font-style: italic; font-display: swap; }
+@font-face { font-family: "CMU Serif"; src: url("../fonts/cmu/cmu-serif-700-roman.woff2") format("woff2"); font-weight: 600 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "CMU Serif"; src: url("../fonts/cmu/cmu-serif-700-italic.woff2") format("woff2"); font-weight: 600 700; font-style: italic; font-display: swap; }
+@font-face { font-family: "CMU Sans Serif"; src: url("../fonts/cmu/cmu-sans-serif-500-roman.woff2") format("woff2"); font-weight: 400 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "CMU Sans Serif"; src: url("../fonts/cmu/cmu-sans-serif-500-italic.woff2") format("woff2"); font-weight: 400 700; font-style: italic; font-display: swap; }
+
+:root {
+  --font-text: "CMU Serif", "Latin Modern Roman", Georgia, serif;
+  --font-label: "CMU Sans Serif", "Helvetica Neue", Arial, sans-serif;
+  --font-data: "CMU Sans Serif", "Helvetica Neue", Arial, sans-serif;
+  --text: 20.7px; --small: 15.5px;       /* the website's 1.15rem of 18px, and its note size */
+  --line: 2rem; --u: 1rem;
+  --rail: 10.2rem; --col: 40.8rem; --gap: 3rem; --side: 18rem;   /* 8.5rem, 34rem, 2.5rem, 15rem of the website's 18px root */
+  --paper: #fbf8f0; --ink: #141413; --quiet: #5d5d58; --rule: #ddd6c6; --faint: #f1ecdf;   /* warm paper (owner decision 2026-11-20); the website's ink and graphite */
+  /* --second is a slate blue, not the website's green: red and green together cannot be told apart
+     by readers with the common color-vision deficiencies. A wrong answer is marked in ink, since red is the accent. */
+  --accent: #b0122b; --second: #2a5078; --good: #1a7f4e; --bad: #141413; --focus: #b0122b;
+  font-synthesis: none;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #050505; --ink: #f5f5f2; --quiet: #b8b8b3; --rule: #2c2c2a; --faint: #1a1a19;
+    --accent: #e0304f; --second: #8fb4dc; --good: #1fa463; --bad: #f5f5f2; --focus: #e0304f;
+  }
+}
+h1 { font-size: 2.9rem; font-weight: 400; letter-spacing: 0; }
+h2 { font-style: normal; font-size: 1.9rem; font-weight: 400; }
+b, strong, .readout b { font-weight: 700; }
+a:link, a:visited { text-decoration: none; }
+article p a:link, article p a:visited,
+.sidenote a:link, .sidenote a:visited { border-bottom: 1px solid var(--rule); }
+a:hover { color: var(--accent); }
+
+/* Labels: the website's small sans capitals. */
+.check > .label, .explain > .label, .takeaway > .label,
+.review > .label, .tool h3, .pagenav .dir, .topline {
+  font-family: var(--font-label); font-size: 12.3px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--quiet); font-style: normal; line-height: 1.5;
+}
+.topline a { font-size: inherit; }
+.topline .pages li { font-size: inherit; }
+.topline .pages a[aria-current="page"] { color: var(--accent); border-bottom: 0; }
+.ctl, button, .choices-label { font-size: 17px; }
+button { border-radius: 0; border-color: var(--quiet); padding: 0.3rem 0.8rem; }
+.claim { font-family: var(--font-label); font-style: normal; font-size: 12.3px; letter-spacing: 0.12em; text-transform: uppercase; }
+.claim::after { content: ""; }
+
+/* No rules between blocks. */
+.tool, .tool .panel + .panel, .check, .explain,
+.takeaway, .review { border: 0; }
+
+@media (min-width: 1240px) {
+  /* The label rail: page number, block names, and panel titles sit left of the text column. */
+  .topline, article, .pagenav {
+    width: calc(var(--rail) + var(--gap) + var(--wide)); padding-left: calc(var(--rail) + var(--gap)); box-sizing: border-box;
+  }
+  .topline { padding-left: 0; border-bottom: 1px solid var(--rule); padding-bottom: var(--u); }
+  h1 { position: relative; }
+  h1 .pageno { position: absolute; left: calc(-1 * (var(--rail) + var(--gap))); width: var(--rail); margin: 0; }
+  .check > .label, .explain > .label, .takeaway > .label {
+    left: calc(-1 * (var(--rail) + var(--gap))); width: var(--rail); top: calc(2 * var(--u) + 0.5rem);
+  }
+  .tool .panel { position: relative; }
+  .tool h3 { position: absolute; left: calc(-1 * (var(--rail) + var(--gap))); top: 0.5rem; width: var(--rail); margin: 0; }
+  .contents .key { left: calc(var(--col) + var(--gap)); }
+}
+.topline .pages a { font-size: 12.3px; letter-spacing: 0.06em; }
+
+/* The page opens with a red initial, three lines deep. */
+article > section:first-of-type > p:first-of-type:not(:has(> .claim:first-child))::first-letter {
+  font-style: normal; font-weight: 400; float: left; font-size: 3.05em; line-height: 0.82; padding: 0.07em 0.12em 0 0; color: var(--accent);
+}
+.check .verdict-wrong { font-weight: 700; }

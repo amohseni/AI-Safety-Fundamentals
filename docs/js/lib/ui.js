@@ -63,3 +63,10 @@ export function reducedMotion() {
 export function cssVar(name) {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
+
+// Resolves when the site's faces are loaded. A canvas keeps whatever face was available when it
+// was drawn, so draw canvas text (or redraw it) after this resolves.
+export function fontsReady() {
+  if (!document.fonts || !document.fonts.load) return Promise.resolve();
+  return Promise.all([document.fonts.load('15px "CMU Sans Serif"'), document.fonts.load('20px "CMU Serif"'), document.fonts.load('italic 20px "CMU Serif"')]).then(() => {}, () => {});
+}
