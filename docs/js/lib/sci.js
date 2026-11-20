@@ -45,10 +45,12 @@ const kindOf = (c) => (SUBS.includes(c) ? 'sub' : SUPS.includes(c) || c === '⁻
 const plainOf = (c) => (c === '⁻' ? MINUS : SUBS.includes(c) ? String(SUBS.indexOf(c)) : SUPS.includes(c) ? String(SUPS.indexOf(c)) : c);
 
 // Splits "w₁ x" into runs [text, kind] with kind '', 'sub', or 'sup'; script digits become plain digits.
-export function scriptRuns(s) {
+// With sup false, superscript characters are left as they are (the faces do have ¹, ² and ³).
+export function scriptRuns(s, sup = true) {
   const runs = [];
   for (const c of String(s)) {
-    const k = kindOf(c);
+    const k = !sup && kindOf(c) === 'sup' ? '' : kindOf(c);
+    if (!k) { if (runs.length && !runs[runs.length - 1][1]) runs[runs.length - 1][0] += c; else runs.push([c, '']); continue; }
     if (runs.length && runs[runs.length - 1][1] === k) runs[runs.length - 1][0] += plainOf(c);
     else runs.push([plainOf(c), k]);
   }
@@ -57,12 +59,12 @@ export function scriptRuns(s) {
 
 // HTML string with subscript digits as <sub> elements, e.g. "weight on x<sub>1</sub>".
 export function subHTML(s) {
-  return scriptRuns(s).map(([t, k]) => (k === 'sub' ? `<sub style="font-size:0.75em;line-height:0">${t}</sub>` : k === 'sup' ? `<span class="exp">${t}</span>` : t)).join('');
+  return scriptRuns(s, false).map(([t, k]) => (k === 'sub' ? `<sub style="font-size:0.75em;line-height:0">${t}</sub>` : t)).join('');
 }
 
 // Writes a label with script digits into an SVG <text> selection (d3) as tspans.
-export function setScripts(t, s) {
-  const runs = scriptRuns(s);
+export function setScripts(t, s, sup = true) {
+  const runs = scriptRuns(s, sup);
   if (runs.every(([, k]) => !k)) { if (t.text() !== String(s)) t.text(s); return t; }
   t.text(null);
   let back = null; // the dy that returns the next run to the baseline
@@ -77,7 +79,7 @@ export function setScripts(t, s) {
 
 // Draws a label with subscript digits on a canvas at (x, y), honoring the context's textAlign and textBaseline.
 export function fillScripts(ctx, s, x, y) {
-  const runs = scriptRuns(s);
+  const runs = scriptRuns(s, false);
   const m = /(\d+(?:\.\d+)?)px/.exec(ctx.font);
   if (!m || runs.every(([, k]) => !k)) { ctx.fillText(runs.map((r) => r[0]).join(''), x, y); return; }
   const size = Number(m[1]), font = ctx.font, small = font.replace(m[0], `${0.75 * size}px`);

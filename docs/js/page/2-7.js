@@ -40,7 +40,7 @@ function render(el, g, val, back, reveal, onPick) {
     const label = n.op === 'input' ? n.name : `${n.name} = ${n.def}`;
     const sel = reveal.selected === n.id;
     gEl.append('text').attr('text-anchor', 'middle').attr('class', n.param ? 'label-ink' : '').attr('font-style', n.param ? 'italic' : null)
-      .attr('text-decoration', sel ? 'underline' : null).call(setScripts, label);
+      .attr('text-decoration', sel ? 'underline' : null).call(setScripts, label, false);
     widths[n.id] = gEl.node().getBBox().width || 8 * label.length;
     if (shownVal.has(n.id)) gEl.append('text').attr('text-anchor', 'middle').attr('y', 22).attr('class', 'label-ink').text(f3(val[n.id]));
     if (gradShown(n.id)) gEl.append('text').attr('text-anchor', 'middle').attr('y', 44).attr('class', 'label-accent').text(f3(back.grad[n.id]));
