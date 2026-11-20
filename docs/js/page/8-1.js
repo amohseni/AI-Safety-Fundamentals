@@ -8,6 +8,8 @@ const d3 = window.d3;
 const MIX = { rate: 0.001, big: 30 };
 const errOf = (st) => (st.kind === 'normal' ? { kind: 'normal', s: st.s }
   : st.kind === 't' ? { kind: 't', s: st.s, df: st.df } : { kind: 'mix', s: st.s, ...MIX });
+// A chart is drawn as wide as the column it sits in.
+const colWidth = (el) => Math.round(el.clientWidth) || 630;
 const kOf = (lk) => Math.round(10 ** lk);
 const kText = (k) => k.toLocaleString('en-US');
 // Labels for a log10 axis.
@@ -35,7 +37,7 @@ const num = (d) => (v) => { const t = v.toFixed(d); return /^-0\.?0*$/.test(t) ?
   button(ctl, 'Draw the winner again', () => { drawSeed++; drawSel(); });
 
   const cc = chart(document.getElementById('reg-curve'), {
-    height: 300, margin: { top: 34, right: 96, bottom: 52, left: 48 },
+    width: colWidth(document.getElementById('reg-curve')), height: 300, margin: { top: 34, right: 84, bottom: 52, left: 48 },
     x: { domain: [0, 6], ticks: 3, label: 'options compared, k' }, y: { domain: [-0.5, 8], label: 'expected value of the winner' },
     title: 'Expected proxy score and true value of the winner against the number of options compared',
   });
@@ -44,7 +46,7 @@ const num = (d) => (v) => { const t = v.toFixed(d); return /^-0\.?0*$/.test(t) ?
   xTicks();
 
   const sc = chart(document.getElementById('reg-scatter'), {
-    height: 300, margin: { top: 34, right: 24, bottom: 52, left: 48 },
+    width: colWidth(document.getElementById('reg-scatter')), height: 300, margin: { top: 34, right: 24, bottom: 52, left: 48 },
     x: { domain: [-4, 6], ticks: 5, label: 'proxy score U' }, y: { domain: [-4, 4], ticks: 4, label: 'true value V' },
     title: 'Two thousand options and the winner of one best-of-k draw',
   });
@@ -121,7 +123,7 @@ const num = (d) => (v) => { const t = v.toFixed(d); return /^-0\.?0*$/.test(t) ?
   slider(ctl, { name: 'Search limit of the optimizer', min: 0, max: 16, step: 0.5, value: st.reach, format: fmt(1),
     onInput: (v) => { st.reach = v; draw(); } });
   const c = chart(document.getElementById('ext-chart'), {
-    height: 340, margin: { top: 34, right: 70, bottom: 52, left: 48 },
+    width: colWidth(document.getElementById('ext-chart')), height: 340, margin: { top: 34, right: 52, bottom: 52, left: 48 },
     x: { domain: [0, 16], label: 'design x' }, y: { domain: [-16, 10], label: 'value' }, title: 'True value and fitted proxy against the design',
   });
   const data = c.g.append('g');
@@ -151,19 +153,25 @@ const num = (d) => (v) => { const t = v.toFixed(d); return /^-0\.?0*$/.test(t) ?
 (function figure() {
   const fig = document.getElementById('fig-tails');
   const r = rng(3), g = () => gaussian(r);
-  for (const [name, err, ids] of [['Normal errors', { kind: 'normal', s: 1 }, ['cap-n-u', 'cap-n-v']], ['Student’s t errors, 3 degrees of freedom', { kind: 't', s: 1, df: 3 }, ['cap-t-u', 'cap-t-v']]]) {
+  const panels = [['Normal errors', { kind: 'normal', s: 1 }, ['cap-n-u', 'cap-n-v']], ['Student’s t errors, 3 degrees of freedom', { kind: 't', s: 1, df: 3 }, ['cap-t-u', 'cap-t-v']]];
+  // Both boxes are added before either chart is drawn, so that each chart is measured at half the figure's width.
+  const boxes = panels.map(([name]) => {
+    const box = document.createElement('div');
+    box.innerHTML = `<p class="small-title">${name}</p>`;
+    fig.append(box);
+    return box;
+  });
+  panels.forEach(([name, err, ids], i) => {
     const pts = Array.from({ length: 10000 }, () => { const v = g(); return [v + errSample(err, r, g), v]; });
     const cut = pts.map((p) => p[0]).sort(d3.descending)[99];
     const top = pts.filter((p) => p[0] >= cut);
     document.getElementById(ids[0]).textContent = d3.mean(top, (p) => p[0]).toFixed(1);
     document.getElementById(ids[1]).textContent = d3.mean(top, (p) => p[1]).toFixed(1);
-    const box = document.createElement('div');
-    box.innerHTML = `<p class="small-title">${name}</p>`;
-    fig.append(box);
+    const box = boxes[i];
     const xMax = Math.ceil(d3.max(pts, (p) => p[0]));
-    const c = chart(box, { width: 340, height: 280, margin: { top: 34, right: 16, bottom: 56, left: 40 },
+    const c = chart(box, { width: colWidth(box), height: 280, margin: { top: 34, right: 16, bottom: 56, left: 40 },
       x: { domain: [Math.floor(d3.min(pts, (p) => p[0])), xMax], ticks: 4, label: 'proxy score' }, y: { domain: [-4, 4], ticks: 4, label: 'true value' }, title: name });
     c.g.append('g').selectAll('circle').data(pts).join('circle').attr('class', (p) => (p[0] >= cut ? 'dot-top' : 'dot')).attr('r', (p) => (p[0] >= cut ? 2.2 : 1.2))
       .attr('cx', (p) => c.x(p[0])).attr('cy', (p) => c.y(Math.max(-4, Math.min(4, p[1]))));
-  }
+  });
 })();
