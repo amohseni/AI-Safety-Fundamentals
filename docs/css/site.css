@@ -533,3 +533,8 @@ code, pre { font-family: "CMU Typewriter Text", monospace; }
 button, .seg button { font-family: var(--font-label); font-size: 17px; }
 .sidenote .katex, .marginnote .katex { font-size: 1em; }
 h2 .katex { font-size: 1em; }
+:root { --font-code: "CMU Typewriter Text", monospace; }
+code, pre { font-family: var(--font-code); }
+/* One button shape. A control is in the label face; an answer is a sentence, so it is in the text face. */
+button, .seg button { border-radius: 0; }
+.check .options button, .task .choices button { font-family: var(--font-text); font-size: var(--text); }
