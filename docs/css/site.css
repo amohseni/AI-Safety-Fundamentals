@@ -70,10 +70,11 @@ article { padding-top: 1.5rem; }
 h1 { margin-top: 1.5rem; }
 h1 .pageno { color: var(--quiet); margin-right: 0.6rem; }
 
-/* Core-path marker: a small filled dot, explained on the contents page. */
+/* Core-path marker: a small empty square standing on a corner, explained on the contents page.
+   The done marker is a circle that fills in, so the two cannot be mistaken for each other. */
 .core-dot {
-  display: inline-block; width: 0.45rem; height: 0.45rem; border-radius: 50%;
-  background: var(--ink); vertical-align: 0.15rem;
+  display: inline-block; box-sizing: border-box; width: 0.5rem; height: 0.5rem;
+  border: 1px solid var(--ink); transform: rotate(45deg); vertical-align: 0.14rem; margin: 0 0.06rem;
 }
 
 /* Colored words in prose that name a figure element. */
