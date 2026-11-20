@@ -132,7 +132,8 @@ const num = (d) => (v) => { const t = v.toFixed(d); return /^-0\.?0*$/.test(t) ?
   c.text('truth-label', 10.2, -5.6, 'true value', { color: 'accent', anchor: 'end' });
   function draw() {
     const p = fitProxy(st.range);
-    c.line('proxy', xs.map((x) => [x, p.f(x)]), { color: 'second', label: 'proxy', labelAt: 'end' });
+    // A proxy line that leaves the chart through the top has its label under it, clear of the line's end.
+    c.line('proxy', xs.map((x) => [x, p.f(x)]), { color: 'second', label: 'proxy', labelAt: 'end', dy: p.f(16) > 10 ? 16 : 0 });
     data.selectAll('circle').data(p.xs.map((x, i) => [x, p.ys[i]])).join('circle').attr('class', 'datum').attr('r', 2.5)
       .attr('cx', (d) => c.x(d[0])).attr('cy', (d) => c.y(d[1]));
     c.vline('range', st.range, { color: 'quiet', label: 'end of data', labelY: 0 });

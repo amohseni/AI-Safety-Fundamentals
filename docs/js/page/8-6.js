@@ -49,7 +49,7 @@ function update() {
   } else { dist.remove('tD'); dist.remove('tD:l'); }
 
   const e = C.evaluate({ mu: state.mu, budget: state.budget, tA: state.tA, tD });
-  trade.point('now', e.usefulness, e.safety, { color: 'accent', r: 6, label: 'current protocol', anchor: e.usefulness > 0.6 ? 'end' : 'start', dx: e.usefulness > 0.6 ? -10 : 10, dy: e.safety > 0.85 ? 40 : -10 });
+  trade.point('now', e.usefulness, e.safety, { color: 'accent', r: 6, label: 'current protocol', anchor: e.usefulness > 0.6 ? 'end' : 'start', dx: e.usefulness > 0.6 ? -14 : 10, dy: e.safety > 0.85 ? 40 : e.usefulness > 0.6 ? 22 : -10 }); // under the curve where the curve falls steeply, so the label does not cross it
   const flagged = 1 - C.Phi(state.tA);
   const lasts = flagged * 1000 > e.B ? `the ${e.B} audits last about ${Math.round(e.B / flagged)} tasks` : `about ${Math.round(e.audits)} of the ${e.B} audits are used`;
   out.innerHTML = `The audit threshold flags ${pct(flagged)} of normal work and ${pct(e.catchRate)} of sabotage; with an honest model, ${lasts}. ` +

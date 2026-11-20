@@ -9,6 +9,8 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
+  /* In two columns the title is not hyphenated (it broke as "decep-tive"); it breaks between words. */
+  @media (min-width: 1080px) { h1 { hyphens: manual; } }
   svg.flow text { font-family: var(--font-data); font-size: var(--small); fill: var(--ink); }
   svg.flow text.quiet { fill: var(--quiet); font-style: italic; }
   svg.flow line { stroke: var(--quiet); stroke-width: 1; }
