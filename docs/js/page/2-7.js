@@ -1,6 +1,7 @@
 // Page 2.7: gradients by hand.
 import { GRAPHS, forward, backward, chainPaths, nudge } from '../lib/s2-graph.js';
 import { slider, segmented, button } from '../lib/ui.js';
+import { subHTML, setScripts } from '../lib/sci.js';
 
 const d3 = window.d3;
 const minus = (str) => str.replace('-', '−');
@@ -39,7 +40,7 @@ function render(el, g, val, back, reveal, onPick) {
     const label = n.op === 'input' ? n.name : `${n.name} = ${n.def}`;
     const sel = reveal.selected === n.id;
     gEl.append('text').attr('text-anchor', 'middle').attr('class', n.param ? 'label-ink' : '').attr('font-style', n.param ? 'italic' : null)
-      .attr('text-decoration', sel ? 'underline' : null).text(label);
+      .attr('text-decoration', sel ? 'underline' : null).call(setScripts, label, false);
     widths[n.id] = gEl.node().getBBox().width || 8 * label.length;
     if (shownVal.has(n.id)) gEl.append('text').attr('text-anchor', 'middle').attr('y', 22).attr('class', 'label-ink').text(f3(val[n.id]));
     if (gradShown(n.id)) gEl.append('text').attr('text-anchor', 'middle').attr('y', 44).attr('class', 'label-accent').text(f3(back.grad[n.id]));
@@ -98,12 +99,13 @@ function build() {
   const g = GRAPHS[state.graph], inp = state.inputs[state.graph];
   inputsBox.innerHTML = '';
   for (const n of g.nodes.filter((n) => n.op === 'input')) {
-    slider(inputsBox, { name: `${n.param ? 'Parameter' : 'Input'} ${n.name}`, min: -3, max: 3, step: 0.01, value: inp[n.id], format: (v) => minus(v.toFixed(2)),
+    slider(inputsBox, { name: subHTML(`${n.param ? 'Parameter' : 'Input'} ${n.name}`), min: -3, max: 3, step: 0.01, value: inp[n.id], format: (v) => minus(v.toFixed(2)),
       onInput: (v) => { inp[n.id] = v; state.nudged = null; draw(); } });
   }
   paramBox.innerHTML = '';
   const params = g.nodes.filter((n) => n.param);
   paramSeg = segmented(paramBox, { name: 'Parameter to follow', options: params.map((n) => [n.id, n.name]), value: state.selected, onChange: (k) => pick(k) });
+  paramBox.querySelectorAll('.seg button').forEach((b) => { b.innerHTML = subHTML(b.textContent); });
   const nb = document.createElement('div'); nb.className = 'seg'; paramBox.append(nb);
   button(nb, 'Nudge test', () => { if (!state.selected) pick(params[0].id); state.nudged = state.selected; draw(); });
   draw();
@@ -156,7 +158,9 @@ function draw() {
     s += `<p>Nudge test for ${p.name}: raising it by 0.001 changes the loss from ${f4(t.base)} to ${minus(t.up.toFixed(6))}, and lowering it by 0.001 changes the loss to ${minus(t.down.toFixed(6))}. ` +
       `Change in loss divided by the total nudge, 0.002: <b>${f4(t.slope)}</b>. Backpropagation: <b>${f4(back.grad[p.id])}</b>.</p>`;
   }
-  out.innerHTML = s;
+  // The faces have no subscript digits and no ∂: subscripts are set as <sub>, and ∂ by KaTeX.
+  out.innerHTML = subHTML(s).replace(/∂/g, '\\(\\partial\\)');
+  if (window.renderMathInElement) window.renderMathInElement(out, { delimiters: [{ left: '\\(', right: '\\)', display: false }], throwOnError: false });
 }
 
 let rT;

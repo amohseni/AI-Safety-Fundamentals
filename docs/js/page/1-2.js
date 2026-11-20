@@ -2,6 +2,7 @@
 import { Playground, datasets, perceptronPass, step, sum } from '../lib/perceptron.js';
 import { chart } from '../lib/chart.js';
 import { slider, segmented, button, reducedMotion } from '../lib/ui.js';
+import { subHTML } from '../lib/sci.js';
 
 const START = { w: [-0.5, 1], b: 0.3 }; // starting line (tools/test-page-1-2.mjs uses the same)
 const MAX_PASSES = 100;
@@ -143,8 +144,8 @@ const hc = document.createElement('div');
 hc.id = 'hidden-controls';
 ctl.append(hc);
 const H = { W: [[1, 0], [0, 1]], b: [0, 0], v: [1, 1], c: 0 };
-const unit = (label) => { const p = document.createElement('p'); p.className = 'unit'; p.textContent = label; hc.append(p); };
-const hs = (name, get, set) => slider(hc, { name, min: -2, max: 2, step: 0.5, value: get(), format: (v) => v.toFixed(1), onInput: (v) => { set(v); draw(); } });
+const unit = (label) => { const p = document.createElement('p'); p.className = 'unit'; p.innerHTML = subHTML(label); hc.append(p); };
+const hs = (name, get, set) => slider(hc, { name: subHTML(name), min: -2, max: 2, step: 0.5, value: get(), format: (v) => v.toFixed(1), onInput: (v) => { set(v); draw(); } });
 unit('Hidden unit h₁');
 hs('weight on x₁', () => H.W[0][0], (v) => { H.W[0][0] = v; });
 hs('weight on x₂', () => H.W[0][1], (v) => { H.W[0][1] = v; });

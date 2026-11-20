@@ -1,7 +1,8 @@
 // Perceptron playground, shared by pages 1.2 (perceptron mode) and 2.2 (neuron mode).
 // The pure functions at the top have no DOM and are used by the Node tests.
 import { rng } from './mlp.js';
-import { cssVar } from './ui.js';
+import { cssVar, fontsReady } from './ui.js';
+import { fillScripts } from './sci.js';
 
 // ---- Data ----
 const CORNERS = [[0, 0], [0, 1], [1, 0], [1, 1]];
@@ -80,6 +81,8 @@ export class Playground {
     this.onChange = onChange;
     this.X = []; this.Y = [];
     this._bind();
+    // A canvas keeps the face it was drawn with, so a picture drawn before the faces loaded is drawn again.
+    fontsReady().then(() => { if (this.size) this.draw(); });
   }
 
   setData({ X, Y }) { this.X = X; this.Y = Y; }
@@ -231,8 +234,8 @@ export class Playground {
     const one = this._px([1, 0]); ctx.fillText('1', one[0], o0[1] + 16);
     ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
     const oneY = this._px([0, 1]); ctx.fillText('1', o0[0] - 18, oneY[1]);
-    ctx.textAlign = 'right'; ctx.textBaseline = 'bottom'; ctx.fillText('x₁', xr[0] - 4, o0[1] - 4);
-    ctx.textAlign = 'left'; ctx.textBaseline = 'top'; ctx.fillText('x₂', o0[0] + 6, yt[1] + 2);
+    ctx.textAlign = 'right'; ctx.textBaseline = 'bottom'; fillScripts(ctx, 'x₁', xr[0] - 4, o0[1] - 4);
+    ctx.textAlign = 'left'; ctx.textBaseline = 'top'; fillScripts(ctx, 'x₂', o0[0] + 6, yt[1] + 2);
 
     // Lines
     const drawLine = (w, b, color, dash, label) => {
@@ -244,7 +247,7 @@ export class Playground {
       if (label) {
         const m = this._px([s[0][0] + 0.8 * (s[1][0] - s[0][0]), s[0][1] + 0.8 * (s[1][1] - s[0][1])]);
         ctx.fillStyle = color; ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
-        ctx.fillText(label, Math.min(m[0] + 6, S - 30), Math.max(m[1] - 4, 24));
+        fillScripts(ctx, label, Math.min(m[0] + 6, S - 30), Math.max(m[1] - 4, 24));
       }
     };
     if (this.hidden) {
