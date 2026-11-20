@@ -1,8 +1,10 @@
 // Page 3.2: embedding space (word2vec vectors), neighbors, analogies, and a country-capital figure.
-import { segmented, button, cssVar } from '../lib/ui.js';
+import { segmented, button, cssVar, fontsReady } from '../lib/ui.js';
 import { decodeVectors, nearest, row, analogy, pca2, mapNeighbors } from '../lib/s3j-embed.js';
 
 const d3 = window.d3;
+// Canvas text keeps the face that was loaded when it was drawn, so the faces are loaded first.
+await fontsReady();
 // Chart text is drawn at the --small size, read from the CSS so the canvas follows the tokens.
 function tokenPx(name) {
   const probe = document.createElement('span');
@@ -13,7 +15,7 @@ function tokenPx(name) {
   return v;
 }
 const SMALL = tokenPx('--small');
-const FONT = `${SMALL}px ${(getComputedStyle(document.documentElement).getPropertyValue('--font-data') || '').trim() || 'et-book, Georgia, serif'}`;
+const FONT = `${SMALL}px ${(getComputedStyle(document.documentElement).getPropertyValue('--font-data') || '').trim() || 'sans-serif'}`;
 const EXAMPLES = [
   ['king', 'man', 'woman'],
   ['Tokyo', 'Japan', 'France'],
@@ -61,8 +63,13 @@ try {
     svg.append('circle').attr('cx', x1).attr('cy', y1).attr('r', 3).attr('fill', 'var(--ink)');
     svg.append('circle').attr('cx', x2).attr('cy', y2).attr('r', 3).attr('fill', 'var(--accent)');
     // Labels sit beyond each end of the arrow, along its direction.
-    svg.append('text').attr('x', x1 - ux * 14).attr('y', y1 - uy * 14 + 6 + (uy < 0 ? 8 : -8)).attr('text-anchor', 'middle').attr('class', 'label-ink').text(country);
-    svg.append('text').attr('x', x2 + ux * 14).attr('y', y2 + uy * 14 + 6 + (uy < 0 ? -8 : 8)).attr('text-anchor', 'middle').attr('class', 'label-accent').text(capital);
+    // A label beside a dot starts or ends 9 px from it, so that it covers neither the dot nor the arrow.
+    const side = Math.abs(ux) > 0.5;
+    const anchor = (dir) => (!side ? 'middle' : dir * ux > 0 ? 'start' : 'end');
+    const lx = (x, dir) => x + (side ? Math.sign(dir * ux) * 9 : dir * ux * 14);
+    const ly = (y, dir) => (side ? y + 5 + dir * uy * 6 : y + dir * uy * 14 + 6 + (dir * uy < 0 ? -8 : 8));
+    svg.append('text').attr('x', lx(x1, -1)).attr('y', ly(y1, -1)).attr('text-anchor', anchor(-1)).attr('class', 'label-ink').text(country);
+    svg.append('text').attr('x', lx(x2, 1)).attr('y', ly(y2, 1)).attr('text-anchor', anchor(1)).attr('class', 'label-accent').text(capital);
   });
 })();
 
@@ -204,12 +211,15 @@ function draw() {
   const sy = (v) => H - pad - ((v - y0) / (y1 - y0)) * (H - 2 * pad);
   const colors = { ink: cssVar('--ink'), quiet: cssVar('--quiet'), rule: cssVar('--rule'), accent: cssVar('--accent'), second: cssVar('--second'), paper: cssVar('--paper') };
   ctx.clearRect(0, 0, W, H);
-  ctx.fillStyle = colors.rule;
+  // The rule color is too close to the paper for 2-pixel dots, so the dots are a tint of the quiet ink.
+  ctx.fillStyle = colors.quiet;
+  ctx.globalAlpha = 0.5;
   for (let i = 0; i < E.n; i++) {
     const x = sx(P[i][0]), y = sy(P[i][1]);
     if (x < -2 || x > W + 2 || y < -2 || y > H + 2) continue;
     ctx.fillRect(x - 1, y - 1, 2, 2);
   }
+  ctx.globalAlpha = 1;
   // Highlighted dots, then labels placed to avoid overlaps.
   const roleColor = { query: colors.accent, nn: colors.accent, input: colors.second, answer: colors.accent };
   hi.forEach(([i, role]) => {
@@ -218,6 +228,8 @@ function draw() {
   });
   ctx.font = FONT;
   ctx.textBaseline = 'middle';
+  // A label may not cover another label, and it covers a highlighted dot only when it fits nowhere else.
+  const dots = hi.map(([i]) => ({ x: sx(P[i][0]) - 5, y: sy(P[i][1]) - 5, w: 10, h: 10 }));
   const boxes = [];
   const order = [...hi].sort((a, b) => (a[1] === 'query' || a[1] === 'input' ? -1 : 0) - (b[1] === 'query' || b[1] === 'input' ? -1 : 0));
   for (const [i, role] of order) {
@@ -225,10 +237,14 @@ function draw() {
     const w = ctx.measureText(E.words[i]).width, h = 20;
     const tries = [[8, 0], [-8 - w, 0], [-w / 2, -16], [-w / 2, 16], [8, -16], [8, 16], [-8 - w, -16], [-8 - w, 16], [-w / 2, -32], [-w / 2, 32]];
     let placed = null;
-    for (const [dx, dy] of tries) {
-      const b = { x: x + dx, y: y + dy - h / 2, w, h };
-      if (b.x < 0 || b.x + w > W || b.y < 0 || b.y + h > H) continue;
-      if (!boxes.some((o) => b.x < o.x + o.w + 2 && o.x < b.x + b.w + 2 && b.y < o.y + o.h && o.y < b.y + b.h)) { placed = b; break; }
+    const hits = (b, o) => b.x < o.x + o.w + 2 && o.x < b.x + b.w + 2 && b.y < o.y + o.h && o.y < b.y + b.h;
+    for (const avoid of [[...boxes, ...dots], boxes]) {
+      for (const [dx, dy] of tries) {
+        const b = { x: x + dx, y: y + dy - h / 2, w, h };
+        if (b.x < 0 || b.x + w > W || b.y < 0 || b.y + h > H) continue;
+        if (!avoid.some((o) => hits(b, o))) { placed = b; break; }
+      }
+      if (placed) break;
     }
     if (!placed) continue;
     boxes.push(placed);

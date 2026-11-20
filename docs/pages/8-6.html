@@ -8,7 +8,6 @@
 <link rel="stylesheet" href="../css/tufte.css">
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
-<script src="../js/skin.js"></script>
 <style>
   /* The two-by-two table is as wide as the text column. */
   table.grid2 { border-collapse: collapse; width: 100%; max-width: var(--col); table-layout: fixed; margin: calc(2 * var(--u)) 0 var(--u); line-height: var(--line); }
@@ -17,7 +16,12 @@
   table.grid2 thead th { color: var(--quiet); border-bottom: 1px solid var(--rule); }
   table.grid2 tbody th { color: var(--quiet); font-style: italic; }
   table.grid2 tbody tr + tr th, table.grid2 tbody tr + tr td { border-top: 1px solid var(--rule); }
-  .tool .stage .sub { margin: calc(2 * var(--u)) 0 0; line-height: var(--line); }
+  /* A chart's title is set like the small titles of the other pages' charts (.small-title in site.css). */
+  .tool .stage .sub { margin: calc(2 * var(--u)) 0 0; line-height: var(--line); font-family: var(--font-label); }
+  /* Tufte CSS makes a sidenote's number an inline block, which may start a line by itself (the first note did, after "directly."). Inline, it stays with the word before it. */
+  label.sidenote-number { display: inline; line-height: 0; }
+  /* Two sidenotes that meet in the margin column are kept a line apart. */
+  @media (min-width: 1080px) { .sidenote { margin-bottom: var(--u); } }
   .tool .stage .sub:first-child { margin-top: 0; }
   @media (max-width: 1079px) { table.grid2 { table-layout: auto; } table.grid2 th, table.grid2 td { padding-right: 0.5rem; } }
 </style>

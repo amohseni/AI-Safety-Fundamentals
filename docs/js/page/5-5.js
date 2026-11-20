@@ -17,18 +17,20 @@ function prep(canvas) {
   ctx.clearRect(0, 0, W, H);
   return { ctx, W, H };
 }
+// Cell edges on whole device pixels, so translucent cells neither overlap nor leave gaps.
+const cellEdges = (W, n) => { const dpr = window.devicePixelRatio || 1; return (i) => Math.round((i * W * dpr) / n) / dpr; };
 // The plane [-1, 1]^2 mapped onto the canvas.
 const toPx = (W, v) => ((v + 1) / 2) * W;
 
 function shadeBoundary(canvas, net, n = 36) {
   const { ctx, W } = prep(canvas);
-  const a = cssVar('--accent'), b = cssVar('--second'), cw = W / n;
+  const a = cssVar('--accent'), b = cssVar('--second'), edge = cellEdges(W, n);
   for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
     const x = [-1 + (2 * i + 1) / n, 1 - (2 * j + 1) / n];
     const p = net.predict(x);
     ctx.fillStyle = p > 0.5 ? a : b;
     ctx.globalAlpha = 0.12 + 0.3 * Math.min(1, Math.abs(p - 0.5) * 2);
-    ctx.fillRect(i * cw, j * cw, cw + 0.5, cw + 0.5);
+    ctx.fillRect(edge(i), edge(j), edge(i + 1) - edge(i), edge(j + 1) - edge(j));
   }
   ctx.globalAlpha = 1;
   dots(ctx, W, 1.3);
@@ -48,11 +50,14 @@ function dots(ctx, W, r) {
 function shadeUnit(canvas, net, layer, u, n = 36) {
   const { ctx, W } = prep(canvas);
   ctx.fillStyle = cssVar('--ink');
-  const cw = W / n;
+  // The text says light is -1 and dark is +1. In the dark theme the ink is the light color, so the scale is turned around.
+  const lum = (hex) => { const m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(hex.trim()); return m ? parseInt(m[1], 16) + parseInt(m[2], 16) + parseInt(m[3], 16) : 0; };
+  const inkIsLight = lum(cssVar('--ink')) > lum(cssVar('--paper'));
+  const edge = cellEdges(W, n);
   for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
     const h = net.stages([-1 + (2 * i + 1) / n, 1 - (2 * j + 1) / n])[2 * layer][u];
-    ctx.globalAlpha = 0.85 * (h + 1) / 2;
-    ctx.fillRect(i * cw, j * cw, cw + 0.5, cw + 0.5);
+    ctx.globalAlpha = 0.85 * (inkIsLight ? 1 - h : h + 1) / 2;
+    ctx.fillRect(edge(i), edge(j), edge(i + 1) - edge(i), edge(j + 1) - edge(j));
   }
   ctx.globalAlpha = 1;
 }
@@ -203,16 +208,20 @@ window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() =
       title: `Run ${r + 1}: size of each frequency in the embedding; key frequencies ${s.key_freqs.join(', ')}` });
     s.spectrum.forEach((v, i) => c.line(`k${i}`, [[i + 1, 0], [i + 1, v]], { color: s.key_freqs.includes(i + 1) ? 'accent' : 'quiet', width: 3 }));
     // Number the key frequencies, nudging labels apart when two are close.
-    let lastX = -Infinity;
-    s.key_freqs.forEach((k) => {
-      const px = c.x(k), shift = px - lastX < 30 ? 30 - (px - lastX) : 0;
-      lastX = px + shift;
-      c.text(`t${k}`, c.x.invert(px + shift), s.spectrum[k - 1] + yMax * 0.05, String(k), { color: 'accent', anchor: 'middle' });
+    // Neighbors share one row of labels above the tallest of them, spread about their middle.
+    const GAP = 22, groups = [];
+    s.key_freqs.slice().sort((a, b) => a - b).forEach((k) => {
+      const g = groups[groups.length - 1];
+      if (g && c.x(k) - c.x(g[g.length - 1]) < GAP) g.push(k); else groups.push([k]);
+    });
+    groups.forEach((g) => {
+      const mid = (c.x(g[0]) + c.x(g[g.length - 1])) / 2, top = Math.max(...g.map((k) => s.spectrum[k - 1]));
+      g.forEach((k, i) => c.text(`t${k}`, c.x.invert(mid + (i - (g.length - 1) / 2) * GAP), top + yMax * 0.05, String(k), { color: 'accent', anchor: 'middle' }));
     });
   });
   const lines = data.seeds.map((s, r) => `run ${r + 1}: ${s.key_freqs.join(', ')}`).join('; ');
   document.getElementById('mod-readout').innerHTML =
-    `Every run answers ${data.seeds.every((s) => s.test_acc === 1) ? '100%' : `between ${pct1(Math.min(...data.seeds.map((s) => s.test_acc)))} and ${pct1(Math.max(...data.seeds.map((s) => s.test_acc)))}`} of the test pairs correctly. Key frequencies, <span class="c-accent">in blue</span>: ${lines}.`;
+    `Every run answers ${data.seeds.every((s) => s.test_acc === 1) ? '100%' : `between ${pct1(Math.min(...data.seeds.map((s) => s.test_acc)))} and ${pct1(Math.max(...data.seeds.map((s) => s.test_acc)))}`} of the test pairs correctly. Key frequencies, <span class="c-accent">in red</span>: ${lines}.`;
 })();
 
 // ---- Static figure: the trained embedding as a heat map ----
@@ -228,12 +237,12 @@ window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() =
   const ctx = canvas.getContext('2d');
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   let mx = 0; E.forEach((row) => row.forEach((v) => { mx = Math.max(mx, Math.abs(v)); }));
-  const pos = cssVar('--accent'), neg = cssVar('--second'), cw = W / d, ch = H / p;
+  const pos = cssVar('--accent'), neg = cssVar('--second'), ex = cellEdges(W, d), ey = cellEdges(H, p);
   for (let a = 0; a < p; a++) for (let j = 0; j < d; j++) {
     const v = E[a][j];
     ctx.fillStyle = v >= 0 ? pos : neg;
     ctx.globalAlpha = Math.min(1, Math.abs(v) / (0.6 * mx));
-    ctx.fillRect(j * cw, a * ch, cw + 0.3, ch + 0.3);
+    ctx.fillRect(ex(j), ey(a), ex(j + 1) - ex(j), ey(a + 1) - ey(a));
   }
   ctx.globalAlpha = 1;
 })();

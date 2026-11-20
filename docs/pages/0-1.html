@@ -8,7 +8,6 @@
 <link rel="stylesheet" href="../css/tufte.css">
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
-<script src="../js/skin.js"></script>
 <style>
   svg.map text, svg.threads text { font-family: var(--font-data); font-size: var(--small); fill: var(--ink); font-variant-numeric: lining-nums tabular-nums; }
   svg.map text.quiet, svg.threads text.quiet { fill: var(--quiet); }
@@ -36,7 +35,9 @@
   svg.threads line.thread { stroke: var(--ink); stroke-width: 2; }
   svg.threads line.thread.gap { stroke: var(--quiet); stroke-width: 1; stroke-dasharray: 3 4; }
   svg.threads circle { fill: var(--ink); }
-  .tool select { font: inherit; font-size: var(--text); color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 3px; padding: 0.1rem 0.3rem; }
+  /* Controls are in the label face at the control size (17px), like the shared buttons and sliders. */
+  .tool select { font: inherit; font-family: var(--font-label); font-size: 17px; color: var(--ink); background: var(--paper); border: 1px solid var(--quiet); border-radius: 0; padding: 0.25rem 0.3rem; }
+  .tool .pair label { font-size: 17px; }
   .tool .pair { display: flex; gap: 0.8rem; flex-wrap: wrap; }
   .tool .pair label { display: flex; flex-direction: column; gap: 0.2rem; color: var(--quiet); }
   /* The map needs both columns: the controls sit in a row above it. */

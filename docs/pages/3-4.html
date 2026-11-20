@@ -8,10 +8,11 @@
 <link rel="stylesheet" href="../css/tufte.css">
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
-<script src="../js/skin.js"></script>
 <style>
   /* The stage spans both columns: the controls sit in a row above it, and each plane takes half. */
   #controls { flex-direction: row; flex-wrap: wrap; gap: var(--u) var(--gap); max-width: none; margin-bottom: calc(2 * var(--u)); align-items: flex-end; }
+  /* The lone button stands on the same line as the other controls' buttons. */
+  #tool #controls > button { align-self: flex-end; }
   .planes { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: calc(2 * var(--u)) var(--gap); align-items: start; margin-bottom: calc(2 * var(--u)); }
   .planes > div { min-width: 0; }
   @media (max-width: 1079px) { .planes { grid-template-columns: minmax(0, 1fr); } }
@@ -26,6 +27,8 @@
   table.wts tbody tr { cursor: pointer; }
   table.wts td.masked { color: var(--quiet); }
   .small-title { margin: 0 0 var(--u); line-height: var(--line); }
+  /* Math in a section heading is set at the heading's size. */
+  h2 .katex { font-size: 1em; }
   /* Fit to the layout grid (2026-11-20). */
   figure { margin: calc(2 * var(--u)) 0 var(--u); }
   .caption { margin: 0 0 calc(2 * var(--u)); }
@@ -85,7 +88,7 @@ $$\mathrm{Attention}(Q, K, V) = \mathrm{softmax}\!\left(\frac{QK^{\top}}{\sqrt{d
       <div class="notice"><p>The weight is always 1. With the mask on, token 1 may see only itself, and softmax over a single score gives weight 1, so token 1&rsquo;s output is its own value whatever its query. With the mask off, token 1 can attend to later tokens; at the starting positions it puts 0.40 of its weight on token 2.</p></div></div>
   </li>
   <li class="task" data-id="3.4-t4">
-    <p class="prompt">Select token 4 and click Start over. If you switch the scaling off, so the scores are no longer divided by \(\sqrt{2}\), will token 4&rsquo;s largest weight go up or down?</p>
+    <p class="prompt">Select token 4 and click Start over. If you switch the scaling off, so the scores are no longer divided by <span style="white-space: nowrap">\(\sqrt{2}\),</span> will token 4&rsquo;s largest weight go up or down?</p>
     <div class="choices" data-options="Up|Down|It stays the same"></div>
     <div class="after"><p>Switch the scaling off and on, and watch row 4 of the table.</p>
       <button class="show" type="button">Show what to notice</button>

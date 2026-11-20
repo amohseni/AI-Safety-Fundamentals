@@ -8,8 +8,9 @@
 <link rel="stylesheet" href="../css/tufte.css">
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
-<script src="../js/skin.js"></script>
 <style>
+  /* In two columns the title is not hyphenated (it broke as "specifica-tion"); it breaks between words. */
+  @media (min-width: 1080px) { h1 { hyphens: manual; } }
   .room { display: block; outline-offset: 4px; }
   /* Two groups of controls in the margin column: playback first, then the parts of the reward.
      On a phone the playback controls come last, directly above the room. */

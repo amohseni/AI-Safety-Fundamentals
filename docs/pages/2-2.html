@@ -8,7 +8,6 @@
 <link rel="stylesheet" href="../css/tufte.css">
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
-<script src="../js/skin.js"></script>
 <style>
   .tool .plane { width: 100%; aspect-ratio: 1 / 1; max-width: 100%; outline-offset: 4px; }
   #fig-neuron svg { max-width: 100%; height: auto; }
@@ -84,7 +83,7 @@ $$\text{output} = f(w \cdot x + b).$$
 <section>
 <h2>What the arrow and the bias do</h2>
 <p><span class="claim">Theorem</span> For any weight vector \(w\) other than zero, the line \(w \cdot x + b = 0\) is perpendicular to \(w\), and its distance from the origin is \(|b| / \lVert w \rVert\). So the direction of \(w\) sets the line&rsquo;s orientation, and the bias, measured against the length of \(w\), sets its position. The length of \(w\) also sets how fast the sum changes as an input crosses the line, which is how sharp the transition in the output is. Multiplying \(w\) and \(b\) by the same number greater than 1 leaves the line where it is and sharpens the transition.</p>
-<p>A neuron&rsquo;s output depends on the input only through the sum \(w \cdot x + b\), which is the signed distance from the line, multiplied by \(\lVert w \rVert\). Every input on a line parallel to \(w \cdot x + b = 0\) gets the same output. If the activation function never decreases, as with step, sigmoid, and ReLU, then for any threshold, the inputs whose output is above it lie on one side of one such line. So a single neuron with such an activation function can separate two classes only with a line, or in more dimensions a hyperplane. This is the perceptron&rsquo;s limit from Section 1.2, and it is why networks stack neurons in layers (Sections 2.3 and 2.4).</p>
+<p>A neuron&rsquo;s output depends on the input only through the sum \(w \cdot x + b\), which is the signed distance from the line, multiplied by <span style="white-space: nowrap">\(\lVert w \rVert\).</span> Every input on a line parallel to \(w \cdot x + b = 0\) gets the same output. If the activation function never decreases, as with step, sigmoid, and ReLU, then for any threshold, the inputs whose output is above it lie on one side of one such line. So a single neuron with such an activation function can separate two classes only with a line, or in more dimensions a hyperplane. This is the perceptron&rsquo;s limit from Section 1.2, and it is why networks stack neurons in layers (Sections 2.3 and 2.4).</p>
 </section>
 
 <div class="check" data-id="2.2-c1" data-correct="1">

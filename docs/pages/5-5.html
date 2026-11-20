@@ -8,12 +8,11 @@
 <link rel="stylesheet" href="../css/tufte.css">
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
-<script src="../js/skin.js"></script>
 <style>
   /* The large plot is square and as wide as the text column. */
   .overlay { width: 100%; aspect-ratio: 1 / 1; }
   /* The rows of unit pictures: a name and four pictures across the text column. */
-  .unit-rows { margin-top: calc(2 * var(--u)); font-size: var(--text); }
+  .unit-rows { margin-top: calc(2 * var(--u)); font-size: var(--text); font-family: var(--font-label); }
   .unit-row { display: grid; grid-template-columns: 4rem repeat(4, minmax(0, 1fr)); gap: var(--u); align-items: center; margin-bottom: var(--u); }
   .unit-row.head { margin-bottom: 0; }
   .unit-row.head span { color: var(--quiet); line-height: var(--line); }
@@ -24,7 +23,9 @@
   /* The program and the parameters side by side: each takes half of both columns, less the gap. */
   .split { display: grid; grid-template-columns: minmax(0, 1fr); gap: calc(2 * var(--u)) var(--gap); align-items: start; }
   .split > div { min-width: 0; }
-  .code { font-size: var(--text); font-family: Consolas, "Liberation Mono", Menlo, monospace; line-height: var(--line); margin: 0; white-space: pre; overflow-x: auto; }
+  /* Code in Computer Modern Typewriter, until the shared CSS defines --font-code. */
+  @font-face { font-family: "CMU Typewriter Text"; src: url("../fonts/cmu/cmu-typewriter-text-500-roman.woff2") format("woff2"); font-weight: 400 700; font-style: normal; font-display: swap; }
+  .code { font-size: var(--text); font-family: var(--font-code, "CMU Typewriter Text", monospace); line-height: var(--line); margin: 0; white-space: pre; overflow-x: auto; }
   .code .hl { color: var(--accent); }
   #fig-weights { width: 100%; display: block; }
   @media (min-width: 1080px) {
@@ -69,7 +70,7 @@
 
   <div class="panel" id="panel-mod">
     <h3>The modular-addition transformer, trained five times</h3>
-    <p class="panel-note">The transformer from Section 5.4, computing \((a + b) \bmod 59\) and trained on 30% of the pairs with weight decay 1 from five seeds, for 20,000 steps each. Each chart shows the size of each frequency in the run&rsquo;s embedding at the end of training. The <span class="c-accent">key frequencies</span>, which together hold at least 90% of the embedding, are in blue and numbered.</p>
+    <p class="panel-note">The transformer from Section 5.4, computing \((a + b) \bmod 59\) and trained on 30% of the pairs with weight decay 1 from five seeds, for 20,000 steps each. Each chart shows the size of each frequency in the run&rsquo;s embedding at the end of training. The <span class="c-accent">key frequencies</span>, which together hold at least 90% of the embedding, are in red and numbered.</p>
     <figure class="multiples" id="freq-multiples" aria-describedby="mod-readout"></figure>
     <p class="readout" id="mod-readout" aria-live="polite"></p>
   </div>
@@ -113,7 +114,7 @@
     return total</pre></div>
   <div><canvas id="fig-weights" aria-hidden="true"></canvas></div>
 </figure>
-<p id="fig-desc" class="caption">Left: a program for addition modulo \(p\). The <span class="c-accent">highlighted line</span> is the cause of one behavior, that 30 + 40 comes out as 11 when \(p = 59\). Right: the embedding matrix of the trained transformer of run 1, which computes the same function: one row for each number from 0 to 58, with 128 learned numbers in each row, <span class="c-accent">positive in blue</span> and <span class="c-second">negative in orange</span>. The same behavior is encoded in these numbers and the model&rsquo;s other parameters, and no single entry is responsible for it.</p>
+<p id="fig-desc" class="caption">Left: a program for addition modulo \(p\). The <span class="c-accent">highlighted line</span> is the cause of one behavior, that 30 + 40 comes out as 11 when \(p = 59\). Right: the embedding matrix of the trained transformer of run 1, which computes the same function: one row for each number from 0 to 58, with 128 learned numbers in each row, <span class="c-accent">positive in red</span> and <span class="c-second">negative in blue</span>. The same behavior is encoded in these numbers and the model&rsquo;s other parameters, and no single entry is responsible for it.</p>
 </section>
 
 <div class="check" data-id="5.5-c1" data-correct="1">

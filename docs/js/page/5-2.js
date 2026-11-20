@@ -18,7 +18,7 @@ const HORIZON = { fixed: 60, rps: 120 };
   s.flowField((x) => replicatorRHS(game, x));
   s.path('rep', integrate(replicatorRHS, game, X0.fixed, 60).map((p) => p.x), { color: 'ink', width: 2 });
   s.path('run', learn('cross', game, X0.fixed, 0.01, 60, 3).map((p) => p.x), { color: 'accent', width: 1.2 });
-  s.point('start', X0.fixed, { color: 'ink', r: 4, label: 'start', dx: -8, anchor: 'end' });
+  s.point('start', X0.fixed, { color: 'ink', r: 4, label: 'start', dx: 8, dy: -8 });
 })();
 
 // ---- The tool ----

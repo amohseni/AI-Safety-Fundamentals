@@ -8,7 +8,6 @@
 <link rel="stylesheet" href="../css/tufte.css">
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
-<script src="../js/skin.js"></script>
 <style>
   #map-stage canvas { display: block; width: 100%; max-width: 100%; touch-action: manipulation; }
   .tool input[type="text"], .tool select {
@@ -57,7 +56,7 @@
 <div class="tool" id="tool">
   <div class="panel" id="panel-map">
     <h3>Neighbors and analogies</h3>
-    <p class="panel-note">Each dot is one of the 4,039 words, placed by a projection of its 300 numbers onto the plane. Search for a word to see its ten nearest neighbors by cosine similarity, computed from all 300 numbers. The analogy box computes \(a - b + c\) from the unit-length vectors and lists the five words closest to the result. The searched word and the analogy&rsquo;s answers are in <span class="c-accent">blue</span>; the analogy&rsquo;s three input words are in <span class="c-second">orange</span>.</p>
+    <p class="panel-note">Each dot is one of the 4,039 words, placed by a projection of its 300 numbers onto the plane. Search for a word to see its ten nearest neighbors by cosine similarity, computed from all 300 numbers. The analogy box computes \(a - b + c\) from the unit-length vectors and lists the five words closest to the result. The searched word and the analogy&rsquo;s answers are in <span class="c-accent">red</span>; the analogy&rsquo;s three input words are in <span class="c-second">blue</span>.</p>
     <div class="row"><div class="controls" id="map-controls"></div><div class="stage" id="map-stage"></div></div>
     <p class="readout" id="map-readout" aria-live="polite"></p>
     <div class="lists" id="lists"></div>

@@ -8,7 +8,6 @@
 <link rel="stylesheet" href="../css/tufte.css">
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
-<script src="../js/skin.js"></script>
 <style>
   /* The table spans both columns, with its control in a row above it. */
   #controls { flex-direction: row; flex-wrap: wrap; gap: var(--u) var(--gap); max-width: none; margin-bottom: calc(2 * var(--u)); align-items: flex-end; }
@@ -16,11 +15,11 @@
      No padding on the left, where the row names stay in place while the table scrolls under them. */
   .scroller { overflow-x: auto; padding: 3px 3px 3px 0; margin: -3px -3px calc(2 * var(--u) - 3px) 0; }
   table.lens { min-width: 100%; border-collapse: separate; border-spacing: 0; font-size: var(--text); line-height: calc(var(--line) - 2px); font-variant-numeric: lining-nums tabular-nums; }
-  table.lens th { font-weight: normal; color: var(--quiet); white-space: pre; padding: 0 0.35rem; text-align: left; border: 1px solid var(--paper); }
+  table.lens th { font-weight: normal; color: var(--quiet); white-space: pre; padding: 0 0.25rem; text-align: left; border: 1px solid var(--paper); }
   table.lens thead th { color: var(--ink); border-bottom: 1px solid var(--rule); }
   table.lens tbody th { text-align: right; padding-left: 0; position: sticky; left: 0; background: var(--paper); }
   table.lens thead th:first-child { padding-left: 0; position: sticky; left: 0; background: var(--paper); }
-  table.lens td { white-space: pre; padding: 0 0.35rem; cursor: pointer; border-radius: 3px; border: 1px solid var(--paper); }
+  table.lens td { white-space: pre; padding: 0 0.25rem; cursor: pointer; border-radius: 3px; border: 1px solid var(--paper); }
   table.lens td.sel { outline: 2px solid var(--accent); outline-offset: -1px; }
   table.lens td:focus-visible { outline: 2px solid var(--focus); }
   #detail { box-sizing: border-box; max-width: var(--col); margin-top: calc(2 * var(--u)); }

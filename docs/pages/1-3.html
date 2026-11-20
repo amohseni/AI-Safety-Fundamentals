@@ -8,9 +8,10 @@
 <link rel="stylesheet" href="../css/tufte.css">
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
-<script src="../js/skin.js"></script>
 <style>
   h1 { hyphens: auto; overflow-wrap: break-word; }
+  /* In two columns the title wraps between words; a hyphenated title is only for narrow screens. */
+  @media (min-width: 1080px) { h1 { hyphens: manual; } }
   .exp { vertical-align: 0.45em; line-height: 0; }
   /* Two panels side by side: each takes half of both columns. */
   #fig-two { gap: var(--u) var(--gap); padding-top: var(--u); }

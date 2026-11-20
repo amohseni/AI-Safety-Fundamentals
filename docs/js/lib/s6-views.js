@@ -1,11 +1,11 @@
 // Views for Section 6 pages: an arrow view for directions in a 2- or 3-dimensional space (canvas),
 // a heat map for a matrix, and a bar chart, all drawn at true pixel width so labels stay at the small size (--small).
 // Colors are named by role ('accent', 'second', 'ink', 'quiet', 'rule') and read from the CSS tokens.
-import { cssVar } from './ui.js';
+import { cssVar, fontsReady } from './ui.js';
 
 const d3 = window.d3;
 // Canvas labels are chart text: the size comes from the --small token.
-const font = () => `${cssVar('--small') || '13pt'} ${(getComputedStyle(document.documentElement).getPropertyValue('--font-data') || '').trim() || 'et-book, Georgia, serif'}`;
+const font = () => `${cssVar('--small') || '13pt'} ${(getComputedStyle(document.documentElement).getPropertyValue('--font-data') || '').trim() || 'sans-serif'}`;
 const TOKEN = { accent: '--accent', second: '--second', ink: '--ink', quiet: '--quiet', rule: '--rule', paper: '--paper' };
 const col = (name) => cssVar(TOKEN[name] || '--ink');
 
@@ -21,6 +21,8 @@ export class ArrowView {
     this.yaw = 0.5; this.pitch = 0.35;
     this.items = []; this.points = []; this.axes = null; this.highlight = -1; this.extent = 1.4;
     if (interactive) this._bind();
+    // A canvas keeps the face that was available when it was drawn: draw the labels again once the site's faces have loaded.
+    fontsReady().then(() => { if (this._drawn) this.draw(); });
   }
 
   setDim(d) { this.dim = d; this.yaw = 0.5; this.pitch = 0.35; }
@@ -62,8 +64,9 @@ export class ArrowView {
   }
 
   draw() {
+    this._drawn = true;
     const c = this.canvas, ctx = this.ctx;
-    const side = Math.max(240, Math.min(this.maxSide, c.parentElement ? c.parentElement.clientWidth : this.maxSide));
+    const side = Math.max(180, Math.min(this.maxSide, c.parentElement ? c.parentElement.clientWidth : this.maxSide));
     const dpr = window.devicePixelRatio || 1;
     if (c.width !== Math.round(side * dpr) || c.height !== Math.round(side * dpr)) { c.width = Math.round(side * dpr); c.height = Math.round(side * dpr); }
     c.style.width = `${side}px`; c.style.height = `${side}px`;

@@ -8,7 +8,6 @@
 <link rel="stylesheet" href="../css/tufte.css">
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
-<script src="../js/skin.js"></script>
 <style>
   #bars text.name { fill: var(--ink); }
   #bars text.num { fill: var(--quiet); }
@@ -85,7 +84,7 @@ $$\pi^{*}(y \mid x) = \frac{1}{Z(x)}\, \pi_{\mathrm{ref}}(y \mid x)\, \exp\!\big
 <p><span class="claim">Empirical finding</span> Gao, Schulman, and Hilton measured this effect in a controlled setting.<label for="sn-gao" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-gao" class="margin-toggle"><span class="sidenote">Gao, Schulman, and Hilton (2022), &ldquo;<a href="https://arxiv.org/abs/2210.10760">Scaling laws for reward model overoptimization</a>,&rdquo; arXiv:2210.10760; published at <em>ICML</em> 2023.</span> A large reward model stood in for human judgment (the &ldquo;gold&rdquo; reward model). Smaller proxy reward models were trained on its labels, and policies were optimized against the proxies. As a policy moved further from the starting model, its proxy score kept rising, while its gold score rose at first and then fell. This happened both under reinforcement learning and under best-of-\(n\) sampling, and the size of the effect changed smoothly with the size of the proxy reward model. It is an instance of Goodhart&rsquo;s law, the subject of Section 8.1.</p>
 
 <figure class="multiples" id="fig-kl" aria-describedby="fig-kl-desc"></figure>
-<p id="fig-kl-desc" class="caption">Expected reward model score (ink) and expected true reward (<span class="c-second">orange</span>) against the KL divergence from the starting model, for the eight responses of the tool. With the hack response, the true reward peaks at a KL divergence of about 0.55 and then falls. Without it, the two rise together.</p>
+<p id="fig-kl-desc" class="caption">Expected reward model score (ink) and expected true reward (<span class="c-second">blue</span>) against the KL divergence from the starting model, for the eight responses of the tool. With the hack response, the true reward peaks at a KL divergence of about 0.55 and then falls. Without it, the two rise together.</p>
 </section>
 
 <div class="check" data-id="4.3-c1" data-correct="2">

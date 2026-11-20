@@ -265,10 +265,10 @@ function meansSVG(title, meansList, endLines, note, Wd) {
     const y = top + (n === 1 ? (rowH / 2) : i * rowH);
     el('text', { x: 0, y: y + 5, class: 'quiet' }, m);
     // Several means converge on one point, then one arrowhead points to the end.
-    el('line', n === 1 ? { x1: 160, y1: y, x2: 212, y2: y, 'marker-end': `url(#${id})` } : { x1: 160, y1: y, x2: 200, y2: endY });
+    el('line', n === 1 ? { x1: 140, y1: y, x2: 192, y2: y, 'marker-end': `url(#${id})` } : { x1: 140, y1: y, x2: 180, y2: endY });
   });
-  if (n > 1) el('line', { x1: 200, y1: endY, x2: 212, y2: endY, 'marker-end': `url(#${id})` });
-  endLines.forEach((s, i) => el('text', { x: 220, y: (n === 1 ? top + rowH / 2 : endY) + 5 + (i - (endLines.length - 1) / 2) * 22 }, s));
+  if (n > 1) el('line', { x1: 180, y1: endY, x2: 192, y2: endY, 'marker-end': `url(#${id})` });
+  endLines.forEach((s, i) => el('text', { x: 200, y: (n === 1 ? top + rowH / 2 : endY) + 5 + (i - (endLines.length - 1) / 2) * 22 }, s));
   if (note) el('text', { x: 0, y: H - 8, class: 'quiet' }, note);
   return svg;
 }

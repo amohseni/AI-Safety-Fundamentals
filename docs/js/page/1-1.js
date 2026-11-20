@@ -1,5 +1,5 @@
 // Page 1.1: the timeline. Events from data/timeline.json, training compute from data/compute.json.
-import { segmented, button } from '../lib/ui.js';
+import { segmented, button, fontsReady } from '../lib/ui.js';
 import { sections } from '../pages.js';
 import { setPow } from '../lib/sci.js';
 
@@ -36,7 +36,8 @@ function slope(pts) {
   return { b, mx, my };
 }
 
-Promise.all([fetch('../data/timeline.json').then((r) => r.json()), fetch('../data/compute.json').then((r) => r.json())])
+// Label widths are measured to place the labels, so the figures are built after the faces load.
+Promise.all([fetch('../data/timeline.json').then((r) => r.json()), fetch('../data/compute.json').then((r) => r.json()), fontsReady()])
   .then(([tl, comp]) => { staticFigure(tl); tool(tl, comp); })
   .catch((e) => { document.getElementById('card').textContent = 'The timeline data could not be loaded.'; console.error(e); });
 
@@ -45,8 +46,8 @@ const KEY = ['McCulloch and Pitts', 'Dartmouth workshop', 'Perceptron', 'Minsky 
 function staticFigure(tl) {
   const box = document.getElementById('fig-static');
   const ev = KEY.map((k) => tl.events.find((e) => e.label === k)).filter(Boolean);
-  const W = Math.max(300, box.clientWidth || 560), H = 620;
-  const m = { top: 14, bottom: 14, left: 48 };
+  const W = Math.max(300, box.clientWidth || 560), H = 626;
+  const m = { top: 14, bottom: 20, left: 48 };
   const y = d3.scaleLinear().domain([1940, 2026]).range([m.top, H - m.bottom]);
   const svg = d3.select(box).append('svg').attr('class', 'chart').attr('viewBox', `0 0 ${W} ${H}`).attr('width', W).attr('height', H)
     .attr('role', 'img').attr('aria-label', 'Timeline from 1940 to 2025: ' + ev.map((e) => `${e.date.slice(0, 4)} ${e.label}`).join(', ') + '; AI winters about 1974 to 1980 and 1987 to 1993.');

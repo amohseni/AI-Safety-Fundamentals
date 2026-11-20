@@ -176,7 +176,7 @@ async function review() {
   if (!pick.length) return;
   const box = document.createElement('div');
   box.className = 'review';
-  box.innerHTML = '<p class="label">Review. These questions are from earlier sections. Answer them from memory before you start this one.</p>' +
+  box.innerHTML = '<p class="label">Review</p><p class="note">These questions are from earlier sections. Answer them from memory before you start this one.</p>' +
     pick.map(({ cid, p }) => { const c = bank[cid]; return `
     <div class="check" data-id="${cid}" data-correct="${c.correct}">
       <p class="label">From <a href="${pageHref(p)}">${p.id} ${p.title}</a></p>
@@ -220,7 +220,8 @@ async function transfer() {
   box.className = 'check transfer';
   box.dataset.id = `T${page.section.n}`;
   box.dataset.correct = t.correct;
-  box.innerHTML = `<p class="label">Transfer question for Section ${page.section.n}. It applies the section&rsquo;s ideas to a case the section did not cover.</p>
+  box.innerHTML = `<p class="label">Transfer question</p>
+    <p class="note">This question applies the ideas of Section ${page.section.n} to a case the section did not cover.</p>
     <p class="q">${t.q}</p>
     <div class="options seg">${t.options.map((o) => `<button>${o}</button>`).join('')}</div>
     <div class="feedback"><p>${t.feedback}</p></div>`;
@@ -273,6 +274,17 @@ export function contents(el) {
   el.querySelectorAll('.view button').forEach((b) => b.addEventListener('click', () => { store.set('view', b.dataset.view); contents(el); el.querySelector(`.view [data-view="${b.dataset.view}"]`).focus(); }));
 }
 
+// A first paragraph that opens with a claim label takes no initial (the stylesheet cannot tell
+// whether text comes before the label, so the class is set here).
+(function () {
+  const p = document.querySelector('article > section:first-of-type > p:first-of-type');
+  if (!p) return;
+  const first = [...p.childNodes].find((n) => n.nodeType !== 3 || n.textContent.trim());
+  if (first && first.nodeType === 1 && first.classList.contains('claim')) p.classList.add('starts-claim');
+  // An initial three lines deep needs three lines of text beside it.
+  const lines = p.getBoundingClientRect().height / (parseFloat(getComputedStyle(p).lineHeight) || 30);
+  if (lines < 2.6) p.classList.add('no-initial');
+})();
 shell();
 sidenotes();
 tasks();

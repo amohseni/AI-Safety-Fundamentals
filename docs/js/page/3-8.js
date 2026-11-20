@@ -10,8 +10,9 @@ const sci = (x) => { const e = Math.floor(Math.log10(x) + 1e-9), m = x / 10 ** e
 const big = (x) => (x >= 1e12 ? `${x >= 1e14 ? Math.round(x / 1e12).toLocaleString('en-US') : (x / 1e12).toFixed(2)} trillion` : x >= 1e9 ? `${(x / 1e9).toFixed(1)} billion` : x >= 1e6 ? `${(x / 1e6).toFixed(1)} million` : x >= 1e3 ? `${(x / 1e3).toFixed(1)} thousand` : x.toFixed(0));
 const isPow = (v) => Math.abs(Math.log10(v) - Math.round(Math.log10(v))) < 1e-6;
 const logTick = (v) => (isPow(v) ? String(Math.round(Math.log10(v))) : '');
-// Rewrites tick labels "18" as 10 with a raised 18, at the same type size.
-const raise = (c) => c.svg.selectAll('.axis text').each(function () { const t = this.textContent; if (/^\d+$/.test(t)) this.innerHTML = `10<tspan dy="-7">${t}</tspan>`; });
+// Rewrites tick labels "18" as 10 with a raised 18, at the size KaTeX gives an exponent (the face has
+// lining figures, which at full size stand as tall as the 10 and run into the neighboring labels).
+const raise = (c) => c.svg.selectAll('.axis text').each(function () { const t = this.textContent; if (/^\d+$/.test(t)) this.innerHTML = `10<tspan dy="-6" font-size="0.75em">${t}</tspan>`; });
 const sizeTick = (v) => (isPow(v) ? ({ 7: '10M', 8: '100M', 9: '1B', 10: '10B', 11: '100B', 12: '1T', 13: '10T' })[Math.round(Math.log10(v))] : '');
 const C_CHIN = 5.76e23;
 const NMIN = 1e7, NMAX = 1e13;
@@ -40,6 +41,18 @@ const ctl = document.getElementById('controls');
 const out = document.getElementById('readout');
 const cS = slider(ctl, { name: 'Budget C, FLOPs', min: 18, max: 26, step: 0.0001, value: state.lc, format: (v) => sci(10 ** v),
   onInput: (v) => { state.lc = v; draw(); } });
+// The site's faces have no superscript figures above 3, so the exponent in the readout is set as a
+// real superscript: the slider writes plain text, and this rewrites it each time it changes.
+{
+  const out = cS.el.parentElement.querySelector('output');
+  const DIGIT = Object.fromEntries(Object.entries(SUP).map(([k, v]) => [v, k === '-' ? '−' : k]));
+  const fix = () => {
+    const m = out.textContent.match(/^(.*10)([⁻⁰¹²³⁴⁵⁶⁷⁸⁹]+)$/);
+    if (m) out.innerHTML = `${m[1]}<sup style="line-height: 0; font-size: 0.75em">${[...m[2]].map((c) => DIGIT[c]).join('')}</sup>`;
+  };
+  new MutationObserver(fix).observe(out, { childList: true, characterData: true, subtree: true });
+  fix();
+}
 const r1 = document.createElement('div'); r1.className = 'btns'; ctl.append(r1);
 button(r1, 'Chinchilla’s budget', () => { state.lc = Math.log10(C_CHIN); cS.set(state.lc); draw(); });
 button(r1, 'Budget × 10', () => { state.lc = Math.min(26, state.lc + 1); cS.set(state.lc); draw(); });

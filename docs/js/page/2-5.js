@@ -100,7 +100,8 @@ const changed = () => listeners.forEach((f) => f());
   const manyBox = document.getElementById('many-chart');
   const c = chart(manyBox, {
     width: manyBox.clientWidth || 560,
-    x: { domain: [1, N], label: 'number of events' }, y: { domain: [0, 1.5], label: 'average loss so far' }, title: 'Average loss of three forecasters',
+    // Fewer ticks on a narrow chart, so 800 and 1,000 do not run together.
+    x: { domain: [1, N], label: 'number of events', ticks: (manyBox.clientWidth || 560) < 440 ? 3 : 5 }, y: { domain: [0, 1.5], label: 'average loss so far' }, title: 'Average loss of three forecasters',
   });
   let seed = 11, n = 0, outcomes = [], raf = null;
   const strategies = () => {

@@ -1,6 +1,6 @@
 // Page 3.5: a gallery of the 144 attention heads of GPT-2 small, from precomputed data
 // (tools/3-5/heads.py). Numbers quoted in the tasks are checked by tools/test-page-3-5.mjs.
-import { segmented, cssVar } from '../lib/ui.js';
+import { segmented, cssVar, fontsReady } from '../lib/ui.js';
 import { chart } from '../lib/chart.js';
 import { loadJSON, unpackAttention, palette, drawPattern, sizedCanvas, showToken, escapeHTML } from '../lib/s3k-gpt2.js';
 
@@ -13,8 +13,10 @@ function tokenPx(name) {
   probe.remove();
   return v;
 }
-const FONT = `${tokenPx('--small')}px ${(getComputedStyle(document.documentElement).getPropertyValue('--font-data') || '').trim() || 'et-book, Georgia, serif'}`;
+const FONT = `${tokenPx('--small')}px ${(getComputedStyle(document.documentElement).getPropertyValue('--font-data') || '').trim() || 'sans-serif'}`;
 const readout = document.getElementById('readout');
+// Canvas text keeps the face that was loaded when it was drawn, so the faces are loaded first.
+await fontsReady();
 
 let data;
 try {
@@ -118,6 +120,19 @@ function drawTypes() {
   }).join('') + '<p style="color: var(--quiet)">Measured on 100 other random sequences of 20 tokens repeated twice; the thresholds are given below the tasks.</p>';
 }
 
+// The text on a shaded cell takes whichever of the paper and ink colors contrasts more with the shade,
+// so that it stays legible in the light and the dark theme.
+function textOn(shade, paper, ink) {
+  const lum = (s) => {
+    const m = s.startsWith('#') ? [1, 3, 5].map((k) => parseInt(s.length === 4 ? s[(k + 1) / 2].repeat(2) : s.slice(k, k + 2), 16)) : s.match(/\d+(\.\d+)?/g).slice(0, 3).map(Number);
+    const [r, g, b] = m.map((v) => (v / 255 <= 0.03928 ? v / 255 / 12.92 : ((v / 255 + 0.055) / 1.055) ** 2.4));
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  const ratio = (a, b) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+  const L = lum(shade);
+  return ratio(L, lum(paper)) > ratio(L, lum(ink)) ? paper : ink;
+}
+
 // ---- The chosen head, enlarged, and the input shaded by its weights ----
 const big = document.getElementById('big');
 const strip = document.getElementById('strip');
@@ -146,7 +161,7 @@ function drawBig() {
   strip.innerHTML = d.tokens.map((t, j) => {
     const w = j <= st.q ? d.att(st.l, st.h, st.q, j) : 0;
     const bg = w > 0.004 ? ink(w) : 'transparent';
-    const fg = Math.sqrt(w) > 0.55 ? paper : inkc;
+    const fg = w > 0.004 ? textOn(bg, paper, inkc) : inkc;
     return `<span class="tk${j === st.q ? ' q' : ''}" data-j="${j}" style="background:${bg};color:${fg}" title="weight ${w.toFixed(2)}">${escapeHTML(showToken(t))}</span>`;
   }).join('');
   writeReadout();

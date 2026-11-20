@@ -3,6 +3,7 @@ import { SURFACES, makeRun, basin } from '../lib/s2-optim.js';
 import { chart } from '../lib/chart.js';
 import { slider, segmented, button, reducedMotion } from '../lib/ui.js';
 import { bands } from '../lib/s2-contour.js';
+import { setScripts } from '../lib/sci.js';
 
 const d3 = window.d3;
 const TOL = 1e-4;
@@ -10,6 +11,8 @@ const MAX = { bowl: 3000, valley: 5000, rosenbrock: 20000, two: 1000 };
 const OPT = { gd: 'plain gradient descent', momentum: 'momentum', adam: 'Adam' };
 const sig3 = (v) => Number(v.toPrecision(3));
 const SUP = { '-': '⁻', 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹' };
+// The faces lack most superscript digits, so the exponents on the axis are set as raised digits.
+const raiseTicks = (c) => c.g.selectAll('.axis .tick text').each(function () { setScripts(d3.select(this), this.textContent); });
 const pow10 = (d) => { const e = Math.round(Math.log10(d)); return e % 2 !== 0 ? '' : e === 0 ? '1' : `10${String(e).split('').map((c) => SUP[c]).join('')}`; };
 
 // Contour map of a surface inside a chart made by chart().
@@ -110,6 +113,7 @@ function build() {
   const lw = document.getElementById('loss-chart').clientWidth || 440;
   lossC = chart(document.getElementById('loss-chart'), { width: lw, height: 220, margin: { top: 30, right: 84, bottom: 50, left: 58 },
     x: { domain: [0, 100], label: 'step', ticks: 3 }, y: { domain: [1e-5, 1e3], log: true, ticks: 3, format: pow10, label: 'loss above lowest' }, title: 'Loss above its lowest value, against step' });
+  raiseTicks(lossC);
   tenBtn.disabled = state.surface !== 'two';
   reset(false);
 }
@@ -155,7 +159,7 @@ function draw() {
     .attr('fill', 'none').attr('stroke', 'var(--accent)').attr('stroke-width', 1.5);
   // Loss chart
   const tmax = Math.max(100, run.t, prev ? Math.min(prev.t, MAX[state.surface]) : 0);
-  lossC.setX([0, tmax]);
+  lossC.setX([0, tmax]); raiseTicks(lossC);
   const series = (r) => thin(r.losses.map((L, i) => [i, Math.max(1e-6, Math.min(1e5, L - S.min))]), 800);
   if (prev) lossC.line('prev', series(prev), { color: 'quiet', width: 1.2, dash: '3 3', label: 'previous' }); else lossC.remove('prev');
   lossC.line('cur', series(run), { color: 'accent', width: 1.6, label: 'this run' });

@@ -8,8 +8,9 @@
 <link rel="stylesheet" href="../css/tufte.css">
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
-<script src="../js/skin.js"></script>
 <style>
+  /* Two sidenotes that meet in the margin column are kept a line apart. */
+  @media (min-width: 1080px) { .sidenote { margin-bottom: var(--u); } }
   /* Tables in the stage: as wide as the text column; the row name takes the spare width, numbers sit at the right edge. */
   table.jb { border-collapse: collapse; width: 100%; margin: 0; line-height: var(--line); font-variant-numeric: lining-nums tabular-nums; }
   table.jb th, table.jb td { padding: 0 0 0 1.2rem; text-align: right; font-weight: normal; vertical-align: baseline; white-space: nowrap; }
@@ -24,6 +25,8 @@
   .tool .stage p.t-title:first-child { margin-top: 0; }
   /* Desirability sliders: each action's name on its own line, its three sliders under the three locations. */
   .dgrid, .dgrid thead, .dgrid tbody { display: block; width: 100%; }
+  /* The grid is a control, so it is set at the size of the other controls (.ctl in site.css). */
+  .dgrid th, .dgrid td, .dgrid output { font-size: 17px; }
   /* The third column is as wide as its heading, Elsewhere, which is the widest of the three. */
   .dgrid tr { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 5.85rem; column-gap: 0.5rem; }
   .dgrid th { font-weight: normal; color: var(--quiet); text-align: left; padding: 0; line-height: var(--line); }

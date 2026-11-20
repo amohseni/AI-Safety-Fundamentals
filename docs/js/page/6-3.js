@@ -43,7 +43,7 @@ const ablBtn = button(ctl, "Remove the probe's direction", () => showAblation())
 const c = chart(document.getElementById('by-layer'), {
   width: document.getElementById('by-layer').clientWidth,
   x: { domain: [0, 24], label: 'layer', ticks: 6 }, y: { domain: [0.4, 1], label: 'test accuracy', ticks: 4, format: '.0%' },
-  title: 'Test accuracy of the probe and of the control probe at each layer', margin: { top: 34, right: 96, bottom: 52, left: 60 },
+  title: 'Test accuracy of the probe and of the control probe at each layer', margin: { top: 34, right: 68, bottom: 52, left: 60 },
 });
 
 function drawChart() {
@@ -141,7 +141,7 @@ changed();
     if (i >= boxes.length) return;
     const [prop, box] = boxes[i++];
     const pts = D.layers.map((L) => [L, train(prop, L, 'linear', PROBE_DEFAULTS.linear)]);
-    const cc = chart(box, { width: box.clientWidth, height: 220, margin: { top: 16, right: 88, bottom: 40, left: 52 },
+    const cc = chart(box, { width: box.clientWidth, height: 220, margin: { top: 16, right: 68, bottom: 40, left: 52 },
       x: { domain: [0, 24], ticks: 3 }, y: { domain: [0.4, 1], ticks: 3, format: '.0%' }, title: `${PROPERTIES[prop]}: test accuracy by layer` });
     cc.line('r', pts.map(([L, r]) => [L, r.te]), { color: 'accent', label: 'property' });
     cc.line('c', pts.map(([L, r]) => [L, r.cte]), { color: 'second', dash: '5 4', label: 'control' });
