@@ -496,12 +496,35 @@ button { border-radius: 0; border-color: var(--quiet); padding: 0.3rem 0.8rem; }
   }
   .tool .panel { position: relative; }
   .tool h3 { position: absolute; left: calc(-1 * (var(--rail) + var(--gap))); top: 0.5rem; width: var(--rail); margin: 0; }
+  .tool .panel + .panel > h3 { top: calc(2 * var(--u) + 0.5rem); }
   .contents .key { left: calc(var(--col) + var(--gap)); }
 }
 .topline .pages a { font-size: 12.3px; letter-spacing: 0.06em; }
 
 /* The page opens with a red initial, three lines deep. */
-article > section:first-of-type > p:first-of-type:not(:has(> .claim:first-child))::first-letter {
+article > section:first-of-type > p:first-of-type:not(.starts-claim)::first-letter {
   font-style: normal; font-weight: 400; float: left; font-size: 3.05em; line-height: 0.82; padding: 0.07em 0.12em 0 0; color: var(--accent);
 }
 .check .verdict-wrong { font-weight: 700; }
+
+/* Shared fixes from the page-by-page pass in the new design (2026-11-20). */
+.sidenote-number::after, .sidenote::before { font-family: var(--font-text); }
+label.sidenote-number { display: inline; line-height: 0; }
+@media (min-width: 1080px) {
+  .sidenote, .marginnote { margin-bottom: var(--u); }
+  h1 { hyphens: manual; }
+}
+@media (min-width: 1080px) and (max-width: 1239px) {
+  .check > .label, .explain > .label, .takeaway > .label { margin-top: 0.5rem; }
+}
+/* The review block and the transfer question: a short name as the label, and their instruction as quiet text. */
+.review > .note, .check.transfer > .note { color: var(--quiet); margin: 0 0 calc(2 * var(--u)); }
+.review { position: relative; }
+@media (min-width: 1080px) {
+  .review > .label { position: absolute; left: calc(var(--col) + var(--gap)); top: 0; width: var(--side); margin: 0; }
+  .review .check > .label { font-family: var(--font-text); font-size: var(--small); text-transform: none; letter-spacing: 0; }
+}
+@media (min-width: 1240px) {
+  .review > .label { left: calc(-1 * (var(--rail) + var(--gap))); width: var(--rail); top: 0.5rem; }
+}
+@media (max-width: 1079px) { .review { margin-bottom: calc(4 * var(--u)); } }
