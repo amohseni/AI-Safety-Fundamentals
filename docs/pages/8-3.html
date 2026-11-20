@@ -9,9 +9,11 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
-  .stack { display: flex; flex-direction: column; gap: 0.6rem; }
+  .stack { display: flex; flex-direction: column; gap: 0; }
   .level { display: block; }
-  .stack .small-title { margin: 0.6rem 0 0; color: var(--ink); }
+  .stack .small-title { margin: calc(2 * var(--u)) 0 0; color: var(--ink); line-height: var(--line); }
+  .stack .small-title:first-child { margin-top: 0; }
+  figure .small-title { margin: 0; line-height: var(--line); }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>

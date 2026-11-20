@@ -1,6 +1,6 @@
 // Page 8.3: coin or right end?
 import { segmented, button, cssVar } from '../lib/ui.js';
-import { fitCanvas } from '../lib/gridworld.js';
+import { fitCanvas, cellLayout } from '../lib/gridworld.js';
 import { rng } from '../lib/mlp.js';
 import { W, H, START, END, MOVES, NA, features, probs, randomCoin, episode, makeTrainer, evaluate, EPISODES } from '../lib/8-coinrun.js';
 
@@ -34,23 +34,25 @@ function startTraining() {
 }
 
 function layout(canvas) {
-  const avail = Math.min(470, canvas.parentElement.clientWidth || 470);
-  const c = Math.floor((avail - 2) / W);
-  const ctx = fitCanvas(canvas, c * W + 2, c * H + 2);
-  return { ctx, c, cx: (x) => 1 + (x + 0.5) * c, cy: (y) => 1 + (y + 0.5) * c };
+  // The grid is as wide as the column the canvas sits in.
+  const avail = Math.round(canvas.parentElement.clientWidth) || 630;
+  const L = cellLayout(avail, W, H, { pad: 1, fill: true });
+  const ctx = fitCanvas(canvas, avail, L.cssHeight);
+  return { ctx, L, c: L.cell, width: avail, height: L.cssHeight, cx: (x) => 1 + (x + 0.5) * L.cell, cy: (y) => 1 + (y + 0.5) * L.cell };
 }
 const colors = () => ({ ink: cssVar('--ink'), quiet: cssVar('--quiet'), rule: cssVar('--rule'), accent: cssVar('--accent'), second: cssVar('--second'), faint: cssVar('--faint') });
 
 export function drawLevel(canvas, { coin, path, heat = null }) {
-  const { ctx, c, cx, cy } = layout(canvas);
+  const { ctx, L, c, cx, cy, width, height } = layout(canvas);
   const col = colors();
-  ctx.clearRect(0, 0, c * W + 2, c * H + 2);
+  ctx.clearRect(0, 0, width, height);
   for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
-    if (heat) { ctx.fillStyle = col.accent; ctx.globalAlpha = Math.min(1, heat[y * W + x]) * 0.85; ctx.fillRect(1 + x * c, 1 + y * c, c, c); ctx.globalAlpha = 1; }
-    ctx.strokeStyle = col.rule; ctx.lineWidth = 1; ctx.strokeRect(1.5 + x * c, 1.5 + y * c, c - 1, c - 1);
+    const [rx, ry, cw, ch] = L.rect(x, y);
+    if (heat) { ctx.fillStyle = col.accent; ctx.globalAlpha = Math.min(1, heat[y * W + x]) * 0.85; ctx.fillRect(rx, ry, cw, ch); ctx.globalAlpha = 1; }
+    ctx.strokeStyle = col.rule; ctx.lineWidth = 1; ctx.strokeRect(rx + 0.5, ry + 0.5, cw - 1, ch - 1);
   }
   // The right end of the middle row: a short bar on the right wall.
-  ctx.fillStyle = col.ink; ctx.fillRect(1 + W * c - 3, 1 + END[1] * c + c * 0.15, 3, c * 0.7);
+  ctx.fillStyle = col.ink; ctx.fillRect(width - 1 - 3, 1 + END[1] * c + c * 0.15, 3, c * 0.7);
   // Start.
   ctx.strokeStyle = col.quiet; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(cx(START[0]), cy(START[1]), c * 0.22, 0, Math.PI * 2); ctx.stroke();
   if (coin) { ctx.fillStyle = col.second; ctx.beginPath(); ctx.arc(cx(coin[0]), cy(coin[1]), c * 0.26, 0, Math.PI * 2); ctx.fill(); }

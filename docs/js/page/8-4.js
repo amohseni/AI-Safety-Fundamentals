@@ -4,6 +4,8 @@ import { slider, segmented, button, fmt } from '../lib/ui.js';
 import { defaultGraph, SHUTDOWN, sampleRewards, analyze, allocate, SHAPES, DISTS } from '../lib/8-power.js';
 
 const d3 = window.d3;
+// A drawing is as wide as the column it sits in.
+const colWidth = (el) => Math.max(280, Math.round(el.clientWidth) || 630);
 const pct = (v) => `${Math.round(100 * v)}%`;
 const num = (d) => (v) => { const t = v.toFixed(d); return /^-0\.?0*$/.test(t) ? t.slice(1) : t.replace('-', '−'); };
 
@@ -143,7 +145,7 @@ function drawGraph(svgSel, graph, result, { width, height = width < 450 ? 420 : 
     const g = graphNow();
     const samples = sampleRewards(st.dist, g.nodes.length, 1000, st.seed);
     const res = analyze(g, samples, st.gamma);
-    const width = Math.max(280, Math.min(540, stage.clientWidth || 540));
+    const width = colWidth(stage);
     const nodes = drawGraph(svg, g, res, { width, selected: st.selected, interactive: true });
     nodes.on('click', (ev, n) => { st.focusId = null; pick(n.id); })
       .on('keydown', (ev, n) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); st.focusId = n.id; pick(n.id); } });
@@ -169,7 +171,7 @@ function drawGraph(svgSel, graph, result, { width, height = width < 450 ? 420 : 
   const drawFig = () => {
     const g0 = defaultGraph();
     const r0 = analyze(g0, sampleRewards('uniform', g0.nodes.length, 1000, 1), 0.9);
-    drawGraph(fsvg, g0, r0, { width: Math.max(280, Math.min(540, fig.clientWidth || 540)) });
+    drawGraph(fsvg, g0, r0, { width: colWidth(fig) });
   };
   drawFig();
   window.addEventListener('resize', () => setTimeout(drawFig, 120));
@@ -192,9 +194,9 @@ function drawGraph(svgSel, graph, result, { width, height = width < 450 ? 420 : 
   let cx = null, cu = null;
   const mk = () => {
     document.getElementById('alloc-x').innerHTML = ''; document.getElementById('alloc-u').innerHTML = '';
-    cx = chart(document.getElementById('alloc-x'), { height: 260, margin: { top: 34, right: 112, bottom: 52, left: 52 },
+    cx = chart(document.getElementById('alloc-x'), { width: colWidth(document.getElementById('alloc-x')), height: 260, margin: { top: 34, right: 96, bottom: 52, left: 52 },
       x: { domain: [0, 100], label: 'optimization step' }, y: { domain: [-6, 6], label: 'attribute value' }, title: 'Attribute values over the optimization' });
-    cu = chart(document.getElementById('alloc-u'), { height: 260, margin: { top: 34, right: 112, bottom: 52, left: 52 },
+    cu = chart(document.getElementById('alloc-u'), { width: colWidth(document.getElementById('alloc-u')), height: 260, margin: { top: 34, right: 96, bottom: 52, left: 52 },
       x: { domain: [0, 100], label: 'optimization step' }, y: { domain: [-20, 5], label: 'utility' }, title: 'True utility and proxy over the optimization' });
   };
   mk();

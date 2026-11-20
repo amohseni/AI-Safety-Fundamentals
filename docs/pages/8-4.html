@@ -9,9 +9,9 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
-  .stack { display: flex; flex-direction: column; gap: 1.2rem; }
+  .stack { display: flex; flex-direction: column; gap: calc(2 * var(--u)); }
   svg.graph { display: block; max-width: 100%; touch-action: manipulation; }
-  svg.graph text { font-family: et-book, Georgia, serif; font-size: var(--text); fill: var(--quiet); font-variant-numeric: lining-nums tabular-nums; }
+  svg.graph text { font-family: et-book, Georgia, serif; font-size: var(--small); fill: var(--quiet); font-variant-numeric: lining-nums tabular-nums; }
   svg.graph .power { fill: var(--ink); }
   svg.graph .share { fill: var(--accent); }
   svg.graph .node circle { fill: var(--paper); stroke: var(--ink); stroke-width: 1.5; }
@@ -19,7 +19,8 @@
   svg.graph .node { cursor: pointer; }
   svg.graph .node:focus { outline: none; }
   svg.graph .node:focus-visible circle { stroke: var(--focus); stroke-width: 3.5; }
-  .edit-row { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+  /* The four editing buttons are stacked at the width of the margin column, like the other buttons. */
+  .edit-row { display: flex; flex-direction: column; gap: calc(0.5 * var(--u)); }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>

@@ -3,6 +3,8 @@ import { chart } from '../lib/chart.js';
 import { slider, button } from '../lib/ui.js';
 import * as C from '../lib/s7-control.js';
 
+// A chart is drawn as wide as the column it sits in.
+const colWidth = (el) => Math.max(280, Math.round(el.clientWidth) || 630);
 const NEVER = 4.5; // hand-off slider value meaning "never hand off"
 const START = { mu: 2, budget: 0.02, tA: 2.05, tD: NEVER };
 const state = { ...START };
@@ -19,11 +21,11 @@ const S = {
 button(ctl, 'Reset', () => { Object.assign(state, START); Object.keys(S).forEach((k) => S[k].set(state[k])); update(); });
 
 const dist = chart(document.getElementById('dist'), {
-  height: 230, x: { domain: [-4, 7.5], label: 'suspicion score' }, y: { domain: [0, 0.45], ticks: 2 },
+  width: colWidth(document.getElementById('dist')), height: 230, x: { domain: [-4, 7.5], label: 'suspicion score' }, y: { domain: [0, 0.45], ticks: 2 },
   title: 'Distributions of the monitor’s scores for normal work and for sabotage', margin: { top: 30, right: 20, bottom: 52, left: 44 },
 });
 const trade = chart(document.getElementById('trade'), {
-  height: 300, x: { domain: [0, 1], label: 'usefulness', format: '.0%', ticks: 4 }, y: { domain: [0, 1], label: 'safety', format: '.0%' },
+  width: colWidth(document.getElementById('trade')), height: 300, x: { domain: [0, 1], label: 'usefulness', format: '.0%', ticks: 4 }, y: { domain: [0, 1], label: 'safety', format: '.0%' },
   title: 'Safety against usefulness', margin: { top: 34, right: 24, bottom: 52, left: 60 },
 });
 const out = document.getElementById('readout');

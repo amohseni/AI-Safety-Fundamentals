@@ -3,6 +3,8 @@ import { chart } from '../lib/chart.js';
 import { slider, button } from '../lib/ui.js';
 import * as S from '../lib/s7-select.js';
 
+// A chart is drawn as wide as the column it sits in.
+const colWidth = (el) => Math.max(280, Math.round(el.clientWidth) || 630);
 const X0 = [1 / 3, 1 / 3, 1 / 3];
 const START = { q: 1, h: 0, T: 200 };
 const state = { ...START };
@@ -21,8 +23,9 @@ const tS = slider(ctl, { name: 'Training rounds', min: 0, max: 500, step: 10, va
 button(ctl, 'Reset', () => { Object.assign(state, START); qS.set(state.q); hS.set(state.h); tS.set(state.T); draw(); });
 
 const c = chart(document.getElementById('chart'), {
+  width: colWidth(document.getElementById('chart')),
   x: { domain: [0, 200], label: 'training round' }, y: { domain: [0, 1], label: 'share of the population', format: '.0%' },
-  title: 'Share of each type of policy over training', margin: { top: 34, right: 112, bottom: 52, left: 60 },
+  title: 'Share of each type of policy over training', margin: { top: 34, right: 80, bottom: 52, left: 60 },
 });
 const out = document.getElementById('readout');
 
@@ -43,7 +46,7 @@ draw();
 // ---- Static figure: the inner alignment problem as a flow ----
 (function flow() {
   const fig = document.getElementById('fig-flow');
-  const W = Math.max(300, Math.min(600, fig.clientWidth || 600)), H = 400;
+  const W = colWidth(fig), H = 400; // the figure's own width: the text column
   const NS = 'http://www.w3.org/2000/svg';
   const svg = document.createElementNS(NS, 'svg');
   svg.setAttribute('class', 'flow'); svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('width', W); svg.setAttribute('height', H);

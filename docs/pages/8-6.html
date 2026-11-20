@@ -9,13 +9,16 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
-  table.grid2 { border-collapse: collapse; width: 61%; margin: 1rem 0 0.4rem; }
-  table.grid2 th, table.grid2 td { text-align: left; vertical-align: top; padding: 0.5rem 0.8rem 0.5rem 0; font-weight: normal; }
+  /* The two-by-two table is as wide as the text column. */
+  table.grid2 { border-collapse: collapse; width: 100%; max-width: var(--col); table-layout: fixed; margin: calc(2 * var(--u)) 0 var(--u); line-height: var(--line); }
+  table.grid2 th, table.grid2 td { text-align: left; vertical-align: top; padding: calc(0.5 * var(--u)) 1.2rem calc(0.5 * var(--u)) 0; font-weight: normal; }
+  table.grid2 th:last-child, table.grid2 td:last-child { padding-right: 0; }
   table.grid2 thead th { color: var(--quiet); border-bottom: 1px solid var(--rule); }
   table.grid2 tbody th { color: var(--quiet); font-style: italic; }
   table.grid2 tbody tr + tr th, table.grid2 tbody tr + tr td { border-top: 1px solid var(--rule); }
-  .tool .stage .sub { margin: 0.2rem 0 0; }
-  @media (max-width: 760px) { table.grid2 { width: 100%; } }
+  .tool .stage .sub { margin: calc(2 * var(--u)) 0 0; line-height: var(--line); }
+  .tool .stage .sub:first-child { margin-top: 0; }
+  @media (max-width: 760px) { table.grid2 { table-layout: auto; } table.grid2 th, table.grid2 td { padding-right: 0.5rem; } }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>
