@@ -1,5 +1,6 @@
 # Runs the numerical tests behind the claims in the page text (tools/test-*.mjs).
-# The tests need Node only: every import is a Node built-in or a file under docs/.
+# The numerical tests need Node only. tools/test-shell.mjs and tools/check.mjs need a browser,
+# so the jobs install Playwright with Chromium first.
 name: test
 
 on:
@@ -19,7 +20,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Install Playwright with Chromium
+        run: |
+          npm install --no-save playwright@1.63.0
+          npx playwright install --with-deps chromium
       - run: node tools/run-tests.mjs --fast
+      - name: Browser check of every page at desktop and phone width
+        run: node tools/check.mjs
 
   full:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
@@ -30,4 +37,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Install Playwright with Chromium
+        run: |
+          npm install --no-save playwright@1.63.0
+          npx playwright install --with-deps chromium
       - run: node tools/run-tests.mjs
+      - run: node tools/check.mjs
