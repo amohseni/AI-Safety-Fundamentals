@@ -20,7 +20,7 @@ async function figure() {
   const run = await loadRun(1.0, 0.3);
   const box = document.getElementById('fig-grok');
   const nar = (box.clientWidth || 620) < 440;
-  const c = chart(box, { width: 620, height: 260, margin: { top: 30, right: nar ? 84 : 185, bottom: 52, left: 52 },
+  const c = chart(box, { width: box.clientWidth, height: 260, margin: { top: 30, right: nar ? 84 : 185, bottom: 52, left: 52 },
     x: { domain: [1, run.steps_total], log: true, ticks: nar ? 3 : 4, format: '~s', label: nar ? 'step (log scale)' : 'training step (log scale)' },
     y: { domain: [0, 1], ticks: 3, format: '.0%', label: 'accuracy' },
     title: 'Training and test accuracy of the main run against training step' });
@@ -52,7 +52,7 @@ const playBtn = button(ctl, 'Play through training', () => (raf ? stop() : play(
 const narrow = (document.getElementById('acc-chart').clientWidth || 560) < 440;
 const LBL = narrow ? { train: 'training', test: 'test', share: 'share' } : { train: 'training pairs', test: 'test pairs', share: 'frequency share' };
 const acc = chart(document.getElementById('acc-chart'), {
-  height: 300, margin: { top: 24, right: narrow ? 84 : 140, bottom: 52, left: 56 },
+  width: document.getElementById('acc-chart').clientWidth, height: 300, margin: { top: 24, right: narrow ? 84 : 140, bottom: 52, left: 56 },
   x: { domain: [1, 20000], log: true, ticks: narrow ? 3 : 4, format: '~s', label: narrow ? 'step (log scale)' : 'training step (log scale)' },
   y: { domain: [0, 1], ticks: 3, format: '.0%' },
   title: 'Accuracy on training and test pairs, and the share of the embedding in its five largest frequencies, against training step' });
@@ -74,7 +74,9 @@ function makeFreqChart(p, yMax) {
   const box = document.getElementById('freq-chart');
   box.innerHTML = '';
   const K = (p - 1) / 2;
-  freq = chart(box, { width: 420, height: 240, margin: { top: 34, right: 16, bottom: 52, left: 44 },
+  // Beside the grid of pairs the chart is as tall as the grid, which is square; stacked on a phone it is shorter.
+  const beside = gridCanvas.clientWidth > 0 && box.getBoundingClientRect().left > gridCanvas.getBoundingClientRect().right;
+  freq = chart(box, { width: box.clientWidth, height: beside ? gridCanvas.clientWidth : 240, margin: { top: 34, right: 16, bottom: 52, left: 44 },
     x: { domain: [0, K + 1], ticks: 4, label: 'frequency k' }, y: { domain: [0, yMax], ticks: 3, label: 'size in the embedding' },
     title: 'Size of each frequency in the embedding at the chosen step' });
   freq.K = K;

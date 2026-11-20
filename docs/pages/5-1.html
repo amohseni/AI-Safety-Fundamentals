@@ -8,6 +8,10 @@
 <link rel="stylesheet" href="../css/tufte.css">
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
+<style>
+  /* Two charts stacked in one stage: a full line between them. */
+  .tool .stage > div + div { margin-top: calc(2 * var(--u)); }
+</style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>
 <script src="../vendor/d3.min.js"></script>
@@ -39,8 +43,7 @@ $$f(x) = b + \sum_{k=1}^{m} a_k\,\mathrm{ReLU}(x - c_k),$$
   <div class="panel">
     <h3>Fit</h3>
     <p class="panel-note">The network uses \(m\) units with kinks evenly spaced at \(0, 1/m, \dots, (m-1)/m\), and its slopes and constant are fitted by least squares. The lower chart shows the error for every \(m\) from 1 to 128, on logarithmic axes.</p>
-    <div class="row"><div class="controls" id="f-controls"></div><div class="stage" id="f-chart"></div></div>
-    <div class="row"><div class="controls" aria-hidden="true"></div><div class="stage" id="f-err"></div></div>
+    <div class="row"><div class="controls" id="f-controls"></div><div class="stage"><div id="f-chart"></div><div id="f-err"></div></div></div>
     <p class="readout" id="f-readout" aria-live="polite"></p>
   </div>
 

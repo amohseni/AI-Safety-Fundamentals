@@ -9,7 +9,8 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
-  .quick { margin-top: -0.4rem; }
+  /* Two charts stacked in one stage: a full line between them. */
+  .tool .stage > div + div { margin-top: calc(2 * var(--u)); }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>
@@ -30,8 +31,7 @@
 <p>Each task below asks for a prediction first. Make it, then use the tool to check it.</p>
 
 <div class="tool" id="tool">
-  <div class="row"><div class="controls" id="controls"></div><div class="stage" id="fit-chart"></div></div>
-  <div class="row"><div class="controls" aria-hidden="true"></div><div class="stage" id="err-chart"></div></div>
+  <div class="row"><div class="controls" id="controls"></div><div class="stage"><div id="fit-chart"></div><div id="err-chart"></div></div></div>
   <p class="readout" id="readout" aria-live="polite"></p>
 </div>
 
@@ -65,7 +65,7 @@
 <p><span class="claim">Argument</span> With fewer features than points, the model cannot pass through every point, so least squares averages over the noise. At the threshold the model has just enough features to pass through every point, and essentially one way to do it. That one fit must pass through the noise too, and to do that it uses large parameters, which make the curve swing between the points. With many more features than points, there are many exact fits, and the minimum-norm one spreads the work over many features with small parameters, which gives a smoother curve. Ridge regularization, which adds a penalty on the squared parameters, stops the fit from forcing its way through every noisy point at the threshold, and so removes the peak.</p>
 <p><span class="claim">Theorem</span> For a linear model trained by gradient descent on the squared error, started from all-zero parameters and with a small enough step size, the parameters converge to the minimum-norm least-squares solution: when the points can be fitted exactly, the exact fit with the smallest sum of squared parameters. The reason is that every gradient step lies in the span of the training inputs, and the minimum-norm fit is the only exact fit in that span. This is one reason large models trained from small parameters can find smooth fits. <span class="claim">Empirical finding</span> In deep networks double descent also appears as training time and dataset size grow, and it is strongest when the labels are noisy (Nakkiran et al.). It is one reason the classical advice to keep models small does not carry over to large networks.<label for="sn-dd2" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-dd2" class="margin-toggle"><span class="sidenote">Schaeffer et al. (2023), &ldquo;<a href="https://arxiv.org/abs/2303.14151">Double descent demystified: identifying, interpreting and ablating the sources of a deep learning puzzle</a>,&rdquo; arXiv:2303.14151, explains the peak in linear regression.</span></p>
 
-<figure class="multiples" id="fig-dd" aria-describedby="fig-dd-desc"></figure>
+<figure id="fig-dd" aria-describedby="fig-dd-desc"></figure>
 <p id="fig-dd-desc" class="caption">Test error against the number of features \(p\), on logarithmic axes, averaged (geometrically) over 8 feature draws, with noise 0.3 and no ridge. Left of the threshold \(p = 40\) is the classical U; the peak is near the threshold; to its right the error falls again.</p>
 </section>
 
