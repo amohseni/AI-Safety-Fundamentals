@@ -9,11 +9,17 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
-  .pairs-row { display: flex; flex-wrap: wrap; gap: 1.6rem; align-items: flex-start; margin-top: 1.2rem; }
-  .pairs-box { flex: 0 1 19rem; min-width: 15rem; }
+  /* The grid of pairs and the frequency chart sit side by side under the accuracy chart:
+     each takes half of both columns, less the gap. On a phone they stack. */
+  .pairs-row { display: grid; grid-template-columns: minmax(0, 1fr); row-gap: calc(2 * var(--u)); margin-top: calc(4 * var(--u)); }
+  .pairs-box, .freq-box { min-width: 0; }
   .pairs-box canvas { width: 100%; aspect-ratio: 1 / 1; }
-  .pairs-box .axis-note { color: var(--quiet); margin: 0.3rem 0 0; }
-  .freq-box { flex: 1 1 22rem; min-width: 0; }
+  .pairs-box .axis-note { color: var(--quiet); line-height: var(--line); margin: var(--u) 0 0; }
+  @media (min-width: 1080px) {
+    .pairs-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: var(--gap); align-items: start; }
+  }
+  /* Until the shared CSS does this: on a phone, figures and the task list end at the column's edge. */
+  @media (max-width: 760px) { figure, figure.multiples { max-width: 100%; } ol.tasks { box-sizing: border-box; } }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>

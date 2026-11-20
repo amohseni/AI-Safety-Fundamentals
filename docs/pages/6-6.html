@@ -9,18 +9,22 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
-  #controls { flex-direction: row; flex-wrap: wrap; gap: 0.9rem 1.6rem; max-width: none; margin-bottom: 1.2rem; align-items: flex-end; }
-  #controls label.ctl { flex: 1 1 14rem; max-width: 22rem; }
-  .gen, #text { font-size: var(--text); line-height: 1.5; white-space: pre-line; overflow-wrap: anywhere; }
-  #text { width: 61%; min-height: 6.5rem; margin: 0.2rem 0 1rem; }
+  /* The generated text is the stage, in the text column, with the controls beside it.
+     The two charts under it need both columns. */
+  .gen, #text { font-size: var(--text); line-height: var(--line); white-space: pre-line; overflow-wrap: anywhere; }
+  #text { min-height: calc(4 * var(--line)); margin: 0; }
   .prompt-text { color: var(--quiet); }
-  .charts { display: flex; flex-wrap: wrap; gap: 1rem 2rem; }
-  .charts > div { flex: 1 1 18rem; min-width: 0; max-width: 27rem; }
+  /* Two charts side by side: each takes half of both columns, less the gap. On a phone they stack. */
+  .charts { display: grid; grid-template-columns: minmax(0, 1fr); gap: calc(2 * var(--u)) var(--gap); margin: calc(4 * var(--u)) 0 calc(2 * var(--u)); }
+  .charts > div { min-width: 0; }
   .charts svg { display: block; }
-  .small-title { margin: 0 0 0.2rem; }
-  #fig-steer > div { flex: 1 1 14rem; }
-  #fig-steer .gen { margin-top: 0.2rem; }
-  @media (max-width: 760px) { #text { width: 100%; } }
+  .small-title { margin: 0; line-height: var(--line); }
+  #fig-steer .gen { margin: 0; }
+  @media (min-width: 1080px) {
+    .charts { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  }
+  /* Until the shared CSS does this: on a phone, figures and the task list end at the column's edge. */
+  @media (max-width: 760px) { figure, figure.multiples { max-width: 100%; } ol.tasks { box-sizing: border-box; } }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>
@@ -43,8 +47,7 @@
 <p>For every vector, prompt, layer, and coefficient from &minus;10 to +10, GPT-2 small wrote 8 continuations of 32 tokens, computed in advance; the tool shows 3 of them. The settings differ only in the steering: each sample uses the same random numbers in every setting. GPT-2 was trained on web text, and its continuations of &ldquo;I hate you because&rdquo; often contain insults and slurs. Profanity and slurs are masked after the first letter; every other word is shown as GPT-2 wrote it, and the scores were computed on the unmasked text. Each task asks for a prediction first.</p>
 
 <div class="tool" id="tool">
-  <div class="controls" id="controls"></div>
-  <p id="text" aria-live="polite"></p>
+  <div class="row"><div class="controls" id="controls"></div><div class="stage"><p id="text" aria-live="polite"></p></div></div>
   <div class="charts">
     <div><p class="small-title" id="score-title">The behavior</p><div id="score-chart"></div></div>
     <div><p class="small-title">Fluency: log probability per token</p><div id="flu-chart"></div></div>

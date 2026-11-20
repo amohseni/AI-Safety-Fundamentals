@@ -10,10 +10,26 @@
 <link rel="stylesheet" href="../css/site.css">
 <style>
   #arrows { outline-offset: 4px; }
-  .tool .readout + .row { margin-top: 1.4rem; }
-  .tool .half { flex: 1 1 18rem; min-width: 0; }
-  .tool .half .panel-note { width: 100%; margin-top: 0; }
+  /* The bar chart and the matrix sit side by side under the readout: each takes half of both
+     columns, less the gap. The notes share a row and the charts share the next, so the charts
+     start level. On a phone the halves stack. */
+  .tool .halves { margin-top: calc(4 * var(--u)); }
+  .tool .half { min-width: 0; }
+  .tool .half + .half { margin-top: calc(4 * var(--u)); }
+  .tool .half .panel-note { width: auto; margin: 0 0 calc(2 * var(--u)); }
+  .tool .half .controls { margin-bottom: var(--u); }
+  @media (min-width: 1080px) {
+    .tool .halves { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: var(--gap); align-items: start; }
+    .tool .half { display: contents; }
+    #bar-controls { grid-column: 1; grid-row: 1; }
+    #bars-note { grid-column: 1; grid-row: 2; }
+    #heat-note { grid-column: 2; grid-row: 1 / span 2; }
+    #bars { grid-column: 1; grid-row: 3; }
+    #heat { grid-column: 2; grid-row: 3; }
+  }
   #fig-sparsity canvas { display: block; }
+  /* Until the shared CSS does this: on a phone, figures and the task list end at the column's edge. */
+  @media (max-width: 760px) { figure, figure.multiples { max-width: 100%; } ol.tasks { box-sizing: border-box; } }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>
@@ -44,14 +60,14 @@ $$h = W x, \qquad x' = \mathrm{ReLU}\big(W^{\top} h + b\big).$$
       <div class="stage"><canvas id="arrows" tabindex="0" aria-label="Feature directions in the hidden space"></canvas></div>
     </div>
     <p class="readout" id="readout" aria-live="polite"></p>
-    <div class="row">
+    <div class="halves">
       <div class="half">
         <div class="controls" id="bar-controls"></div>
         <p class="panel-note" id="bars-note"></p>
         <div id="bars"></div>
       </div>
       <div class="half">
-        <p class="panel-note">The matrix \(W^{\top} W\). The square in row \(i\) and column \(j\) shows the dot product of directions \(i\) and \(j\): <span class="c-accent">positive</span> or <span class="c-second">negative</span>, darker when larger in size. Squares off the diagonal show interference between features.</p>
+        <p class="panel-note" id="heat-note">The matrix \(W^{\top} W\). The square in row \(i\) and column \(j\) shows the dot product of directions \(i\) and \(j\): <span class="c-accent">positive</span> or <span class="c-second">negative</span>, darker when larger in size. Squares off the diagonal show interference between features.</p>
         <div id="heat"></div>
       </div>
     </div>

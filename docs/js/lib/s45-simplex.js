@@ -7,10 +7,12 @@ const COLOR = { accent: 'var(--accent)', second: 'var(--second)', ink: 'var(--in
 export function simplex(container, { width = 520, labels = ['1', '2', '3'], title = '' } = {}) {
   const avail = container.clientWidth || width;
   const W = Math.max(280, Math.min(width, avail));
-  const pad = { top: 34, side: 20, bottom: 40 };
+  // The triangle's base runs from the left edge of its column to the right edge.
+  const pad = { top: 34, side: 1, bottom: 40 };
   const side = W - 2 * pad.side, h = (side * Math.sqrt(3)) / 2, H = h + pad.top + pad.bottom;
   const svg = d3.select(container).append('svg').attr('class', 'chart').attr('viewBox', `0 0 ${W} ${H}`)
-    .attr('width', W).attr('height', H).attr('role', 'img').attr('aria-label', title);
+    .attr('width', W).attr('height', H).attr('role', 'img').attr('aria-label', title)
+  svg.style('overflow', 'visible'); // a point at a corner is not cut off
   // Corner i is where x_i = 1: corner 0 top, corner 1 bottom left, corner 2 bottom right.
   const P = [[W / 2, pad.top], [pad.side, pad.top + h], [W - pad.side, pad.top + h]];
   const toXY = (x) => [x[0] * P[0][0] + x[1] * P[1][0] + x[2] * P[2][0], x[0] * P[0][1] + x[1] * P[1][1] + x[2] * P[2][1]];

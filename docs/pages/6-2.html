@@ -9,8 +9,12 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
-  .tool .stage .sub { margin: 0.4rem 0 0; color: var(--quiet); }
-  figure#fig-dir > div { flex: 1 1 15rem; }
+  /* Two plots stacked in one stage: a full line between them. */
+  .tool .stage > div + div { margin-top: calc(2 * var(--u)); }
+  /* Two plots side by side: each takes half of both columns, less the gap. */
+  #fig-dir { gap: var(--gap); }
+  /* Until the shared CSS does this: on a phone, figures and the task list end at the column's edge. */
+  @media (max-width: 760px) { figure, figure.multiples { max-width: 100%; } ol.tasks { box-sizing: border-box; } }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>

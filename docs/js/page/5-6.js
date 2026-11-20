@@ -18,11 +18,15 @@ const pow10 = (n) => { const e = Math.round(Math.log10(n)); return Math.abs(Math
 // ---- Static figure: per-digit and exact match (k = 10) ----
 (function figure() {
   const fig = document.getElementById('fig-em');
-  for (const [kind, title] of [['digit', 'Per-digit accuracy'], ['exact', 'Exact match, 10 digits']]) {
+  // Both boxes first, so each chart can be drawn at the width of its half of the figure.
+  const boxes = [['digit', 'Per-digit accuracy'], ['exact', 'Exact match, 10 digits']].map(([kind, title]) => {
     const box = document.createElement('div');
     box.innerHTML = `<p class="small-title">${title}</p>`;
     fig.append(box);
-    const c = chart(box, { width: 340, height: 230, margin: { top: 14, right: 30, bottom: 52, left: 46 },
+    return [kind, title, box];
+  });
+  for (const [kind, title, box] of boxes) {
+    const c = chart(box, { width: box.clientWidth, height: 230, margin: { top: 14, right: 30, bottom: 52, left: 46 },
       x: { domain: [1e7, 1e12], log: true, ticks: 3, format: pow10, label: 'parameters' }, y: { domain: [0, 1], ticks: 2 }, title });
     c.line('l', NS.map((N) => [N, metric(kind, N, 0.5, 10)]), { color: 'ink', width: 1 });
     SIZES.forEach((N, i) => c.point(`p${i}`, N, metric(kind, N, 0.5, 10), { color: 'accent', r: 3.5, label: null }));
@@ -43,9 +47,9 @@ const xOpt = () => (st.log ? { domain: [1e7, 1e12], log: true, ticks: 5, format:
 function build() {
   const a = document.getElementById('digit-chart'), b = document.getElementById('metric-chart');
   a.innerHTML = ''; b.innerHTML = '';
-  left = chart(a, { height: 260, margin: { top: 34, right: 40, bottom: 52, left: 52 }, x: xOpt(), y: { domain: [0, 1], ticks: 2, label: 'per-digit accuracy p' }, title: 'Per-digit accuracy against model size' });
+  left = chart(a, { width: a.clientWidth, height: 260, margin: { top: 34, right: 16, bottom: 52, left: 52 }, x: xOpt(), y: { domain: [0, 1], ticks: 2, label: 'per-digit accuracy p' }, title: 'Per-digit accuracy against model size' });
   const ylab = METRICS.find((m) => m[0] === st.kind)[1].toLowerCase();
-  right = chart(b, { height: 260, margin: { top: 34, right: 40, bottom: 52, left: 52 }, x: xOpt(), y: { domain: [0, 1], ticks: 2, label: ylab }, title: `${ylab} against model size` });
+  right = chart(b, { width: b.clientWidth, height: 260, margin: { top: 34, right: 16, bottom: 52, left: 52 }, x: xOpt(), y: { domain: [0, 1], ticks: 2, label: ylab }, title: `${ylab} against model size` });
   draw();
 }
 function draw() {
