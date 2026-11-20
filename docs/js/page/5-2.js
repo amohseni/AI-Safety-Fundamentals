@@ -14,7 +14,7 @@ const HORIZON = { fixed: 60, rps: 120 };
   const box = document.createElement('div');
   document.getElementById('fig-simplex').append(box);
   const game = { kind: 'fixed', pay: [0.9, 0.6, 0.3] };
-  const s = simplex(box, { width: 460, labels: NAMES.fixed, title: 'Replicator flow with a learning path' });
+  const s = simplex(box, { width: box.clientWidth, labels: NAMES.fixed, title: 'Replicator flow with a learning path' });
   s.flowField((x) => replicatorRHS(game, x));
   s.path('rep', integrate(replicatorRHS, game, X0.fixed, 60).map((p) => p.x), { color: 'ink', width: 2 });
   s.path('run', learn('cross', game, X0.fixed, 0.01, 60, 3).map((p) => p.x), { color: 'accent', width: 1.2 });
@@ -25,7 +25,7 @@ const HORIZON = { fixed: 60, rps: 120 };
 const st = { kind: 'fixed', pay: [0.9, 0.6, 0.3], rule: 'cross', h: 0.1, runs: 5, x0: X0.fixed.slice() };
 const game = () => (st.kind === 'fixed' ? { kind: 'fixed', pay: st.pay.slice() } : { kind: 'rps' });
 const ctl = document.getElementById('controls'), out = document.getElementById('readout');
-const S = simplex(document.getElementById('stage'), { width: 520, labels: NAMES.fixed, title: 'Probabilities of three actions, with the replicator flow and learning paths' });
+const S = simplex(document.getElementById('stage'), { width: document.getElementById('stage').clientWidth, labels: NAMES.fixed, title: 'Probabilities of three actions, with the replicator flow and learning paths' });
 S.svg.attr('tabindex', 0).attr('aria-label', 'Simplex of action probabilities. Click or use the arrow keys to move the starting point.');
 
 segmented(ctl, { name: 'Payoffs', options: [['fixed', 'Three fixed payoffs'], ['rps', 'Rock-paper-scissors']], value: st.kind,

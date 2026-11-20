@@ -3,8 +3,10 @@
    first of two compared quantities; --second marks the other. Nothing else is colored. */
 
 :root {
-  /* Three type sizes only: page title (h1), section heading (h2), and --text for everything else. */
+  /* Type sizes: page title (h1), section heading (h2), --text for the text, and --small (below). */
   --text: 16pt;
+  /* A fourth size (owner decision 2026-11-20), used only for chart text, sidenotes, and the top line. */
+  --small: 13pt;
   --paper: #fffff8;
   --ink: #111111;
   --quiet: #5f5e57;
@@ -80,7 +82,7 @@ figure.multiples, ol.tasks, .check, .explain, .takeaway { clear: right; }
 .tool .panel { margin-bottom: 2.2rem; }
 .tool h3 { margin-top: 0.4rem; margin-bottom: 0.6rem; font-size: var(--text); }
 .tool .panel-note { font-size: var(--text); line-height: 1.5; color: var(--quiet); width: 61%; margin: 0.2rem 0 0.8rem; }
-.tool .row { display: flex; flex-wrap: wrap; gap: 1.6rem; align-items: flex-start; }
+.tool div.row { display: flex; flex-wrap: wrap; gap: 1.6rem; align-items: flex-start; }
 .tool .controls { display: flex; flex-direction: column; gap: 0.9rem; min-width: 15rem; max-width: 19rem; flex: 0 1 19rem; }
 .tool .stage { flex: 1 1 26rem; min-width: 0; }
 .tool svg, .tool canvas, figure svg { display: block; max-width: 100%; height: auto; touch-action: none; }
@@ -180,7 +182,7 @@ figure .small-title { font-size: var(--text); color: var(--ink); margin: 0 0 0.2
 .contents li a:hover { text-decoration: underline; }
 
 /* Phones: the tool and its text take the full column. */
-@media (max-width: 760px) {
+@media (max-width: 1079px) {
   .katex-display, .topline, .tool, ol.tasks, .readout, .check, .explain, .takeaway, .pagenav, .contents, .tool .panel-note, .caption { width: 100%; }
   .tool .controls { max-width: none; flex: 1 1 100%; }
   ol.tasks { padding-left: 1.2rem; }
@@ -206,7 +208,7 @@ p, dl, ol, ul, .sidenote, .marginnote { line-height: 1.5; }
 h1 { hyphens: auto; overflow-wrap: break-word; }
 .topline { flex-wrap: wrap; column-gap: 1.2rem; }
 /* A page's own canvas cap (e.g. .plane) wins over the generic max-width. */
-.tool .plane { max-width: 34rem; }
+.tool .plane { max-width: 100%; }
 .sidenote > code { font-size: var(--text); }
 .check .again { color: var(--quiet); font-style: italic; margin: 0 0 0.6rem; }
 .check button.chosen:disabled { opacity: 1; }
@@ -215,12 +217,196 @@ h1 { hyphens: auto; overflow-wrap: break-word; }
 .review .check { width: 100%; }
 .contents .view { margin-top: 1.4rem; }
 .contents .core-next { font-size: var(--text); margin: 0.9rem 0 0; }
-@media (max-width: 760px) { .review { width: 100%; } }
+@media (max-width: 1079px) { .review { width: 100%; } }
 /* On a phone an opened sidenote sits in the text column. A long formula or a line that cannot
    wrap then scrolls inside the note instead of widening the page. */
-@media (max-width: 760px) {
+@media (max-width: 1079px) {
   .sidenote, .marginnote { max-width: 95%; overflow-x: auto; }
   /* An opened sidenote floats left, so what follows must start below it. */
   figure, figure.multiples, .tool, ol.tasks, .check, .explain, .takeaway { clear: both; }
 }
 .licence { color: var(--quiet); font-size: var(--text); margin-top: 3rem; }
+
+/* ==========================================================================
+   Layout grid (2026-11-20). One grid for every page, in units of the text line.
+
+   Columns:  [ text column: --col ] [ gap: --gap ] [ margin column: --side ]
+   The text column holds what is read in order: prose, charts, questions.
+   The margin column holds what is said about it: sidenotes, a tool's controls,
+   and the name of a block (Check, Takeaway). Wide figures span both.
+   Every block ends at one of two right edges: the text column's or the margin's.
+
+   Rows: one line of text is --line. Space between blocks is a whole number of
+   half lines (--u), so text in the two columns stays on the same lines.
+   ========================================================================== */
+:root {
+  --line: 2rem;                 /* line height of the text: 30px at the 15px root size */
+  --u: 1rem;                    /* half a line: the unit for all vertical space */
+  --col: 42rem;                 /* about 68 characters of 16pt ET Book */
+  --gap: 3rem;
+  --side: 18rem;
+  --wide: calc(var(--col) + var(--gap) + var(--side));
+}
+p, dl, ol, ul, .sidenote, .marginnote, .caption, .readout, .tool .panel-note, .task .after { line-height: var(--line); }
+
+@media (min-width: 1080px) {
+  body { width: auto; max-width: none; padding: 0 2rem; margin: 0; }
+  .topline, article, .pagenav { width: var(--wide); margin-left: auto; margin-right: auto; }
+  article { padding: calc(2 * var(--u)) 0 calc(4 * var(--u)); }
+
+  /* Text column. */
+  article > p, article > ul, article > ol, article > dl, article > blockquote, article > h1, article > h2, article > h3,
+  section > p, section > ul, section > ol, section > dl, section > h2, section > h3,
+  .katex-display, .caption, .review, article > table, figure { width: var(--col); max-width: var(--col); box-sizing: border-box; }
+  article > ul, article > ol, section > ul, section > ol { padding-left: 2rem; -webkit-padding-start: 2rem; }
+  p { margin-top: 0; margin-bottom: var(--u); }
+  h1 { margin: calc(3 * var(--u)) 0 calc(5 * var(--u)); line-height: calc(2 * var(--line)); }
+  h2 { margin: calc(8 * var(--u)) 0 calc(2 * var(--u)); line-height: calc(1.5 * var(--line)); }
+  article > ul, article > ol, section > ul, section > ol { margin-top: var(--u); margin-bottom: calc(2 * var(--u)); }
+
+  /* Margin column: sidenotes. */
+  .sidenote, .marginnote {
+    float: right; clear: right; width: var(--side);
+    margin: 0 calc(-1 * (var(--side) + var(--gap))) 0 0;
+  }
+
+  /* Wide blocks span both columns. */
+  .tool, figure.multiples, figure.fullwidth, figure.wide { width: var(--wide); max-width: var(--wide); }
+
+  /* A tool: the chart sits in the text column and the controls beside it in the margin column. */
+  .tool { margin: calc(3 * var(--u)) 0 calc(4 * var(--u)); border-top: 1px solid var(--rule); padding-top: calc(2 * var(--u)); }
+  .tool .panel { margin-bottom: calc(4 * var(--u)); }
+  .tool .panel:last-child { margin-bottom: 0; }
+  .tool .panel + .panel { border-top: 1px solid var(--rule); padding-top: calc(2 * var(--u)); }
+  .tool h3 { margin: 0 0 var(--u); font-style: normal; font-weight: 600; line-height: var(--line); }
+  .tool .panel-note, .readout { width: var(--col); margin: 0 0 calc(2 * var(--u)); }
+  .readout { margin: calc(2 * var(--u)) 0 0; }
+  .tool div.row { display: grid; grid-template-columns: var(--col) var(--side); column-gap: var(--gap); align-items: start; }
+  .tool div.row > .stage { grid-column: 1; grid-row: 1; min-width: 0; }
+  .tool div.row > .controls { grid-column: 2; grid-row: 1; min-width: 0; max-width: none; gap: var(--u); }
+
+  /* Blocks that end a page: the name of the block sits in the margin column, level with its first line. */
+  ol.tasks, .check, .explain, .takeaway { width: var(--col); position: relative; box-sizing: border-box; }
+  .check, .explain, .takeaway { margin-top: calc(4 * var(--u)); padding-top: calc(2 * var(--u)); }
+  .check + .check { margin-top: calc(3 * var(--u)); }
+  .check .q { margin-bottom: calc(1.5 * var(--u)); }
+  .check .feedback { margin-top: calc(1.5 * var(--u)); }
+  .explain textarea { margin-top: var(--u); min-height: calc(4 * var(--line)); }
+  .check > .label, .explain > .label, .takeaway > .label {
+    position: absolute; left: calc(var(--col) + var(--gap)); top: calc(2 * var(--u)); width: var(--side); margin: 0;
+    font-style: normal; color: var(--quiet); line-height: var(--line);
+  }
+  .check .q, .explain > p:not(.label), .takeaway > p:not(.label) { margin-top: 0; }
+  .takeaway { border-top: 2px solid var(--ink); }
+  .pagenav { margin-top: calc(8 * var(--u)); margin-bottom: calc(6 * var(--u)); }
+  .pagenav .row + .row { margin-top: calc(2 * var(--u)); }
+  .pagenav .row { width: var(--col); }
+  .topline { padding-top: calc(2 * var(--u)); }
+
+  /* Tasks: numbers hang in the left margin, so the questions align with the text. */
+  ol.tasks { padding-left: 0; margin: calc(4 * var(--u)) 0 calc(2 * var(--u)); list-style-position: outside; }
+  ol.tasks > li { margin: 0 0 calc(3 * var(--u)); padding-left: 0; }
+  .task .choices { margin: var(--u) 0 0; }
+  .task .after { margin-top: var(--u); }
+  ol.tasks > li::marker { color: var(--quiet); }
+}
+
+.explain textarea { box-sizing: border-box; }
+
+/* Answers use the same boxes as controls (owner decision 2026-11-20). A check's options are stacked
+   and share one width, so their edges line up with the text column. */
+.check .options.seg { display: flex; flex-direction: column; gap: calc(0.5 * var(--u)); align-items: stretch; }
+.check .options button { text-align: left; padding: calc(0.4 * var(--u)) 0.9rem; line-height: 1.5; }
+.task .choices .seg { gap: 0.5rem; }
+.task .choices button, .seg button, button { padding: 0.25rem 0.8rem; }
+
+/* The small size: chart text, sidenotes, and the top line. */
+.chart text { font-size: var(--small); }
+.sidenote, .marginnote, .sidenote > code { font-size: var(--small); line-height: calc(0.75 * var(--line)); }
+.topline, .topline a { font-size: var(--small); }
+
+/* Top line: the site, then the section with its pages; the current page is marked. */
+.topline .here { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 1.2rem; }
+.topline .pages { display: inline-flex; gap: 0.7rem; list-style: none; margin: 0; padding: 0; font-variant-numeric: lining-nums tabular-nums; }
+.topline .pages li { margin: 0; font-size: var(--small); line-height: var(--line); }
+.topline .pages a[aria-current="page"] { color: var(--ink); border-bottom: 1px solid var(--ink); }
+
+/* Contents page on the grid: number, core mark, title, and the done circle in a column at the
+   right edge of the text column. The key to the two marks sits in the margin column. */
+h1:has(+ .subtitle) { margin-bottom: var(--u); }
+p.subtitle { margin-top: 0; margin-bottom: calc(3 * var(--u)); line-height: var(--line); }
+.contents h2 { margin: calc(4 * var(--u)) 0 var(--u); }
+.contents li { display: grid; grid-template-columns: 3rem 1.4rem 1fr 1rem; gap: 0; align-items: baseline; line-height: var(--line); margin: 0; }
+.contents li:not(:first-child) { margin-top: 0; }
+.contents .no { min-width: 0; font-variant-numeric: lining-nums tabular-nums; }
+.contents .mark { min-width: 0; }
+.contents .done-dot { justify-self: end; }
+.contents .done-dot.done { background: var(--ink); border-color: var(--ink); }
+.contents .view { margin-top: calc(3 * var(--u)); }
+.contents .key { font-size: var(--small); color: var(--quiet); line-height: calc(0.75 * var(--line)); margin: var(--u) 0 0; }
+.contents .key span { white-space: nowrap; margin-right: 1.2rem; }
+.contents .key .done-dot { margin-right: 0.3rem; }
+@media (min-width: 1080px) {
+  .contents { width: var(--col); position: relative; }
+  .contents .key { position: absolute; left: calc(var(--col) + var(--gap)); top: calc(3 * var(--u)); width: var(--side); margin: 0; }
+  .contents .key span { display: block; margin: 0 0 calc(0.5 * var(--u)); white-space: normal; }
+  .licence { width: var(--col); margin-top: calc(6 * var(--u)); }
+}
+.contents .key span > span { display: inline-block; margin: 0 0.45rem 0 0; white-space: nowrap; }
+
+/* Shared fixes found while fitting pages to the grid (2026-11-20). */
+@media (max-width: 1079px) {
+  ol.tasks { box-sizing: border-box; }
+  figure, figure.multiples, .fullwidth { max-width: 100%; }
+  section > ul, section > ol, section > dl, article > ul, article > ol { width: auto; }
+}
+figure { margin: calc(3 * var(--u)) 0 calc(2 * var(--u)); }
+.caption { margin: 0 0 calc(3 * var(--u)); }
+.tool .controls > button { align-self: flex-start; }
+/* A stage that needs both columns: add class "wide" to its .row; the controls go in a row above it. */
+@media (min-width: 1080px) {
+  .tool div.row.wide { display: block; }
+  .tool div.row.wide > .controls { flex-direction: row; flex-wrap: wrap; align-items: flex-start; gap: var(--u) calc(2 * var(--u)); margin-bottom: calc(2 * var(--u)); }
+}
+.small-title { margin: 0 0 var(--u); line-height: var(--line); }
+
+/* Review block: closed by a rule before the page's own text begins. */
+.review > .label { font-style: normal; }
+@media (min-width: 1080px) {
+  .review { margin: 0 0 calc(6 * var(--u)); padding-bottom: calc(4 * var(--u)); border-bottom: 1px solid var(--rule); }
+  .review > .label { margin: 0 0 var(--u); line-height: var(--line); }
+}
+/* A tool's panel title looks the same at every width. */
+.tool h3 { font-style: normal; font-weight: 600; }
+.tool .stage > div + div { margin-top: calc(2 * var(--u)); }
+figure.multiples.two { gap: var(--gap); }
+.tool .readout + .panel-note { margin-top: calc(2 * var(--u)); }
+
+/* Two layouts only (2026-11-20): two columns at 1080 px and wider, one column below. In one column
+   the text keeps its measure and is centered, and vertical space follows the same units. */
+@media (max-width: 1079px) {
+  body { width: auto; max-width: none; margin: 0; padding: 0 1.6rem; }
+  .topline, article, .pagenav { max-width: var(--col); margin-left: auto; margin-right: auto; }
+  .topline, .pagenav, .contents, .review, .caption, .katex-display, .readout, .tool, .tool .panel-note,
+  ol.tasks, .check, .explain, .takeaway { width: 100%; box-sizing: border-box; }
+  section > p, section > ul, section > ol, section > dl, article > p, article > ul, article > ol, figure { width: auto; max-width: 100%; }
+  p { margin-top: 0; margin-bottom: var(--u); }
+  h1 { margin: calc(2 * var(--u)) 0 calc(3 * var(--u)); }
+  h2 { margin: calc(6 * var(--u)) 0 calc(2 * var(--u)); }
+  .tool { margin: calc(3 * var(--u)) 0; border-top: 1px solid var(--rule); padding-top: calc(2 * var(--u)); }
+  .tool .panel { margin-bottom: calc(3 * var(--u)); }
+  .tool .panel + .panel { border-top: 1px solid var(--rule); padding-top: calc(2 * var(--u)); }
+  .tool .controls { max-width: none; flex: 1 1 100%; gap: var(--u); }
+  .tool div.row { gap: calc(2 * var(--u)); }
+  .tool .panel-note { margin: 0 0 calc(2 * var(--u)); }
+  .readout { margin: calc(2 * var(--u)) 0 0; }
+  ol.tasks { margin: calc(3 * var(--u)) 0 calc(2 * var(--u)); padding-left: 1.6rem; }
+  ol.tasks > li { margin-bottom: calc(2.5 * var(--u)); }
+  .task .choices { margin-top: var(--u); }
+  .check, .explain, .takeaway { margin-top: calc(3 * var(--u)); padding-top: calc(1.5 * var(--u)); }
+  .check > .label, .explain > .label, .takeaway > .label { font-style: normal; margin: 0 0 var(--u); }
+  .check .q { margin-bottom: calc(1.5 * var(--u)); }
+  .takeaway { border-top: 2px solid var(--ink); }
+  .pagenav { margin: calc(6 * var(--u)) auto calc(4 * var(--u)); }
+  .margin-toggle:checked + .sidenote, .margin-toggle:checked + .marginnote { width: 100%; left: 0; margin: var(--u) 0; box-sizing: border-box; }
+}

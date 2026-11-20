@@ -3,7 +3,8 @@ import { slider, segmented, button, cssVar, reducedMotion } from '../lib/ui.js';
 import { fitCanvas, cellLayout } from '../lib/gridworld.js';
 import { G, LAYOUT, T, PARTS, ACTIONS, A_CLEAN } from '../lib/8-cleaning.js';
 
-const FONT = '21.33px et-book, Georgia, serif';
+// Labels in the drawing are chart text: the small size, read from the CSS token.
+const font = () => `${cssVar('--small') || '13pt'} et-book, Georgia, serif`;
 const weights = Object.fromEntries(PARTS.map((p) => [p.id, 0]));
 const st = { plant: false, t: T, result: null, playing: false };
 let reqId = 0, raf = null;
@@ -88,12 +89,12 @@ function entryAt(path, t) {
 }
 
 function draw() {
-  const avail = Math.min(460, canvas.parentElement.clientWidth || 460);
-  const L = cellLayout(avail, G.width, G.height, { pad: 1, maxCell: 90 });
-  const ctx = fitCanvas(canvas, L.w + 2, L.h + TOP + 2);
-  pctl.style.width = `${L.w + 2}px`;
+  // The room is as wide as the stage, which is the text column.
+  const avail = Math.round(canvas.parentElement.clientWidth) || 630;
+  const L = cellLayout(avail, G.width, G.height, { pad: 1, fill: true });
+  const ctx = fitCanvas(canvas, avail, L.h + TOP + 2);
   const col = { ink: cssVar('--ink'), quiet: cssVar('--quiet'), rule: cssVar('--rule'), faint: cssVar('--faint'), accent: cssVar('--accent'), second: cssVar('--second'), paper: cssVar('--paper') };
-  ctx.clearRect(0, 0, L.w + 2, L.h + TOP + 2);
+  ctx.clearRect(0, 0, avail, L.h + TOP + 2);
   ctx.save(); ctx.translate(0, TOP);
   const res = st.result;
   const path = res ? res.path : null;
@@ -101,11 +102,11 @@ function draw() {
   const s = e ? e.st : { pos: LAYOUT.dock, mask: LAYOUT.messes.reduce((m, i) => m | (1 << i), 0), vase: 1, plant: st.plant ? 1 : 0, done: 0 };
   const blocked = s.pos === LAYOUT.block && !s.done;
   // Camera view.
-  if (!blocked) for (let i = 0; i < G.n; i++) if (LAYOUT.inView(i)) { const [x, y] = G.xy(i); const [rx, ry, c] = L.rect(x, y); ctx.fillStyle = col.rule; ctx.globalAlpha = 0.7; ctx.fillRect(rx, ry, c, c); ctx.globalAlpha = 1; } // --faint is nearly invisible in the dark theme
+  if (!blocked) for (let i = 0; i < G.n; i++) if (LAYOUT.inView(i)) { const [x, y] = G.xy(i); const [rx, ry, cw, ch] = L.rect(x, y); ctx.fillStyle = col.rule; ctx.globalAlpha = 0.7; ctx.fillRect(rx, ry, cw, ch); ctx.globalAlpha = 1; } // --faint is nearly invisible in the dark theme
   // Cells.
   ctx.strokeStyle = col.rule; ctx.lineWidth = 1;
-  for (let y = 0; y < G.height; y++) for (let x = 0; x < G.width; x++) { const [rx, ry, c] = L.rect(x, y); ctx.strokeRect(rx + 0.5, ry + 0.5, c - 1, c - 1); }
-  ctx.font = FONT; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+  for (let y = 0; y < G.height; y++) for (let x = 0; x < G.width; x++) { const [rx, ry, cw, ch] = L.rect(x, y); ctx.strokeRect(rx + 0.5, ry + 0.5, cw - 1, ch - 1); }
+  ctx.font = font(); ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
   const label = (i, text, color = col.quiet) => { const [x, y] = G.xy(i); const [rx, ry, c] = L.rect(x, y); ctx.fillStyle = color; ctx.fillText(text, rx + c / 2, ry + c - 6); };
   const center = (i) => { const [x, y] = G.xy(i); return L.center(x, y); };
   const c = L.cell;
@@ -142,7 +143,7 @@ function draw() {
   ctx.restore();
   // Camera above the top-left cell.
   { const [rx] = L.rect(0, 0); ctx.fillStyle = col.ink; ctx.fillRect(rx + c * 0.3, TOP - 14, c * 0.4, 12); ctx.beginPath(); ctx.moveTo(rx + c * 0.42, TOP - 2); ctx.lineTo(rx + c * 0.58, TOP - 2); ctx.lineTo(rx + c * 0.5, TOP + 5); ctx.fill();
-    ctx.font = FONT; ctx.textAlign = 'left'; ctx.fillStyle = col.quiet; ctx.fillText(blocked ? 'camera, view blocked' : 'camera', rx + c * 0.8, TOP - 6); }
+    ctx.font = font(); ctx.textAlign = 'left'; ctx.fillStyle = col.quiet; ctx.fillText(blocked ? 'camera, view blocked' : 'camera', rx + c * 0.8, TOP - 6); }
   readout(e);
 }
 
@@ -178,18 +179,25 @@ solve();
 // ---- Static figure: CoastRunners schematic ----
 (function figure() {
   const fig = document.getElementById('fig-coast');
-  const W = 520, H = 300;
-  fig.innerHTML = `<svg class="schematic" viewBox="0 0 ${W} ${H}" width="${W}" role="img" aria-label="Schematic of the CoastRunners course with the intended route and the agent's loop">
+  // Drawn at the figure's own width (the text column). The shapes are laid out on a field whose
+  // course runs from x = 38 to 482 and from y = 18 to 282; the field is scaled so that the course
+  // spans the column, and the labels are placed at the scaled positions and keep their size.
+  const X0 = 38, Y0 = 14;
+  const W = Math.round(fig.clientWidth) || 630, k = W / 444, H = Math.round((300 - Y0) * k);
+  const at = (x, y) => `x="${((x - X0) * k).toFixed(1)}" y="${((y - Y0) * k).toFixed(1)}"`;
+  fig.innerHTML = `<svg class="schematic" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Schematic of the CoastRunners course with the intended route and the agent's loop">
+    <g transform="scale(${k}) translate(${-X0},${-Y0})">
     <path d="M60,150 C60,60 140,40 260,40 C380,40 460,60 460,150 C460,240 380,260 260,260 C140,260 60,240 60,150 Z" fill="none" stroke="var(--rule)" stroke-width="44"/>
-    <path d="M60,150 C60,60 140,40 260,40 C380,40 460,60 460,150 C460,240 380,260 260,260 C140,260 60,240 60,150 Z" fill="none" stroke="var(--quiet)" stroke-width="1.5" stroke-dasharray="5 5"/>
-    <line x1="260" y1="236" x2="260" y2="284" stroke="var(--ink)" stroke-width="3"/>
-    <text x="268" y="296">finish line</text>
-    <ellipse cx="380" cy="150" rx="60" ry="46" fill="var(--faint)" stroke="var(--rule)"/>
+    <path d="M60,150 C60,60 140,40 260,40 C380,40 460,60 460,150 C460,240 380,260 260,260 C140,260 60,240 60,150 Z" fill="none" stroke="var(--quiet)" stroke-width="1.5" stroke-dasharray="5 5" vector-effect="non-scaling-stroke"/>
+    <line x1="260" y1="236" x2="260" y2="284" stroke="var(--ink)" stroke-width="3" vector-effect="non-scaling-stroke"/>
+    <ellipse cx="380" cy="150" rx="60" ry="46" fill="var(--faint)" stroke="var(--rule)" vector-effect="non-scaling-stroke"/>
     <circle cx="352" cy="132" r="6" fill="var(--second)"/><circle cx="404" cy="128" r="6" fill="var(--second)"/><circle cx="384" cy="176" r="6" fill="var(--second)"/>
-    <ellipse cx="380" cy="152" rx="36" ry="27" fill="none" stroke="var(--accent)" stroke-width="2.5"/>
-    <path d="M410,140 l8,8 l4,-11" fill="none" stroke="var(--accent)" stroke-width="2.5"/>
-    <text x="150" y="112" fill="var(--quiet)">intended route</text>
-    <text x="312" y="157" text-anchor="end" style="fill: var(--accent)">the agent&#8217;s loop</text>
-    <text x="380" y="222" text-anchor="middle">lagoon, three targets</text>
+    <ellipse cx="380" cy="152" rx="36" ry="27" fill="none" stroke="var(--accent)" stroke-width="2.5" vector-effect="non-scaling-stroke"/>
+    <path d="M410,140 l8,8 l4,-11" fill="none" stroke="var(--accent)" stroke-width="2.5" vector-effect="non-scaling-stroke"/>
+    </g>
+    <text ${at(268, 296)}>finish line</text>
+    <text ${at(150, 112)} fill="var(--quiet)">intended route</text>
+    <text ${at(312, 157)} text-anchor="end" style="fill: var(--accent)">the agent&#8217;s loop</text>
+    <text ${at(408, 224)} text-anchor="end">lagoon, three targets</text>
   </svg>`;
 })();

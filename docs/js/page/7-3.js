@@ -12,12 +12,12 @@ const f2 = (v) => v.toFixed(2);
 let net = null;
 
 // ---- Drawing one environment on a canvas ----
-// opts: { env, cssWidth, maxCell, paths: [{ cells, color, offset }], keyShown, agent, goal, sub, decoded, start }
+// opts: { env, cssWidth (the width of the canvas's column, which the grid fills), paths: [{ cells, color, offset }], keyShown, agent, goal, sub, decoded, start }
 function drawMaze(canvas, o) {
-  const L = cellLayout(o.cssWidth, M.W, M.H, { pad: 1, maxCell: o.maxCell });
-  const ctx = fitCanvas(canvas, L.w + 2, L.cssHeight);
+  const L = cellLayout(o.cssWidth, M.W, M.H, { pad: 1, fill: true });
+  const ctx = fitCanvas(canvas, o.cssWidth, L.cssHeight);
   const col = colors(), c = L.cell;
-  ctx.clearRect(0, 0, L.w + 2, L.cssHeight);
+  ctx.clearRect(0, 0, o.cssWidth, L.cssHeight);
   const B = M.blocked(o.env);
   const door = (x, y) => M.isDoor(M.cell(x, y));
   drawGrid(ctx, L, G, { wall: (x, y) => B[M.cell(x, y)] && door(x, y) < 0, colors: col });
@@ -26,8 +26,8 @@ function drawMaze(canvas, o) {
   M.DOORS.forEach(([x, y], i) => {
     const s = o.env.doors[i];
     if (s === 0) return;
-    const [rx, ry] = L.rect(x, y);
-    ctx.fillStyle = col.rule; ctx.fillRect(rx, ry, c, c);
+    const [rx, ry, cw, ch] = L.rect(x, y);
+    ctx.fillStyle = col.rule; ctx.fillRect(rx, ry, cw, ch);
     if (s === 1) {
       const [cx, cy] = L.center(x, y);
       ctx.fillStyle = col.ink;
@@ -81,7 +81,8 @@ function drawMaze(canvas, o) {
   return L;
 }
 
-const avail = (el, cap) => Math.min(cap, el.clientWidth || cap);
+// The width in CSS pixels of the column an element sits in.
+const colWidth = (el, fallback) => Math.round(el.clientWidth || fallback);
 
 // ---- Panel 1: many means, one end ----
 const means = { ran: false, results: null };
@@ -108,7 +109,7 @@ function drawMeans() {
   minis.forEach((m, i) => {
     const r = means.ran ? means.results[i] : null;
     drawMaze(m.canvas, {
-      env: m.E.env, cssWidth: 9 * 15 + 2, maxCell: 15,
+      env: m.E.env, cssWidth: colWidth(m.canvas.parentElement, 190),
       paths: r ? [{ cells: r.net.path, color: 'accent', offset: -2 }, { cells: r.direct.path, color: 'second', offset: 2 }] : [],
     });
     m.res.innerHTML = r
@@ -189,7 +190,7 @@ function drawInside() {
   const goalP = P.readGoal(net, h), decoded = P.argmax(goalP);
   const doorP = P.readDoors(net, h);
   layout = drawMaze(big, {
-    env: env(), cssWidth: avail(insideStage, 9 * 48 + 2), maxCell: 48, keyShown: !hasKey,
+    env: env(), cssWidth: colWidth(insideStage, 630), keyShown: !hasKey,
     paths: [{ cells: r.path.slice(0, t + 1), color: 'accent' }],
     agent: pos, sub: st.goalMode === 'swap' ? st.sub : -1, decoded,
   });
@@ -243,10 +244,10 @@ big.addEventListener('keydown', (ev) => {
 });
 
 // ---- Static figure ----
-function meansSVG(title, meansList, endLines, note) {
+function meansSVG(title, meansList, endLines, note, Wd) {
   const NS = 'http://www.w3.org/2000/svg';
   const rowH = 26, top = 54, n = meansList.length;
-  const H = top + Math.max(n, 2) * rowH + (note ? 30 : 6), Wd = 320;
+  const H = top + Math.max(n, 2) * rowH + (note ? 30 : 6);
   const svg = document.createElementNS(NS, 'svg');
   svg.setAttribute('class', 'means'); svg.setAttribute('width', Wd); svg.setAttribute('height', H); svg.setAttribute('viewBox', `0 0 ${Wd} ${H}`);
   svg.setAttribute('role', 'img');
@@ -277,7 +278,7 @@ function figure() {
   for (const [title, list, end, note] of [
     ['A thermostat', ['turn the heater on'], ['room at its', 'set point'], 'in any room'],
     ['A coding agent', ['read the failing test', 'search the code', 'edit the parser', 'install a package', 'run the tests again'], ['the tests', 'pass'], 'in any repository'],
-  ]) { const d = document.createElement('div'); d.append(meansSVG(title, list, end, note)); topRow.append(d); }
+  ]) { const d = document.createElement('div'); topRow.append(d); d.append(meansSVG(title, list, end, note, colWidth(d, 300))); }
   const bottom = document.getElementById('fig-bottom');
   bottom.innerHTML = '';
   if (!net) return;
@@ -291,8 +292,7 @@ function figure() {
     cv.className = 'maze'; cv.setAttribute('role', 'img');
     cv.setAttribute('aria-label', `${title}: the network's path ends at ${r.path.at(-1) === M.GOAL ? 'its goal' : 'the outlined cell'} after ${r.steps} steps`);
     d.append(cv); bottom.append(d);
-    const fc = (bottom.clientWidth || 400) < 400 ? 16 : 20;
-    drawMaze(cv, { env: E.env, cssWidth: 9 * fc + 2, maxCell: fc, paths: [{ cells: r.path, color: 'accent' }], sub, agent: r.path.at(-1) });
+    drawMaze(cv, { env: E.env, cssWidth: colWidth(d, 300), paths: [{ cells: r.path, color: 'accent' }], sub, agent: r.path.at(-1) });
   }
 }
 

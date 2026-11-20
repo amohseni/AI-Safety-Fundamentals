@@ -10,9 +10,17 @@
 <link rel="stylesheet" href="../css/site.css">
 <style>
   #fig-box svg { max-width: 100%; height: auto; }
-  #tool .controls { flex: 1 1 100%; max-width: none; flex-direction: row; flex-wrap: wrap; gap: 0.9rem 1.6rem; }
+  /* Two charts side by side, each half of both columns; the controls sit in a row above them. */
+  #tool .controls { flex: 1 1 100%; max-width: none; flex-direction: row; flex-wrap: wrap; gap: var(--u) calc(2 * var(--u)); }
   #tool .controls .ctl { flex: 1 1 13rem; max-width: 18rem; }
-  #tool .stage { flex: 0 1 auto; }
+  #tool .stage { flex: 1 1 20rem; min-width: 0; }
+  @media (min-width: 1080px) {
+    #tool .row { grid-template-columns: 1fr 1fr; row-gap: calc(2 * var(--u)); }
+    #tool .row > .controls { grid-column: 1 / -1; grid-row: 1; }
+    #tool .row > .stage { grid-column: auto; grid-row: 2; }
+  }
+  @media (max-width: 1079px) { #tool .stage { flex-basis: 100%; } }
+  @media (max-width: 1079px) { #tool .controls .ctl { flex-basis: 100%; max-width: none; } }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>

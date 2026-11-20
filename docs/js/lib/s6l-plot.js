@@ -1,4 +1,4 @@
-// Plots shared by pages 6.2 and 7.2: a scatter of activations in a plane with a draggable
+// Plots of page 6.2: a scatter of activations in a plane with a draggable
 // direction arrow, and a mirrored histogram of the projections onto that direction.
 // Drawn with the global d3 at the container's true pixel width; colors by role tokens only.
 const d3 = window.d3;
@@ -6,7 +6,7 @@ const d3 = window.d3;
 // Scatter with an arrow from the origin. Points: { x, y, kind } with kind 'a' (filled, accent),
 // 'b' (open circle, second color) or 'q' (small, quiet). onArrow(angle) is called while dragging.
 // Options: arrow (draw the arrow at all), interactive (the arrow can be dragged and turned with keys).
-export function scatterArrow(container, { height = 360, maxWidth = 520, label = '', onArrow = null, arrowColor = 'ink', arrow = true, interactive = true } = {}) {
+export function scatterArrow(container, { height = 360, maxWidth = Infinity, label = '', onArrow = null, arrowColor = 'ink', arrow = true, interactive = true } = {}) {
   const avail = container.clientWidth || maxWidth;
   const W = Math.max(260, Math.min(maxWidth, avail)), H = Math.min(height, W);
   const svg = d3.select(container).append('svg').attr('class', 'chart').attr('width', W).attr('height', H)
@@ -75,10 +75,10 @@ export function scatterArrow(container, { height = 360, maxWidth = 520, label = 
 }
 
 // Mirrored histogram: values of group A above the axis (accent), group B below (second).
-export function mirrorHist(container, { height = 190, maxWidth = 520, labelA = 'true', labelB = 'false', bins = 30, label = '' } = {}) {
+export function mirrorHist(container, { height = 190, maxWidth = Infinity, labelA = 'true', labelB = 'false', bins = 30, label = '' } = {}) {
   const avail = container.clientWidth || maxWidth;
   const W = Math.max(260, Math.min(maxWidth, avail)), H = height;
-  const m = { left: 8, right: 8, top: 26, bottom: 26 };
+  const m = { left: 0, right: 0, top: 26, bottom: 26 }; // the axis runs the full width of the column
   const svg = d3.select(container).append('svg').attr('class', 'chart').attr('width', W).attr('height', H)
     .attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', label);
   const g = svg.append('g');

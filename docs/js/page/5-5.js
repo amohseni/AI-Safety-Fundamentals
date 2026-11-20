@@ -189,11 +189,16 @@ window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() =
   const box = document.getElementById('freq-multiples');
   const yMax = Math.max(...data.seeds.flatMap((s) => s.spectrum)) * 1.12;
   const K = (data.p - 1) / 2;
-  data.seeds.forEach((s, r) => {
+  // All five boxes first, so each chart can be drawn at the width of its share of the figure.
+  const divs = data.seeds.map((s, r) => {
     const div = document.createElement('div');
     div.innerHTML = `<p class="small-title">Run ${r + 1}</p>`;
     box.append(div);
-    const c = chart(div, { width: 300, height: 200, margin: { top: 24, right: 14, bottom: 56, left: 36 },
+    return div;
+  });
+  data.seeds.forEach((s, r) => {
+    const div = divs[r];
+    const c = chart(div, { width: div.clientWidth, height: 200, margin: { top: 24, right: 14, bottom: 56, left: 36 },
       x: { domain: [0, K + 1], ticks: 3, label: 'frequency k' }, y: { domain: [0, yMax], ticks: 2 },
       title: `Run ${r + 1}: size of each frequency in the embedding; key frequencies ${s.key_freqs.join(', ')}` });
     s.spectrum.forEach((v, i) => c.line(`k${i}`, [[i + 1, 0], [i + 1, v]], { color: s.key_freqs.includes(i + 1) ? 'accent' : 'quiet', width: 3 }));

@@ -21,7 +21,7 @@ const NMIN = 1e7, NMAX = 1e13;
   const fig = document.getElementById('fig-frontier');
   const thin = (fig.clientWidth || 640) < 480;
   const fmt = thin ? (v) => (isPow(v) && (Math.round(Math.log10(v)) - 18) % 4 === 0 ? logTick(v) : '') : logTick;
-  const c = chart(fig, { width: 640, height: 340, margin: { top: 34, right: 70, bottom: 52, left: 52 },
+  const c = chart(fig, { width: fig.clientWidth || 640, height: 340, margin: { top: 34, right: 70, bottom: 52, left: 52 },
     x: { domain: [1e18, 1e26], log: true, ticks: 8, format: fmt, label: thin ? 'compute (FLOPs)' : 'training compute (FLOPs)' }, y: { domain: [1.5, 4], ticks: 4, label: 'predicted loss' },
     title: 'Predicted loss against compute for five model sizes' });
   const Cs = d3.range(18, 26.001, 0.02).map((e) => 10 ** e);
@@ -63,6 +63,7 @@ const stage = document.getElementById('chart');
 const narrow = (stage.clientWidth || 560) < 440;
 const sizeTickNarrow = (v) => (isPow(v) && Math.round(Math.log10(v)) % 2 === 1 ? sizeTick(v) : '');
 const c = chart(stage, {
+  width: stage.clientWidth || 560,
   x: { domain: [NMIN, NMAX], log: true, ticks: 6, format: narrow ? sizeTickNarrow : sizeTick, label: narrow ? 'parameters' : 'model size N (parameters)' }, y: { domain: [1.8, 2.4], ticks: 4, label: 'predicted loss' },
   margin: { top: 34, right: narrow ? 24 : 110, bottom: 52, left: 56 }, title: 'Predicted loss against model size at the chosen budget',
 });

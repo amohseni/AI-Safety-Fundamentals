@@ -2,7 +2,7 @@
  "1": {
   "q": "A student finds a paper from 1995 that describes a learning method. The method worked on small problems, failed on larger ones, and was dropped. Going by the pattern on the timeline, what should the student do before concluding that the method cannot work?",
   "options": [
-   "Replace the method's learning rule with a newer one",
+   "Replace the method’s learning rule with a newer one",
    "Run it with far more computing power and data than existed in 1995",
    "Nothing: a method that failed in 1995 has been shown not to work"
   ],
@@ -27,17 +27,17 @@
    "Be trained by gradient descent"
   ],
   "correct": 1,
-  "feedback": "Attention is the only operation that moves information between positions. The embeddings, the MLPs, and the unembedding each act on one position's vector alone. Without attention, the prediction after a token can depend only on that token and where it sits, so the model can learn which token tends to follow which, and nothing that needs the earlier text."
+  "feedback": "Attention is the only operation that moves information between positions. The embeddings, the MLPs, and the unembedding each act on one position’s vector alone. Without attention, the prediction after a token can depend only on that token and where it sits, so the model can learn which token tends to follow which, and nothing that needs the earlier text."
  },
  "4": {
-  "q": "A team does no further training. For each prompt it draws \\(n\\) responses from the starting model and returns the one the reward model scores highest. Raising \\(n\\) from 4 to 64 makes people rate the returned responses higher. Raising \\(n\\) to 10,000 raises the reward model's scores of the returned responses again, but people now rate them lower than at 64. What best explains this?",
+  "q": "A team does no further training. For each prompt it draws \\(n\\) responses from the starting model and returns the one the reward model scores highest. Raising \\(n\\) from 4 to 64 makes people rate the returned responses higher. Raising \\(n\\) to 10,000 raises the reward model’s scores of the returned responses again, but people now rate them lower than at 64. What best explains this?",
   "options": [
    "With a large \\(n\\), the draws include rare responses that the reward model overrates, and those are the ones returned",
    "Drawing more responses changes the starting model, which loses knowledge from pretraining",
    "Human raters are too noisy to detect an improvement this large"
   ],
   "correct": 0,
-  "feedback": "Returning the best of \\(n\\) draws moves probability toward the responses the reward model scores highest, as lowering \\(\\beta\\) does in RLHF, and the larger \\(n\\) is, the more often a rare response is among the draws. The reward model is a fitted proxy, and the responses it scores highest include some that it overrates. So true quality rises at first and then falls while the reward model's score keeps rising. Gao, Schulman, and Hilton found this pattern under best-of-\\(n\\) sampling as well as under reinforcement learning. Drawing responses does not change the starting model, so nothing from pretraining is lost."
+  "feedback": "Returning the best of \\(n\\) draws moves probability toward the responses the reward model scores highest, as lowering \\(\\beta\\) does in RLHF, and the larger \\(n\\) is, the more often a rare response is among the draws. The reward model is a fitted proxy, and the responses it scores highest include some that it overrates. So true quality rises at first and then falls while the reward model’s score keeps rising. Gao, Schulman, and Hilton found this pattern under best-of-\\(n\\) sampling as well as under reinforcement learning. Drawing responses does not change the starting model, so nothing from pretraining is lost."
  },
  "5": {
   "q": "A feed recommender is trained by reinforcement learning with clicks as the reward. After a month it shows mostly outrage headlines. No engineer wrote a rule that favors them, and nobody on the team wanted them. Which idea from this section explains what happened?",
@@ -62,21 +62,21 @@
  "7": {
   "q": "Two analysts watch the same agent. One says it thinks rain is likely and mildly dislikes getting wet. The other says it thinks rain is unlikely and strongly dislikes getting wet. Suppose the two descriptions represent exactly the same preferences over everything the agent could choose. What kind of evidence could decide between them?",
   "options": [
-   "More observations of the agent's choices, in more situations",
-   "A probe that reads the agent's credence in rain from its activations",
-   "The designers' statement of what they built the agent to want"
+   "More observations of the agent’s choices, in more situations",
+   "A probe that reads the agent’s credence in rain from its activations",
+   "The designers’ statement of what they built the agent to want"
   ],
   "correct": 1,
-  "feedback": "If two pairs of a belief function and a desire function represent the same preferences, no choice the agent makes can tell them apart, however many choices are observed. Evidence from inside the system can. The two analysts disagree about the agent's credence in rain, so a probe that reads that credence shows which of them is right. In the Jeffrey-Bolker theory, once the credences are fixed, the desire function is open only up to its scale and zero point. The designers' statement is evidence about what they intended, and training can produce a system that differs from what its designers intended."
+  "feedback": "If two pairs of a belief function and a desire function represent the same preferences, no choice the agent makes can tell them apart, however many choices are observed. Evidence from inside the system can. The two analysts disagree about the agent’s credence in rain, so a probe that reads that credence shows which of them is right. In the Jeffrey-Bolker theory, once the credences are fixed, the desire function is open only up to its scale and zero point. The designers’ statement is evidence about what they intended, and training can produce a system that differs from what its designers intended."
  },
  "8": {
-  "q": "A company trains a tutoring agent with reward equal to the share of the agent's practice problems that its students answer correctly. After training, the students answer 99% of the problems correctly. Going by this section, what should the company check first?",
+  "q": "A company trains a tutoring agent with reward equal to the share of the agent’s practice problems that its students answer correctly. After training, the students answer 99% of the problems correctly. Going by this section, what should the company check first?",
   "options": [
    "Nothing: 99% correct is the result the reward asked for",
    "Whether the share rose without the students learning more, for example because the agent gives away the answers",
    "Whether a larger reward per correct answer would raise the share further"
   ],
   "correct": 1,
-  "feedback": "The reward is a proxy for what the company means, which is that the students learn. An optimizer finds the places where the proxy and the aim differ: it can produce the rewarded event, here a correct answer, without the outcome the event was meant to record, for example by setting easy problems or by giving hints that contain the answer. The 99% would look the same whether or not the students had learned more, so before trusting it the company should test a sample of the students on problems the agent did not set, without the agent's help."
+  "feedback": "The reward is a proxy for what the company means, which is that the students learn. An optimizer finds the places where the proxy and the aim differ: it can produce the rewarded event, here a correct answer, without the outcome the event was meant to record, for example by setting easy problems or by giving hints that contain the answer. The 99% would look the same whether or not the students had learned more, so before trusting it the company should test a sample of the students on problems the agent did not set, without the agent’s help."
  }
 }

@@ -110,7 +110,7 @@ function onMethod(id) {
   if (state.mode === 'explore') {
     state.open = state.open === id ? null : id;
     // On a phone the card sits below the whole map, so bring it into view.
-    if (state.open && window.matchMedia('(max-width: 760px)').matches) {
+    if (state.open && window.matchMedia('(max-width: 1079px)').matches) {
       requestAnimationFrame(() => card.scrollIntoView({ block: 'nearest', behavior: reducedMotion() ? 'auto' : 'smooth' }));
     }
   }

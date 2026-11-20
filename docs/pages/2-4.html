@@ -9,8 +9,10 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
-  .plane { width: 100%; aspect-ratio: 1 / 1; max-width: 34rem; outline-offset: 4px; }
+  .tool .plane { width: 100%; aspect-ratio: 1 / 1; max-width: 100%; outline-offset: 4px; }
   .mini { width: 100%; aspect-ratio: 1 / 1; }
+  /* A title that takes two lines must not push its picture below the others. */
+  #fig-xor { align-items: flex-end; }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>
@@ -24,7 +26,7 @@
 <p>The four clusters of the XOR dataset sit at the corners of a square, with each class on one diagonal. No single line separates the <span class="c-accent">blue</span> points from the <span class="c-second">orange</span> ones. A network with two small hidden layers usually learns to classify them. This page shows how: each hidden layer moves the points, and after the last hidden layer one line can separate them.</p>
 
 <p>Each layer does two things. First a linear map, plus a shift, rotates, stretches, shears, or flattens space. Then the activation function bends it. The network on this page uses the hyperbolic tangent, tanh, which squashes each coordinate into the range from \(-1\) to \(1\). ReLU, the other common choice, sets every negative coordinate to zero. For a network with two hidden layers,</p>
-$$h_1 = \tanh(W_1 x + b_1), \quad h_2 = \tanh(W_2 h_1 + b_2), \quad \text{output} = \sigma(w \cdot h_2 + b).$$
+$$\begin{gathered} h_1 = \tanh(W_1 x + b_1), \quad h_2 = \tanh(W_2 h_1 + b_2), \\[4pt] \text{output} = \sigma(w \cdot h_2 + b). \end{gathered}$$
 <p>The output is a single neuron (Section 2.2). It draws one line through the space of \(h_2\) and reports which side of that line each point is on. The <em>width</em> of the network is the number of units in each hidden layer. At width 2 the hidden spaces are planes; at width 3 they are three-dimensional, and the output draws a plane instead of a line.<label for="sn-olah" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-olah" class="margin-toggle"><span class="sidenote">This way of picturing a network comes from Chris Olah (2014), &ldquo;<a href="https://colah.github.io/posts/2014-03-NN-Manifolds-Topology/">Neural Networks, Manifolds, and Topology</a>.&rdquo;</span></p>
 </section>
 

@@ -38,17 +38,17 @@ function drawOutputs() {
   stage.innerHTML = '';
   const target = data.first_token[`instruct:${i}`].target;
   const vals = CK.map((c) => data.first_token[`${c.key}:${i}`]?.p_target ?? NaN);
-  const W = Math.min(520, stage.clientWidth || 520), rowH = 34, L = 92, H = CK.length * rowH + 40;
+  const W = stage.clientWidth || 520, rowH = 30, L = 92, H = CK.length * rowH + 30;
   const svg = d3.select(stage).append('svg').attr('class', 'chart').attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`)
     .attr('role', 'img').attr('aria-label', `Probability each checkpoint gives to starting its response with ${shown(target)}`);
   const x = d3.scaleLinear().domain([0, 1]).range([0, W - L - 60]);
-  svg.append('text').attr('x', 0).attr('y', 16).attr('class', 'label-quiet').text(`probability of starting with “${shown(target)}”`);
+  svg.append('text').attr('x', 0).attr('y', 20).attr('class', 'label-quiet').text(`probability of starting with “${shown(target)}”`);
   CK.forEach((c, k) => {
     const y = 30 + k * rowH;
-    svg.append('text').attr('x', 0).attr('y', y + 15).text(c.name);
-    svg.append('line').attr('x1', L).attr('x2', L + x(1)).attr('y1', y + 10).attr('y2', y + 10).attr('stroke', 'var(--rule)');
-    svg.append('rect').attr('x', L).attr('y', y + 2).attr('height', 16).attr('width', Math.max(1, x(vals[k]))).attr('fill', c.key === 'base' ? 'var(--quiet)' : 'var(--accent)');
-    svg.append('text').attr('x', L + Math.max(1, x(vals[k])) + 6).attr('y', y + 15).text(fmt(vals[k] < 0.01 ? 4 : 2)(vals[k]));
+    svg.append('text').attr('x', 0).attr('y', y + 21).text(c.name);
+    svg.append('line').attr('x1', L).attr('x2', L + x(1)).attr('y1', y + 15).attr('y2', y + 15).attr('stroke', 'var(--rule)');
+    svg.append('rect').attr('x', L).attr('y', y + 7).attr('height', 16).attr('width', Math.max(1, x(vals[k]))).attr('fill', c.key === 'base' ? 'var(--quiet)' : 'var(--accent)');
+    svg.append('text').attr('x', L + Math.max(1, x(vals[k])) + 6).attr('y', y + 21).text(fmt(vals[k] < 0.01 ? 4 : 2)(vals[k]));
   });
   const tops = CK.map((c) => {
     const t = data.first_token[`${c.key}:${i}`].top[0];
@@ -62,7 +62,7 @@ function drawFacts() {
   stage.innerHTML = '';
   const P = CK.map((c) => data.fact_probs[c.key]);
   const nF = data.facts.length;
-  const c = chart(stage, { height: 320, margin: { top: 34, right: 80, bottom: 52, left: 56 },
+  const c = chart(stage, { width: stage.clientWidth || 560, height: 320, margin: { top: 34, right: 80, bottom: 52, left: 56 },
     x: { domain: [-0.15, 3.15], ticks: 4, format: 'd' }, y: { domain: [0, 1], ticks: 5, label: 'probability of the true answer' },
     title: 'Probability each checkpoint gives to the true answer of each fact' });
   // Name the checkpoints on the horizontal axis.

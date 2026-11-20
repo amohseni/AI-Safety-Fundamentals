@@ -11,8 +11,12 @@
 <style>
   h1 { hyphens: auto; overflow-wrap: break-word; }
   .exp { vertical-align: 0.45em; line-height: 0; }
-  #fig-two { gap: 2rem; }
-  #fig-two .rule { font-variant-numeric: lining-nums; line-height: 1.6; margin: 0.4rem 0 0; }
+  /* Two panels side by side: each takes half of both columns. */
+  #fig-two { gap: var(--u) var(--gap); padding-top: var(--u); }
+  #fig-two > div { flex: 1 1 calc(50% - var(--gap) / 2); min-width: 0; }
+  #fig-two .small-title { margin: 0 0 var(--u); line-height: var(--line); }
+  #fig-two .rule { font-variant-numeric: lining-nums; line-height: var(--line); margin: 0; }
+  @media (max-width: 1079px) { #fig-two > div { flex-basis: 100%; } }
   #fig-two .rule span { color: var(--quiet); font-style: italic; }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>

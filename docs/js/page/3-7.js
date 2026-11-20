@@ -3,7 +3,16 @@ import { button, cssVar } from '../lib/ui.js';
 import { steps, shapeOf, paramsThrough, tensorAt } from '../lib/s3j-gpt2.js';
 
 const d3 = window.d3;
-const FONT = '21.33px et-book, Georgia, serif';
+// Chart text is drawn at the --small size, read from the CSS so the canvas follows the tokens.
+function tokenPx(name) {
+  const probe = document.createElement('span');
+  probe.style.cssText = `position:absolute;visibility:hidden;font-size:var(${name})`;
+  document.body.append(probe);
+  const v = parseFloat(getComputedStyle(probe).fontSize) || 17;
+  probe.remove();
+  return v;
+}
+const FONT = `${tokenPx('--small')}px et-book, Georgia, serif`;
 const S = steps();
 const fmtN = (v) => v.toLocaleString('en-US');
 const showTok = (t) => t.replace(/ /g, '·').replace(/\n/g, '↵');
@@ -85,7 +94,7 @@ function canvasFor(parent, W, H) {
 // column shows the entry of largest absolute value among the numbers it covers, so no spike is averaged away.
 function rowMap(parent, rec, cols, value, color, note) {
   const n = rec.tokens.length;
-  const avail = Math.min(640, parent.clientWidth || 560);
+  const avail = parent.clientWidth || 560;
   const m = document.createElement('canvas').getContext('2d');
   m.font = FONT;
   const left = Math.ceil(Math.max(...rec.tokens.map(([t]) => m.measureText(showTok(t)).width))) + 12;
@@ -137,12 +146,16 @@ function drawTensor(box, rec, st) {
   }
   if (T.kind === 'pattern') {
     const wrap = document.createElement('div');
-    wrap.style.display = 'flex'; wrap.style.flexWrap = 'wrap'; wrap.style.gap = '0.6rem 1rem';
+    wrap.className = 'heads';
     box.append(wrap);
-    const cell = n <= 3 ? 20 : 16;
+    // Equal columns across the stage: six heads to a row, or four on a narrow screen.
+    const perRow = (box.clientWidth || 560) >= 500 ? 6 : 4;
+    wrap.style.gridTemplateColumns = `repeat(${perRow}, minmax(0, 1fr))`;
+    const tile = Math.floor(((box.clientWidth || 560) - (perRow - 1) * 15) / perRow);
+    const cell = Math.max(4, Math.min(n <= 3 ? 20 : 16, Math.floor(tile / n)));
     for (let h = 0; h < 12; h++) {
       const d = document.createElement('div');
-      const size = Math.max(n * cell, 64);
+      const size = Math.min(tile, Math.max(n * cell, 64));
       const { c, ctx } = canvasFor(d, size, n * cell + 28);
       for (let i = 0; i < n; i++) for (let j = 0; j <= i; j++) {
         const w = T.values[h * n * n + i * n + j] / 255;
@@ -171,8 +184,9 @@ function drawTensor(box, rec, st) {
     isP ? 'Columns: the 50,257 tokens in order of id. A stronger blue means a higher probability.' : 'Columns: the 50,257 tokens in order of id. A stronger blue means a higher score.')
     .setAttribute('aria-label', `Heat map, ${n} rows by 50,257 tokens, in ${cols} bins`);
   const ul = document.createElement('div');
+  ul.className = 'tops';
   ul.innerHTML = `<p class="small-title">${isP ? 'Most likely next tokens, with probabilities' : 'Highest scores'}</p>` +
-    rec.top.map((row, r) => `<p style="margin:0">after “${esc(showTok(rec.tokens[r][0]))}”: ${row.slice(0, 3).map(([t, , z, p]) => `“${esc(showTok(t))}” ${isP ? p.toFixed(3) : z.toFixed(1).replace('-', '−')}`).join(', ')}</p>`).join('');
+    rec.top.map((row, r) => `<p>after “${esc(showTok(rec.tokens[r][0]))}”: ${row.slice(0, 3).map(([t, , z, p]) => `“${esc(showTok(t))}” ${isP ? p.toFixed(3) : z.toFixed(1).replace('-', '−')}`).join(', ')}</p>`).join('');
   box.append(ul);
 }
 
@@ -186,8 +200,8 @@ S.forEach((s, i) => {
 });
 function drawStrip() {
   const box = document.getElementById('fp-strip');
-  box.innerHTML = `<p style="margin:0">Parameters used so far: <b>${fmtN(paramsThrough(S, state.i, C))}</b> of ${fmtN(C.total)}</p>`;
-  const W = Math.max(240, Math.min(760, box.clientWidth || 640)), H = 70;
+  box.innerHTML = `<p>Parameters used so far: <b>${fmtN(paramsThrough(S, state.i, C))}</b> of ${fmtN(C.total)}</p>`;
+  const W = Math.max(240, box.clientWidth || 640), H = 60;
   const svg = d3.select(box).append('svg').attr('class', 'chart').attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`)
     .attr('role', 'img');
   const x = d3.scaleLinear().domain([0, C.total]).range([0, W - 2]);
@@ -245,7 +259,7 @@ async function draw() {
   const where = st.layer >= 1 && st.layer <= 12 ? `Layer ${st.layer}: ` : '';
   stage.innerHTML = `<p class="small-title">Step ${state.i + 1} of ${S.length}. ${where}${st.name}</p>
     <p class="what">${st.what}</p>
-    <p>Shape: <b>${shape}</b>${st.key === 'tokens' ? ` (${n} tokens)` : ''}. Parameters in this step: <b>${fmtN(p)}</b>${st.key === 'logits' ? ' new (it reuses the 38,597,376 of the token embedding matrix)' : ''}.</p>`;
+    <p class="shape-line">Shape: <b>${shape}</b>${st.key === 'tokens' ? ` (${n} tokens)` : ''}. Parameters in this step: <b>${fmtN(p)}</b>${st.key === 'logits' ? ' new (it reuses the 38,597,376 of the token embedding matrix)' : ''}.</p>`;
   const box = document.createElement('div');
   stage.append(box);
   drawTensor(box, rec, st);

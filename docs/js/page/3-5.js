@@ -4,7 +4,16 @@ import { segmented, cssVar } from '../lib/ui.js';
 import { chart } from '../lib/chart.js';
 import { loadJSON, unpackAttention, palette, drawPattern, sizedCanvas, showToken, escapeHTML } from '../lib/s3k-gpt2.js';
 
-const FONT = '21.33px et-book, Georgia, serif';
+// Chart text is drawn at the --small size, read from the CSS so the canvas follows the tokens.
+function tokenPx(name) {
+  const probe = document.createElement('span');
+  probe.style.cssText = `position:absolute;visibility:hidden;font-size:var(${name})`;
+  document.body.append(probe);
+  const v = parseFloat(getComputedStyle(probe).fontSize) || 17;
+  probe.remove();
+  return v;
+}
+const FONT = `${tokenPx('--small')}px et-book, Georgia, serif`;
 const readout = document.getElementById('readout');
 
 let data;
@@ -40,9 +49,11 @@ const grid = document.getElementById('grid');
 let G = null; // layout of the grid
 function drawGrid() {
   const avail = grid.parentElement.clientWidth || 520;
-  const W = Math.max(280, Math.min(544, avail));
-  const left = 30, top = 26, gap = 2;
-  const cell = Math.floor((W - left - gap * 11) / 12);
+  // The grid ends at the right edge of its column; what is left over widens the gutter for the row labels.
+  const W = Math.max(280, avail);
+  const top = 26, gap = 2;
+  const cell = Math.floor((W - 30 - gap * 11) / 12);
+  const left = W - 12 * cell - 11 * gap;
   const H = top + 12 * cell + 11 * gap + 4;
   const ctx = sizedCanvas(grid, W, H);
   G = { left, top, gap, cell, W, H };
@@ -114,7 +125,7 @@ let B = null;
 function drawBig() {
   const d = cur(), n = d.n;
   const avail = big.parentElement.clientWidth || 420;
-  const size = Math.max(240, Math.min(420, avail));
+  const size = Math.max(240, avail);
   const ctx = sizedCanvas(big, size, size);
   const c = size / n;
   B = { size, c };
@@ -164,7 +175,7 @@ const mean = (a) => a.reduce((s, v) => s + v, 0) / a.length;
 function drawLoss() {
   const d = cur();
   lossBox.innerHTML = '';
-  const c = chart(lossBox, { width: 760, height: 200, margin: { top: 30, right: 20, bottom: 52, left: 44 },
+  const c = chart(lossBox, { width: lossBox.clientWidth || 760, height: 200, margin: { top: 30, right: 20, bottom: 52, left: 44 },
     x: { domain: [0.5, d.n - 0.5], ticks: 6, label: 'position' }, y: { domain: [0, 20], ticks: 4, label: 'loss' },
     title: 'Loss on each token of the input' });
   const bw = Math.max(1.5, c.x(1.5) - c.x(1) - 1);
@@ -199,14 +210,18 @@ function figure() {
   const fig = document.getElementById('fig-heads');
   fig.innerHTML = '';
   const d = inputs[0];
-  for (const [l, h, title] of [[4, 11, 'Head 4.11'], [5, 5, 'Head 5.5'], [1, 10, 'Head 1.10']]) {
+  // All three boxes are placed first, so each pattern is drawn at the width its box ends up with.
+  const boxes = [[4, 11, 'Head 4.11'], [5, 5, 'Head 5.5'], [1, 10, 'Head 1.10']].map(([l, h, title]) => {
     const box = document.createElement('div');
     box.innerHTML = `<p class="small-title">${title}</p>`;
+    fig.append(box);
+    return [l, h, box];
+  });
+  for (const [l, h, box] of boxes) {
     const cv = document.createElement('canvas');
     cv.setAttribute('aria-hidden', 'true');
     box.append(cv);
-    fig.append(box);
-    const size = Math.max(200, Math.min(260, box.clientWidth || 260));
+    const size = Math.max(200, box.clientWidth || 260);
     const ctx = sizedCanvas(cv, size, size);
     drawPattern(ctx, d.att, l, h, 0, 0, size, palette('--ink'));
     ctx.strokeStyle = cssVar('--rule'); ctx.strokeRect(0.5, 0.5, size - 1, size - 1);

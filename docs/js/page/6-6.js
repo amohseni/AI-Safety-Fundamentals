@@ -39,7 +39,7 @@ function plot(box, key, title, domain, fmtTick) {
   box.innerHTML = '';
   const c = cell(), V = VEC[st.v];
   const ys = c[key];
-  const ch = chart(box, { width: 420, height: 230, margin: { top: 30, right: 24, bottom: 52, left: 52 },
+  const ch = chart(box, { width: box.clientWidth, height: 230, margin: { top: 30, right: 24, bottom: 52, left: 52 },
     x: { domain: [coefs[0], coefs[coefs.length - 1]], ticks: 5, label: 'coefficient' },
     y: { domain, ticks: 4, format: fmtTick }, title: `${title} against the coefficient` });
   ch.line('l', coefs.map((x, i) => [x, ys[i]]), { color: 'ink', width: 1.4 });

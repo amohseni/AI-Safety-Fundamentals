@@ -9,17 +9,22 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
-  .tool select { font: inherit; font-size: var(--text); color: var(--ink); background: transparent; }
-  #s-text { font-size: var(--text); display: flex; flex-wrap: wrap; align-items: flex-start; gap: 0.3rem 0.2rem; margin: 0 0 0.8rem; line-height: 1.35; }
+  .tool select { font: inherit; font-size: var(--text); color: var(--ink); background: transparent; border: 1px solid var(--rule); border-radius: 3px; padding: 0.25rem 0.5rem; width: 100%; box-sizing: border-box; }
+  #s-text { font-size: var(--text); display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--u) 0.25rem; margin: 0 0 calc(2 * var(--u)); line-height: var(--line); }
   #s-text .ptext { color: var(--quiet); margin-right: 0.2rem; }
-  .gtok { display: inline-flex; flex-direction: column; align-items: center; border: 1px solid var(--rule); border-radius: 2px; padding: 0 0.3rem; }
+  .gtok { display: inline-flex; flex-direction: column; align-items: center; border: 1px solid var(--rule); border-radius: 2px; padding: 0 0.3rem; margin: -1px 0; }
   .gtok .t { white-space: pre; color: var(--ink); }
   .gtok .pr { color: var(--quiet); font-variant-numeric: lining-nums tabular-nums; }
-  #s-draws { margin-top: 1.2rem; width: 61%; }
-  #s-draws .draw { margin: 0.2rem 0 0.5rem; }
+  #s-draws { box-sizing: border-box; max-width: var(--col); margin-top: calc(2 * var(--u)); }
+  #s-draws .draw { margin: 0 0 var(--u); line-height: var(--line); }
+  #s-draws .draw:last-child { margin-bottom: 0; }
   #s-draws .ptext { color: var(--quiet); }
-  .small-title { margin: 0 0 0.2rem; }
-  @media (max-width: 760px) { #s-draws { width: 100%; } }
+  .small-title { margin: 0 0 var(--u); line-height: var(--line); color: var(--quiet); }
+  figure .small-title { color: var(--ink); }
+  /* Fit to the layout grid (2026-11-20). */
+  figure { margin: calc(2 * var(--u)) 0 var(--u); }
+  .caption { margin: 0 0 calc(2 * var(--u)); }
+  @media (max-width: 1079px) { figure, figure.multiples { max-width: 100%; } ol.tasks { box-sizing: border-box; } section > ol, section > ul { width: 100%; box-sizing: border-box; } }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>

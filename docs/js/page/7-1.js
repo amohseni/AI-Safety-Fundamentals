@@ -72,8 +72,8 @@ function katex(el) { if (window.renderMathInElement) window.renderMathInElement(
     const m = model(), vals = J.actionValues(m), best = J.argmax(vals);
     const rows = J.ACTIONS.map((act, i) => {
       const terms = state.ps.map((p, j) => `${f2(p)} × ${state.D[i][j] < 0 ? `(${sgn(state.D[i][j])})` : sgn(state.D[i][j])}`).join(' + ');
-      return `<tr class="${i === best ? 'chosen-a' : ''}"><th class="row" scope="row">${act}${i === best ? ' (chosen)' : ''}</th><td class="val">${sgn(vals[i])}</td></tr>
-        <tr><td colspan="2" style="text-align:left;color:var(--quiet);padding-bottom:0.5rem">${terms}</td></tr>`;
+      return `<tr class="${i === best ? 'chosen-a' : ''}"><th class="rname" scope="row">${act}${i === best ? ' (chosen)' : ''}</th><td class="val">${sgn(vals[i])}</td></tr>
+        <tr><td colspan="2" class="terms">${terms}</td></tr>`;
     }).join('');
     stage.innerHTML = `<p class="t-title">Desirability of each action, averaged over the locations</p>
       <table class="jb" aria-label="Desirability of each action"><tbody>${rows}</tbody></table>`;
@@ -113,9 +113,9 @@ function katex(el) { if (window.renderMathInElement) window.renderMathInElement(
     const best = J.argmax(vals), bestT = J.argmax(valsT);
     const cond = [0, 1, 2].map((i) => J.conditional(mt, i));
     const ROW = ['Edit parser', 'Edit renderer', 'Search'];
-    const credRows = ROW.map((act, i) => `<tr><th class="row" scope="row">${act}</th>${cond[i].map((p, j) => `<td class="${j === 0 ? 'sep' : ''}">${f2(p)}</td>`).join('')}</tr>`).join('');
-    const desRows = ROW.map((act, i) => `<tr><th class="row" scope="row">${act}</th>${[0, 1, 2].map((j) => `<td class="${j === 0 ? 'sep' : ''}">${sgn(mt.D[i * 3 + j])}</td>`).join('')}</tr>`).join('');
-    const actRows = J.ACTIONS.map((act, i) => `<tr class="${i === bestT ? 'chosen-b' : ''}"><th class="row" scope="row">${act}${i === bestT ? ' (chosen)' : ''}</th><td class="val">${sgn(valsT[i])}</td></tr>`).join('');
+    const credRows = ROW.map((act, i) => `<tr><th class="rname" scope="row">${act}</th>${cond[i].map((p, j) => `<td class="${j === 0 ? 'sep' : ''}">${f2(p)}</td>`).join('')}</tr>`).join('');
+    const desRows = ROW.map((act, i) => `<tr><th class="rname" scope="row">${act}</th>${[0, 1, 2].map((j) => `<td class="${j === 0 ? 'sep' : ''}">${sgn(mt.D[i * 3 + j])}</td>`).join('')}</tr>`).join('');
+    const actRows = J.ACTIONS.map((act, i) => `<tr class="${i === bestT ? 'chosen-b' : ''}"><th class="rname" scope="row">${act}${i === bestT ? ' (chosen)' : ''}</th><td class="val">${sgn(valsT[i])}</td></tr>`).join('');
     stage.innerHTML = `<p class="t-title">New credence in each location, given the action</p>
       <table class="jb" aria-label="New credences given each action">${head}<tbody>${credRows}</tbody></table>
       <p class="t-title">New desirability of each action and location</p>
@@ -142,7 +142,7 @@ function katex(el) { if (window.renderMathInElement) window.renderMathInElement(
 // ---- Static figure: the triangle of Herrmann and Levinstein's Figure 1 ----
 (function triangle() {
   const fig = document.getElementById('fig-triangle');
-  const W = Math.max(300, Math.min(560, fig.clientWidth || 560)), H = 380;
+  const W = Math.max(280, fig.clientWidth || 630), H = 380; // the figure's own width: the text column
   const NS = 'http://www.w3.org/2000/svg';
   const svg = document.createElementNS(NS, 'svg');
   svg.setAttribute('class', 'triangle');

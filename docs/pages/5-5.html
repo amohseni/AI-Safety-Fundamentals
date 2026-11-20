@@ -9,19 +9,31 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
-  .overlay { width: 100%; max-width: 26rem; aspect-ratio: 1 / 1; }
-  .unit-rows { margin-top: 1.2rem; max-width: 34rem; font-size: var(--text); }
-  .unit-row { display: grid; grid-template-columns: 4rem repeat(4, minmax(0, 1fr)); gap: 0.5rem; align-items: center; margin-bottom: 0.5rem; }
-  .unit-row.head span { color: var(--quiet); line-height: 1.2; }
+  /* The large plot is square and as wide as the text column. */
+  .overlay { width: 100%; aspect-ratio: 1 / 1; }
+  /* The rows of unit pictures: a name and four pictures across the text column. */
+  .unit-rows { margin-top: calc(2 * var(--u)); font-size: var(--text); }
+  .unit-row { display: grid; grid-template-columns: 4rem repeat(4, minmax(0, 1fr)); gap: var(--u); align-items: center; margin-bottom: var(--u); }
+  .unit-row.head { margin-bottom: 0; }
+  .unit-row.head span { color: var(--quiet); line-height: var(--line); }
   .unit-row .run-name { color: var(--quiet); }
   .unit-row canvas.mini { width: 100%; aspect-ratio: 1 / 1; background: var(--paper); outline: 1px solid var(--faint); }
-  #freq-multiples > div { flex: 1 1 15rem; }
-  .split { display: flex; flex-wrap: wrap; gap: 2rem; align-items: flex-start; max-width: 90%; }
-  .split > div { flex: 1 1 16rem; min-width: 0; }
-  .code { font-size: var(--text); font-family: Consolas, "Liberation Mono", Menlo, monospace; line-height: 1.5; margin: 0; white-space: pre; overflow-x: auto; }
+  /* Five small charts: three across both columns, so every chart is a third of the full width. */
+  #freq-multiples { display: grid; grid-template-columns: minmax(0, 1fr); gap: calc(2 * var(--u)) 1.2rem; }
+  /* The program and the parameters side by side: each takes half of both columns, less the gap. */
+  .split { display: grid; grid-template-columns: minmax(0, 1fr); gap: calc(2 * var(--u)) var(--gap); align-items: start; }
+  .split > div { min-width: 0; }
+  .code { font-size: var(--text); font-family: Consolas, "Liberation Mono", Menlo, monospace; line-height: var(--line); margin: 0; white-space: pre; overflow-x: auto; }
   .code .hl { color: var(--accent); }
   #fig-weights { width: 100%; display: block; }
-  @media (max-width: 760px) { .unit-row { grid-template-columns: 1.2rem repeat(4, minmax(0, 1fr)); gap: 0.3rem; } .unit-row .wide { display: none; } .split { max-width: 100%; } }
+  @media (min-width: 1080px) {
+    .unit-rows { width: var(--col); }
+    #freq-multiples { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .split { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  }
+  @media (max-width: 1079px) { .unit-row { grid-template-columns: 1.2rem repeat(4, minmax(0, 1fr)); gap: 0.5rem; margin-bottom: 0.5rem; } .unit-row .wide { display: none; } }
+  /* Until the shared CSS does this: on a phone, figures and the task list end at the column's edge. */
+  @media (max-width: 1079px) { figure, figure.multiples { max-width: 100%; } ol.tasks { box-sizing: border-box; } }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>
@@ -92,7 +104,7 @@
 <p>Both panels show the same pattern: runs that differ only in their seed reach the same behavior on the task through different internal mechanisms. <span class="claim">Empirical finding</span> Nanda et al. report the same for the modular-addition transformer at \(p = 113\): the key frequencies differ by seed.<label for="sn-nanda" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-nanda" class="margin-toggle"><span class="sidenote">Nanda, Chan, Lieberum, Smith, and Steinhardt (2023), &ldquo;<a href="https://arxiv.org/abs/2301.05217">Progress measures for grokking via mechanistic interpretability</a>,&rdquo; ICLR 2023, appendix C.2.1. The runs on this page are described in Section 5.4.</span> Some structure does recur: every modular-addition run here uses a few frequencies. <span class="claim">Hypothesis</span> For image models, Olah et al. proposed, with preliminary evidence, that analogous features and circuits form across different models, a hypothesis they call universality.<label for="sn-zoom" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-zoom" class="margin-toggle"><span class="sidenote">Olah, Cammarata, Schubert, Goh, Petrov, and Carter (2020), &ldquo;<a href="https://doi.org/10.23915/distill.00024.001">Zoom In: An Introduction to Circuits</a>,&rdquo; <em>Distill</em>.</span> Which mechanism a particular network uses still has to be found by examining that network.</p>
 <p><span class="claim">Argument</span> A further consequence follows. Training selects any setting of the parameters that achieves low loss, or high reward in reinforcement learning. It does not check whether the mechanism behind that setting is the one the designers had in mind, so it can select mechanisms they did not intend and would not approve of. Section 8 returns to this.</p>
 
-<figure class="split" aria-describedby="fig-desc">
+<figure class="split wide" aria-describedby="fig-desc">
   <div><pre class="code" aria-label="A short program for addition modulo p">def add_mod(a, b, p):
     total = a + b
     if total &gt;= p:

@@ -43,7 +43,8 @@
 //
 // Drawing helpers (browser only)
 //   fitCanvas(canvas, cssWidth, cssHeight) -> ctx, sized for the device pixel ratio and scaled to CSS pixels.
-//   cellLayout(cssWidth, width, height, { pad = 1 }) -> { cell, ox, oy, w, h, center(x, y), rect(x, y) }
+//   cellLayout(cssWidth, width, height, { pad = 1, maxCell = 80, fill = false }) -> { cell, ox, oy, w, h, center(x, y), rect(x, y) }
+//     rect returns [x, y, width, height]. With fill, the grid is exactly cssWidth wide.
 //   drawGrid(ctx, layout, g, { wall = () => false }) draws the cells as thin rules and walls as filled squares.
 
 // ---------------- Deterministic MDPs ----------------
@@ -237,14 +238,17 @@ export function fitCanvas(canvas, cssWidth, cssHeight) {
   return ctx;
 }
 
-export function cellLayout(cssWidth, width, height, { pad = 1, maxCell = 80 } = {}) {
-  const cell = Math.min(maxCell, Math.floor((cssWidth - 2 * pad) / width));
-  const w = cell * width, h = cell * height;
+export function cellLayout(cssWidth, width, height, { pad = 1, maxCell = 80, fill = false } = {}) {
+  // fill: the grid takes the whole of cssWidth, so that it ends at the edge of its column. A cell is
+  // then not a whole number of pixels wide, and each cell edge is rounded to a pixel to keep lines sharp.
+  const cell = fill ? (cssWidth - 2 * pad) / width : Math.min(maxCell, Math.floor((cssWidth - 2 * pad) / width));
+  const w = cell * width, h = Math.round(cell * height);
   const ox = pad, oy = pad;
+  const px = (v) => (fill ? Math.round(v) : v);
   return {
     cell, ox, oy, w, h, cssHeight: h + 2 * pad,
     center: (x, y) => [ox + (x + 0.5) * cell, oy + (y + 0.5) * cell],
-    rect: (x, y) => [ox + x * cell, oy + y * cell, cell, cell],
+    rect: (x, y) => { const x0 = px(ox + x * cell), y0 = px(oy + y * cell); return [x0, y0, px(ox + (x + 1) * cell) - x0, px(oy + (y + 1) * cell) - y0]; },
   };
 }
 
@@ -252,8 +256,8 @@ export function drawGrid(ctx, L, g, { wall = () => false, colors }) {
   ctx.lineWidth = 1;
   ctx.strokeStyle = colors.rule;
   for (let y = 0; y < g.height; y++) for (let x = 0; x < g.width; x++) {
-    const [rx, ry, c] = L.rect(x, y);
-    if (wall(x, y)) { ctx.fillStyle = colors.quiet; ctx.fillRect(rx, ry, c, c); }
-    else ctx.strokeRect(rx + 0.5, ry + 0.5, c - 1, c - 1);
+    const [rx, ry, cw, ch] = L.rect(x, y);
+    if (wall(x, y)) { ctx.fillStyle = colors.quiet; ctx.fillRect(rx, ry, cw, ch); }
+    else ctx.strokeRect(rx + 0.5, ry + 0.5, cw - 1, ch - 1);
   }
 }

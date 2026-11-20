@@ -29,7 +29,7 @@ function drawAdd() {
   const stage = document.getElementById('add-chart');
   stage.innerHTML = '';
   const narrow = (stage.clientWidth || 560) < 420;
-  const ch = chart(stage, { height: 300, margin: { top: 34, right: narrow ? 104 : 120, bottom: 52, left: 56 },
+  const ch = chart(stage, { width: stage.clientWidth || 560, height: 300, margin: { top: 34, right: narrow ? 104 : 120, bottom: 52, left: 56 },
     x: { domain: [1, 12], ticks: narrow ? 3 : 6, label: 'digits in each number' },
     y: { domain: [0, 1], ticks: 5, format: '.0%', label: 'share of sums fully right' },
     title: `Accuracy of the two models on ${SUMS[A.sums]}, against the number of digits` });
@@ -117,7 +117,7 @@ function drawEarly() {
   if (mk) tbox.scrollTop = Math.max(0, mk.offsetTop - tbox.offsetTop - tbox.clientHeight / 2);
   const stage = document.getElementById('cot-chart');
   stage.innerHTML = '';
-  const ch = chart(stage, { height: 260, margin: { top: 34, right: 40, bottom: 52, left: 56 },
+  const ch = chart(stage, { width: stage.clientWidth || 560, height: 260, margin: { top: 34, right: 40, bottom: 52, left: 56 },
     x: { domain: [0, 1], ticks: (stage.clientWidth || 560) < 420 ? 3 : 5, format: '.0%', label: (stage.clientWidth || 560) < 420 ? 'share kept' : 'share of the chain of thought kept' }, y: { domain: [0, 1], ticks: 5, label: `probability of (${LETTERS[f]})` },
     title: `Probability the model gives its final answer (${LETTERS[f]}) when cut off at each point` });
   const pts = p.cuts.map((q) => [q.tokens / p.cot_tokens, q.p[f]]);
@@ -142,11 +142,11 @@ function figure() {
   const f = mult.figure2;
   const d = mult.forced.find((x) => x.a === f.a && x.b === f.b);
   // Each row: the way of answering and its result on one line, the bar below it, the number of passes under the bar.
-  const W = Math.min(560, fig.clientWidth || 560), rowH = 96, H = 2 * rowH;
+  const W = fig.clientWidth || 560, rowH = 90, H = 2 * rowH;
   const rows = [['Answer at once', d.passes, `${d.output}, wrong`, 'second'], ['With written steps', f.tokens, `${f.true}, right`, 'accent']];
   const svg = d3.select(fig).append('svg').attr('class', 'chart').attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`)
     .attr('role', 'img').attr('aria-label', `Forward passes used: ${d.passes} answering at once, ${f.tokens} with written steps`);
-  const x = d3.scaleLinear().domain([0, f.tokens]).range([0, W - 2]);
+  const x = d3.scaleLinear().domain([0, f.tokens]).range([0, W]);
   rows.forEach(([name, n, result, col], k) => {
     const y = k * rowH;
     const t = svg.append('text').attr('x', 0).attr('y', y + 20).style('fill', 'var(--ink)').text(`${name}: `);

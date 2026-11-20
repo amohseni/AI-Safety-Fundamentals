@@ -10,7 +10,16 @@
 <link rel="stylesheet" href="../css/site.css">
 <style>
   #surface-chart svg { cursor: crosshair; }
-  #loss-chart { margin-top: 0.4rem; }
+  /* The map and the loss chart sit side by side, each half of both columns; the controls sit in a row above them. */
+  #tool .controls { flex: 1 1 100%; max-width: none; flex-direction: row; flex-wrap: wrap; align-items: flex-start; gap: var(--u) calc(2 * var(--u)); }
+  #tool .controls .ctl { flex: 1 1 13rem; max-width: 18rem; }
+  #tool .stage { flex: 1 1 100%; display: grid; grid-template-columns: minmax(0, 1fr); row-gap: var(--u); }
+  @media (min-width: 1080px) {
+    #tool .row { display: block; }
+    #tool .row > .controls { margin-bottom: calc(2 * var(--u)); }
+    #tool .stage { grid-template-columns: 1fr 1fr; column-gap: var(--gap); align-items: start; }
+  }
+  @media (max-width: 1079px) { #tool .controls .ctl { flex-basis: 100%; max-width: none; } }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>

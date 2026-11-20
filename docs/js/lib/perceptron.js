@@ -205,7 +205,7 @@ export class Playground {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, S, S);
     const col = { a: cssVar('--accent'), b: cssVar('--second'), ink: cssVar('--ink'), quiet: cssVar('--quiet'), rule: cssVar('--rule') };
-    ctx.font = '21.33px et-book, Georgia, serif';
+    ctx.font = `${cssVar('--small') || '13pt'} et-book, Georgia, serif`; // chart text size, from the CSS token
 
     // Shading: the output over the plane, rendered at low resolution and scaled up.
     const n = 160;

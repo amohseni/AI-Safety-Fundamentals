@@ -46,11 +46,15 @@ function enableDrawing(c, active, onChange, ctl) {
 // ---- Static figure: smooth target with 4, 8, 32 units ----
 (function figure() {
   const fig = document.getElementById('fig-approx');
-  for (const m of [4, 8, 32]) {
+  // All three boxes first, so each chart can be drawn at the width of its share of the figure.
+  const boxes = [4, 8, 32].map((m) => {
     const box = document.createElement('div');
     box.innerHTML = `<p class="small-title">${m} units</p>`;
     fig.append(box);
-    const c = chart(box, { width: 300, height: 220, margin: { top: 14, right: 16, bottom: 36, left: 40 },
+    return [m, box];
+  });
+  for (const [m, box] of boxes) {
+    const c = chart(box, { width: box.clientWidth, height: 220, margin: { top: 14, right: 16, bottom: 36, left: 40 },
       x: { domain: [0, 1], ticks: 2 }, y: { domain: [-0.2, 1], ticks: 3 }, title: `Fit with ${m} units` });
     const fit = fitEven(TARGETS.smooth, m);
     fit.units.forEach((u, k) => c.line(`u${k}`, curve((x) => u.a * relu(x - u.c)), { color: 'quiet', width: 0.6 }));
@@ -63,7 +67,7 @@ function enableDrawing(c, active, onChange, ctl) {
 (function byHand() {
   const st = { target: 'bump', b: 0, units: [], sel: -1 };
   const ctl = document.getElementById('h-controls'), out = document.getElementById('h-readout');
-  const c = chart(document.getElementById('h-chart'), { height: 320, margin: { top: 34, right: 30, bottom: 52, left: 52 },
+  const c = chart(document.getElementById('h-chart'), { width: document.getElementById('h-chart').clientWidth, height: 320, margin: { top: 34, right: 14, bottom: 52, left: 52 },
     x: { domain: [0, 1], label: 'x' }, y: { domain: [-0.3, 1.1], label: 'output' }, title: 'Target and the sum of the units' });
   segmented(ctl, { name: 'Target', options: TNAMES, value: st.target, onChange: (k) => { st.target = k; draw(); } });
   const addRow = document.createElement('div'); addRow.className = 'seg'; ctl.append(addRow);
@@ -128,9 +132,9 @@ function enableDrawing(c, active, onChange, ctl) {
 (function fit() {
   const st = { target: 'jagged', m: 8 };
   const ctl = document.getElementById('f-controls'), out = document.getElementById('f-readout');
-  const c = chart(document.getElementById('f-chart'), { height: 300, margin: { top: 34, right: 30, bottom: 52, left: 52 },
+  const c = chart(document.getElementById('f-chart'), { width: document.getElementById('f-chart').clientWidth, height: 300, margin: { top: 34, right: 44, bottom: 52, left: 64 },
     x: { domain: [0, 1], label: 'x' }, y: { domain: [-0.3, 1.1], label: 'output' }, title: 'Target and the fitted network' });
-  const e = chart(document.getElementById('f-err'), { height: 280, margin: { top: 34, right: 60, bottom: 52, left: 64 },
+  const e = chart(document.getElementById('f-err'), { width: document.getElementById('f-err').clientWidth, height: 280, margin: { top: 34, right: 44, bottom: 52, left: 64 },
     x: { domain: [1, 128], log: true, ticks: 4, format: '~g', label: 'number of units m' }, y: { domain: [1e-4, 0.5], log: true, ticks: 3, format: '~g', label: 'error' },
     title: 'Error against the number of units' });
   segmented(ctl, { name: 'Target', options: TNAMES, value: st.target, onChange: (k) => { st.target = k; full(); } });
@@ -165,7 +169,7 @@ function enableDrawing(c, active, onChange, ctl) {
 (function depth() {
   const st = { k: 2 };
   const ctl = document.getElementById('d-controls'), out = document.getElementById('d-readout');
-  const c = chart(document.getElementById('d-chart'), { height: 300, margin: { top: 34, right: 30, bottom: 52, left: 52 },
+  const c = chart(document.getElementById('d-chart'), { width: document.getElementById('d-chart').clientWidth, height: 300, margin: { top: 34, right: 14, bottom: 52, left: 52 },
     x: { domain: [0, 1], label: 'x' }, y: { domain: [-0.2, 1.2], label: 'output' }, title: 'Sawtooth, deep network, and shallow network' });
   slider(ctl, { name: 'Hidden layers of the deep network k', min: 1, max: 6, step: 1, value: st.k, format: (v) => String(v),
     onInput: (v) => { st.k = v; draw(); } });

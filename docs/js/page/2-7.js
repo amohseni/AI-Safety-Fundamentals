@@ -14,10 +14,10 @@ const dname = (g, id) => `∂L/∂${nodeOf(g, id).name}`;
 // active: id of the node whose backward step is shown, selected: parameter id}.
 function render(el, g, val, back, reveal, onPick) {
   el.innerHTML = '';
-  const W = Math.max(300, Math.min(820, el.clientWidth || 820));
+  const W = Math.max(300, el.clientWidth || 820);
   const horiz = W >= 680;
   const lanes = g.nodes.map((n) => n.pos[1]), lmin = Math.min(...lanes), lmax = Math.max(...lanes);
-  const pad = horiz ? 52 : 50;
+  const pad = horiz ? 24 : 50;
   const colW = horiz ? (W - 2 * pad) / 6 : (W - 2 * pad) / Math.max(1, lmax - lmin);
   const rowH = horiz ? 84 : 96;
   const H = horiz ? (lmax - lmin) * rowH + 110 : 6 * rowH + 90;

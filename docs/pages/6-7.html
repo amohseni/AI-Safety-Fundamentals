@@ -11,12 +11,16 @@
 <style>
   .comp-buttons { display: flex; flex-wrap: wrap; gap: 0.35rem; }
   #patch-chart svg, #map svg, #spec-chart svg, #circle svg { display: block; }
-  #map { margin-top: 1.2rem; }
-  #map .map-note { width: 61%; color: var(--quiet); margin: 0 0 0.4rem; }
+  /* The patching map has 59 columns, so it spans both columns; its note stays in the text column. */
+  #map { margin-top: calc(4 * var(--u)); }
+  #map .map-note { color: var(--quiet); line-height: var(--line); margin: 0 0 var(--u); }
+  @media (min-width: 1080px) { #map .map-note { width: var(--col); } }
+  /* Two plots stacked in one stage: a full line between them. */
+  .tool .stage > div + div { margin-top: calc(2 * var(--u)); }
   #map-cells { outline-offset: 4px; }
   .tool .stage .readout { width: 100%; }
-  #fig-algo > div { flex: 1 1 15rem; }
-  @media (max-width: 760px) { #map .map-note { width: 100%; } }
+  /* Until the shared CSS does this: on a phone, figures and the task list end at the column's edge. */
+  @media (max-width: 1079px) { figure, figure.multiples { max-width: 100%; } ol.tasks { box-sizing: border-box; } }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>

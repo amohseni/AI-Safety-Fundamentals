@@ -83,7 +83,7 @@ const out1 = document.getElementById('patch-readout');
 let svg1 = null;
 
 function drawBars(res) {
-  const W = Math.max(280, Math.min(560, chartBox.clientWidth || 560));
+  const W = Math.max(280, chartBox.clientWidth || 560);
   const rowH = 30, top = 34, H = top + rowH * COMPS.length + 8;
   const labelW = 132, valW = 64;
   if (!svg1 || Number(svg1.attr('width')) !== W) {
@@ -147,9 +147,9 @@ function drawMap(force) {
       mapData.push(v === (st.which === 'a' ? st.a : st.b) ? null : restoredFor([st.a, st.b], cv, COMPS.map((c) => c.id)).out);
     }
   }
-  const W = Math.max(280, Math.min(720, mapBox.clientWidth || 720));
+  const W = Math.max(280, mapBox.clientWidth || 720);
   const labelW = 132, rowH = 26, top = 6, H = top + rowH * COMPS.length + 58;
-  const cw = (W - labelW - 8) / p;
+  const cw = (W - labelW - 2) / p; // 2 px for the outline of the chosen column at the right edge
   mapBox.innerHTML = '';
   const svg = d3.select(mapBox).append('svg').attr('class', 'chart').attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`)
     .attr('role', 'img').attr('aria-label', `Patching map for the clean pair ${st.a} + ${st.b}, corrupting ${st.which}`);
@@ -200,7 +200,7 @@ function drawFreq() {
   togBtn.textContent = fs.keep[fs.sel] ? `Remove frequency ${fs.sel}` : `Put back frequency ${fs.sel}`;
   // Spectrum
   specBox.innerHTML = '';
-  const c = chart(specBox, { width: 560, height: 250, margin: { top: 34, right: 16, bottom: 52, left: 50 },
+  const c = chart(specBox, { width: specBox.clientWidth, height: 250, margin: { top: 34, right: 16, bottom: 52, left: 50 },
     x: { domain: [0.5, 29.5], ticks: 6, label: 'frequency k' }, y: { domain: [0, 6.4], ticks: 3, label: 'size in the embedding' },
     title: 'Size of each frequency in the number embeddings' });
   const bw = Math.max(3, (c.x(2) - c.x(1)) * 0.6);
@@ -217,13 +217,14 @@ function drawFreq() {
     .on('click', (ev) => { const [mx] = d3.pointer(ev, c.g.node()); fs.sel = Math.max(1, Math.min(29, Math.round(c.x.invert(mx)))); selS.set(fs.sel); drawFreq(); });
   // Circle
   circBox.innerHTML = '';
-  const S = Math.max(260, Math.min(360, circBox.clientWidth || 360));
+  // The drawing is as wide as the column; the circle keeps its size and sits in the middle of it.
+  const CW = Math.max(260, circBox.clientWidth || 360), S = Math.min(360, CW);
   const pts = M.circle(fs.sel);
   const R = 0.85, sc = d3.scaleLinear().domain([-R, R]).range([20, S - 20]);
-  const svg = d3.select(circBox).append('svg').attr('class', 'chart').attr('width', S).attr('height', S + 30).attr('viewBox', `0 0 ${S} ${S + 30}`)
+  const svg = d3.select(circBox).append('svg').attr('class', 'chart').attr('width', CW).attr('height', S + 30).attr('viewBox', `0 0 ${CW} ${S + 30}`)
     .attr('role', 'img').attr('aria-label', `The numbers' embeddings at frequency ${fs.sel}`);
   svg.append('text').attr('x', 0).attr('y', 20).attr('class', 'label-accent').text(`frequency ${fs.sel}${fs.keep[fs.sel] ? '' : ' (removed)'}`);
-  const g = svg.append('g').attr('transform', 'translate(0,30)');
+  const g = svg.append('g').attr('transform', `translate(${(CW - S) / 2},30)`);
   pts.forEach(([px, py], a) => g.append('circle').attr('cx', sc(px)).attr('cy', sc(-py)).attr('r', 3).attr('fill', 'var(--ink)'));
   for (const a of [0, 1, 2]) {
     const [px, py] = pts[a], rr = Math.hypot(px, py);
@@ -254,11 +255,14 @@ drawFreq();
 // ---- Static figure: how the model adds 12 and 30 ----
 (function figure() {
   const fig = document.getElementById('fig-algo');
-  const add = (title) => { const box = document.createElement('div'); box.innerHTML = `<p class="small-title">${title}</p>`; fig.append(box); return box; };
+  // All three boxes first, so each drawing can use the width of its share of the figure.
+  const boxes = ['Angles add, at frequency 12', 'Scores cos(w(42 − c))', 'The model’s logits for 12 + 30'].map((title) => {
+    const box = document.createElement('div'); box.innerHTML = `<p class="small-title">${title}</p>`; fig.append(box); return box;
+  });
   // 1. The circle at frequency 12.
   {
-    const box = add('Angles add, at frequency 12');
-    const S = Math.max(240, Math.min(300, box.clientWidth || 300));
+    const box = boxes[0];
+    const S = Math.max(240, box.clientWidth || 300);
     const svg = d3.select(box).append('svg').attr('class', 'chart').attr('width', S).attr('height', S).attr('viewBox', `0 0 ${S} ${S}`).attr('aria-hidden', 'true');
     const cx = S / 2, cy = S / 2, rad = S / 2 - 44, w = (2 * Math.PI * 12) / p;
     svg.append('circle').attr('cx', cx).attr('cy', cy).attr('r', rad).attr('fill', 'none').attr('stroke', 'var(--rule)');
@@ -273,17 +277,17 @@ drawFreq();
   // 2. The three cosines and their sum.
   const cs = d3.range(p);
   {
-    const box = add('Scores cos(w(42 − c))');
-    const c = chart(box, { width: 320, height: 240, margin: { top: 30, right: 16, bottom: 48, left: 40 }, x: { domain: [0, 58], ticks: 3, label: 'candidate c' }, y: { domain: [-3, 3.4], ticks: 3 }, title: 'Cosine scores at three frequencies and their sum' });
+    const box = boxes[1];
+    const c = chart(box, { width: box.clientWidth, height: 240, margin: { top: 30, right: 16, bottom: 48, left: 40 }, x: { domain: [0, 58], ticks: 3, label: 'candidate c' }, y: { domain: [-3, 3.4], ticks: 3 }, title: 'Cosine scores at three frequencies and their sum' });
     for (const k of [1, 12, 27]) c.line(`k${k}`, cs.map((v) => [v, Math.cos((2 * Math.PI * k * (42 - v)) / p)]), { color: 'quiet', width: 1 });
     c.line('sum', cs.map((v) => [v, [1, 12, 27].reduce((s, k) => s + Math.cos((2 * Math.PI * k * (42 - v)) / p), 0)]), { color: 'ink', width: 1.8 });
     c.point('peak', 42, 3, { color: 'ink', r: 3, label: 'sum, 42', anchor: 'end', dx: -6, dy: 6 });
   }
   // 3. The model's logits.
   {
-    const box = add('The model’s logits for 12 + 30');
+    const box = boxes[2];
     const L = Array.from(M.run(12, 30).logits);
-    const c = chart(box, { width: 320, height: 240, margin: { top: 30, right: 16, bottom: 48, left: 48 }, x: { domain: [0, 58], ticks: 3, label: 'candidate c' }, y: { domain: [Math.floor(d3.min(L) / 10) * 10, Math.ceil(d3.max(L) / 10) * 10 + 5], ticks: 4 }, title: 'Logits of the trained model for 12 + 30' });
+    const c = chart(box, { width: box.clientWidth, height: 240, margin: { top: 30, right: 16, bottom: 48, left: 48 }, x: { domain: [0, 58], ticks: 3, label: 'candidate c' }, y: { domain: [Math.floor(d3.min(L) / 10) * 10, Math.ceil(d3.max(L) / 10) * 10 + 5], ticks: 4 }, title: 'Logits of the trained model for 12 + 30' });
     c.line('L', cs.map((v) => [v, L[v]]), { color: 'ink', width: 1.6 });
     c.point('peak', 42, L[42], { color: 'ink', r: 3, label: '42', anchor: 'end', dx: -6, dy: 6 });
   }

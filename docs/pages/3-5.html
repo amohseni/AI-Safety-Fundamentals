@@ -9,21 +9,27 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
-  #controls { flex-direction: row; flex-wrap: wrap; gap: 0.9rem 1.6rem; max-width: none; margin-bottom: 1.2rem; align-items: flex-end; }
-  .views { display: flex; flex-wrap: wrap; gap: 1.2rem 2rem; align-items: flex-start; }
-  .views > div { flex: 1 1 20rem; min-width: 0; max-width: 34rem; }
-  .small-title { margin: 0 0 0.3rem; }
+  /* The stage spans both columns: the controls sit in a row above it, and each view takes half. */
+  #controls { flex-direction: row; flex-wrap: wrap; gap: var(--u) var(--gap); max-width: none; margin-bottom: calc(2 * var(--u)); align-items: flex-end; }
+  .views { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: calc(2 * var(--u)) var(--gap); align-items: start; margin-bottom: calc(2 * var(--u)); }
+  .views > div { min-width: 0; }
+  @media (max-width: 1079px) { .views { grid-template-columns: minmax(0, 1fr); } }
+  .small-title { margin: 0 0 var(--u); line-height: var(--line); }
   #grid, #big { display: block; touch-action: manipulation; cursor: pointer; }
   #grid:focus-visible, #big:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
-  .strip { font-size: var(--text); line-height: 1.9; margin: 0.6rem 0 0.8rem; overflow-wrap: anywhere; }
+  .strip { font-size: var(--text); line-height: var(--line); margin: calc(2 * var(--u)) 0 0; overflow-wrap: anywhere; }
   .strip .tk { white-space: pre-wrap; cursor: pointer; border-radius: 2px; padding: 0.05rem 1px; margin-right: 2px; }
   .strip .tk.q { outline: 2px solid var(--accent); outline-offset: 0; }
   .strip .tk:focus-visible { outline: 2px solid var(--focus); }
-  #types { margin: 0.6rem 0 0; }
-  #types p { margin: 0.2rem 0; }
+  #types { margin: calc(2 * var(--u)) 0 0; }
+  #types p { margin: 0 0 var(--u); line-height: var(--line); }
+  #types p:last-child { margin-bottom: 0; }
   #loss svg { display: block; }
-  #fig-heads > div { flex: 1 1 13rem; }
   #fig-heads canvas { display: block; }
+  /* Fit to the layout grid (2026-11-20). */
+  figure { margin: calc(2 * var(--u)) 0 var(--u); }
+  .caption { margin: 0 0 calc(2 * var(--u)); }
+  @media (max-width: 1079px) { figure, figure.multiples { max-width: 100%; } ol.tasks { box-sizing: border-box; } section > ol, section > ul { width: 100%; box-sizing: border-box; } }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>

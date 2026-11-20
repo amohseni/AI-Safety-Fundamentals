@@ -9,23 +9,27 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
-  #map-stage canvas { display: block; width: 100%; max-width: 40rem; touch-action: manipulation; }
-  .tool input[type="text"] {
+  #map-stage canvas { display: block; width: 100%; max-width: 100%; touch-action: manipulation; }
+  .tool input[type="text"], .tool select {
     font: inherit; font-size: var(--text); color: var(--ink); background: transparent;
-    border: 1px solid var(--rule); border-radius: 3px; padding: 0.1rem 0.4rem; width: 100%; box-sizing: border-box;
+    border: 1px solid var(--rule); border-radius: 3px; padding: 0.25rem 0.5rem; width: 100%; box-sizing: border-box;
   }
-  .abc { display: grid; grid-template-columns: auto 1fr; gap: 0.3rem 0.6rem; align-items: center; }
-  .abc span { color: var(--quiet); text-align: center; }
-  table.nn { border-collapse: collapse; margin: 0.3rem 0 0; font-variant-numeric: lining-nums tabular-nums; }
-  table.nn td, table.nn th { padding: 0.05rem 0.6rem 0.05rem 0; text-align: left; font-weight: normal; white-space: nowrap; }
+  .abc { display: grid; grid-template-columns: auto 1fr; gap: calc(0.5 * var(--u)) 0.6rem; align-items: center; }
+  .abc span { color: var(--quiet); text-align: left; }
+  table.nn { border-collapse: collapse; margin: 0; font-variant-numeric: lining-nums tabular-nums; line-height: var(--line); }
+  table.nn td, table.nn th { padding: 0 1.5rem 0 0; text-align: left; font-weight: normal; white-space: nowrap; }
   table.nn th { color: var(--quiet); }
-  table.nn td.num { text-align: right; }
+  table.nn td.num { text-align: right; padding-right: 0; }
   table.nn tr.input td { color: var(--quiet); font-style: italic; }
-  .lists { display: flex; flex-wrap: wrap; gap: 0.6rem 2.4rem; }
+  .lists { box-sizing: border-box; max-width: var(--col); display: flex; flex-wrap: wrap; gap: var(--u) var(--gap); margin-top: calc(2 * var(--u)); }
+  .lists:empty { display: none; }
   .lists > div { min-width: 12rem; }
-  .small-title { margin: 0 0 0.2rem; }
+  .small-title { margin: 0; line-height: var(--line); color: var(--quiet); }
   .err { color: var(--bad); }
-  figure.embfig { max-width: 90%; }
+  /* Fit to the layout grid (2026-11-20). */
+  figure { margin: calc(2 * var(--u)) 0 var(--u); }
+  .caption { margin: 0 0 calc(2 * var(--u)); }
+  @media (max-width: 1079px) { figure, figure.multiples { max-width: 100%; } ol.tasks { box-sizing: border-box; } section > ol, section > ul { width: 100%; box-sizing: border-box; } }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>

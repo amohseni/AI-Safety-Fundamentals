@@ -10,23 +10,25 @@
 <link rel="stylesheet" href="../css/site.css">
 <style>
   .maze { display: block; outline-offset: 4px; }
-  .multi { display: flex; flex-wrap: wrap; gap: 1.2rem 1rem; }
-  .multi > div { flex: 0 0 137px; }
-  .multi p { margin: 0.2rem 0 0; line-height: 1.35; }
+  /* Six environments: three to a row in the text column, two to a row on a phone. */
+  .multi { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: calc(2 * var(--u)) 2rem; }
+  .multi > div { min-width: 0; }
+  .multi p { margin: 0; line-height: var(--line); }
+  .multi p.env-name { margin-top: calc(0.5 * var(--u)); }
   .multi p.res { color: var(--quiet); }
-  .tool .controls.inline { flex-direction: row; flex-wrap: wrap; align-items: flex-start; max-width: none; flex: 1 1 100%; min-width: 0; gap: 0.6rem; }
-  figure#fig-means { max-width: 90%; }
-  .tool .wide-controls { max-width: 24rem; flex-basis: 24rem; }
-  ul.criteria { width: 55%; }
-  .fig-row { display: flex; flex-wrap: wrap; gap: 1.2rem 2.2rem; max-width: 90%; margin-bottom: 1rem; }
-  .fig-row > div { flex: 0 1 auto; }
-  figure .small-title { margin: 0 0 0.3rem; }
-  #fig-bottom { gap: 1rem 2.2rem; }
-  @media (max-width: 760px) { #fig-bottom { gap: 1rem; } }
-  svg.means text { font-family: et-book, Georgia, serif; font-size: var(--text); fill: var(--ink); }
+  /* Static figure: two rows of two, each item half of the text column. */
+  .fig-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--u) 2rem; margin: 0 0 calc(2 * var(--u)); }
+  .fig-row:last-child { margin-bottom: 0; }
+  .fig-row > div { min-width: 0; }
+  figure .small-title { margin: 0; line-height: var(--line); }
+  svg.means text { font-family: et-book, Georgia, serif; font-size: var(--small); fill: var(--ink); }
   svg.means text.quiet { fill: var(--quiet); font-style: italic; }
   svg.means line { stroke: var(--quiet); stroke-width: 1; }
-  @media (max-width: 760px) { ul.criteria, .fig-row, figure#fig-means { width: 100%; max-width: 100%; } #panel-inside .stage { order: -1; } }
+  @media (max-width: 1079px) {
+    .multi { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 1rem; }
+    .fig-row { column-gap: 1rem; }
+    #fig-top { grid-template-columns: minmax(0, 1fr); }
+  }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>
@@ -64,14 +66,14 @@
   <div class="panel" id="panel-means">
     <h3>Many means, one end</h3>
     <p class="panel-note">Six environments with the same start (the open circle) and the same goal (the filled square). A closed door is shaded in a different gray from the wall around it and has a bar across it; a locked door has a keyhole instead, and opens for an agent carrying the key. The <span class="c-accent">network&rsquo;s path</span> is compared with the path of a <span class="c-second">direct controller</span>, which moves along its row toward the goal&rsquo;s column, then along that column toward the goal, and pushes against anything in its way. Like a thermostat, the direct controller has one means.</p>
-    <div class="row"><div class="controls inline" id="means-controls"></div><div class="stage" id="means-stage"></div></div>
+    <div class="row"><div class="controls" id="means-controls"></div><div class="stage" id="means-stage"></div></div>
     <p class="readout" id="means-readout" aria-live="polite"></p>
   </div>
 
   <div class="panel" id="panel-inside">
     <h3>Inside the network</h3>
     <p class="panel-note">The <span class="c-accent">agent&rsquo;s path</span> under the chosen interventions, and the cell the goal probe reads from the activations at the chosen step, ringed in <span class="c-second">orange</span>. <em>Removed</em> replaces the activations&rsquo; component in the goal subspace with its average. <em>Swapped</em> replaces that component with the one the network computes, in the same state, for a goal at the <span class="c-accent">outlined cell</span>; tap a cell to move it, or focus the grid and use the arrow keys. A belief about the doors replaces the component in the door subspace with the one computed for those door states; the doors themselves do not change.</p>
-    <div class="row"><div class="controls wide-controls" id="inside-controls"></div><div class="stage" id="inside-stage"></div></div>
+    <div class="row"><div class="controls" id="inside-controls"></div><div class="stage" id="inside-stage"></div></div>
     <p class="readout" id="inside-readout" aria-live="polite"></p>
   </div>
 </div>

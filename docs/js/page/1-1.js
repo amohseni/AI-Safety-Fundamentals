@@ -45,7 +45,7 @@ const KEY = ['McCulloch and Pitts', 'Dartmouth workshop', 'Perceptron', 'Minsky 
 function staticFigure(tl) {
   const box = document.getElementById('fig-static');
   const ev = KEY.map((k) => tl.events.find((e) => e.label === k)).filter(Boolean);
-  const W = Math.max(300, Math.min(560, box.clientWidth || 560)), H = 620;
+  const W = Math.max(300, box.clientWidth || 560), H = 620;
   const m = { top: 14, bottom: 14, left: 48 };
   const y = d3.scaleLinear().domain([1940, 2026]).range([m.top, H - m.bottom]);
   const svg = d3.select(box).append('svg').attr('class', 'chart').attr('viewBox', `0 0 ${W} ${H}`).attr('width', W).attr('height', H)
@@ -210,7 +210,7 @@ function tool(tl, comp) {
     LANES.forEach(([k, name]) => {
       const t = laneTop[k];
       g.append('line').attr('x1', 0).attr('x2', W).attr('y1', t + 4).attr('y2', t + 4).attr('stroke', 'var(--rule)');
-      g.append('text').attr('x', 4).attr('y', t + 24).attr('font-style', 'italic').text(name);
+      g.append('text').attr('x', 0).attr('y', t + 24).attr('font-style', 'italic').text(name);
       let rowsTop = t + 32;
       if (k === 'compute' && state.compute) { drawCompute(g, t + 30); rowsTop += COMPUTE_H; }
       // Pack labels into rows, left to right.

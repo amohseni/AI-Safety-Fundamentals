@@ -14,8 +14,8 @@ function imagenetFigure() {
   const box = document.getElementById('fig-imagenet');
   box.innerHTML = '';
   // One row per year: the label on top, the bar under it, so long labels never run off the chart.
-  const width = Math.max(300, Math.min(620, box.clientWidth || 620)), rowH = 50;
-  const m = { top: 40, right: 16, bottom: 48, left: 4 };
+  const width = Math.max(300, box.clientWidth || 620), rowH = 50;
+  const m = { top: 40, right: 1, bottom: 48, left: 0 };
   const n = IMAGENET.length, height = m.top + m.bottom + rowH * n;
   const iw = width - m.left - m.right;
   const svg = d3.select(box).append('svg').attr('class', 'chart').attr('viewBox', `0 0 ${width} ${height}`)

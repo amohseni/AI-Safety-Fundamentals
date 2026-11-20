@@ -47,7 +47,9 @@ function shell() {
   top.className = 'topline';
   top.setAttribute('aria-label', 'Site');
   top.innerHTML = `<a href="${base}index.html">A Primer on AI</a>
-    <span>Section ${page.section.n}, ${page.section.title}${page.core ? ' <span class="core-dot" title="Core path"></span>' : ''}</span>`;
+    <span class="here"><span>${page.section.n}. ${page.section.title}</span>
+      <ol class="pages" aria-label="Pages in this section">${page.section.pages.filter((p) => p.href).map((p) =>
+        `<li><a href="${base + p.href}" title="${p.id} ${p.title}"${p.id === id ? ' aria-current="page"' : ''}>${p.id}</a></li>`).join('')}</ol></span>`;
   article.before(top);
 
   const h1 = article.querySelector('h1');
@@ -266,6 +268,7 @@ export function contents(el) {
       <button type="button" data-view="all" aria-pressed="${view === 'all'}">All ${allPages.length} pages</button>
       <button type="button" data-view="core" aria-pressed="${view === 'core'}">Core path, ${corePages.length} pages</button>
     </div>` +
+    `<p class="key"><span><span class="core-dot"></span> on the core path</span><span><span class="done-dot done"></span> all its check questions answered correctly</span></p>` +
     (view === 'core' ? `<p class="core-next">${next ? `Next on the core path: <a href="${next.href}">${next.id} ${next.title}</a>` : 'You have finished the core path.'}</p>` : '') + list;
   el.querySelectorAll('.view button').forEach((b) => b.addEventListener('click', () => { store.set('view', b.dataset.view); contents(el); el.querySelector(`.view [data-view="${b.dataset.view}"]`).focus(); }));
 }

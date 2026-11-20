@@ -9,10 +9,9 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
-  .tool .plane { width: 100%; aspect-ratio: 1 / 1; max-width: 460px; }
-  /* The shared chart kit draws charts at least 280 pixels wide, so the four panels sit two to a row. */
-  #fig-acts { max-width: 640px; }
-  #fig-acts > div { flex: 1 1 280px; min-width: 280px; }
+  .tool .plane { width: 100%; aspect-ratio: 1 / 1; max-width: 100%; }
+  /* Four panels across both columns; two to a row on a narrow screen, one on a phone. */
+  #fig-acts > div { flex: 1 1 12rem; min-width: 0; }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>

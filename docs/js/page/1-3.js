@@ -33,10 +33,10 @@ function times(r) {
 // ---- Static figure: a small network with two hidden layers ----
 (function figure() {
   const box = document.getElementById('fig-net');
-  const W = 300, H = 190;
+  const W = Math.max(260, box.clientWidth || 300), H = 190;
   const svg = d3.select(box).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('width', W).attr('height', H).attr('aria-hidden', 'true');
   const layers = [2, 4, 4, 1];
-  const xs = layers.map((_, i) => 30 + i * 80);
+  const xs = layers.map((_, i) => 8 + i * (W - 16) / 3);
   const pos = layers.map((n, i) => d3.range(n).map((k) => [xs[i], H / 2 + (k - (n - 1) / 2) * 38]));
   for (let i = 0; i < layers.length - 1; i++) {
     for (const a of pos[i]) for (const b of pos[i + 1]) {
@@ -67,7 +67,7 @@ let svg, g, iw, ih, xAxis, yAxis, bars, valLabels;
 const m = { top: 46, right: 12, bottom: 52, left: 64 };
 function build() {
   stage.innerHTML = '';
-  const W = Math.max(280, Math.min(600, stage.clientWidth || 560)), H = 340;
+  const W = Math.max(280, stage.clientWidth || 560), H = 340;
   iw = W - m.left - m.right; ih = H - m.top - m.bottom;
   svg = d3.select(stage).append('svg').attr('class', 'chart').attr('viewBox', `0 0 ${W} ${H}`).attr('width', W).attr('height', H)
     .attr('role', 'img');

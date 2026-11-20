@@ -14,7 +14,7 @@ const clampE = (v) => Math.min(1e3, Math.max(1e-4, v));
 (function figure() {
   const box = document.createElement('div');
   document.getElementById('fig-dd').append(box);
-  const c = chart(box, { width: 560, height: 300, margin: { top: 30, right: 70, bottom: 52, left: 64 },
+  const c = chart(box, { width: box.clientWidth, height: 300, margin: { top: 30, right: 70, bottom: 52, left: 64 },
     x: { domain: [1, 1000], log: true, ticks: 4, format: '~g', label: 'number of features p' }, y: { domain: [0.01, 10], log: true, ticks: 3, format: '~g', label: 'test error' },
     title: 'Test error against the number of features, averaged over 8 draws' });
   c.vline('n', N_TRAIN, { color: 'quiet', label: 'p = 40' });
@@ -33,7 +33,7 @@ const clampE = (v) => Math.min(1e3, Math.max(1e-4, v));
 const ctl = document.getElementById('controls'), out = document.getElementById('readout');
 const pS = slider(ctl, { name: 'Number of features p', min: 0, max: 3, step: 0.005, value: Math.log10(st.p),
   format: (v) => String(Math.round(10 ** v)), onInput: (v) => { st.p = Math.round(10 ** v); drawFit(); } });
-const quick = document.createElement('div'); quick.className = 'seg quick'; ctl.append(quick);
+const quick = document.createElement('div'); quick.className = 'seg'; ctl.append(quick);
 for (const p of [10, 40, 400]) button(quick, `p = ${p}`, () => { st.p = p; pS.set(Math.log10(p)); drawFit(); });
 slider(ctl, { name: 'Label noise (standard deviation)', min: 0, max: 0.6, step: 0.05, value: st.noise, format: (v) => v.toFixed(2),
   onInput: (v) => { st.noise = v; data = makeData(v); schedule(); } });
@@ -41,9 +41,9 @@ segmented(ctl, { name: 'Ridge strength', options: RIDGES.map((r) => [r, r]), val
   onChange: (k) => { st.ridge = Number(k); schedule(); } });
 button(ctl, 'New features', () => { st.seed++; F = makeFeatures(data.X, st.seed); schedule(); });
 
-const fc = chart(document.getElementById('fit-chart'), { height: 300, margin: { top: 34, right: 70, bottom: 52, left: 52 },
+const fc = chart(document.getElementById('fit-chart'), { width: document.getElementById('fit-chart').clientWidth, height: 300, margin: { top: 34, right: 70, bottom: 52, left: 64 },
   x: { domain: [-1, 1], label: 'x' }, y: { domain: [-2.5, 2.5], label: 'y' }, title: 'Training points, true curve, and fitted curve' });
-const ec = chart(document.getElementById('err-chart'), { height: 300, margin: { top: 34, right: 70, bottom: 52, left: 64 },
+const ec = chart(document.getElementById('err-chart'), { width: document.getElementById('err-chart').clientWidth, height: 300, margin: { top: 34, right: 70, bottom: 52, left: 64 },
   x: { domain: [1, 1000], log: true, ticks: 4, format: '~g', label: 'number of features p' }, y: { domain: [1e-4, 1e3], log: true, ticks: 4, format: '~g', label: 'error' },
   title: 'Training and test error against the number of features' });
 ec.vline('n', N_TRAIN, { color: 'quiet', label: 'p = 40', labelY: 0 });
