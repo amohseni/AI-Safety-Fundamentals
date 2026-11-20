@@ -9,21 +9,27 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
-  #controls { flex-direction: row; flex-wrap: wrap; gap: 0.9rem 1.6rem; max-width: none; margin-bottom: 1.2rem; align-items: flex-end; }
-  .scroller { overflow-x: auto; max-width: 100%; padding: 3px; }
-  table.lens { border-collapse: separate; border-spacing: 2px; font-size: var(--text); font-variant-numeric: lining-nums tabular-nums; }
-  table.lens th { font-weight: normal; color: var(--quiet); white-space: pre; padding: 0.1rem 0.25rem; text-align: left; }
+  /* The table spans both columns, with its control in a row above it. */
+  #controls { flex-direction: row; flex-wrap: wrap; gap: var(--u) var(--gap); max-width: none; margin-bottom: calc(2 * var(--u)); align-items: flex-end; }
+  /* The padding leaves room for the outline of the chosen cell; the negative margin keeps the table on the column edges. */
+  .scroller { overflow-x: auto; padding: 3px; margin: -3px -3px calc(2 * var(--u) - 3px); }
+  table.lens { min-width: 100%; border-collapse: separate; border-spacing: 0; font-size: var(--text); line-height: calc(var(--line) - 2px); font-variant-numeric: lining-nums tabular-nums; }
+  table.lens th { font-weight: normal; color: var(--quiet); white-space: pre; padding: 0 0.35rem; text-align: left; border: 1px solid var(--paper); }
   table.lens thead th { color: var(--ink); border-bottom: 1px solid var(--rule); }
-  table.lens tbody th { text-align: right; position: sticky; left: 0; background: var(--paper); box-shadow: -6px 0 0 var(--paper), 2px 0 0 var(--paper); }
-  table.lens thead th:first-child { position: sticky; left: 0; background: var(--paper); }
-  table.lens td { white-space: pre; padding: 0.1rem 0.25rem; cursor: pointer; border-radius: 2px; }
-  table.lens td.sel { outline: 2px solid var(--accent); outline-offset: 0; }
+  table.lens tbody th { text-align: right; padding-left: 0; position: sticky; left: 0; background: var(--paper); }
+  table.lens thead th:first-child { padding-left: 0; position: sticky; left: 0; background: var(--paper); }
+  table.lens td { white-space: pre; padding: 0 0.35rem; cursor: pointer; border-radius: 3px; border: 1px solid var(--paper); }
+  table.lens td.sel { outline: 2px solid var(--accent); outline-offset: -1px; }
   table.lens td:focus-visible { outline: 2px solid var(--focus); }
-  #detail { display: flex; flex-wrap: wrap; gap: 1rem 2rem; margin-top: 1rem; align-items: flex-start; }
-  #detail > div { flex: 1 1 18rem; min-width: 0; }
+  #detail { box-sizing: border-box; max-width: var(--col); margin-top: calc(2 * var(--u)); }
+  #detail .readout { width: auto; }
   #top10 svg { display: block; }
-  .small-title { margin: 0 0 0.3rem; }
+  .small-title { margin: 0 0 var(--u); line-height: var(--line); }
   #fig-block svg { display: block; max-width: 100%; height: auto; }
+  /* Fit to the layout grid (2026-11-20). */
+  figure { margin: calc(2 * var(--u)) 0 var(--u); }
+  .caption { margin: 0 0 calc(2 * var(--u)); }
+  @media (max-width: 760px) { figure, figure.multiples { max-width: 100%; } ol.tasks { box-sizing: border-box; } section > ol, section > ul { width: 100%; box-sizing: border-box; } }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>

@@ -9,19 +9,24 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
-  .toks { font-size: var(--text); display: flex; flex-wrap: wrap; gap: 0.45rem 0.25rem; margin: 0.2rem 0 0; }
+  /* Token chips: one text line per row of a chip; rows of chips are 3 or 5 half lines apart. */
+  .toks { font-size: var(--text); display: flex; flex-wrap: wrap; gap: var(--u) 0.25rem; margin: 0; }
   .toks[dir="rtl"] { direction: rtl; }
-  .tok { display: inline-flex; flex-direction: column; align-items: center; border: 1px solid var(--rule); border-radius: 2px; padding: 0 0.3rem; line-height: 1.35; }
+  .tok { display: inline-flex; flex-direction: column; align-items: center; border: 1px solid var(--rule); border-radius: 2px; padding: 0 0.3rem; margin: -1px 0; line-height: var(--line); }
   .tok .t { white-space: pre; color: var(--ink); }
   .tok .id { color: var(--quiet); font-variant-numeric: lining-nums tabular-nums; }
   .tok .sp, .tok .byte { color: var(--quiet); }
   .tok .byte { font-style: italic; }
   .tok.new { border-color: var(--accent); }
-  .tool textarea { width: 100%; min-height: 4.5rem; font: inherit; font-size: var(--text); line-height: 1.5; color: var(--ink); background: transparent; border: 1px solid var(--rule); border-radius: 3px; padding: 0.4rem 0.5rem; }
-  .merges { margin: 0.4rem 0 0; padding-left: 1.6rem; columns: 2 10rem; }
-  .merges li { break-inside: avoid; }
+  .tool textarea { box-sizing: border-box; width: 100%; min-height: calc(3 * var(--line)); font: inherit; font-size: var(--text); line-height: var(--line); color: var(--ink); background: transparent; border: 1px solid var(--rule); border-radius: 3px; padding: calc(0.5 * var(--u)) 0.6rem; }
+  .merges { box-sizing: border-box; max-width: var(--col); margin: calc(2 * var(--u)) 0 0; padding-left: 2rem; columns: 2 10rem; column-gap: var(--gap); line-height: var(--line); }
+  .merges:empty { display: none; }
+  .merges li { break-inside: avoid; margin: 0; }
   .merges .n { color: var(--quiet); }
-  figure.tokfig { max-width: 90%; }
+  /* Fit to the layout grid (2026-11-20). */
+  figure { margin: calc(2 * var(--u)) 0 var(--u); }
+  .caption { margin: 0 0 calc(2 * var(--u)); }
+  @media (max-width: 760px) { figure, figure.multiples { max-width: 100%; } ol.tasks { box-sizing: border-box; } section > ol, section > ul { width: 100%; box-sizing: border-box; } }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>

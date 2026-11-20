@@ -9,34 +9,43 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
-  #fp-top { display: flex; flex-wrap: wrap; gap: 0.9rem 1.6rem; align-items: flex-end; margin-bottom: 1.2rem; }
-  #fp-top select { font: inherit; font-size: var(--text); color: var(--ink); background: transparent; }
-  #fp-top .ctl input[type="range"] { min-width: 10rem; }
-  .fp-body { display: flex; flex-wrap: wrap; gap: 1.2rem 2rem; align-items: flex-start; }
-  ol.steps { list-style: none; padding: 0; margin: 0; flex: 0 1 19rem; min-width: 15rem; }
-  ol.steps li { margin: 0; }
-  ol.steps button { display: flex; justify-content: space-between; gap: 0.8rem; width: 100%; text-align: left; border: 0; border-left: 2px solid transparent; border-radius: 0; padding: 0.05rem 0.4rem; }
-  ol.steps button .shape { color: var(--quiet); white-space: nowrap; font-variant-numeric: lining-nums tabular-nums; }
+  /* The steps are the tool's controls, so they sit in the margin column beside the stage. */
+  #fp-top { display: flex; flex-wrap: wrap; gap: var(--u) 0.5rem; align-items: flex-end; }
+  #fp-top .ctl { flex: 1 1 100%; }
+  #fp-top select { font: inherit; font-size: var(--text); color: var(--ink); background: transparent; border: 1px solid var(--rule); border-radius: 3px; padding: 0.25rem 0.5rem; width: 100%; box-sizing: border-box; }
+  ol.steps { list-style: none; padding: 0; margin: 0; }
+  ol.steps li { margin: 0; line-height: var(--line); }
+  /* The mark of the current step hangs in the gap, so the names stay on the column's edge. */
+  ol.steps button { display: block; width: calc(100% + 0.6rem + 2px); text-align: left; border: 0; border-left: 2px solid transparent; border-radius: 0; margin-left: calc(-0.6rem - 2px); padding: 0 0 0 0.6rem; line-height: var(--line); }
   ol.steps button[aria-current="step"] { border-left-color: var(--accent); color: var(--accent); }
-  ol.steps li.layer-head { color: var(--quiet); font-style: italic; padding: 0.5rem 0 0.1rem 0.4rem; }
-  ol.steps li.in-layer button { padding-left: 1.4rem; }
-  .fp-stage { flex: 1 1 24rem; min-width: 0; }
-  .fp-stage .small-title { margin: 0 0 0.2rem; }
-  .fp-stage .what { color: var(--quiet); margin: 0.2rem 0 0.6rem; }
-  .fp-stage canvas { display: block; max-width: 100%; }
-  .toks { font-size: var(--text); display: flex; flex-wrap: wrap; gap: 0.45rem 0.25rem; margin: 0.4rem 0; }
-  .tok { display: inline-flex; flex-direction: column; align-items: center; border: 1px solid var(--rule); border-radius: 2px; padding: 0 0.3rem; line-height: 1.35; }
+  ol.steps li.layer-head { color: var(--quiet); font-style: italic; }
+  ol.steps li.in-layer button { padding-left: 1.6rem; }
+  #fp-stage { min-width: 0; }
+  #fp-stage p { margin: 0 0 var(--u); line-height: var(--line); }
+  #fp-stage .what { color: var(--quiet); }
+  #fp-stage canvas + .what, #fp-stage .heads + .what { margin: var(--u) 0 0; }
+  #fp-stage .shape-line { margin-bottom: calc(2 * var(--u)); }
+  #fp-stage .tops { margin-top: calc(2 * var(--u)); }
+  #fp-stage .tops p { margin: 0; }
+  #fp-stage .tops .small-title { margin-bottom: var(--u); }
+  #fp-stage canvas { display: block; max-width: 100%; }
+  .heads { display: grid; gap: var(--u); }
+  .toks { font-size: var(--text); display: flex; flex-wrap: wrap; gap: var(--u) 0.25rem; margin: 0; }
+  .tok { display: inline-flex; flex-direction: column; align-items: center; border: 1px solid var(--rule); border-radius: 2px; padding: 0 0.3rem; margin: -1px 0; line-height: var(--line); }
   .tok .t { white-space: pre; }
   .tok .sp { color: var(--quiet); }
   .tok .id { color: var(--quiet); font-variant-numeric: lining-nums tabular-nums; }
-  table.preds { border-collapse: collapse; margin: 0.5rem 0 0; font-variant-numeric: lining-nums tabular-nums; }
-  table.preds td, table.preds th { padding: 0.05rem 0.8rem 0.05rem 0; text-align: left; font-weight: normal; white-space: pre; }
-  table.preds th { color: var(--quiet); }
-  #fp-strip { margin-top: 1.4rem; }
-  .pipe { font-size: var(--text); line-height: 1.6; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.2rem 0.5rem; max-width: 90%; margin: 1rem 0 0.4rem; }
+  #fp-strip { margin-top: calc(3 * var(--u)); }
+  #fp-strip p { margin: 0 0 var(--u); line-height: var(--line); }
+  #fp-strip svg { display: block; }
+  .tool .row + .panel-note { margin-top: calc(2 * var(--u)); margin-bottom: 0; }
+  .pipe { box-sizing: border-box; max-width: var(--col); font-size: var(--text); line-height: var(--line); display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 0.5rem; margin: calc(2 * var(--u)) 0 var(--u); }
   .pipe .op { color: var(--ink); }
   .pipe .arr { color: var(--quiet); font-style: italic; white-space: nowrap; }
-  .pipe .rep { border: 1px solid var(--rule); border-radius: 3px; padding: 0 0.4rem; }
+  .pipe .rep { border: 1px solid var(--rule); border-radius: 3px; padding: 0 0.4rem; margin: -1px 0; }
+  /* Fit to the layout grid (2026-11-20). */
+  .caption { margin: 0 0 calc(2 * var(--u)); }
+  @media (max-width: 760px) { ol.tasks { box-sizing: border-box; } section > ol, section > ul { width: 100%; box-sizing: border-box; } }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>
@@ -62,12 +71,16 @@
 <p>The tool shows every intermediate result of one forward pass of GPT-2 small, recorded in advance for five prompts. Each task below asks for a prediction first. Make it, then use the tool to check it.</p>
 
 <div class="tool" id="tool">
-  <div id="fp-top"></div>
-  <div class="fp-body">
-    <ol class="steps" id="fp-steps" aria-label="Steps of the forward pass"></ol>
-    <div class="fp-stage" id="fp-stage" aria-live="polite"></div>
+  <div class="row">
+    <div class="controls">
+      <div id="fp-top"></div>
+      <ol class="steps" id="fp-steps" aria-label="Steps of the forward pass"></ol>
+    </div>
+    <div class="stage">
+      <div id="fp-stage" aria-live="polite"></div>
+      <div id="fp-strip"></div>
+    </div>
   </div>
-  <div id="fp-strip"></div>
   <p class="panel-note">Each heat map row is one position; each column is one number. <span class="c-accent">Blue</span> is positive and <span class="c-second">orange</span> negative. Colors are cut off at the 99th percentile of the absolute values in that step, because a few entries of GPT-2&rsquo;s residual stream are hundreds of times larger than the rest; the values were rounded to 15 levels for display. The strip under the map shows all 124,439,808 parameters: the parameters used so far are <span class="c-accent">blue</span>, and those of the current step are outlined.</p>
 </div>
 

@@ -10,7 +10,7 @@ const readout = document.getElementById('readout');
 function blockDiagram() {
   const fig = document.getElementById('fig-block');
   fig.innerHTML = '';
-  const W = Math.max(300, Math.min(520, fig.clientWidth || 520));
+  const W = Math.max(300, fig.clientWidth || 520);
   const wide = W >= 440;
   const sx = 34, bx = 92, step = 50;
   const parts = [];
@@ -32,7 +32,7 @@ function blockDiagram() {
     const d = dir === 'left' ? `M${x},${y}l8,-5l0,10z` : `M${x},${y}l-5,-8l10,0z`;
     svg.append('path').attr('d', d).attr('fill', 'var(--ink)');
   };
-  box(4, 8, 34, 'token and position embeddings');
+  box(1, 8, 34, 'token and position embeddings');
   line(sx, 42, sx, H - 96, { w: 2.2, c: 'var(--accent)' });
   svg.append('text').attr('x', sx + 10).attr('y', 72).attr('class', 'label-accent').text('residual stream');
   parts.forEach(([name], i) => {
@@ -49,8 +49,8 @@ function blockDiagram() {
   const yb = top + parts.length * step;
   svg.append('text').attr('x', sx + 14).attr('y', yb + 12).text('… 9 more layers');
   arrowHead(sx, H - 88, 'down');
-  box(4, H - 86, 34, wide ? 'final layer norm, then unembedding' : 'layer norm, unembedding');
-  svg.append('text').attr('x', 10).attr('y', H - 18).attr('class', 'label-ink').text('a score for every token');
+  box(1, H - 86, 34, wide ? 'final layer norm, then unembedding' : 'layer norm, unembedding');
+  svg.append('text').attr('x', 11).attr('y', H - 18).attr('class', 'label-ink').text('a score for every token');
 }
 blockDiagram();
 
@@ -121,16 +121,16 @@ function detail() {
   const c = P.cells[st.row][st.col];
   document.getElementById('top-title').innerHTML = `Top 10 next tokens ${rowLong(st.row)}, at ${q(P.tokens[st.col])}`;
   topBox.innerHTML = '';
-  const W = Math.max(260, Math.min(420, topBox.clientWidth || 420)), rowH = 26, H = rowH * 10 + 6, lw = 130, vw = 52;
+  const W = Math.max(260, topBox.clientWidth || 420), rowH = 30, H = rowH * 10, lw = 130, vw = 52;
   const svg = d3.select(topBox).append('svg').attr('class', 'chart').attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`)
     .attr('role', 'img').attr('aria-label', 'Top 10 predicted next tokens and their probabilities');
   const x = d3.scaleLinear().domain([0, 1]).range([lw, W - vw]);
   c.t.forEach((t, k) => {
     const y = k * rowH;
-    svg.append('text').attr('x', lw - 8).attr('y', y + 19).attr('text-anchor', 'end').attr('class', k === 0 ? 'label-accent' : 'label-ink').text(showToken(t));
-    svg.append('rect').attr('x', lw).attr('y', y + 6).attr('width', Math.max(1, x(c.p[k]) - lw)).attr('height', rowH - 10)
+    svg.append('text').attr('x', lw - 8).attr('y', y + 21).attr('text-anchor', 'end').attr('class', k === 0 ? 'label-accent' : 'label-ink').text(showToken(t));
+    svg.append('rect').attr('x', lw).attr('y', y + 5).attr('width', Math.max(1, x(c.p[k]) - lw)).attr('height', rowH - 10)
       .attr('fill', k === 0 ? 'var(--accent)' : 'var(--quiet)').attr('fill-opacity', k === 0 ? 0.85 : 0.5);
-    svg.append('text').attr('x', x(c.p[k]) + 6).attr('y', y + 19).text(c.p[k] < 0.01 ? c.p[k].toFixed(3) : c.p[k].toFixed(2));
+    svg.append('text').attr('x', x(c.p[k]) + 6).attr('y', y + 21).text(c.p[k] < 0.01 ? c.p[k].toFixed(3) : c.p[k].toFixed(2));
   });
   let s = `Position ${st.col}, ${q(P.tokens[st.col])}, ${rowLong(st.row)}: the top prediction is <span class="c-accent">${q(c.t[0])}</span>, with probability <b>${c.p[0].toFixed(2)}</b>.`;
   if (c.chg) {
