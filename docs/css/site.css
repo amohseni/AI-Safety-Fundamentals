@@ -208,7 +208,7 @@ p, dl, ol, ul, .sidenote, .marginnote { line-height: 1.5; }
 h1 { hyphens: auto; overflow-wrap: break-word; }
 .topline { flex-wrap: wrap; column-gap: 1.2rem; }
 /* A page's own canvas cap (e.g. .plane) wins over the generic max-width. */
-.tool .plane { max-width: 34rem; }
+.tool .plane { max-width: 100%; }
 .sidenote > code { font-size: var(--text); }
 .check .again { color: var(--quiet); font-style: italic; margin: 0 0 0.6rem; }
 .check button.chosen:disabled { opacity: 1; }
@@ -353,3 +353,18 @@ p.subtitle { margin-top: 0; margin-bottom: calc(3 * var(--u)); line-height: var(
   .licence { width: var(--col); margin-top: calc(6 * var(--u)); }
 }
 .contents .key span > span { display: inline-block; margin: 0 0.45rem 0 0; white-space: nowrap; }
+
+/* Shared fixes found while fitting pages to the grid (2026-11-20). */
+@media (max-width: 760px) {
+  ol.tasks { box-sizing: border-box; }
+  figure, figure.multiples, .fullwidth { max-width: 100%; }
+  section > ul, section > ol, section > dl, article > ul, article > ol { width: auto; }
+}
+figure { margin: calc(3 * var(--u)) 0 calc(2 * var(--u)); }
+.caption { margin: 0 0 calc(3 * var(--u)); }
+.tool .controls > button { align-self: flex-start; }
+/* A stage that needs both columns: add class "wide" to its .row; the controls go in a row above it. */
+@media (min-width: 1080px) {
+  .tool .row.wide { display: block; }
+  .tool .row.wide > .controls { flex-direction: row; flex-wrap: wrap; align-items: flex-start; gap: var(--u) calc(2 * var(--u)); margin-bottom: calc(2 * var(--u)); }
+}

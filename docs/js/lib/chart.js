@@ -8,7 +8,8 @@ export function chart(container, opts) {
   const { height = 320, margin = { top: 34, right: 120, bottom: 52, left: 60 }, x: xo, y: yo, title } = opts;
   // Draw at the container's real width (capped), so text stays at its set size on phones.
   const avail = container.clientWidth || opts.width || 560;
-  const width = Math.max(200, Math.min(opts.width || 560, avail));
+  // A chart fills its container unless the page asks for a narrower one.
+  const width = Math.max(200, Math.min(opts.width || avail, avail));
   const svg = d3.select(container).append('svg')
     .attr('class', 'chart').attr('viewBox', `0 0 ${width} ${height}`).attr('width', width).attr('height', height)
     .attr('role', 'img').attr('aria-label', title || '');
@@ -24,7 +25,7 @@ export function chart(container, opts) {
   };
   drawAxes();
   if (xo.label) g.append('text').attr('x', iw).attr('y', ih + 46).attr('text-anchor', 'end').text(xo.label);
-  if (yo.label) g.append('text').attr('x', -margin.left + 4).attr('y', -16).attr('text-anchor', 'start').text(yo.label);
+  if (yo.label) g.append('text').attr('x', -margin.left).attr('y', -16).attr('text-anchor', 'start').text(yo.label);
   const clipId = `clip-${Math.random().toString(36).slice(2)}`;
   svg.append('defs').append('clipPath').attr('id', clipId).append('rect').attr('x', -6).attr('y', -6).attr('width', iw + 12).attr('height', ih + 12);
   const layer = g.append('g').attr('clip-path', `url(#${clipId})`);
