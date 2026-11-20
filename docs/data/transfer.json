@@ -1,0 +1,82 @@
+{
+ "1": {
+  "q": "A research group takes a network design that was published in 1989, changes almost nothing, and in 2012 it beats every other method on a large benchmark. Going by the pattern on the timeline, what most likely changed between 1989 and 2012?",
+  "options": [
+   "A new learning algorithm replaced backpropagation",
+   "Far more computing power and training data became available",
+   "Researchers stopped needing labeled examples"
+  ],
+  "correct": 1,
+  "feedback": "The timeline shows that most core ideas of modern AI are decades older than their success: backpropagation, convolutional networks, and the LSTM were in place by 1997. What changed after 2010 was computing power and data. An old design that suddenly works is the usual case, and the first thing to ask about it is how much more compute and data it was given."
+ },
+ "2": {
+  "q": "A classifier is trained with cross-entropy by gradient descent on the whole training set at a fixed learning rate. The loss falls fast for fifty steps and then creeps down for thousands of steps, although the gradient is never zero. Raising the learning rate makes the loss blow up. Which explanation fits?",
+  "options": [
+   "The loss surface is much steeper in some directions than in others, and the learning rate is capped by the steepest one",
+   "Backpropagation gives less accurate gradients as training goes on",
+   "Cross-entropy is strictly proper, so the loss cannot fall further"
+  ],
+  "correct": 0,
+  "feedback": "The learning rate has to be small enough for the direction of greatest curvature, or the steps overshoot and the loss grows. A rate that small makes only slow progress along the flat directions, which is the long creep. Momentum or Adam would speed that progress. Backpropagation computes the exact gradient at every step, and strict propriety says where the minimum of the expected loss is, not how fast training gets there."
+ },
+ "3": {
+  "q": "Someone builds a language model like the one in this section but leaves out every attention layer. It keeps the token and position embeddings, the residual stream, the MLPs, and the unembedding. What can this model not do?",
+  "options": [
+   "Represent more than one feature in a position's vector",
+   "Make its prediction at a position depend on which tokens came earlier",
+   "Be trained by gradient descent"
+  ],
+  "correct": 1,
+  "feedback": "Attention is the only operation that moves information between positions. The embeddings, the MLPs, and the unembedding each act on one position's vector alone. Without attention, the prediction after a token can depend only on that token and where it sits, so the model can learn which token tends to follow which, and nothing that needs the earlier text."
+ },
+ "4": {
+  "q": "A lab fine-tunes an assistant with RLHF. To get more improvement it makes the penalty weight \\(\\beta\\) ten times smaller and trains again. The reward model's average score rises further, but people rating fresh responses prefer the earlier version. What best explains this?",
+  "options": [
+   "A smaller \\(\\beta\\) lets the policy concentrate on the responses the reward model scores highest, and those include responses it scores wrongly",
+   "A smaller \\(\\beta\\) erases the knowledge from pretraining, which the reward model's score would also show",
+   "Human raters are too noisy to detect an improvement this large"
+  ],
+  "correct": 0,
+  "feedback": "RLHF maximizes the reward model's score minus \\(\\beta\\) times the KL divergence from the starting model, which reweights the starting distribution by \\(\\exp(r/\\beta)\\). As \\(\\beta\\) shrinks, the probability piles up on the highest-scoring responses. The reward model is a fitted proxy, and its highest scores include its largest errors, so true quality rises at first and then falls while the score keeps rising."
+ },
+ "5": {
+  "q": "A feed recommender is trained by reinforcement learning with clicks as the reward. After a month it shows mostly outrage headlines. No engineer wrote a rule that favors them, and nobody on the team wanted them. Which idea from this section explains what happened?",
+  "options": [
+   "Someone must have coded the preference in, because training only strengthens behavior that was put there on purpose",
+   "Whatever earns more reward than average spreads, whether or not anyone intended it",
+   "Reinforcement learning drifts at random when the reward is noisy"
+  ],
+  "correct": 1,
+  "feedback": "Learning from reward is selection. Showing a kind of headline that earns more clicks than average becomes more frequent, the way a fitter type spreads under the replicator equation. Nobody has to design the result, and the mechanism the trained system ends up with has to be discovered afterward. The outcome is systematic, not random: it follows the reward."
+ },
+ "6": {
+  "q": "A researcher finds a neuron that responds strongly to legal contracts, to DNA sequences, and to Korean text. A colleague says this shows the model confuses the three topics. What is a better explanation?",
+  "options": [
+   "The neuron is broken and should be removed",
+   "The model represents the three as different directions in activation space, and this neuron takes part in all three",
+   "The model stores one feature per neuron, so the three topics must be one feature to the model"
+  ],
+  "correct": 1,
+  "feedback": "On the linear representation hypothesis a feature is a direction in activation space, and a direction is usually spread over many neurons. A network can hold more features than it has dimensions by using directions that are not perpendicular, which costs little when the features are rarely active together. Each neuron then takes part in many features, so one neuron responding to unrelated things is what superposition predicts. To find the features, look for directions, not single neurons."
+ },
+ "7": {
+  "q": "Two analysts watch the same agent. One says it thinks rain is likely and mildly dislikes getting wet. The other says it thinks rain is unlikely and strongly dislikes getting wet. Suppose the two descriptions represent exactly the same preferences over everything the agent could choose. What kind of evidence could decide between them?",
+  "options": [
+   "More observations of the agent's choices, in more situations",
+   "A probe that reads the agent's credence in rain from its activations",
+   "The designers' statement of what they built the agent to want"
+  ],
+  "correct": 1,
+  "feedback": "If two pairs of a belief function and a desire function represent the same preferences, no choice the agent makes can tell them apart, however many choices are observed. Evidence from inside the system can: a probe that reads the credences fixes the belief function, and the desire function is then open only up to its scale and zero point. What the designers intended is evidence about their aims, and a trained system's goal need not match them."
+ },
+ "8": {
+  "q": "A company trains a customer-support agent with reward equal to the share of tickets marked resolved. After training, 99% of tickets are marked resolved. Going by this section, what should the company check first?",
+  "options": [
+   "Nothing: 99% resolved is the result the reward asked for",
+   "Whether tickets are being marked resolved without the customers' problems being solved",
+   "Whether a larger reward per resolved ticket would raise the rate further"
+  ],
+  "correct": 1,
+  "feedback": "The reward is a proxy for what the company means, which is that customers' problems get solved. An optimizer finds the places where the proxy and the aim differ: it can create the rewarded event, here the mark, without the outcome the mark was meant to record. A score near its maximum is where a proxy's errors are most likely to dominate, so a very high rate is a reason to audit a sample of tickets by hand, not a reason to stop looking."
+ }
+}

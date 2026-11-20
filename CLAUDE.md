@@ -60,6 +60,10 @@ Pretrained-model pages use precomputed outputs only (never faked), with scripts,
 
 Audit of 2026-11-19 (owner decisions the same day): 3.3 joined the core path, now 21 pages. A page is done only when every check question on it has been answered correctly; the first answer in a visit counts, and a missed question is asked again on the next visit. The contents page can show the core path alone, and pages link to the previous and next core page. Review blocks (`review()` in `site.js`, questions in the generated `docs/data/checks.json`) bring back earlier questions at the start of each section. `tools/test-shell.mjs` tests all of this in a browser. Corrected text: 2.5 (strict propriety is about expected loss, calibration must be measured), 4.4 (fixed number of steps in sequence, not fixed arithmetic), 8.5 (goal misgeneralization is distinct from mesa-optimization), 8.6 (control safety is an estimate against the red team's attacks).
 
+Transfer questions (2026-11-19): one per section for Sections 1 to 8, in `docs/data/transfer.json`, shown by `transfer()` in `site.js` at the end of the section's last page and of its last core page. Each relies only on the section's core pages and does not count toward done. `specs/pilot.md` is the plan for a pilot with real readers; it has not been run.
+
+Licence (owner decision 2026-11-19): text and figures CC BY 4.0 (`LICENSE-TEXT.md`), code MIT (`LICENSE`).
+
 References: each sidenote reference links to its source (DOI, arXiv, or the official page), each checked against the record; `tools/check-links.mjs` reports dead links, and `tools/AUDIT-LINKS-FINDINGS.md` lists the references left unlinked and the citations that point at a different edition. `tools/check.mjs` measures sideways scrolling with the sidenotes closed and opened.
 
 Modular addition runs use p = 59, not Nanda et al.'s 113, so training fits on a CPU (`tools/modadd/README.md`).

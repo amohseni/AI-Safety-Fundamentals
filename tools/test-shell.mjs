@@ -113,6 +113,19 @@ await hs.focus();
 for (let k = 0; k < 10; k++) await page.keyboard.press('ArrowRight');
 check('5.1 arrow keys on the height slider change the target', (await page.locator('#h-readout').textContent()) !== before);
 
+// 8. Transfer questions: at the end of a section's last page and of its last core page.
+for (const [f, want] of [['2-7', 1], ['2-8', 1], ['2-6', 0], ['4-3', 1], ['4-4', 1], ['9-1', 0], ['1-1', 1]]) {
+  await page.goto(url(`pages/${f}.html`), { waitUntil: 'networkidle' });
+  check(`transfer question on ${f}: ${want}`, await page.locator('.check.transfer').count() === want);
+}
+await page.goto(url('pages/4-3.html'), { waitUntil: 'networkidle' });
+check('transfer math is typeset', await page.locator('.check.transfer').evaluate((e) => !/\\\(/.test(e.textContent) && !!e.querySelector('.katex')));
+await answer('.check.transfer', true);
+await page.goto(url('pages/4-4.html'), { waitUntil: 'networkidle' });
+check('a transfer answer is kept across the two pages that show it', await page.locator('.check.transfer').evaluate((e) => e.classList.contains('answered')));
+const tf = JSON.parse(fs.readFileSync(path.join(root, 'data', 'transfer.json'), 'utf8'));
+check('eight transfer questions, each with a valid answer index', Object.keys(tf).join('') === '12345678' && Object.values(tf).every((t) => t.correct >= 0 && t.correct < t.options.length && t.options.length === 3));
+
 check('no console errors', errors.length === 0, errors.slice(0, 3).join(' | '));
 await browser.close();
 server.close();

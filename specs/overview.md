@@ -24,7 +24,7 @@ Every page has the same parts, in this order. Each page spec in the section tabs
 3. **Text**: 150 to 300 words of plain prose, with at most one displayed formula. In the specs, the draft text is set as a quotation.
 4. **Image**: one static figure that carries the page's main idea and is readable without the tool. It also serves print, slow connections, and screen readers (with a text description).
 5. **Interactive**: one tool, with two to four numbered tasks. Each task asks the reader to predict the result before trying it; a line on what to notice is revealed afterward.
-6. **Check**: one or two questions the reader answers before seeing the answer. Questions from earlier pages return at the start of later sections for spaced review: the first page of each section, and its first core page, show up to three questions the reader has already answered, those answered wrongly first and then those answered longest ago (`review()` in `site.js`, questions in `docs/data/checks.json`).
+6. **Check**: one or two questions the reader answers before seeing the answer. Each of Sections 1 to 8 ends with one transfer question on a case the section did not cover (`docs/data/transfer.json`). Questions from earlier pages return at the start of later sections for spaced review: the first page of each section, and its first core page, show up to three questions the reader has already answered, those answered wrongly first and then those answered longest ago (`review()` in `site.js`, questions in `docs/data/checks.json`).
 7. **Links and references**: earlier pages this page depends on, later pages that use it, and two or three references.
 
 ## Design principles
@@ -258,6 +258,6 @@ Sources opened for the numbers:
 - [Korbak et al. 2025, Chain of Thought Monitorability](https://arxiv.org/abs/2507.11473)
 - [Skalse et al. 2023, Partial Identifiability in Reward Learning](https://proceedings.mlr.press/v202/skalse23a.html)
 
-Section 7 follows Herrmann and Levinstein, [*Radical AI Interpretability*](https://arxiv.org/abs/2606.26523) (arXiv v1, June 2026). It was read in full except §6.3.3, §6.4, and §6.5.2; section numbers cited on pages 7.1 to 7.3 refer to that version.
+Section 7 follows Herrmann and Levinstein, [*Radical AI Interpretability*](https://arxiv.org/abs/2606.26523) (arXiv v1, June 2026). It was first read in full except §6.3.3, §6.4, and §6.5.2. On 2026-11-19 the owner supplied the PDF, and §6.3.3, §6.3.4, the Chapter 7 quotation on page 7.2, and the Chapter 5 claims on page 7.3 (§5.2.2, §5.4.2, §5.5, §5.7) were checked against it; section numbers cited on pages 7.1 to 7.3 refer to that version.
 
 Added after the fact-check and not yet verified against sources: the references in How the site teaches and Visual design, and the new references on page 8.4.

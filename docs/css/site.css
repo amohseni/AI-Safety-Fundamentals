@@ -223,3 +223,4 @@ h1 { hyphens: auto; overflow-wrap: break-word; }
   /* An opened sidenote floats left, so what follows must start below it. */
   figure, figure.multiples, .tool, ol.tasks, .check, .explain, .takeaway { clear: both; }
 }
+.licence { color: var(--quiet); font-size: var(--text); margin-top: 3rem; }

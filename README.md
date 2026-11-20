@@ -6,4 +6,8 @@ An interactive introduction to how modern AI systems work, from a single neuron 
 - To view it locally: `python3 -m http.server -d docs` and open http://localhost:8000.
 - The page specifications are in `specs/`. Working rules for building pages are in `CLAUDE.md`.
 
-Fonts: ET Book (MIT, via Tufte CSS). Libraries: D3 and KaTeX, vendored in `docs/vendor/`.
+## Licence
+
+- Text and figures: CC BY 4.0 (`LICENSE-TEXT.md`).
+- Code: MIT (`LICENSE`).
+- Material from other sources keeps its own licence: the ET Book fonts and Tufte CSS (MIT); D3 (ISC), KaTeX (MIT), and js-tiktoken (MIT) in `docs/vendor/`; city facts from GeoNames (CC BY 4.0) in `docs/data/truth/`; and stored outputs and activations of the pretrained models named in `CLAUDE.md`, which are subject to those models' licences. Each `tools/<page-id>/README.md` names the model or data source its page uses.

@@ -200,6 +200,33 @@ function explains() {
   });
 }
 
+// ---- Transfer question: one per section, on a case the section did not cover ----
+// Shown at the end of the section's last page and of its last core page. The questions are in
+// docs/data/transfer.json and rely only on the section's core pages. They do not count toward "done".
+async function transfer() {
+  const id = document.body.dataset.page;
+  const page = allPages.find((p) => p.id === id);
+  if (!page) return;
+  const inSection = page.section.pages.filter((p) => p.href);
+  const lastCore = inSection.filter((p) => p.core).pop();
+  if (id !== inSection[inSection.length - 1].id && !(lastCore && id === lastCore.id)) return;
+  let all;
+  try { all = await (await fetch(`${base}data/transfer.json`)).json(); } catch { return; }
+  const t = all[String(page.section.n)];
+  if (!t) return;
+  const box = document.createElement('div');
+  box.className = 'check transfer';
+  box.dataset.id = `T${page.section.n}`;
+  box.dataset.correct = t.correct;
+  box.innerHTML = `<p class="label">Transfer question for Section ${page.section.n}. It applies the section&rsquo;s ideas to a case the section did not cover.</p>
+    <p class="q">${t.q}</p>
+    <div class="options seg">${t.options.map((o) => `<button>${o}</button>`).join('')}</div>
+    <div class="feedback"><p>${t.feedback}</p></div>`;
+  document.querySelector('article').append(box);
+  wireCheck(box);
+  math(box);
+}
+
 // Number sidenotes in document order. (Tufte CSS uses a CSS counter, which current
 // Chrome does not carry across paragraphs, so every note showed "1".)
 function sidenotes() {
@@ -249,4 +276,5 @@ tasks();
 checks();
 explains();
 review();
+transfer();
 if (document.readyState === 'complete') math(); else window.addEventListener('load', () => math());
