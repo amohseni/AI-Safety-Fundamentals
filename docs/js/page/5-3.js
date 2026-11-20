@@ -52,6 +52,8 @@ const dots = fc.g.append('g');
 function drawCurve() {
   curve = P_GRID.map((p) => { const r = fit(data, F, p, st.ridge); return { p, train: r.train, test: r.test }; });
   ec.line('train', curve.map((v) => [v.p, clampE(v.train)]), { color: 'ink', label: 'training', labelAt: 0.15, dy: 18 });
+  // The name clears a little paper around itself: on a narrow chart it lies over the threshold line.
+  ec.svg.selectAll('text.label-ink').attr('stroke', 'var(--paper)').attr('stroke-width', 5).attr('stroke-linejoin', 'round').style('paint-order', 'stroke');
   ec.line('test', curve.map((v) => [v.p, clampE(v.test)]), { color: 'second', label: 'test' });
   drawFit();
 }

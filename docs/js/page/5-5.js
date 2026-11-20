@@ -50,10 +50,13 @@ function dots(ctx, W, r) {
 function shadeUnit(canvas, net, layer, u, n = 36) {
   const { ctx, W } = prep(canvas);
   ctx.fillStyle = cssVar('--ink');
+  // The text says light is -1 and dark is +1. In the dark theme the ink is the light color, so the scale is turned around.
+  const lum = (hex) => { const m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(hex.trim()); return m ? parseInt(m[1], 16) + parseInt(m[2], 16) + parseInt(m[3], 16) : 0; };
+  const inkIsLight = lum(cssVar('--ink')) > lum(cssVar('--paper'));
   const edge = cellEdges(W, n);
   for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
     const h = net.stages([-1 + (2 * i + 1) / n, 1 - (2 * j + 1) / n])[2 * layer][u];
-    ctx.globalAlpha = 0.85 * (h + 1) / 2;
+    ctx.globalAlpha = 0.85 * (inkIsLight ? 1 - h : h + 1) / 2;
     ctx.fillRect(edge(i), edge(j), edge(i + 1) - edge(i), edge(j + 1) - edge(j));
   }
   ctx.globalAlpha = 1;

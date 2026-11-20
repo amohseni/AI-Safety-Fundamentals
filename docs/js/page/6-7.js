@@ -168,7 +168,11 @@ function drawMap(force) {
   const yb = top + rowH * COMPS.length;
   if (!same()) svg.append('rect').attr('x', labelW + st.bad * cw - 1).attr('y', top - 1).attr('width', cw + 2).attr('height', rowH * COMPS.length + 2)
     .attr('fill', 'none').attr('stroke', 'var(--ink)').attr('stroke-width', 1.5);
-  for (const v of [0, 20, 40, 58]) svg.append('text').attr('x', labelW + (v + 0.5) * cw).attr('y', yb + 22).attr('text-anchor', 'middle').text(v);
+  // On a narrow map the last number ends at the right edge, where a centered one would be cut off.
+  for (const v of [0, 20, 40, 58]) {
+    const last = v === 58 && cw < 16;
+    svg.append('text').attr('x', last ? W : labelW + (v + 0.5) * cw).attr('y', yb + 22).attr('text-anchor', last ? 'end' : 'middle').text(v);
+  }
   svg.append('text').attr('x', W).attr('y', yb + 50).attr('text-anchor', 'end').text(`corrupted value of ${st.which}`);
   // Tap a column to choose that corrupted value.
   svg.append('rect').attr('x', labelW).attr('y', top).attr('width', cw * p).attr('height', rowH * COMPS.length).attr('fill', 'transparent')
