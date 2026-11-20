@@ -37,6 +37,14 @@
 
 body { background-color: var(--paper); color: var(--ink); }
 a:link, a:visited { color: inherit; }
+/* Links in running text and sidenotes: a plain underline in the text color. Tufte CSS draws its
+   underline with gradients and text shadows in fixed paper colors, which do not follow the theme
+   tokens and do not apply to visited links. */
+a:link, a:visited {
+  background: none; text-shadow: none;
+  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.15em;
+}
+.sidenote, .marginnote { overflow-wrap: break-word; }
 ::selection { background: var(--faint); }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 
