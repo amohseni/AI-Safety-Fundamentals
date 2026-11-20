@@ -181,7 +181,7 @@ figure .small-title { font-size: var(--text); color: var(--ink); margin: 0 0 0.2
 .contents .no { color: var(--quiet); min-width: 2.2rem; }
 .contents .planned { color: var(--quiet); }
 .contents .mark { min-width: 0.8rem; }
-.contents .done-dot { display: inline-block; width: 0.45rem; height: 0.45rem; border-radius: 50%; border: 1px solid var(--quiet); }
+.contents .done-dot { display: inline-block; box-sizing: border-box; width: 0.6rem; height: 0.6rem; border-radius: 50%; border: 1px solid var(--quiet); }
 .contents .done-dot.done { background: var(--quiet); }
 .contents li a { text-decoration: none; background: none; }
 .contents li a:hover { text-decoration: underline; }
@@ -347,6 +347,8 @@ p.subtitle { margin-top: 0; margin-bottom: calc(3 * var(--u)); line-height: var(
 .contents .mark { min-width: 0; }
 .contents .done-dot { justify-self: end; }
 .contents .done-dot.done { background: var(--ink); border-color: var(--ink); }
+/* Some, not all, of the page's check questions answered correctly: the left half is filled. */
+.contents .done-dot.some { background: linear-gradient(90deg, var(--ink) 50%, transparent 50%); border-color: var(--ink); }
 .contents .view { margin-top: calc(3 * var(--u)); }
 .contents .key { font-size: var(--small); color: var(--quiet); line-height: calc(0.75 * var(--line)); margin: var(--u) 0 0; }
 .contents .key span { white-space: nowrap; margin-right: 1.2rem; }

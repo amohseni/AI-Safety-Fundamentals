@@ -25,6 +25,12 @@ function checkRecord(id, correct) {
   if (r === null) return null;
   return typeof r === 'number' ? { k: r, right: r === correct, t: 0 } : r;
 }
+// How many of a page's check questions have been answered correctly: 'none', 'some', or 'all'.
+export function pageProgress(p) {
+  if (!(p.checks && p.checks.length)) return 'none';
+  const right = p.checks.filter(([id, correct]) => { const r = checkRecord(id, correct); return r && r.right; }).length;
+  return right === p.checks.length ? 'all' : right ? 'some' : 'none';
+}
 // A page is done when every one of its check questions has been answered correctly.
 export function pageDone(p) {
   return !!(p.checks && p.checks.length) && p.checks.every(([id, correct]) => { const r = checkRecord(id, correct); return r && r.right; });
@@ -260,15 +266,15 @@ export function contents(el) {
     return `
     <h2>${s.n}. ${s.title}</h2>
     <ol>${pages.map((p) => {
-      const done = pageDone(p);
+      const done = pageDone(p), prog = pageProgress(p);
       const title = p.href ? `<a href="${p.href}">${p.title}</a>` : `<span class="planned">${p.title}</span>`;
-      return `<li><span class="no">${p.id}</span><span class="mark">${p.core ? '<span class="core-dot" title="Core path"></span>' : ''}</span>${title}${p.href ? ` <span class="done-dot${done ? ' done' : ''}" title="${done ? 'Done' : 'Not done yet'}"></span>` : ''}</li>`;
+      return `<li><span class="no">${p.id}</span><span class="mark">${p.core ? '<span class="core-dot" title="Core path"></span>' : ''}</span>${title}${p.href ? ` <span class="done-dot${done ? ' done' : prog === 'some' ? ' some' : ''}" title="${done ? 'All check questions answered correctly' : prog === 'some' ? 'Some check questions answered correctly' : 'No check question answered correctly yet'}"></span>` : ''}</li>`;
     }).join('')}</ol>`; }).join('');
   el.innerHTML = `<div class="seg view" role="group" aria-label="Pages shown">
       <button type="button" data-view="all" aria-pressed="${view === 'all'}">All ${allPages.length} pages</button>
       <button type="button" data-view="core" aria-pressed="${view === 'core'}">Core path, ${corePages.length} pages</button>
     </div>` +
-    `<p class="key"><span><span class="core-dot"></span> on the core path</span><span><span class="done-dot done"></span> all its check questions answered correctly</span></p>` +
+    `<p class="key"><span><span class="core-dot"></span> on the core path</span><span><span class="done-dot"></span><span class="done-dot some"></span><span class="done-dot done"></span> none, some, or all of its check questions answered correctly</span></p>` +
     (view === 'core' ? `<p class="core-next">${next ? `Next on the core path: <a href="${next.href}">${next.id} ${next.title}</a>` : 'You have finished the core path.'}</p>` : '') + list;
   el.querySelectorAll('.view button').forEach((b) => b.addEventListener('click', () => { store.set('view', b.dataset.view); contents(el); el.querySelector(`.view [data-view="${b.dataset.view}"]`).focus(); }));
 }

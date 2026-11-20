@@ -41,6 +41,9 @@ check('options lock after an answer', await page.locator(`.check[data-id="${ids[
 check('wrong answer shows the right one', (await page.locator(`.check[data-id="${ids[0]}"] .verdict-wrong`).textContent()).startsWith('Not quite.'));
 await page.goto(url('index.html'), { waitUntil: 'networkidle' });
 check('page with one wrong answer is not done', (await done('2.5')) === false);
+const dotClass = (id) => page.evaluate((i) => [...document.querySelectorAll('.contents li')].find((li) => li.querySelector('.no').textContent === i).querySelector('.done-dot').className, id);
+check('page with one of two checks right shows the half-filled circle', (await dotClass('2.5')) === 'done-dot some', await dotClass('2.5'));
+check('page with no check answered shows the empty circle', (await dotClass('2.4')) === 'done-dot', await dotClass('2.4'));
 
 // 2. On the next visit the missed question is asked again, unanswered; the right one stays answered.
 await page.goto(url('pages/2-5.html'), { waitUntil: 'networkidle' });
@@ -49,6 +52,7 @@ check('correct answer is kept', await page.locator(`.check[data-id="${ids[1]}"]`
 await answer(`.check[data-id="${ids[0]}"]`, true);
 await page.goto(url('index.html'), { waitUntil: 'networkidle' });
 check('page is done once every check is answered correctly', (await done('2.5')) === true);
+check('done page shows the filled circle', (await dotClass('2.5')) === 'done-dot done', await dotClass('2.5'));
 
 // 3. A record from before the change (a bare option number) still counts.
 await page.evaluate(() => { const s = JSON.parse(localStorage.getItem('asf-v1')); s['check:2.1-c1'] = Number(document.title.length * 0); localStorage.setItem('asf-v1', JSON.stringify(s)); });
