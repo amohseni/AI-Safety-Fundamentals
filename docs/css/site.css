@@ -224,3 +224,95 @@ h1 { hyphens: auto; overflow-wrap: break-word; }
   figure, figure.multiples, .tool, ol.tasks, .check, .explain, .takeaway { clear: both; }
 }
 .licence { color: var(--quiet); font-size: var(--text); margin-top: 3rem; }
+
+/* ==========================================================================
+   Layout grid (2026-11-20). One grid for every page, in units of the text line.
+
+   Columns:  [ text column: --col ] [ gap: --gap ] [ margin column: --side ]
+   The text column holds what is read in order: prose, charts, questions.
+   The margin column holds what is said about it: sidenotes, a tool's controls,
+   and the name of a block (Check, Takeaway). Wide figures span both.
+   Every block ends at one of two right edges: the text column's or the margin's.
+
+   Rows: one line of text is --line. Space between blocks is a whole number of
+   half lines (--u), so text in the two columns stays on the same lines.
+   ========================================================================== */
+:root {
+  --line: 2rem;                 /* line height of the text: 30px at the 15px root size */
+  --u: 1rem;                    /* half a line: the unit for all vertical space */
+  --col: 42rem;                 /* about 68 characters of 16pt ET Book */
+  --gap: 3rem;
+  --side: 18rem;
+  --wide: calc(var(--col) + var(--gap) + var(--side));
+}
+p, dl, ol, ul, .sidenote, .marginnote, .caption, .readout, .tool .panel-note, .task .after { line-height: var(--line); }
+
+@media (min-width: 1080px) {
+  body { width: auto; max-width: none; padding: 0 2rem; margin: 0; }
+  .topline, article, .pagenav { width: var(--wide); margin-left: auto; margin-right: auto; }
+  article { padding: calc(2 * var(--u)) 0 calc(4 * var(--u)); }
+
+  /* Text column. */
+  article > p, article > ul, article > ol, article > dl, article > blockquote, article > h1, article > h2, article > h3,
+  section > p, section > ul, section > ol, section > dl, section > h2, section > h3,
+  .katex-display, .caption, .review, article > table, figure { width: var(--col); max-width: var(--col); box-sizing: border-box; }
+  article > ul, article > ol, section > ul, section > ol { padding-left: 2rem; -webkit-padding-start: 2rem; }
+  p { margin-top: 0; margin-bottom: var(--u); }
+  h1 { margin: calc(2 * var(--u)) 0 calc(3 * var(--u)); line-height: calc(2 * var(--line)); }
+  h2 { margin: calc(4 * var(--u)) 0 var(--u); line-height: calc(1.5 * var(--line)); }
+
+  /* Margin column: sidenotes. */
+  .sidenote, .marginnote {
+    float: right; clear: right; width: var(--side);
+    margin: 0 calc(-1 * (var(--side) + var(--gap))) 0 0;
+  }
+
+  /* Wide blocks span both columns. */
+  .tool, figure.multiples, figure.fullwidth, figure.wide { width: var(--wide); max-width: var(--wide); }
+
+  /* A tool: the chart sits in the text column and the controls beside it in the margin column. */
+  .tool { margin: calc(2 * var(--u)) 0 calc(3 * var(--u)); border-top: 1px solid var(--rule); padding-top: var(--u); }
+  .tool .panel { margin-bottom: calc(2 * var(--u)); }
+  .tool .panel + .panel { border-top: 1px solid var(--rule); padding-top: var(--u); }
+  .tool h3 { margin: 0 0 calc(0.5 * var(--u)); font-style: normal; font-weight: 600; line-height: var(--line); }
+  .tool .panel-note, .readout { width: var(--col); margin: 0 0 var(--u); }
+  .readout { margin-top: var(--u); }
+  .tool .row { display: grid; grid-template-columns: var(--col) var(--side); column-gap: var(--gap); align-items: start; }
+  .tool .row > .stage { grid-column: 1; grid-row: 1; min-width: 0; }
+  .tool .row > .controls { grid-column: 2; grid-row: 1; min-width: 0; max-width: none; gap: var(--u); }
+
+  /* Blocks that end a page: the name of the block sits in the margin column, level with its first line. */
+  ol.tasks, .check, .explain, .takeaway { width: var(--col); position: relative; box-sizing: border-box; }
+  .check, .explain, .takeaway { margin-top: calc(2 * var(--u)); padding-top: var(--u); }
+  .check > .label, .explain > .label, .takeaway > .label {
+    position: absolute; left: calc(var(--col) + var(--gap)); top: var(--u); width: var(--side); margin: 0;
+    font-style: normal; color: var(--quiet); line-height: var(--line);
+  }
+  .check .q, .explain > p:not(.label), .takeaway > p:not(.label) { margin-top: 0; }
+  .takeaway { border-top: 2px solid var(--ink); }
+  .pagenav { margin-top: calc(4 * var(--u)); }
+  .pagenav .row { width: var(--col); }
+  .topline { padding-top: calc(2 * var(--u)); }
+
+  /* Tasks: numbers hang in the left margin, so the questions align with the text. */
+  ol.tasks { padding-left: 0; margin: 0 0 calc(2 * var(--u)); list-style-position: outside; }
+  ol.tasks > li { margin: 0 0 var(--u); padding-left: 0; }
+  ol.tasks > li::marker { color: var(--quiet); }
+}
+
+/* Answers are not controls. A tool's control is a box; an answer to a question is a line of text
+   with an open circle, filled once chosen. */
+.task .choices button, .check .options button {
+  border: 0; border-radius: 0; padding: 0 0 0 1.5rem; margin-right: 1.5rem; position: relative; text-align: left; line-height: var(--line);
+}
+.task .choices button::before, .check .options button::before {
+  content: ""; position: absolute; left: 0.1rem; top: 0.68rem; width: 0.7rem; height: 0.7rem; box-sizing: border-box;
+  border: 1px solid var(--quiet); border-radius: 50%;
+}
+.task .choices button:hover::before, .check .options button:hover::before { border-color: var(--ink); }
+.task .choices button[aria-pressed="true"]::before, .check .options button.chosen::before { background: var(--ink); border-color: var(--ink); }
+.check .options.seg { display: flex; flex-direction: column; gap: 0; align-items: flex-start; }
+.task .choices { margin: 0; }
+.task .choices-label { display: none; }
+.task .choices .seg { gap: 0; }
+.explain textarea { box-sizing: border-box; }
