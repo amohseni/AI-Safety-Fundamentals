@@ -6,7 +6,7 @@ This doc specifies all 50 pages of the explainer site, in 10 sections. For each 
 
 ## Reader and goal
 
-The reader is a new graduate student in philosophy, computer science, or a nearby field. The site assumes linear algebra, calculus, and probability (to be confirmed) and no machine learning. After working through the site, the reader should be able to:
+The reader is a new graduate student in philosophy, computer science, or a nearby field. The site assumes the basics of linear algebra, calculus, and probability, but no machine learning (owner wording, 2026-11-19). After working through the site, the reader should be able to:
 
 - explain how a transformer language model is trained and how it computes an output;
 - read a current interpretability or alignment paper and follow its methods;
