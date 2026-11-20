@@ -45,7 +45,7 @@
 <div class="tool" id="tool">
   <div class="panel" id="panel-spirals">
     <h3>The spirals network, trained five times</h3>
-    <p class="panel-note">The plane classifier from Section 2 with two hidden layers of 3 units and tanh, trained on the spirals from five seeds for 4,000 steps each. Of 40 seeds we tried, these five reached 100% on the training points within 4,000 steps in every test we ran. The large plot shows the training points and, in ink, the decision boundary of each selected run. Below, for each run, its output class over the plane as shading (output) and the response of each hidden unit over the plane, from light (\(-1\)) to dark (\(+1\)).</p>
+    <p class="panel-note">The plane classifier from Section 2 with two hidden layers of 3 units and tanh, trained on the spirals from five seeds for 4,000 steps each. Of 40 seeds we tried, six reached 100% on the training points within 4,000 steps in every test we ran. The tool uses five of the six. The large plot shows the training points and, in ink, the decision boundary of each selected run. Below, for each run, its output class over the plane as shading (output) and the response of each hidden unit over the plane, from light (\(-1\)) to dark (\(+1\)).</p>
     <div class="row">
       <div class="controls" id="spiral-controls"></div>
       <div class="stage"><canvas class="overlay" id="overlay" role="img" aria-label="Training points of the two spirals and the decision boundaries of the selected runs"></canvas></div>
@@ -68,7 +68,7 @@
     <div class="choices" data-options="Nearly the same everywhere|Nearly the same near the spirals, different elsewhere|Very different everywhere"></div>
     <div class="after"><p>Press Train all five and look at the large plot.</p>
       <button class="show" type="button">Show what to notice</button>
-      <div class="notice"><p>Nearly the same near the spirals, different elsewhere. <span class="claim">Empirical finding</span> On 2,000 new points drawn from the same spirals, any two of the five runs give the same class to between 92% and 99.8% of the points (97% on average over the ten pairs). Over the whole square, most of which holds no training points, two runs agree on as little as 77% of it (90% on average). Training constrains the boundary only near the training points.</p></div></div>
+      <div class="notice"><p>Nearly the same near the spirals, different elsewhere. <span class="claim">Empirical finding</span> On 2,000 new points drawn from the same spirals, any two of the five runs give the same class to between 92% and 99.8% of the points (97% on average over the ten pairs). Over the whole square, most of which holds no training points, two runs agree on as little as 77% of it (89% on average). Training constrains the boundary only near the training points.</p></div></div>
   </li>
   <li class="task" data-id="5.5-t2">
     <p class="prompt">All five runs classify every training point correctly. Will the hidden units of layer 2 respond in the same way across runs?</p>

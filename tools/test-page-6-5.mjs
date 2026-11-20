@@ -126,12 +126,11 @@ check('t1, check 2: at penalty 0.5 the rebuild error is 0.17 (average over ten s
   check('t2: a dictionary of 3 units recovers one to three features (30 runs)', rec.length === 30 && lo(rec) === 1 && hi(rec) === 3, `${lo(rec)} to ${hi(rec)}`);
 }
 // Task 3 notice: "In ten starts at 10 units, all five features were recovered every time; one to four units never fired, and one to
-// four more pointed at a feature that another unit already matched, and in some starts one unit pointed at no feature."
+// four more pointed at a feature that another unit already matched, and in one start of the ten one unit pointed at no feature."
 check('t3: 10 units, penalty 0.5: all five features recovered in every one of ten starts', col(10, 0.5, 'recovered').every((v) => v === 5), col(10, 0.5, 'recovered').join(' '));
 check('t3: one to four units never fire', lo(col(10, 0.5, 'dead')) === 1 && hi(col(10, 0.5, 'dead')) === 4, col(10, 0.5, 'dead').join(' '));
 check('t3: one to four more point at a feature another unit already matches', lo(col(10, 0.5, 'dup')) === 1 && hi(col(10, 0.5, 'dup')) === 4, col(10, 0.5, 'dup').join(' '));
-// FAILS as of 2026-11-19: this happens in one start of the ten (start 5), not in "some starts". See AUDIT-TESTS-FINDINGS.md.
-check('t3: in some starts (at least 2, not all) one unit points at no feature, and never more than one', hi(col(10, 0.5, 'misaligned')) === 1 && col(10, 0.5, 'misaligned').filter((v) => v === 1).length >= 2 && lo(col(10, 0.5, 'misaligned')) === 0, col(10, 0.5, 'misaligned').join(' '));
+check('t3: in one start of the ten one unit points at no feature', hi(col(10, 0.5, 'misaligned')) === 1 && col(10, 0.5, 'misaligned').filter((v) => v === 1).length === 1 && lo(col(10, 0.5, 'misaligned')) === 0, col(10, 0.5, 'misaligned').join(' '));
 check('t3: at 20 units all five features are still recovered in every start, with more silent units and copies', col(20, 0.5, 'recovered').every((v) => v === 5) && lo(col(20, 0.5, 'dead')) > hi(col(10, 0.5, 'dead')), `dead ${col(20, 0.5, 'dead').join(' ')}`);
 console.log(fails ? `${fails} FAILED` : 'all checks passed');
 process.exit(fails ? 1 : 0);

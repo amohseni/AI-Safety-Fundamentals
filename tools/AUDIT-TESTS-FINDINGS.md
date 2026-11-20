@@ -1,5 +1,7 @@
 # Test audit findings (2026-11-19)
 
+Status (2026-11-19): the three disagreements below were corrected in the page text (5.5: 89%; 6.4: 0.56; 6.5: one start of the ten), 5.5 now says six of 40 seeds qualified, and the assertions state the corrected text.
+
 Twenty scripts in `tools/` printed numbers without asserting them. Each now asserts the claims its page makes and exits nonzero when one fails. This file lists every place where the page text and the computed value do not match exactly.
 
 Measured with Node 22.23.4. No page was edited.

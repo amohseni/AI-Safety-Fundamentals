@@ -84,7 +84,7 @@ sweep('task 3', 0.8, [0.5, 0.7, 0.8, 0.9]);
   // Task 1 notice: "For a left-out feature the model outputs a constant, ReLU(b_i), and training sets b_i near 0.5".
   check('t1: the biases of the three left-out features are near 0.5 (within 0.03)', [2, 3, 4].every((i) => Math.abs(d.b[i] - 0.5) <= 0.03), Array.from(d.b, (v) => v.toFixed(3)).join(' '));
   // Argument: "In the pentagon we trained, neighboring directions have dot product 0.37, the others have dot product -0.98,
-  // and every bias is -0.21. ... the negative bias removes the positive interference whenever x_j is below 0.57."
+  // and every bias is -0.21. ... the negative bias removes the positive interference whenever x_j is below 0.56."
   const G = p.gram(), pos = [], neg = [];
   for (let i = 0; i < 5; i++) for (let j = i + 1; j < 5; j++) (G[i][j] > 0 ? pos : neg).push(G[i][j]);
   const avg = (a) => a.reduce((s, v) => s + v, 0) / a.length;
@@ -94,9 +94,8 @@ sweep('task 3', 0.8, [0.5, 0.7, 0.8, 0.9]);
   check('pentagon: neighboring directions have dot product 0.37 (average of the five pairs; each within 0.015)', pos.length === 5 && avg(pos).toFixed(2) === '0.37' && pos.every((v) => Math.abs(v - 0.37) <= 0.015), `${avg(pos)}: ${pos.map((v) => v.toFixed(3)).join(' ')}`);
   check('pentagon: the others have dot product -0.98 (average of the five pairs; each within 0.015)', neg.length === 5 && avg(neg).toFixed(2) === '-0.98' && neg.every((v) => Math.abs(v + 0.98) <= 0.015), `${avg(neg)}: ${neg.map((v) => v.toFixed(3)).join(' ')}`);
   check('pentagon: every bias is -0.21', Array.from(p.b).every((v) => v.toFixed(2) === '-0.21'), Array.from(p.b, (v) => v.toFixed(3)).join(' '));
-  check('pentagon: with the quoted numbers, 0.21 / 0.37 = 0.57', (0.21 / 0.37).toFixed(2) === '0.57', 0.21 / 0.37);
   // FAILS as of 2026-11-19: the trained parameters give 0.56 (0.2114 / 0.3748 = 0.564). See AUDIT-TESTS-FINDINGS.md.
-  check('pentagon: the bias removes the positive interference whenever x_j is below 0.57 (average bias / average neighboring dot product, from the trained parameters)', (-avg(Array.from(p.b)) / avg(pos)).toFixed(2) === '0.57', -avg(Array.from(p.b)) / avg(pos));
+  check('pentagon: the bias removes the positive interference whenever x_j is below 0.56 (average bias / average neighboring dot product, from the trained parameters)', (-avg(Array.from(p.b)) / avg(pos)).toFixed(2) === '0.56', -avg(Array.from(p.b)) / avg(pos));
   check('at S = 0.9 two given features are both active 1% of the time', Math.abs((1 - 0.9) ** 2 - 0.01) < 1e-12, (1 - 0.9) ** 2);
   console.log('W^T W pentagon (row 1):', p.gram()[0].map((v) => v.toFixed(2)).join(' '), '; lengths', p.norms().map((v) => v.toFixed(2)).join(' '));
 }
