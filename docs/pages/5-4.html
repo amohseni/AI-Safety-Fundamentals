@@ -44,7 +44,7 @@
 <p>Each setting of the controls loads a training run done in advance. Move through training with the slider, by dragging on the accuracy chart, or with Play.</p>
 
 <div class="tool" id="tool">
-  <p class="panel-note">Top: accuracy on the <span class="c-second">training pairs</span> and on the <span class="c-accent">test pairs</span>, and, dashed, the share of the embedding that lies in its five largest frequencies. Bottom left: every pair \((a, b)\), with \(a\) running down and \(b\) across; a square is filled when the model answers that pair correctly at the chosen step, in <span class="c-second">orange for a training pair</span> and <span class="c-accent">blue for a test pair</span>. Bottom right: the size of each frequency in the embedding at that step, with the three largest numbered.</p>
+  <p class="panel-note">Top: accuracy on the <span class="c-second">training pairs</span> and on the <span class="c-accent">test pairs</span>, and, dashed, the share of the embedding that lies in its five largest frequencies. Bottom left: every pair \((a, b)\), with \(a\) running down and \(b\) across; a square is filled when the model answers that pair correctly at the chosen step, in <span class="c-second">blue for a training pair</span> and <span class="c-accent">red for a test pair</span>. Bottom right: the size of each frequency in the embedding at that step, with the three largest numbered.</p>
   <div class="row">
     <div class="controls" id="controls"></div>
     <div class="stage" id="acc-chart"></div>
@@ -62,12 +62,12 @@
     <div class="choices" data-options="Yes|No"></div>
     <div class="after"><p>Choose weight decay 0 and 30%, then move to the last step. Compare with weight decay 1.</p>
       <button class="show" type="button">Show what to notice</button>
-      <div class="notice"><p>No. With weight decay 0 the model answers every training pair correctly from step 100 on, but at step 20,000 it answers only 4% of the test pairs. <span class="claim">Empirical finding</span> Those it does answer are pairs whose reverse, \((b, a)\), is a training pair: it gets 15% of those right and none of the others. In the grid, each such blue square is the mirror image of an orange square across the diagonal. The same holds with 50% and 70% of the pairs: without weight decay, final test accuracy is 42% and 70%, and more than 98% of the correctly answered test pairs are reversed training pairs. With weight decay 1, test accuracy passes 99% by step 5,800.</p></div></div>
+      <div class="notice"><p>No. With weight decay 0 the model answers every training pair correctly from step 100 on, but at step 20,000 it answers only 4% of the test pairs. <span class="claim">Empirical finding</span> Those it does answer are pairs whose reverse, \((b, a)\), is a training pair: it gets 15% of those right and none of the others. In the grid, each such red square is the mirror image of a blue square across the diagonal. The same holds with 50% and 70% of the pairs: without weight decay, final test accuracy is 42% and 70%, and more than 98% of the correctly answered test pairs are reversed training pairs. With weight decay 1, test accuracy passes 99% by step 5,800.</p></div></div>
   </li>
   <li class="task" data-id="5.4-t2">
     <p class="prompt">With weight decay 1, compare training on 30% and on 70% of the pairs. With 70%, does test accuracy rise earlier or later?</p>
     <div class="choices" data-options="Earlier|At about the same step|Later"></div>
-    <div class="after"><p>Switch between 30% and 70% and look at where the blue line rises.</p>
+    <div class="after"><p>Switch between 30% and 70% and look at where the red line rises.</p>
       <button class="show" type="button">Show what to notice</button>
       <div class="notice"><p>Earlier. With weight decay 1, test accuracy passes 99% at step 1,200 with 70% of the pairs, at step 1,850 with 50%, and at step 5,800 with 30%. With 70%, test accuracy also jumps to 69% within the first 120 steps; nearly all of those correct test pairs are reversed training pairs, as in task 1. With weight decay 0.3 the rise comes later in every case, and with 30% of the pairs test accuracy has reached only 88% by step 20,000.</p></div></div>
   </li>

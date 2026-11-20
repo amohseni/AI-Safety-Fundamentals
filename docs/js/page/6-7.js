@@ -160,7 +160,8 @@ function drawMap(force) {
       const cell = mapData[v];
       if (!cell) continue;
       const r = Math.max(0, Math.min(1, cell[c.id].restored));
-      if (r > 0) svg.append('rect').attr('x', labelW + v * cw).attr('y', y + 1).attr('width', cw + 0.3).attr('height', rowH - 2)
+      // Whole-pixel edges: translucent neighbors neither overlap nor leave a gap.
+      if (r > 0) svg.append('rect').attr('x', Math.round(labelW + v * cw)).attr('y', y + 1).attr('width', Math.round(labelW + (v + 1) * cw) - Math.round(labelW + v * cw)).attr('height', rowH - 2)
         .attr('fill', 'var(--accent)').attr('fill-opacity', r);
     }
   });
@@ -278,7 +279,7 @@ drawFreq();
   const cs = d3.range(p);
   {
     const box = boxes[1];
-    const c = chart(box, { width: box.clientWidth, height: 240, margin: { top: 30, right: 16, bottom: 48, left: 40 }, x: { domain: [0, 58], ticks: 3, label: 'candidate c' }, y: { domain: [-3, 3.4], ticks: 3 }, title: 'Cosine scores at three frequencies and their sum' });
+    const c = chart(box, { width: box.clientWidth, height: 240, margin: { top: 30, right: 16, bottom: 52, left: 40 }, x: { domain: [0, 58], ticks: 3, label: 'candidate c' }, y: { domain: [-3, 3.4], ticks: 3 }, title: 'Cosine scores at three frequencies and their sum' });
     for (const k of [1, 12, 27]) c.line(`k${k}`, cs.map((v) => [v, Math.cos((2 * Math.PI * k * (42 - v)) / p)]), { color: 'quiet', width: 1 });
     c.line('sum', cs.map((v) => [v, [1, 12, 27].reduce((s, k) => s + Math.cos((2 * Math.PI * k * (42 - v)) / p), 0)]), { color: 'ink', width: 1.8 });
     c.point('peak', 42, 3, { color: 'ink', r: 3, label: 'sum, 42', anchor: 'end', dx: -6, dy: 6 });
@@ -287,7 +288,7 @@ drawFreq();
   {
     const box = boxes[2];
     const L = Array.from(M.run(12, 30).logits);
-    const c = chart(box, { width: box.clientWidth, height: 240, margin: { top: 30, right: 16, bottom: 48, left: 48 }, x: { domain: [0, 58], ticks: 3, label: 'candidate c' }, y: { domain: [Math.floor(d3.min(L) / 10) * 10, Math.ceil(d3.max(L) / 10) * 10 + 5], ticks: 4 }, title: 'Logits of the trained model for 12 + 30' });
+    const c = chart(box, { width: box.clientWidth, height: 240, margin: { top: 30, right: 16, bottom: 52, left: 48 }, x: { domain: [0, 58], ticks: 3, label: 'candidate c' }, y: { domain: [Math.floor(d3.min(L) / 10) * 10, Math.ceil(d3.max(L) / 10) * 10 + 5], ticks: 4 }, title: 'Logits of the trained model for 12 + 30' });
     c.line('L', cs.map((v) => [v, L[v]]), { color: 'ink', width: 1.6 });
     c.point('peak', 42, L[42], { color: 'ink', r: 3, label: '42', anchor: 'end', dx: -6, dy: 6 });
   }

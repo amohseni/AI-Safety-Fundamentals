@@ -46,6 +46,8 @@ function plot(box, key, title, domain, fmtTick) {
   ch.vline('zero', 0, { color: 'quiet' });
   ch.point('cur', st.coef, ys[ci()], { color: 'accent', r: 5, label: key === 'flu' ? minus(ys[ci()].toFixed(2)) : V.fmt(ys[ci()]),
     anchor: st.coef > 4 ? 'end' : 'start', dx: st.coef > 4 ? -8 : 8 });
+  // The value clears a little paper around itself, so the curve never runs through its digits.
+  ch.svg.selectAll('text.label-accent').attr('stroke', 'var(--paper)').attr('stroke-width', 5).attr('stroke-linejoin', 'round').style('paint-order', 'stroke');
 }
 
 function draw() {
