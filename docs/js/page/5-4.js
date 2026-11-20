@@ -20,7 +20,7 @@ async function figure() {
   const run = await loadRun(1.0, 0.3);
   const box = document.getElementById('fig-grok');
   const nar = (box.clientWidth || 620) < 440;
-  const c = chart(box, { width: box.clientWidth, height: 260, margin: { top: 30, right: nar ? 84 : 185, bottom: 52, left: 52 },
+  const c = chart(box, { width: box.clientWidth, height: 260, margin: { top: 30, right: nar ? 84 : 132, bottom: 52, left: 52 },
     x: { domain: [1, run.steps_total], log: true, ticks: nar ? 3 : 4, format: '~s', label: nar ? 'step (log scale)' : 'training step (log scale)' },
     y: { domain: [0, 1], ticks: 3, format: '.0%', label: 'accuracy' },
     title: 'Training and test accuracy of the main run against training step' });
@@ -52,7 +52,7 @@ const playBtn = button(ctl, 'Play through training', () => (raf ? stop() : play(
 const narrow = (document.getElementById('acc-chart').clientWidth || 560) < 440;
 const LBL = narrow ? { train: 'training', test: 'test', share: 'share' } : { train: 'training pairs', test: 'test pairs', share: 'frequency share' };
 const acc = chart(document.getElementById('acc-chart'), {
-  width: document.getElementById('acc-chart').clientWidth, height: 300, margin: { top: 24, right: narrow ? 84 : 140, bottom: 52, left: 56 },
+  width: document.getElementById('acc-chart').clientWidth, height: 300, margin: { top: 24, right: narrow ? 84 : 112, bottom: 52, left: 56 },
   x: { domain: [1, 20000], log: true, ticks: narrow ? 3 : 4, format: '~s', label: narrow ? 'step (log scale)' : 'training step (log scale)' },
   y: { domain: [0, 1], ticks: 3, format: '.0%' },
   title: 'Accuracy on training and test pairs, and the share of the embedding in its five largest frequencies, against training step' });

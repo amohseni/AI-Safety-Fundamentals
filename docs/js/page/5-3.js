@@ -52,6 +52,8 @@ const dots = fc.g.append('g');
 function drawCurve() {
   curve = P_GRID.map((p) => { const r = fit(data, F, p, st.ridge); return { p, train: r.train, test: r.test }; });
   ec.line('train', curve.map((v) => [v.p, clampE(v.train)]), { color: 'ink', label: 'training', labelAt: 0.15, dy: 18 });
+  // The name clears a little paper around itself: on a narrow chart it lies over the threshold line.
+  ec.svg.selectAll('text.label-ink').attr('stroke', 'var(--paper)').attr('stroke-width', 5).attr('stroke-linejoin', 'round').style('paint-order', 'stroke');
   ec.line('test', curve.map((v) => [v.p, clampE(v.test)]), { color: 'second', label: 'test' });
   drawFit();
 }
@@ -60,7 +62,7 @@ function drawFit() {
   const r = fit(data, F, st.p, st.ridge);
   dots.selectAll('circle').data(data.X).join('circle').attr('r', 3.5).attr('fill', 'var(--ink)')
     .attr('cx', (x) => fc.x(x)).attr('cy', (x, i) => fc.y(data.Y[i]));
-  fc.line('true', XS.map((x) => [x, truth(x)]), { color: 'quiet', dash: '4 3', label: 'true', labelAt: 0.1, dy: 18 });
+  fc.line('true', XS.map((x) => [x, truth(x)]), { color: 'quiet', dash: '4 3', label: 'true' });
   fc.line('fit', XS.map((x) => [x, Math.max(-4, Math.min(4, r.f(x)))]), { color: 'accent', width: 1.8, label: 'fit', labelAt: 0.9 });
   ec.vline('p', st.p, { color: 'accent', dash: null });
   ec.point('pt', st.p, clampE(r.test), { color: 'accent', r: 4.5, label: null });

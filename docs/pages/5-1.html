@@ -37,7 +37,7 @@ $$f(x) = b + \sum_{k=1}^{m} a_k\,\mathrm{ReLU}(x - c_k),$$
 <div class="tool" id="tool">
   <div class="panel">
     <h3>By hand</h3>
-    <p class="panel-note">Add units and set each one&rsquo;s kink and slope. The target is in ink, the network&rsquo;s output in <span class="c-accent">blue</span>, and each unit&rsquo;s own contribution in gray. Drag a unit&rsquo;s kink, the dot on the axis, along the axis. With <em>Draw your own</em> chosen, drag across the chart to draw a target, or use the two sliders that appear: one chooses a position and the other sets the height there.</p>
+    <p class="panel-note">Add units and set each one&rsquo;s kink and slope. The target is in ink, the network&rsquo;s output in <span class="c-accent">red</span>, and each unit&rsquo;s own contribution in gray. Drag a unit&rsquo;s kink, the dot on the axis, along the axis. With <em>Draw your own</em> chosen, drag across the chart to draw a target, or use the two sliders that appear: one chooses a position and the other sets the height there.</p>
     <div class="row"><div class="controls" id="h-controls"></div><div class="stage" id="h-chart"></div></div>
     <p class="readout" id="h-readout" aria-live="polite"></p>
   </div>
@@ -88,7 +88,7 @@ $$f(x) = b + \sum_{k=1}^{m} a_k\,\mathrm{ReLU}(x - c_k),$$
 <p><span class="claim">Theorem</span> Depth can make the number of units needed much smaller. Telgarsky used the sawtooth of the tool to prove that, for every whole number \(k\), some ReLU network with on the order of \(k^3\) layers of a few units each computes a function that no network with on the order of \(k\) layers can approximate closely unless it has on the order of \(2^k\) units.<label for="sn-depth" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-depth" class="margin-toggle"><span class="sidenote">Telgarsky (2016), &ldquo;<a href="https://proceedings.mlr.press/v49/telgarsky16.html">Benefits of depth in neural networks</a>,&rdquo; <em>COLT</em>. Eldan and Shamir (2016), &ldquo;<a href="https://proceedings.mlr.press/v49/eldan16.html">The power of depth for feedforward neural networks</a>,&rdquo; <em>COLT</em>.</span> Eldan and Shamir found a function of \(d\) inputs that a network with two hidden layers expresses with a number of units growing only polynomially in \(d\), while a network with one hidden layer cannot approximate it better than a fixed accuracy unless its number of units grows exponentially in \(d\).</p>
 
 <figure class="multiples" id="fig-approx" aria-describedby="fig-approx-desc"></figure>
-<p id="fig-approx-desc" class="caption">The smooth target (ink) and fits with 4, 8, and 32 units (<span class="c-accent">blue</span>), with each unit&rsquo;s contribution, a ReLU ramp, drawn faintly beneath. With 32 units the fit cannot be told apart from the target at this size.</p>
+<p id="fig-approx-desc" class="caption">The smooth target (ink) and fits with 4, 8, and 32 units (<span class="c-accent">red</span>), with each unit&rsquo;s contribution, a ReLU ramp, drawn faintly beneath. With 32 units the fit cannot be told apart from the target at this size.</p>
 </section>
 
 <div class="check" data-id="5.1-c1" data-correct="1">

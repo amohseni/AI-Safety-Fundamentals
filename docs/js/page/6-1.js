@@ -207,7 +207,7 @@ render();
     nodes.forEach(([t, y]) => svg.append('text').attr('x', x).attr('y', y).attr('text-anchor', 'middle').attr('class', t === 'activations' && p.dir === 'in' ? 'label-accent' : 'label-ink').text(t));
     [[42, 102], [137, 197]].forEach(([a, b]) => svg.append('line').attr('x1', x).attr('x2', x).attr('y1', a).attr('y2', b).attr('stroke', 'var(--ink)').attr('marker-end', `url(#${idInk})`));
     const line = svg.append('line').attr('y1', 120).attr('y2', 120).attr('stroke', `var(--${p.sideColor})`).attr('stroke-width', 1.6).attr('stroke-dasharray', p.dash).attr('marker-end', `url(#${idSide})`);
-    if (p.dir === 'out') line.attr('x1', 180).attr('x2', 240); else line.attr('x1', 240).attr('x2', 180);
+    if (p.dir === 'out') line.attr('x1', 164).attr('x2', 240); else line.attr('x1', 240).attr('x2', 164);
     svg.append('text').attr('x', 246).attr('y', 126).attr('class', p.sideColor === 'accent' ? 'label-accent' : 'label-ink').text(p.side.split(' ')[0]);
     svg.append('text').attr('x', 246).attr('y', 146).attr('class', p.sideColor === 'accent' ? 'label-accent' : 'label-ink').text(p.side.split(' ')[1]);
     svg.append('text').attr('x', x).attr('y', 242).attr('text-anchor', 'middle').text(p.note);

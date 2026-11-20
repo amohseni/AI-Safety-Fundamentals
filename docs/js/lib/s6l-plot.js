@@ -12,10 +12,11 @@ export function scatterArrow(container, { height = 360, maxWidth = Infinity, lab
   const svg = d3.select(container).append('svg').attr('class', 'chart').attr('width', W).attr('height', H)
     .attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', label);
   const cx = W / 2, cy = H / 2, R = Math.min(W, H) / 2 - 18;
-  const gPts = svg.append('g'), gLab = svg.append('g'), gArrow = svg.append('g');
+  // The dashed tail lies under the labels, and each label clears a little paper around itself, so the tail never strikes through a name.
+  const gPts = svg.append('g'), gTail = svg.append('g'), gLab = svg.append('g'), gArrow = svg.append('g');
   let scale = 1, angle = 0, pts = [];
   const line = gArrow.append('line').attr('stroke', `var(--${arrowColor})`).attr('stroke-width', 2);
-  const tail = gArrow.append('line').attr('stroke', `var(--${arrowColor})`).attr('stroke-width', 1).attr('stroke-dasharray', '3 4');
+  const tail = gTail.append('line').attr('stroke', `var(--${arrowColor})`).attr('stroke-width', 1).attr('stroke-dasharray', '3 4');
   const head = gArrow.append('path').attr('fill', `var(--${arrowColor})`);
   const knob = gArrow.append('circle').attr('r', 9).attr('fill', 'var(--paper)').attr('stroke', `var(--${arrowColor})`).attr('stroke-width', 2)
     .attr('tabindex', 0).attr('role', 'slider').attr('aria-label', 'Direction of the arrow, in degrees').attr('aria-valuemin', 0).attr('aria-valuemax', 359)
@@ -34,7 +35,7 @@ export function scatterArrow(container, { height = 360, maxWidth = Infinity, lab
     drawArrow();
     onArrow && onArrow(angle);
   };
-  if (!arrow) gArrow.attr('display', 'none');
+  if (!arrow) { gArrow.attr('display', 'none'); gTail.attr('display', 'none'); }
   if (!interactive) knob.remove();
   let dragging = false;
   if (interactive) svg.on('pointerdown', (ev) => { dragging = true; svg.node().setPointerCapture && svg.node().setPointerCapture(ev.pointerId); setFromPointer(ev); })
@@ -64,7 +65,7 @@ export function scatterArrow(container, { height = 360, maxWidth = Infinity, lab
     setLabels(labels) {
       gLab.selectAll('text').data(labels).join('text')
         .attr('x', (l) => cx + l.x * scale).attr('y', (l) => cy - l.y * scale + 6).attr('text-anchor', 'middle')
-        .attr('class', (l) => `label-${l.color || 'ink'}`).text((l) => l.text);
+        .attr('class', (l) => `label-${l.color || 'ink'}`).attr('stroke', 'var(--paper)').attr('stroke-width', 5).attr('stroke-linejoin', 'round').style('paint-order', 'stroke').text((l) => l.text);
       return api;
     },
     setAngle(a) { angle = a; drawArrow(); return api; },

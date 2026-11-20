@@ -8,12 +8,22 @@ const st = { alpha: 0.5, k: 1, kind: 'exact', log: true };
 const METRICS = [['exact', 'Exact match'], ['digit', 'Per-digit accuracy'], ['loglik', 'Log-likelihood']];
 // On the linear axis, model sizes are plotted in units of 10^12.
 const X = (N) => (st.log ? N : N / 1e12);
-const sci = (n) => { const e = Math.floor(Math.log10(n)); return `${(n / 10 ** e).toFixed(1)} \u00d7 10${String(e).split('').map((d) => SUP[d]).join('')}`; };
+// Set as a formula, so the exponent is a true superscript in the text face.
+const sci = (n) => { const e = Math.floor(Math.log10(n)); return `\\(${(n / 10 ** e).toFixed(1)} \\times 10^{${e}}\\)`; };
 const fine = (lo, hi) => d3.range(0, 201).map((i) => 10 ** (lo + ((hi - lo) * i) / 200));
 const NS = fine(7, 12);
 // Tick labels as powers of ten, 10⁷ and so on; other ticks are left unlabeled.
 const SUP = '⁰¹²³⁴⁵⁶⁷⁸⁹';
 const pow10 = (n) => { const e = Math.round(Math.log10(n)); return Math.abs(Math.log10(n) - e) < 1e-6 ? '10' + String(e).split('').map((d) => SUP[d]).join('') : ''; };
+// The chart face has no superscript digits above 3, so the exponents are drawn as raised digits of that face.
+function raiseExponents(c) {
+  c.svg.selectAll('.axis text').each(function () {
+    const m = /^10([⁰¹²³⁴⁵⁶⁷⁸⁹]+)$/.exec(this.textContent);
+    if (!m) return;
+    const t = d3.select(this).text('10');
+    t.append('tspan').attr('dy', '-0.45em').attr('font-size', '0.72em').text(m[1].split('').map((ch) => SUP.indexOf(ch)).join(''));
+  });
+}
 
 // ---- Static figure: per-digit and exact match (k = 10) ----
 (function figure() {
@@ -30,6 +40,7 @@ const pow10 = (n) => { const e = Math.round(Math.log10(n)); return Math.abs(Math
       x: { domain: [1e7, 1e12], log: true, ticks: 3, format: pow10, label: 'parameters' }, y: { domain: [0, 1], ticks: 2 }, title });
     c.line('l', NS.map((N) => [N, metric(kind, N, 0.5, 10)]), { color: 'ink', width: 1 });
     SIZES.forEach((N, i) => c.point(`p${i}`, N, metric(kind, N, 0.5, 10), { color: 'accent', r: 3.5, label: null }));
+    raiseExponents(c);
   }
 })();
 
@@ -59,6 +70,7 @@ function draw() {
   const vals = SIZES.map((N) => metric(kind, N, alpha, k));
   if (kind === 'loglik') right.setY([Math.min(-1, Math.floor(Math.min(...NS.map((N) => metric(kind, N, alpha, k))))), 0]);
   else right.setY([0, 1]);
+  raiseExponents(left); raiseExponents(right);
   right.line('l', NS.map((N) => [X(N), metric(kind, N, alpha, k)]), { color: 'accent', width: 1 });
   SIZES.forEach((N, i) => right.point(`p${i}`, X(N), vals[i], { color: 'accent', r: 3.5, label: null }));
   const f = (v) => (kind === 'loglik' ? v.toFixed(2) : v.toFixed(3));
