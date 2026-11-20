@@ -32,6 +32,8 @@
     .split { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   }
   @media (max-width: 760px) { .unit-row { grid-template-columns: 1.2rem repeat(4, minmax(0, 1fr)); gap: 0.5rem; margin-bottom: 0.5rem; } .unit-row .wide { display: none; } }
+  /* Until the shared CSS does this: on a phone, figures and the task list end at the column's edge. */
+  @media (max-width: 760px) { figure, figure.multiples { max-width: 100%; } ol.tasks { box-sizing: border-box; } }
 </style>
 <script defer src="../vendor/katex/katex.min.js"></script>
 <script defer src="../vendor/katex/auto-render.min.js"></script>
