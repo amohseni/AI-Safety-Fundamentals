@@ -59,7 +59,7 @@
   {
    "id": "2.5",
    "question": "What does the training loss reward?",
-   "takeaway": "Cross-entropy is the logarithmic scoring rule. It is strictly proper, so the best a model can do is report the probabilities the data supports, and next-token training pushes models toward calibration. How calibrated a trained model is has to be measured. Pretraining is supervised learning; reinforcement learning comes later."
+   "takeaway": "Cross-entropy is the logarithmic scoring rule. It is strictly proper: the expected loss is lowest only at the true probabilities of the next token, so next-token training pushes models toward calibration. How calibrated a trained model is has to be measured. Pretraining is supervised learning; reinforcement learning comes later."
   },
   {
    "id": "2.6",

@@ -107,7 +107,7 @@ $$\mathbb{E}[L(q)] = -\,p \log q \;-\; (1-p)\log(1-q).$$
   <p class="label">Check</p>
   <p class="q">Suppose a model were trained with the linear rule instead of the log rule. Would you expect the probabilities it reports to be calibrated?</p>
   <div class="options seg"><button>Yes, any scoring rule leads to calibration</button><button>No, training would push its reports toward 0 and 1</button><button>No, training would push its reports toward one half</button></div>
-  <div class="feedback"><p>The linear rule is not proper: its expected loss is lowest at an end, so a model trained with it gains by reporting 0 or 1. Calibration comes from the rule being strictly proper.</p></div>
+  <div class="feedback"><p>The linear rule is not proper: its expected loss is lowest at an end, so a model trained with it gains by reporting 0 or 1. The push toward calibration comes from the rule being strictly proper.</p></div>
 </div>
 
 <div class="check" data-id="2.5-c2" data-correct="1">
@@ -125,7 +125,7 @@ $$\mathbb{E}[L(q)] = -\,p \log q \;-\; (1-p)\log(1-q).$$
 
 <div class="takeaway">
   <p class="label">Takeaway</p>
-  <p>Cross-entropy is the logarithmic scoring rule. It is strictly proper, so the best a model can do is report the probabilities the data supports, and next-token training pushes models toward calibration. How calibrated a trained model is has to be measured. Pretraining is supervised learning; reinforcement learning comes later.</p>
+  <p>Cross-entropy is the logarithmic scoring rule. It is strictly proper: the expected loss is lowest only at the true probabilities of the next token, so next-token training pushes models toward calibration. How calibrated a trained model is has to be measured. Pretraining is supervised learning; reinforcement learning comes later.</p>
 </div>
 </article>
 <script type="module" src="../js/site.js"></script>

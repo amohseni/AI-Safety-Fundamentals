@@ -22,7 +22,7 @@ Six to ten readers who match the intended reader: linear algebra, calculus, and 
 
 - **Pretest and posttest.** Two forms of twelve questions, one or two per section, each a new case in the style of the transfer questions in `docs/data/transfer.json` and not shown on the site. Half the readers get form A first and half form B, so a difference between the forms does not look like learning. These twenty-four questions have to be written and reviewed before the pilot; the eight transfer questions on the site cannot be reused, since readers will have seen them.
 - **Critique task.** A two-page excerpt from a recent safety paper (candidate: the method and results of a linear-probe or activation-patching paper). The reader writes one paragraph on what the result shows and one on what it does not show. Scored by two people against a short rubric: names the method correctly; separates what was measured from what was concluded; names one alternative explanation.
-- **Delayed test.** Six questions from the form the reader has not yet seen twice.
+- **Delayed test.** Six of the twelve questions on the reader's pretest form, which the reader last saw before using the site.
 - **From the browser, with the reader's consent.** Readers export their saved progress (the `asf-v1` entry in the browser's storage): which checks were right at the first attempt, which were missed, and the self-explanations. The site sends nothing anywhere, so this needs an export button or a copy-and-paste step. Not built yet.
 
 ## What is reported
@@ -35,10 +35,10 @@ Six to ten readers who match the intended reader: linear algebra, calculus, and 
 
 - A check that most readers miss on the first attempt, on a page they report as clear, means the check or the page teaches something other than what it tests. Rewrite one of them.
 - A page most readers report being stuck on is rewritten or split.
-- No gain on a section's posttest questions means the section's core pages do not carry its idea. That section is reviewed before any other change.
+- No gain across readers on a section's questions is a sign that the section's core pages do not carry its idea. With one or two questions per section and at most ten readers the sign is weak, so that section is reviewed first, together with the stuck reports and the interviews, before anything is rewritten.
 
 ## Open decisions for the owner
 
 1. Who the readers are (for example, incoming students in the department, or team members on current projects) and whether they are paid.
-2. Whether this needs ethics review. If the results are only used to improve the site, it usually does not; if they are to be published, ask the review board first.
+2. Whether this needs ethics review. Work done only to improve the site is usually not counted as research on human subjects, but the review board makes that determination. Ask the board before recruiting, and in any case if the readers are the owner's own students or the results may be published.
 3. Whether to build the export button for saved progress.
