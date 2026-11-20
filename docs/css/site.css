@@ -3,8 +3,10 @@
    first of two compared quantities; --second marks the other. Nothing else is colored. */
 
 :root {
-  /* Three type sizes only: page title (h1), section heading (h2), and --text for everything else. */
+  /* Type sizes: page title (h1), section heading (h2), --text for the text, and --small (below). */
   --text: 16pt;
+  /* A fourth size (owner decision 2026-11-20), used only for chart text, sidenotes, and the top line. */
+  --small: 13pt;
   --paper: #fffff8;
   --ink: #111111;
   --quiet: #5f5e57;
@@ -258,8 +260,9 @@ p, dl, ol, ul, .sidenote, .marginnote, .caption, .readout, .tool .panel-note, .t
   .katex-display, .caption, .review, article > table, figure { width: var(--col); max-width: var(--col); box-sizing: border-box; }
   article > ul, article > ol, section > ul, section > ol { padding-left: 2rem; -webkit-padding-start: 2rem; }
   p { margin-top: 0; margin-bottom: var(--u); }
-  h1 { margin: calc(2 * var(--u)) 0 calc(3 * var(--u)); line-height: calc(2 * var(--line)); }
-  h2 { margin: calc(4 * var(--u)) 0 var(--u); line-height: calc(1.5 * var(--line)); }
+  h1 { margin: calc(3 * var(--u)) 0 calc(5 * var(--u)); line-height: calc(2 * var(--line)); }
+  h2 { margin: calc(8 * var(--u)) 0 calc(2 * var(--u)); line-height: calc(1.5 * var(--line)); }
+  article > ul, article > ol, section > ul, section > ol { margin-top: var(--u); margin-bottom: calc(2 * var(--u)); }
 
   /* Margin column: sidenotes. */
   .sidenote, .marginnote {
@@ -271,48 +274,82 @@ p, dl, ol, ul, .sidenote, .marginnote, .caption, .readout, .tool .panel-note, .t
   .tool, figure.multiples, figure.fullwidth, figure.wide { width: var(--wide); max-width: var(--wide); }
 
   /* A tool: the chart sits in the text column and the controls beside it in the margin column. */
-  .tool { margin: calc(2 * var(--u)) 0 calc(3 * var(--u)); border-top: 1px solid var(--rule); padding-top: var(--u); }
-  .tool .panel { margin-bottom: calc(2 * var(--u)); }
-  .tool .panel + .panel { border-top: 1px solid var(--rule); padding-top: var(--u); }
-  .tool h3 { margin: 0 0 calc(0.5 * var(--u)); font-style: normal; font-weight: 600; line-height: var(--line); }
-  .tool .panel-note, .readout { width: var(--col); margin: 0 0 var(--u); }
-  .readout { margin-top: var(--u); }
+  .tool { margin: calc(3 * var(--u)) 0 calc(4 * var(--u)); border-top: 1px solid var(--rule); padding-top: calc(2 * var(--u)); }
+  .tool .panel { margin-bottom: calc(4 * var(--u)); }
+  .tool .panel:last-child { margin-bottom: 0; }
+  .tool .panel + .panel { border-top: 1px solid var(--rule); padding-top: calc(2 * var(--u)); }
+  .tool h3 { margin: 0 0 var(--u); font-style: normal; font-weight: 600; line-height: var(--line); }
+  .tool .panel-note, .readout { width: var(--col); margin: 0 0 calc(2 * var(--u)); }
+  .readout { margin: calc(2 * var(--u)) 0 0; }
   .tool .row { display: grid; grid-template-columns: var(--col) var(--side); column-gap: var(--gap); align-items: start; }
   .tool .row > .stage { grid-column: 1; grid-row: 1; min-width: 0; }
   .tool .row > .controls { grid-column: 2; grid-row: 1; min-width: 0; max-width: none; gap: var(--u); }
 
   /* Blocks that end a page: the name of the block sits in the margin column, level with its first line. */
   ol.tasks, .check, .explain, .takeaway { width: var(--col); position: relative; box-sizing: border-box; }
-  .check, .explain, .takeaway { margin-top: calc(2 * var(--u)); padding-top: var(--u); }
+  .check, .explain, .takeaway { margin-top: calc(4 * var(--u)); padding-top: calc(2 * var(--u)); }
+  .check + .check { margin-top: calc(3 * var(--u)); }
+  .check .q { margin-bottom: calc(1.5 * var(--u)); }
+  .check .feedback { margin-top: calc(1.5 * var(--u)); }
+  .explain textarea { margin-top: var(--u); min-height: calc(4 * var(--line)); }
   .check > .label, .explain > .label, .takeaway > .label {
-    position: absolute; left: calc(var(--col) + var(--gap)); top: var(--u); width: var(--side); margin: 0;
+    position: absolute; left: calc(var(--col) + var(--gap)); top: calc(2 * var(--u)); width: var(--side); margin: 0;
     font-style: normal; color: var(--quiet); line-height: var(--line);
   }
   .check .q, .explain > p:not(.label), .takeaway > p:not(.label) { margin-top: 0; }
   .takeaway { border-top: 2px solid var(--ink); }
-  .pagenav { margin-top: calc(4 * var(--u)); }
+  .pagenav { margin-top: calc(8 * var(--u)); margin-bottom: calc(6 * var(--u)); }
+  .pagenav .row + .row { margin-top: calc(2 * var(--u)); }
   .pagenav .row { width: var(--col); }
   .topline { padding-top: calc(2 * var(--u)); }
 
   /* Tasks: numbers hang in the left margin, so the questions align with the text. */
-  ol.tasks { padding-left: 0; margin: 0 0 calc(2 * var(--u)); list-style-position: outside; }
-  ol.tasks > li { margin: 0 0 var(--u); padding-left: 0; }
+  ol.tasks { padding-left: 0; margin: calc(4 * var(--u)) 0 calc(2 * var(--u)); list-style-position: outside; }
+  ol.tasks > li { margin: 0 0 calc(3 * var(--u)); padding-left: 0; }
+  .task .choices { margin: var(--u) 0 0; }
+  .task .after { margin-top: var(--u); }
   ol.tasks > li::marker { color: var(--quiet); }
 }
 
-/* Answers are not controls. A tool's control is a box; an answer to a question is a line of text
-   with an open circle, filled once chosen. */
-.task .choices button, .check .options button {
-  border: 0; border-radius: 0; padding: 0 0 0 1.5rem; margin-right: 1.5rem; position: relative; text-align: left; line-height: var(--line);
-}
-.task .choices button::before, .check .options button::before {
-  content: ""; position: absolute; left: 0.1rem; top: 0.68rem; width: 0.7rem; height: 0.7rem; box-sizing: border-box;
-  border: 1px solid var(--quiet); border-radius: 50%;
-}
-.task .choices button:hover::before, .check .options button:hover::before { border-color: var(--ink); }
-.task .choices button[aria-pressed="true"]::before, .check .options button.chosen::before { background: var(--ink); border-color: var(--ink); }
-.check .options.seg { display: flex; flex-direction: column; gap: 0; align-items: flex-start; }
-.task .choices { margin: 0; }
-.task .choices-label { display: none; }
-.task .choices .seg { gap: 0; }
 .explain textarea { box-sizing: border-box; }
+
+/* Answers use the same boxes as controls (owner decision 2026-11-20). A check's options are stacked
+   and share one width, so their edges line up with the text column. */
+.check .options.seg { display: flex; flex-direction: column; gap: calc(0.5 * var(--u)); align-items: stretch; }
+.check .options button { text-align: left; padding: calc(0.4 * var(--u)) 0.9rem; line-height: 1.5; }
+.task .choices .seg { gap: 0.5rem; }
+.task .choices button, .seg button, button { padding: 0.25rem 0.8rem; }
+
+/* The small size: chart text, sidenotes, and the top line. */
+.chart text { font-size: var(--small); }
+.sidenote, .marginnote, .sidenote > code { font-size: var(--small); line-height: calc(0.75 * var(--line)); }
+.topline, .topline a { font-size: var(--small); }
+
+/* Top line: the site, then the section with its pages; the current page is marked. */
+.topline .here { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 1.2rem; }
+.topline .pages { display: inline-flex; gap: 0.7rem; list-style: none; margin: 0; padding: 0; font-variant-numeric: lining-nums tabular-nums; }
+.topline .pages li { margin: 0; font-size: var(--small); line-height: var(--line); }
+.topline .pages a[aria-current="page"] { color: var(--ink); border-bottom: 1px solid var(--ink); }
+
+/* Contents page on the grid: number, core mark, title, and the done circle in a column at the
+   right edge of the text column. The key to the two marks sits in the margin column. */
+h1:has(+ .subtitle) { margin-bottom: var(--u); }
+p.subtitle { margin-top: 0; margin-bottom: calc(3 * var(--u)); line-height: var(--line); }
+.contents h2 { margin: calc(4 * var(--u)) 0 var(--u); }
+.contents li { display: grid; grid-template-columns: 3rem 1.4rem 1fr 1rem; gap: 0; align-items: baseline; line-height: var(--line); margin: 0; }
+.contents li:not(:first-child) { margin-top: 0; }
+.contents .no { min-width: 0; font-variant-numeric: lining-nums tabular-nums; }
+.contents .mark { min-width: 0; }
+.contents .done-dot { justify-self: end; }
+.contents .done-dot.done { background: var(--ink); border-color: var(--ink); }
+.contents .view { margin-top: calc(3 * var(--u)); }
+.contents .key { font-size: var(--small); color: var(--quiet); line-height: calc(0.75 * var(--line)); margin: var(--u) 0 0; }
+.contents .key span { white-space: nowrap; margin-right: 1.2rem; }
+.contents .key .done-dot { margin-right: 0.3rem; }
+@media (min-width: 1080px) {
+  .contents { width: var(--col); position: relative; }
+  .contents .key { position: absolute; left: calc(var(--col) + var(--gap)); top: calc(3 * var(--u)); width: var(--side); margin: 0; }
+  .contents .key span { display: block; margin: 0 0 calc(0.5 * var(--u)); white-space: normal; }
+  .licence { width: var(--col); margin-top: calc(6 * var(--u)); }
+}
+.contents .key span > span { display: inline-block; margin: 0 0.45rem 0 0; white-space: nowrap; }
