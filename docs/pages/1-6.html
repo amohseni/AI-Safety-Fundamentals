@@ -9,11 +9,6 @@
 <link rel="stylesheet" href="../vendor/katex/katex.min.css">
 <link rel="stylesheet" href="../css/site.css">
 <style>
-  /* The red initial. The shared rule skips a paragraph whose first element is a claim label, to avoid
-     a paragraph that starts with the label; this one only has a label further on, so it is restored here. */
-  article > section:first-of-type > p:first-of-type::first-letter {
-    font-style: normal; font-weight: 400; float: left; font-size: 3.05em; line-height: 0.82; padding: 0.07em 0.12em 0 0; color: var(--accent);
-  }
   /* Three outputs side by side across both columns; the controls sit in rows above them. */
   .three { display: flex; flex-wrap: wrap; gap: calc(2 * var(--u)) var(--gap); margin-top: calc(2 * var(--u)); }
   .three > div { flex: 1 1 12rem; min-width: 0; border-top: 1px solid var(--rule); padding-top: var(--u); }
